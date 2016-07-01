@@ -14,6 +14,7 @@ function NTMain() {
 	d2B_tamohighland();		// tamoe highland thingy
 	d2B_outercloister();		// outer cloister thingy
 	d2B_barracks();			// barracks thingy
+	d2B_jail();			// jail thingy
 	
 	d2B_cata();		// catacombs thingy
 	
@@ -161,7 +162,7 @@ function d2B_barracks() {
 	d2B_commonInitSetup(27);
 	NTP_DoPrecast();
 	
-	d2B_moveToPresetUnitMonster(28, 754, -5, 5);	// go to where main monster is in the barracks
+	d2B_moveToPresetUnitMonster(28, 754, -5, 5);	// go to where main monster is in the malus dude
 	d2B_clrLvlOC();
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
@@ -169,6 +170,16 @@ function d2B_barracks() {
 function d2B_jail() {
 	d2B_commonInitSetup(29);
 	NTP_DoPrecast();
+	d2B_clrLvlOC();
+	
+	NTTM_CheckAct(1);	// return to Act 1 town
+}
+function d2B_innercloister() {
+	d2B_commonInitSetup(32);
+	NTP_DoPrecast();
+	d2B_clrLvlOC();
+	
+	d2B_moveToPresetUnitMonster(33, 743, 0, 10);	// move to frozen dude in the cathedral
 	d2B_clrLvlOC();
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
