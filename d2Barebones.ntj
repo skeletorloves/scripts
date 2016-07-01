@@ -15,7 +15,8 @@ function NTMain() {
 	d2B_outercloister();		// outer cloister thingy
 	d2B_barracks();			// barracks thingy
 	d2B_jail();			// jail thingy
-	
+	d2B_innercloister();		// inner cloister thingy
+
 	d2B_cata();		// catacombs thingy
 	
 
