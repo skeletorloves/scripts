@@ -8,7 +8,7 @@ function NTMain() {
 	d2B_coldplains();	// cold plains thingy
 	d2B_burialgrounds();	// burial grounds thingy
 	d2B_stonyfield();	// stony field thiny
-	//d2B_undergroundpassage(); // underground passage thingy
+	d2B_undergroundpassage(); // underground passage thingy
 	
 	d2B_cata();		// catacombs thingy
 	
@@ -97,6 +97,24 @@ function d2B_stonyfield() {
 	d2B_usePortal("Portal",38);			// use portal to enter tristram
 	d2B_clrLvlOC();
 
+	NTTM_CheckAct(1);	// return to Act 1 town
+}
+function d2B_undergroundpassage() {
+	d2B_chkAct();
+	NTTMGR_TownManager();
+	d2B_moveWP();
+	d2B_gotoWP(4);
+	NTP_DoPrecast(true);
+	NTConfig_SkipRegularMonsters = false;
+
+	d2B_moveToStair(me.areaid,10);
+	d2B_takeStairs(10);
+	d2B_clrLvlOC();
+	
+	d2B_moveToStair(me.areaid,14);
+	d2B_takeStairs(14);
+	d2B_clrLvlOC();
+	
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
 function d2B_cata() {
