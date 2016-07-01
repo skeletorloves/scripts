@@ -12,7 +12,8 @@ function NTMain() {
 	d2B_darkwood();			// dark wood thingy
 	d2B_blackmarsh();		// black marsh thingy
 	d2B_tamohighland();		// tamoe highland thingy
-	
+	d2B_outercloister();		// outer cloister thingy
+	d2B_barracks();			// barracks thingy
 	
 	d2B_cata();		// catacombs thingy
 	
@@ -149,7 +150,22 @@ function d2B_tamohighland() {
 	d2B_moveToPresetUnit(me.areaid, 397, 1, 1);	// go to the special chest of the pit
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
-}	
+}
+function d2B_outercloister() {
+	d2B_commonInitSetup(27);
+	NTP_DoPrecast();
+	
+	NTTM_CheckAct(1);	// return to Act 1 town
+}
+function d2B_barracks() {
+	d2B_commonInitSetup(27);
+	NTP_DoPrecast();
+	
+	d2B_moveToPresetUnitMonster(28, 754, -5, 5);	// go to where main monster is in the barracks
+	d2B_clrLvlOC();
+	
+	NTTM_CheckAct(1);	// return to Act 1 town
+}
 function d2B_cata() {
 	d2B_commonInitSetup(32);
 	
