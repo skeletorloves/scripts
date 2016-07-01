@@ -93,12 +93,7 @@ function d2B_stonyfield() {
 	d2B_clrLvlOC();
 	
 	d2B_MoveToPresetUnitMonster(737, 10, 10);
-	
-	if(!NTM_UsePortal("Portal", 38)){					// use portal to enter tristram
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_UsePortal()");
-		return;
-	}
-	
+	d2B_usePortal("Portal",38);			// use portal to enter tristram
 	d2B_clrLvlOC();
 
 	NTTM_CheckAct(1);	// return to Act 1 town
@@ -194,6 +189,13 @@ function d2B_movePresetUnitTitle(a,b,c,d) {
 function d2B_movePresetUnitMonster(a,b,c)
 	if(!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, a, b, c)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
+		return;
+	}
+	return;
+}
+function d2B_usePortal(a,b){
+	if(!NTM_UsePortal(a, b)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_UsePortal()");
 		return;
 	}
 	return;
