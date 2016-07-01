@@ -7,6 +7,8 @@ function NTMain() {
 	d2B_bloodmoor();	// blood moore thingy
 	d2B_coldplains();	// cold plains thingy
 	d2B_burialgrounds();	// burial grounds thingy
+	d2B_stonyfield();	// stony field thiny
+	
 	d2B_cata();		// catacombs thingy
 	
 
@@ -63,7 +65,7 @@ function d2B_burialgrounds() {
 	NTP_DoPrecast(true);
 	NTConfig_SkipRegularMonsters = false;
 	
-	NTM_MoveToPresetUnit(17, NTC_UNIT_TILE, 7, 8, 15);	// move to burial grounds
+	d2B_MoveToPresetUnitTitle(17,7,8,15);	// move to burial grounds
 	
 	d2B_clrLevel();
 	
@@ -80,6 +82,27 @@ function d2B_burialgrounds() {
 
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
+function d2B_stonyfield() {
+	d2B_chkAct();
+	NTTMGR_TownManager();
+	d2B_moveWP();
+	d2B_gotoWP(4);
+	NTP_DoPrecast(true);
+	NTConfig_SkipRegularMonsters = false;
+	
+	d2B_clrLvlOC();
+	
+	d2B_MoveToPresetUnitMonster(737, 10, 10);
+	
+	if(!NTM_UsePortal("Portal", 38)){					// use portal to enter tristram
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_UsePortal()");
+		return;
+	}
+	
+	d2B_clrLvlOC();
+
+	NTTM_CheckAct(1);	// return to Act 1 town
+}
 function d2B_cata() {
 	d2B_chkAct();
 	NTTMGR_TownManager();
@@ -89,14 +112,14 @@ function d2B_cata() {
 	NTConfig_SkipRegularMonsters = false;
 	
 	// clear all catacombs...
-	d2B_movePresetUnit(33,15);
+	d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
 	d2B_takeStairs(34);
 	NTP_DoPrecast();
 	d2B_clrLvlOC();
 	
 	for(var i = 35; i <= 37; i++) {
 	
-		d2B_movePresetUnit(me.areaid,18);
+		d2B_movePresetUnitTitle(me.areaid,18,0);
 		d2B_takeStairs(i);
 		NTP_DoPrecast();
 		d2B_clrLvlOC();
@@ -153,8 +176,23 @@ function d2B_gotoWP(a) {
 	}
 	return;
 }
-function d2B_movePresetUnit(a,b) {
-	if(!NTM_MoveToPresetUnit(a, NTC_UNIT_TILE, b)){
+function d2B_movePresetUnitTitle(a,b,c,d) {
+	if(c != 0) {
+		if(!NTM_MoveToPresetUnit(a, NTC_UNIT_TILE, b, c, d)){
+			NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
+			return;
+		}
+	}
+	if(c == 0) {
+		if(!NTM_MoveToPresetUnit(a, NTC_UNIT_TILE, b)){
+			NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
+			return;
+		}
+	}
+	return;
+}
+function d2B_movePresetUnitMonster(a,b,c)
+	if(!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, a, b, c)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
 		return;
 	}
