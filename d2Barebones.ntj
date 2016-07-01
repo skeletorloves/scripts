@@ -175,7 +175,7 @@ function d2B_takeStairs(a) {
 	return;
 }
 function d2B_clrLevel() {
-	if(!NTA_ClearLevel()){
+	if(!NTA_ClearLevel(true)){						// true: pickit enabled
 		NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 	}
 	return;
