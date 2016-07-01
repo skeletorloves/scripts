@@ -2,13 +2,37 @@
 
 function NTMain() {
 	
-	d2B_load();   	// initializing & loading thingies
-	d2B_cata();	// catacombs thingy
+	d2B_load();   		// initializing & loading thingies
+	d2B_bloodmoor();	// blood moore thingy
+	d2B_cata();		// catacombs thingy
 
 
 
 
 	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
+}
+
+// ________________________________________________________
+// main scripts
+
+function d2B_bloodmoor() {
+	d2B_chkAct(1);
+	NTTMGR_TownManager();
+	d2B_townMove("exit");	// exit town
+	NTC_PingDelay(200);
+	NTTM_OutOfAct1();
+	NTP_DoPrecast(true);
+	
+	d2B_clrLevel();
+	d2B_openChests();
+	
+	d2B_moveToStair(2,8);
+	d2B_takeStairs(8);
+	NTP_DoPrecast();
+	d2B_clrLevel();
+	d2B_openChests();
+	
+	NTTM_CheckAct(1);	// return to Act 1 town
 }
 
 function d2B_cata() {
@@ -38,8 +62,9 @@ function d2B_cata() {
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
 
+// ________________________________________________________
 // common functions
-//
+
 function d2B_load() {
  	Include("libs/common/NTCommon.ntl");
 	NTC_IncludeLibs();
@@ -53,6 +78,20 @@ function d2B_load() {
 function d2B_chkAct() {
 	if(!NTTM_CheckAct()){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_CheckAct()");
+		return;
+	}
+	return;
+}
+function d2B_chkAct2(a) {
+	if(!NTTM_CheckAct(a)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_CheckAct()");
+		return;
+	}
+	return;
+}
+function d2B_townMove(a) {
+	if(!NTTM_TownMove(a)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_TownMove()");
 		return;
 	}
 	return;
@@ -74,6 +113,13 @@ function d2B_gotoWP(a) {
 function d2B_movePresetUnit(a,b) {
 	if(!NTM_MoveToPresetUnit(a, NTC_UNIT_TILE, b)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
+		return;
+	}
+	return;
+}
+function d2B_moveToStair(a,b) {
+	if(!NTM_MoveToStair(a, b)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToStair()");
 		return;
 	}
 	return;
