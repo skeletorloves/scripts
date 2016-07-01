@@ -8,6 +8,7 @@ function NTMain() {
 	d2B_coldplains();	// cold plains thingy
 	d2B_burialgrounds();	// burial grounds thingy
 	d2B_stonyfield();	// stony field thiny
+	//d2B_undergroundpassage(); // underground passage thingy
 	
 	d2B_cata();		// catacombs thingy
 	
@@ -186,7 +187,7 @@ function d2B_movePresetUnitTitle(a,b,c,d) {
 	}
 	return;
 }
-function d2B_movePresetUnitMonster(a,b,c)
+function d2B_movePresetUnitMonster(a,b,c) {
 	if(!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, a, b, c)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
 		return;
