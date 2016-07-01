@@ -66,7 +66,7 @@ function d2B_burialgrounds() {
 	NTP_DoPrecast(true);
 	NTConfig_SkipRegularMonsters = false;
 	
-	d2B_MoveToPresetUnitTitle(17,7,8,15);	// move to burial grounds
+	d2B_movePresetUnitTitle(17,7,8,15);	// move to burial grounds
 	
 	d2B_clrLevel();
 	
@@ -93,7 +93,7 @@ function d2B_stonyfield() {
 	
 	d2B_clrLvlOC();
 	
-	d2B_MoveToPresetUnitMonster(737, 10, 10);
+	d2B_movePresetUnitMonster(737, 10, 10);
 	d2B_usePortal("Portal",38);			// use portal to enter tristram
 	d2B_clrLvlOC();
 
