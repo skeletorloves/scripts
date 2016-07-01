@@ -17,16 +17,26 @@ function d2B_cata() {
 	d2B_moveWP();
 	d2B_gotoWP(32);
 	NTP_DoPrecast(true);
+	NTConfig_SkipRegularMonsters = false;
 	
 	// clear all catacombs...
-	d2B_movePresetUnit(33);
+	d2B_movePresetUnit(33,15);
 	d2B_takeStairs(34);
 	NTP_DoPrecast();
-	NTConfig_SkipRegularMonsters = false;
 	d2B_clrLevel();
 	d2B_openChests();
 	
-
+	for(var i = 35; i <= 37; i++) {
+	
+		d2B_movePresetUnit(me.areaid,18);
+		d2B_takeStairs(i);
+		NTP_DoPrecast();
+		d2B_clrLevel();
+		d2B_openChests();
+	}
+	
+	return;
+}
 
 // common functions
 //
@@ -61,8 +71,8 @@ function d2B_gotoWP(a) {
 	}
 	return;
 }
-function d2B_movePresetUnit(a) {
-	if(!NTM_MoveToPresetUnit(a, NTC_UNIT_TILE, 15)){
+function d2B_movePresetUnit(a,b) {
+	if(!NTM_MoveToPresetUnit(a, NTC_UNIT_TILE, b)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
 		return;
 	}
