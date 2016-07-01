@@ -8,7 +8,7 @@ function NTMain() {
 
 
 
-
+	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 }
 
 function d2B_cata() {
@@ -36,8 +36,6 @@ function d2B_cata() {
 	}
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
-	
-	return;
 }
 
 // common functions
