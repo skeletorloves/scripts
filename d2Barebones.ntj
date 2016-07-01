@@ -1,9 +1,9 @@
 // d2Barebones.ntj for script shrinking
 
 function NTMain() {
-
-  d2B_load();   // initializing & loading thingies
-
+	
+	d2B_load();   	// initializing & loading thingies
+	d2B_cata();	// catacombs thingy
 
 
 
@@ -11,10 +11,27 @@ function NTMain() {
 
 }
 
-// common functions
+function d2B_cata() {
+	d2B_chkAct();
+	NTTMGR_TownManager();
+	d2B_moveWP();
+	d2B_gotoWP(32);
+	NTP_DoPrecast(true);
+	
+	// clear all catacombs...
+	d2B_movePresetUnit(33);
+	d2B_takeStairs(34);
+	NTP_DoPrecast();
+	NTConfig_SkipRegularMonsters = false;
+	d2B_clrLevel();
+	d2B_openChests();
+	
 
+
+// common functions
+//
 function d2B_load() {
-  Include("libs/common/NTCommon.ntl");
+ 	Include("libs/common/NTCommon.ntl");
 	NTC_IncludeLibs();
 	NTC_IncludeConfig("NTBot/char_configs");
 	NT_LoadConfig();
@@ -22,4 +39,51 @@ function d2B_load() {
 	NTA_Initialize();
   
   return;
+}
+function d2B_chkAct() {
+	if(!NTTM_CheckAct()){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_CheckAct()");
+		return 0
+	}
+	return;
+}
+function d2B_moveWP() {
+	if(!NTTM_TownMove("waypoint")){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_TownMove()");
+		return;
+	}
+	return;
+}
+function d2B_gotoWP(a) {
+	if(!NTM_TakeWaypoint(a)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeWaypoint()");
+		return;
+	}
+	return;
+}
+function d2B_movePresetUnit(a) {
+	if(!NTM_MoveToPresetUnit(a, NTC_UNIT_TILE, 15)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
+		return;
+	}
+	return;
+}
+function d2B_takeStairs(a) {
+	if(!NTM_TakeStair(a)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeStair()");
+		return;
+	}
+	return;
+}
+function d2B_clrLevel() {
+	if(!NTA_ClearLevel()){
+		NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
+	}
+	return;
+}
+function d2B_openChests() {
+	if(NTConfig_OpenChestsInArea && NTU_DontOpenAreas()){
+		OpenChestsInArea();
+	}
+	return;
 }
