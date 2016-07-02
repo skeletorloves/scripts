@@ -10,7 +10,7 @@ function NTMain() {
 	
 	while(d2B_actPausedAt != 0) { 
 		Print(COLOR_3 + "Case mode # " + d2b_actPausedAt);
-		switch(d2b_actPausedAt) {
+		switch(d2B_actPausedAt) {
 			case 1: d2B_bloodmoor();		// blood moore thingy
 				break;
 			case 2: d2B_coldplains();		// cold plains thingy
