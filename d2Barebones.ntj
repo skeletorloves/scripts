@@ -1,4 +1,8 @@
+//
 // d2Barebones.ntj for script shrinking
+//
+
+// var d2B_actPausedAt: for keeping track of where we left off during a pause (placed in: NTBotGame.ntj)
 
 function NTMain() {
 	
@@ -24,7 +28,7 @@ function NTMain() {
 				break;
 			case 9: d2B_outercloister();		// outer cloister thingy
 				break;
-			case 10: d2B_barracks();			// barracks thingy
+			case 10: d2B_barracks();		// barracks thingy
 				break;
 			case 11: d2B_jail();			// jail thingy
 				break;
@@ -34,17 +38,14 @@ function NTMain() {
 				break;
 		}
 		d2B_actPausedAt = d2B_actPausedAt + 1;
-		
 		if(d2B_actPausedAt > 11) {d2B_actPausedAt = 0;}
 	}
-
-
 
 	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 }
 
 // ________________________________________________________
-// main scripts
+// main function scripts
 
 function d2B_bloodmoor() {
 	d2B_chkAct(1);
