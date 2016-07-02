@@ -1,15 +1,18 @@
 //
 // d2Barebones.ntj for script shrinking
 //
+var _myName = "temp";
 
 // var d2B_actPausedAt: for keeping track of where we left off during a pause (placed in: NTBotGame.ntj)
 
 function NTMain() {
 	
 	d2B_load();   		// initializing & loading thingies
+	//d2B_actPausedAt = 1;
 	
 	while(d2B_actPausedAt != 0) { 
 		Print(COLOR_3 + "Case mode # " + d2B_actPausedAt);
+		Say("/msg *" + _myName + " Case mode # " + d2B_actPausedAt);
 		switch(d2B_actPausedAt) {
 			case 1: d2B_bloodmoor();		// blood moore thingy
 				break;
@@ -40,6 +43,8 @@ function NTMain() {
 		}
 		d2B_actPausedAt = d2B_actPausedAt + 1;
 		Print(COLOR_4 + "Case mode # " + d2B_actPausedAt);
+		Say("/msg *" + _myName + " Case mode # " + d2B_actPausedAt);
+		Dekay(Random(8000,12000));
 		if(d2B_actPausedAt > 11) {d2B_actPausedAt = 0;}
 	}
 
@@ -170,7 +175,7 @@ function d2B_tamohighland() {
 	NTP_DoPrecast();
 	d2B_clrLvlOC();
 	
-	d2B_moveToPresetUnit(me.areaid, 397, 1, 1);	// go to the special chest of the pit
+	d2B_moveToPresetUnitTitle(me.areaid, 397, 1, 1);	// go to the special chest of the pit
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
