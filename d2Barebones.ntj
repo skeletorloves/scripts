@@ -4,21 +4,39 @@ function NTMain() {
 	
 	d2B_load();   		// initializing & loading thingies
 	
-	d2B_bloodmoor();		// blood moore thingy
-	d2B_coldplains();		// cold plains thingy
-	d2B_burialgrounds();		// burial grounds thingy
-	d2B_stonyfield();		// stony field thiny
-	d2B_undergroundpassage();	// underground passage thingy
-	d2B_darkwood();			// dark wood thingy
-	d2B_blackmarsh();		// black marsh thingy
-	d2B_tamohighland();		// tamoe highland thingy
-	d2B_outercloister();		// outer cloister thingy
-	d2B_barracks();			// barracks thingy
-	d2B_jail();			// jail thingy
-	d2B_innercloister();		// inner cloister thingy
-
-	d2B_cata();		// catacombs thingy
-	
+	while(d2B_actPausedAt != 0) { 
+		switch(d2b_actPausedAt) {
+			case 1: d2B_bloodmoor();		// blood moore thingy
+				break;
+			case 2: d2B_coldplains();		// cold plains thingy
+				break;
+			case 3: d2B_burialgrounds();		// burial grounds thingy
+				break;
+			case 4: d2B_stonyfield();		// stony field thiny
+				break;
+			case 5: d2B_undergroundpassage();	// underground passage thingy
+				break;
+			case 6: d2B_darkwood();			// dark wood thingy
+				break;
+			case 7: d2B_blackmarsh();		// black marsh thingy
+				break;
+			case 8: d2B_tamohighland();		// tamoe highland thingy
+				break;
+			case 9: d2B_outercloister();		// outer cloister thingy
+				break;
+			case 10: d2B_barracks();			// barracks thingy
+				break;
+			case 11: d2B_jail();			// jail thingy
+				break;
+			case 12: d2B_innercloister();		// inner cloister thingy
+				break;
+			case 13: d2B_cata();			// catacombs thingy
+				break;
+		}
+		d2B+actPausedAt = d2B+actPausedAt + 1;
+		
+		if(d2B_actPausedAt > 11) {d2B_actPausedAt = 0;}
+	}
 
 
 
