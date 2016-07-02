@@ -33,6 +33,7 @@ function NTMain() {
 			case 9: d2B_outercloister();		// outer cloister thingy
 				break;
 			case 10: //d2B_barracks();		// barracks thingy
+				Delay(Random(8000,12000));
 				break;
 			case 11: d2B_jail();			// jail thingy
 				break;
