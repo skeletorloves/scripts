@@ -44,7 +44,7 @@ function NTMain() {
 		d2B_actPausedAt = d2B_actPausedAt + 1;
 		Print(COLOR_4 + "Case mode # " + d2B_actPausedAt);
 		Say("/msg *" + _myName + " Case mode # " + d2B_actPausedAt);
-		Dekay(Random(8000,12000));
+		Delay(Random(8000,12000));
 		if(d2B_actPausedAt > 11) {d2B_actPausedAt = 0;}
 	}
 
