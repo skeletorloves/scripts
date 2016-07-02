@@ -33,7 +33,7 @@ function NTMain() {
 			case 13: d2B_cata();			// catacombs thingy
 				break;
 		}
-		d2B+actPausedAt = d2B+actPausedAt + 1;
+		d2B_actPausedAt = d2B_actPausedAt + 1;
 		
 		if(d2B_actPausedAt > 11) {d2B_actPausedAt = 0;}
 	}
