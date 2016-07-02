@@ -175,13 +175,14 @@ function d2B_tamohighland() {
 	NTP_DoPrecast();
 	d2B_clrLvlOC();
 	
-	d2B_moveToPresetUnitTitle(me.areaid, 397, 1, 1);	// go to the special chest of the pit
+	d2B_movePresetUnitTitle(me.areaid, 397, 1, 1);	// go to the special chest of the pit
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
 function d2B_outercloister() {
 	d2B_commonInitSetup(27);
 	NTP_DoPrecast();
+	d2B_clrLvlOC();
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
@@ -189,7 +190,7 @@ function d2B_barracks() {
 	d2B_commonInitSetup(27);
 	NTP_DoPrecast();
 	
-	d2B_moveToPresetUnitMonster(28, 754, -5, 5);	// go to where main monster is in the malus dude
+	d2B_movePresetUnitMonster(28, 754, -5, 5);	// go to where main monster is in the malus dude
 	d2B_clrLvlOC();
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
@@ -206,7 +207,7 @@ function d2B_innercloister() {
 	NTP_DoPrecast();
 	d2B_clrLvlOC();
 	
-	d2B_moveToPresetUnitMonster(33, 743, 0, 10);	// move to frozen dude in the cathedral
+	d2B_movePresetUnitMonster(33, 743, 0, 10);	// move to frozen dude in the cathedral
 	d2B_clrLvlOC();
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
