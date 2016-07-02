@@ -46,7 +46,7 @@ function NTMain() {
 		Print(COLOR_4 + "Case mode # " + d2B_actPausedAt);
 		Say("/msg *" + _myName + " Case mode # " + d2B_actPausedAt);
 		Delay(Random(8000,12000));
-		if(d2B_actPausedAt > 11) {d2B_actPausedAt = 0;}
+		if(d2B_actPausedAt > 13) {d2B_actPausedAt = 0;}
 	}
 
 	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
