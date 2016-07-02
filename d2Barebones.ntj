@@ -32,7 +32,7 @@ function NTMain() {
 				break;
 			case 9: d2B_outercloister();		// outer cloister thingy
 				break;
-			case 10: d2B_barracks();		// barracks thingy
+			case 10: //d2B_barracks();		// barracks thingy
 				break;
 			case 11: d2B_jail();			// jail thingy
 				break;
