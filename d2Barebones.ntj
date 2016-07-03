@@ -9,6 +9,7 @@ function NTMain() {
 	
 	d2B_load();   		// initializing & loading thingies
 	NTConfig_SkipRegularMonsters = true;
+	d2B_usingAFollower = true; // using d2B_myTP()
 	//d2B_actPausedAt = 1;
 	
 	while(d2B_actPausedAt != 0) { 
@@ -62,6 +63,7 @@ function d2B_bloodmoor() {
 	d2B_townMove("exit");	// exit town
 	NTC_PingDelay(200);
 	NTTM_OutOfAct1();
+	if(d2B_usingAFollower) {d2B_myTP();}
 	NTP_DoPrecast(true);
 	
 	d2B_clrLvlOC();		// clear level & open chests
@@ -351,4 +353,8 @@ function d2B_clrLvlOC() {
 	d2B_clrLevel();
 	d2B_openChests();
 	return;
+}
+function d2B_myTP() {
+	NTA_ClearPosition(5);
+	NTM_MakeTP();
 }
