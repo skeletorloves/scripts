@@ -24,10 +24,10 @@ var _myName = "temp";
 
 function NTMain() {
 	
-	d2B_load();   		// initializing & loading thingies
-	NTConfig_SkipRegularMonsters = true;
-	d2B_usingAFollower = false; // using d2B_myTP()
-	//d2B_actPausedAt = 1;
+	d2B_load();   						// initializing & loading thingies
+	NTConfig_SkipRegularMonsters = true;			// toggle atk to regular monsters
+	d2B_usingAFollower = false; 				// using a follower, then make townportals d2B_myTP()
+	//d2B_actPausedAt = 1;					// continue from the beginning of the section paused at
 	
 	while(d2B_actPausedAt != 0) { 
 		Print(COLOR_3 + "Case mode # " + d2B_actPausedAt);
