@@ -8,6 +8,7 @@ var _myName = "temp";
 function NTMain() {
 	
 	d2B_load();   		// initializing & loading thingies
+	NTConfig_SkipRegularMonsters = true;
 	//d2B_actPausedAt = 1;
 	
 	while(d2B_actPausedAt != 0) { 
@@ -252,7 +253,7 @@ function d2B_commonInitSetup(a) {
 	d2B_moveWP();
 	d2B_gotoWP(a);
 	NTP_DoPrecast(true);
-	NTConfig_SkipRegularMonsters = false;
+	//NTConfig_SkipRegularMonsters = false;
 	
 	return;
 }
