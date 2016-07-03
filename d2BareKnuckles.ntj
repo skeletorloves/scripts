@@ -1,0 +1,360 @@
+//
+// d2Barebones.ntj for script shrinking
+//
+var _myName = "temp";
+
+// var d2B_actPausedAt: for keeping track of where we left off during a pause (placed in: NTBotGame.ntj)
+
+function NTMain() {
+	
+	d2B_load();   		// initializing & loading thingies
+	NTConfig_SkipRegularMonsters = true;
+	d2B_usingAFollower = true; // using d2B_myTP()
+	//d2B_actPausedAt = 1;
+	
+	while(d2B_actPausedAt != 0) { 
+		Print(COLOR_3 + "Case mode # " + d2B_actPausedAt);
+		Say("/msg *" + _myName + " Case mode # " + d2B_actPausedAt);
+		switch(d2B_actPausedAt) {
+			case 1: d2B_bloodmoor();		// blood moore thingy
+				break;
+			case 2: d2B_coldplains();		// cold plains thingy
+				break;
+			case 3: d2B_burialgrounds();		// burial grounds thingy
+				break;
+			case 4: d2B_stonyfield();		// stony field thiny
+				break;
+			case 5: d2B_undergroundpassage();	// underground passage thingy
+				break;
+			case 6: d2B_darkwood();			// dark wood thingy
+				break;
+			case 7: d2B_blackmarsh();		// black marsh thingy
+				break;
+			case 8: d2B_tamohighland();		// tamoe highland thingy
+				break;
+			case 9: d2B_outercloister();		// outer cloister thingy
+				break;
+			case 10: //d2B_barracks();		// barracks thingy
+				Delay(Random(8000,12000));
+				break;
+			case 11: d2B_jail();			// jail thingy
+				break;
+			case 12: d2B_innercloister();		// inner cloister thingy
+				break;
+			case 13: d2B_cata();			// catacombs thingy
+				break;
+		}
+		d2B_actPausedAt = d2B_actPausedAt + 1;
+		Print(COLOR_4 + "Case mode # " + d2B_actPausedAt);
+		Say("/msg *" + _myName + " Case mode # " + d2B_actPausedAt);
+		Delay(Random(8000,12000));
+		if(d2B_actPausedAt > 13) {d2B_actPausedAt = 0;}
+	}
+
+	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
+}
+
+// ________________________________________________________
+// main function scripts
+
+function d2B_bloodmoor() {
+	d2B_chkAct(1);
+	NTTMGR_TownManager();
+	d2B_townMove("exit");	// exit town
+	NTC_PingDelay(200);
+	NTTM_OutOfAct1();
+	if(d2B_usingAFollower) {d2B_myTP();}
+	NTP_DoPrecast(true);
+	
+	d2B_clrLvlOC();		// clear level & open chests
+	
+	d2B_moveToStair(2,8);
+	d2B_takeStairs(8);
+	NTP_DoPrecast();
+	d2B_clrLvlOC();
+	
+	NTTM_CheckAct(1);	// return to Act 1 town
+}
+function d2B_coldplains() {
+	d2B_commonInitSetup(3);
+	d2B_clrLvlOC();
+	
+	d2B_moveToStair(3,9);
+	d2B_takeStairs(9);
+	d2B_clrLvlOC();
+	
+	d2B_moveToStair(9,13);
+	d2B_takeStairs(13);
+	d2B_clrLvlOC();
+	
+	NTTM_CheckAct(1);	// return to Act 1 town
+}
+function d2B_burialgrounds() {
+	d2B_commonInitSetup(3);
+	d2B_movePresetUnitTitle(17,7,8,15);	// move to burial grounds
+	d2B_clrLevel();
+	
+	d2B_moveToStair(me.areaid,19);	// enter the mausoleum
+	d2B_takeStairs(19);
+	d2B_clrLvlOC();
+	
+	d2B_moveToStair(me.areaid,17);
+	d2B_takeStairs(17);
+	
+	d2B_moveToStair(me.areaid,18);	// enter the crypt
+	d2B_takeStairs(18);
+	d2B_clrLvlOC();
+
+	NTTM_CheckAct(1);	// return to Act 1 town
+}
+function d2B_stonyfield() {
+	d2B_commonInitSetup(4);
+	d2B_clrLvlOC();
+	
+	d2B_movePresetUnitMonster(737, 10, 10);
+	d2B_usePortal("Portal",38);			// use portal to enter tristram
+	d2B_clrLvlOC();
+
+	NTTM_CheckAct(1);	// return to Act 1 town
+}
+function d2B_undergroundpassage() {
+	d2B_commonInitSetup(4);
+
+	d2B_moveToStair(me.areaid,10);
+	d2B_takeStairs(10);
+	d2B_clrLvlOC();
+	
+	d2B_moveToStair(me.areaid,14);
+	d2B_takeStairs(14);
+	d2B_clrLvlOC();
+	
+	NTTM_CheckAct(1);	// return to Act 1 town
+}
+function d2B_darkwood() {
+	d2B_commonInitSetup(5);
+	d2B_clrLvlOC();
+	
+	NTTM_CheckAct(1);	// return to Act 1 town
+}
+function d2B_blackmarsh() {
+	d2B_commonInitSetup(6);
+	d2B_clrLvlOC();
+	
+	d2B_moveToStair(me.areaid,11);	// clear the hole
+	d2B_takeStairs(11);
+	d2B_clrLvlOC();
+	
+	d2B_moveToStair(me.areaid,15);	// clear the hole
+	d2B_takeStairs(15);
+	d2B_clrLvlOC();
+	
+	NTTM_CheckAct(1);	// return to Act 1 town
+	
+	d2B_commonInitSetup(6);
+	
+	for(var i = 0 ; i < 6 ; i++) {
+		d2B_moveToStair(me.areaid,20+i);	// go to the forgotten tower and do tower things
+		d2B_takeStairs(20+i);
+		NTP_DoPrecast();
+		d2B_clrLvlOC();
+	}
+	
+	NTTM_CheckAct(1);	// return to Act 1 town
+}
+function d2B_tamohighland() {
+	d2B_commonInitSetup(6);
+	NTP_DoPrecast();
+	
+	d2B_moveToStair(7,12);	// go to the enterance of tamoe highland pit
+	NTP_DoPrecast();
+	d2B_clrLvlOC();
+	
+	d2B_moveToStair(7,12);	// go to the enterance of the tamoe highland pit
+	d2B_takeStairs(12);
+	NTP_DoPrecast();
+	d2B_clrLvlOC();
+	
+	d2B_moveToStair(me.areaid,16);	// go to the 2nd level of the tamoe highland pit
+	d2B_takeStairs(16);
+	NTP_DoPrecast();
+	d2B_clrLvlOC();
+	
+	//d2B_movePresetUnitTitle(me.areaid, 397, 1, 1);	// go to the special chest of the pit
+	
+	NTTM_CheckAct(1);	// return to Act 1 town
+}
+function d2B_outercloister() {
+	d2B_commonInitSetup(27);
+	NTP_DoPrecast();
+	d2B_clrLvlOC();
+	
+	NTTM_CheckAct(1);	// return to Act 1 town
+}
+function d2B_barracks() {
+	d2B_commonInitSetup(27);
+	NTP_DoPrecast();
+	
+	d2B_movePresetUnitMonster(28, 754, -5, 5);	// go to where main monster is in the malus dude
+	d2B_clrLvlOC();
+	
+	NTTM_CheckAct(1);	// return to Act 1 town
+}
+function d2B_jail() {
+	d2B_commonInitSetup(29);
+	NTP_DoPrecast();
+	d2B_clrLvlOC();
+	
+	NTTM_CheckAct(1);	// return to Act 1 town
+}
+function d2B_innercloister() {
+	d2B_commonInitSetup(32);
+	NTP_DoPrecast();
+	d2B_clrLvlOC();
+	
+	d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
+	d2B_clrLvlOC();					// clear the cathedral
+	
+	NTTM_CheckAct(1);	// return to Act 1 town
+}
+function d2B_cata() {
+	d2B_commonInitSetup(32);
+	
+	// clear all catacombs...
+	d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
+	d2B_takeStairs(34);
+	NTP_DoPrecast();
+	d2B_clrLvlOC();
+	
+	for(var i = 35; i <= 37; i++) {
+	
+		d2B_movePresetUnitTitle(me.areaid,18,0);
+		d2B_takeStairs(i);
+		NTP_DoPrecast();
+		d2B_clrLvlOC();
+	}
+	
+	NTTM_CheckAct(1);	// return to Act 1 town
+}
+
+// ________________________________________________________
+// common functions
+
+function d2B_load() {
+ 	Include("libs/common/NTCommon.ntl");
+	NTC_IncludeLibs();
+	NTC_IncludeConfig("NTBot/char_configs");
+	NT_LoadConfig();
+	NTSI_LoadNIPFiles("NTBot/item_configs");
+	NTA_Initialize();
+  
+  	return;
+}
+function d2B_commonInitSetup(a) {
+	d2B_chkAct();
+	NTTMGR_TownManager();
+	d2B_moveWP();
+	d2B_gotoWP(a);
+	NTP_DoPrecast(true);
+	//NTConfig_SkipRegularMonsters = false;
+	
+	return;
+}
+function d2B_chkAct() {
+	if(!NTTM_CheckAct()){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_CheckAct()");
+		return;
+	}
+	return;
+}
+function d2B_chkAct2(a) {
+	if(!NTTM_CheckAct(a)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_CheckAct()");
+		return;
+	}
+	return;
+}
+function d2B_townMove(a) {
+	if(!NTTM_TownMove(a)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_TownMove()");
+		return;
+	}
+	return;
+}
+function d2B_moveWP() {
+	if(!NTTM_TownMove("waypoint")){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_TownMove()");
+		return;
+	}
+	return;
+}
+function d2B_gotoWP(a) {
+	if(!NTM_TakeWaypoint(a)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeWaypoint()");
+		return;
+	}
+	return;
+}
+function d2B_movePresetUnitTitle(a,b,c,d) {
+	if(c != 0) {
+		if(!NTM_MoveToPresetUnit(a, NTC_UNIT_TILE, b, c, d)){
+			NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
+			return;
+		}
+	}
+	if(c == 0) {
+		if(!NTM_MoveToPresetUnit(a, NTC_UNIT_TILE, b)){
+			NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
+			return;
+		}
+	}
+	return;
+}
+function d2B_movePresetUnitMonster(a,b,c) {
+	if(!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, a, b, c)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
+		return;
+	}
+	return;
+}
+function d2B_usePortal(a,b){
+	if(!NTM_UsePortal(a, b)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_UsePortal()");
+		return;
+	}
+	return;
+}
+function d2B_moveToStair(a,b) {
+	if(!NTM_MoveToStair(a, b)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToStair()");
+		return;
+	}
+	return;
+}
+function d2B_takeStairs(a) {
+	if(!NTM_TakeStair(a)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeStair()");
+		return;
+	}
+	return;
+}
+function d2B_clrLevel() {
+	if(!NTA_ClearLevel(true)){						// true: pickit enabled
+		NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
+	}
+	return;
+}
+function d2B_openChests() {
+	if(NTConfig_OpenChestsInArea && NTU_DontOpenAreas()){
+		OpenChestsInArea();
+	}
+	return;
+}
+function d2B_clrLvlOC() {
+	d2B_clrLevel();
+	d2B_openChests();
+	return;
+}
+function d2B_myTP() {
+	NTA_ClearPosition(5);
+	NTM_MakeTP();
+}
