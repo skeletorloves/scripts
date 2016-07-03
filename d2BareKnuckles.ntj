@@ -26,7 +26,7 @@ function NTMain() {
 	
 	d2B_load();   		// initializing & loading thingies
 	NTConfig_SkipRegularMonsters = true;
-	d2B_usingAFollower = true; // using d2B_myTP()
+	d2B_usingAFollower = false; // using d2B_myTP()
 	//d2B_actPausedAt = 1;
 	
 	while(d2B_actPausedAt != 0) { 
@@ -379,7 +379,11 @@ function d2B_myTP() {
 // ________________________________________________________
 // ________________________________________________________
 //
-// helper bot
+//
+// 	HELPER bot
+//
+// ________________________________________________________
+// ________________________________________________________
 //
 
 function d2H_helper() {
@@ -472,50 +476,18 @@ function Action() {
 }
 
 function ChatHandler( msg, type ) {
-	if(NTConfig_HelperHumor) {
-		// My attempt at making the bot have humour
-		// 3 checks per 1000 === 0.3% chance
-		var _funny = Random(1, 1000);
-		var _skip = false;
-		switch(_funny)
-		{
-			case 1:
-				Say("Hmm... I don't feel like it.  Ask me later.");
-				_skip = true;
-				break;
-			case 500:
-				Say("Why don't you do it?  I'm tired.");
-				_skip = true;
-				break;
-			case 1000:
-				Say("Hah, you wish...");
-				_skip = true;
-				break;
-		}
-		if(_skip)
-		{
-			return;
-		}
-	}
-	
-	switch( type )
-	{
+	switch( type )	{
 		case 0: // white
-			if(!NTConfig_AllowCommands)
-			{
-				return;
-			}
+			if(!NTConfig_AllowCommands){return;}
 			_msgsplit = msg.toLowerCase().split(":");
 			if( _msgsplit.length >= 1 && _msgsplit[1] !== undefined )
 			{
 				var _name = _msgsplit[0].substring(3, _msgsplit[0].length - 3);
 				var _commands = _msgsplit[1].substring(1).split(" ");
 			}
-			else
-				return;
+			else {return;}
 			
-			if(_name == me.name.toLowerCase())
-				return;
+			if(_name == me.name.toLowerCase()) {return;}
 			
 			if( _commands[0] == me.name.toLowerCase() ) 	// remove char name.  
 				for(var f = 0; f <= _commands.length-1; f++)
@@ -526,16 +498,13 @@ function ChatHandler( msg, type ) {
 					if(!_commands[i])
 						_commands[i] = "";
 			
-			while(_commands.length < 5)
-				_commands.push("");
+			while(_commands.length < 5) {_commands.push("");}
 			
 			if(_commands[0] == "p" && _name == leaderName)
 			{
 				isPaused = !isPaused;
-				if(isPaused)
-					Say("~Paused chat commands");
-				else
-					Say("~Unpaused chat commands");
+				if(isPaused) {Say("~Paused chat commands");}
+				else {Say("~Unpaused chat commands");}
 			}
 			
 			if( !isBusy && !isPaused && _name == leaderName.toLowerCase())
@@ -544,10 +513,7 @@ function ChatHandler( msg, type ) {
 		case 1: // red
 			break;
 		case 2: // green
-			if(!NTConfig_AllowCommands)
-			{
-				return;
-			}
+			if(!NTConfig_AllowCommands) { return;}
 			if(msg.indexOf("From ") > -1 && msg.indexOf(" (*") > -1)
 			{
 				_msgsplit = msg.toLowerCase().split(" (*");
