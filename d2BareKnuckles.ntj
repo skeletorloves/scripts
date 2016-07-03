@@ -522,8 +522,7 @@ function ChatHandler( msg, type ) {
 					var _name = _msgsplit[0].split(" ")[1];
 					var _commands = _msgsplit[1].split("):")[1].substring(1).split(" ");
 				}
-				else
-					return;
+				else {return;}
 			}
 			else
 			if(msg.indexOf(" whispers: ") > -1)
@@ -534,8 +533,7 @@ function ChatHandler( msg, type ) {
 					var _name = _msgsplit[0];
 					var _commands = _msgsplit[1].substring(1).split(" ");
 				}
-				else
-					return;
+				else {return;}
 			}
 			else
 			{
@@ -551,17 +549,13 @@ function ChatHandler( msg, type ) {
 							saystring = NTConfig_GreetMsg.replace("%name%", _name);
 							Whisper(_name, saystring);
 						}
-						else
-						{
-							Whisper(_name, NTConfig_GreetMsg);
-						}
+						else {Whisper(_name, NTConfig_GreetMsg);}
 					}
 				}
 				return;
 			}
 			
-			if(_name == me.name.toLowerCase())
-				return;
+			if(_name == me.name.toLowerCase()){return;}
 			
 			if( _commands[0] == me.name.toLowerCase() ) 	// remove char name.  
 				for(var f = 0; f <= _commands.length-1; f++)
@@ -572,16 +566,13 @@ function ChatHandler( msg, type ) {
 					if(!_commands[i])
 						_commands[i] = "";
 			
-			while(_commands.length < 5)
-				_commands.push("");
+			while(_commands.length < 5) {_commands.push("");}
 			
 			if(_commands[0] == "p" && _name == leaderName)
 			{
 				isPaused = !isPaused;
-				if(isPaused)
-					Say("~Paused chat commands");
-				else
-					Say("~Unpaused chat commands");
+				if(isPaused) {Say("~Paused chat commands");}
+				else {Say("~Unpaused chat commands");}
 			}
 			
 			if( !isBusy && !isPaused && _name == leaderName.toLowerCase())
@@ -603,10 +594,7 @@ function ChatHandler( msg, type ) {
 						saystring = NTConfig_GreetMsg.replace("%name%", _name);
 						Whisper(_name, saystring);
 					}
-					else
-					{
-						Whisper(_name, NTConfig_GreetMsg);
-					}
+					else {Whisper(_name, NTConfig_GreetMsg);}
 				}
 			}
 			*/
