@@ -4,7 +4,7 @@ var debug = false;
 
 var pathRushBots = "NTRush/rushbots/";
 var isBusy = false;
-var isPaused;
+var isPaused = false;
 var isFollowingEnabled = true;
 var isAttackEnabled = true;
 var isAutoEnchantEnabled = false;
