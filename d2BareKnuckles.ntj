@@ -19,6 +19,9 @@ var attackRange = 15;
 
 
 var _myName = "temp";
+var d2B_usingAFollower = false; 		// using a follower, then make townportals d2B_myTP()
+//var d2B_actPausedAt = 1;			// continue from the beginning of the section paused at
+var d2B_toggleHelper = false;			// for engaging helper	
 
 // var d2B_actPausedAt: for keeping track of where we left off during a pause (placed in: NTBotGame.ntj)
 
@@ -26,47 +29,52 @@ function NTMain() {
 	
 	d2B_load();   						// initializing & loading thingies
 	NTConfig_SkipRegularMonsters = true;			// toggle atk to regular monsters
-	d2B_usingAFollower = false; 				// using a follower, then make townportals d2B_myTP()
-	//d2B_actPausedAt = 1;					// continue from the beginning of the section paused at
 	
-	while(d2B_actPausedAt != 0) { 
-		Print(COLOR_3 + "Case mode # " + d2B_actPausedAt);
-		Say("/msg *" + _myName + " Case mode # " + d2B_actPausedAt);
-		switch(d2B_actPausedAt) {
-			case 1: d2B_bloodmoor();		// blood moore thingy
-				break;
-			case 2: d2B_coldplains();		// cold plains thingy
-				break;
-			case 3: d2B_burialgrounds();		// burial grounds thingy
-				break;
-			case 4: d2B_stonyfield();		// stony field thiny
-				break;
-			case 5: d2B_undergroundpassage();	// underground passage thingy
-				break;
-			case 6: d2B_darkwood();			// dark wood thingy
-				break;
-			case 7: d2B_blackmarsh();		// black marsh thingy
-				break;
-			case 8: d2B_tamohighland();		// tamoe highland thingy
-				break;
-			case 9: d2B_outercloister();		// outer cloister thingy
-				break;
-			case 10: //d2B_barracks();		// barracks thingy
-				Delay(Random(8000,12000));
-				break;
-			case 11: d2B_jail();			// jail thingy
-				break;
-			case 12: d2B_innercloister();		// inner cloister thingy
-				break;
-			case 13: d2B_cata();			// catacombs thingy
-				break;
+	if(d2B_toggleHelper == false) {
+	
+		while(d2B_actPausedAt != 0) { 
+			Print(COLOR_3 + "Case mode # " + d2B_actPausedAt);
+			Say("/msg *" + _myName + " Case mode # " + d2B_actPausedAt);
+			switch(d2B_actPausedAt) {
+				case 1: d2B_bloodmoor();		// blood moore thingy
+					break;
+				case 2: d2B_coldplains();		// cold plains thingy
+					break;
+				case 3: d2B_burialgrounds();		// burial grounds thingy
+					break;
+				case 4: d2B_stonyfield();		// stony field thiny
+					break;
+				case 5: d2B_undergroundpassage();	// underground passage thingy
+					break;
+				case 6: d2B_darkwood();			// dark wood thingy
+					break;
+				case 7: d2B_blackmarsh();		// black marsh thingy
+					break;
+				case 8: d2B_tamohighland();		// tamoe highland thingy
+					break;
+				case 9: d2B_outercloister();		// outer cloister thingy
+					break;
+				case 10: //d2B_barracks();		// barracks thingy
+					Delay(Random(8000,12000));
+					break;
+				case 11: d2B_jail();			// jail thingy
+					break;
+				case 12: d2B_innercloister();		// inner cloister thingy
+					break;
+				case 13: d2B_cata();			// catacombs thingy
+					break;
+			}
+			d2B_actPausedAt = d2B_actPausedAt + 1;
+			Print(COLOR_4 + "Case mode # " + d2B_actPausedAt);
+			Say("/msg *" + _myName + " Case mode # " + d2B_actPausedAt);
+			Delay(Random(8000,12000));
+			if(d2B_actPausedAt > 13) {
+				d2B_actPausedAt = 0;
+				NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
+			}
 		}
-		d2B_actPausedAt = d2B_actPausedAt + 1;
-		Print(COLOR_4 + "Case mode # " + d2B_actPausedAt);
-		Say("/msg *" + _myName + " Case mode # " + d2B_actPausedAt);
-		Delay(Random(8000,12000));
-		if(d2B_actPausedAt > 13) {d2B_actPausedAt = 0;}
-	}
+	else if(d2B_toggleHelper == true) {d2H_helper();}		// for enabling a follower
+
 
 	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 }
@@ -408,6 +416,8 @@ function d2H_load() {
 	NT_LoadConfig();
     	NTSI_LoadNIPFiles("NTBot/item_configs");
 	NTA_Initialize();
+	
+	return;
 }
 function d2_wait4leader() {
 	var leaderInGame = false;				// Wait for the leader to join the game
@@ -452,6 +462,7 @@ function d2_wait4leader() {
 		leaderUnit = GetLeaderUnit(leaderName);
 		leaderPlayerUnit = GetLeader(leaderName);
 	}
+	return;
 }
 
 function d2H_actOnLeader() {
