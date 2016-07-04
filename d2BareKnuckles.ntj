@@ -10,7 +10,7 @@ var pathRushBots = "NTRush/rushbots/";
 var isBusy = false;
 var isPaused = false;
 var isFollowingEnabled = true;
-var isAttackEnabled = true;
+var isAttackEnabled = false;
 var isAutoEnchantEnabled = false;
 var leaderUnit;
 var leaderPlayerUnit;
@@ -18,11 +18,11 @@ var followRange = 5;
 var attackRange = 15;
 
 
-var _myName = "temp";
-var d2B_usingAFollower = false; 		// using a follower, then make townportals d2B_myTP()
 //var d2B_actPausedAt = 1;			// continue from the beginning of the section paused at
 						// for keeping track of where we left off during a pause (placed in: NTBotGame.ntj)
 var d2B_toggleHelper = true;			// for engaging helper	
+var _myName = "temp";
+var d2B_usingAFollower = false; 		// using a follower, then make townportals d2B_myTP()
 
 
 function NTMain() {
@@ -645,8 +645,7 @@ function ChatHandler( msg, type ) {
 	}
 }
 
-function CommandHandler( msg1, msg2, msg3, msg4, msg5 )
-{
+function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 	switch( msg1 )
 	{
 	case "dbg": // keep right above goto command without a break
@@ -797,8 +796,8 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 )
 	return 1;
 }
 
-function DisplayHelp(msg) // Eventually add multiple menus via 'help commandname'. 
-{
+function DisplayHelp(msg) { // Eventually add multiple menus via 'help commandname'. 
+
 	isBusy = 1;
 	switch(msg)
 	{
@@ -834,8 +833,7 @@ function Invalid(){Say("!Invalid Command");}
 function NI(){Say("Function not implemented. (yet)");}
 function Busy(){Say("I'm busy!");}
 
-function Follow( target )
-{
+function Follow( target ) {
 	var _distance = -1;
 	var leaderPlayerUnitintown, _meintown;
 	
@@ -1284,8 +1282,7 @@ function Follow( target )
 	}
 }
 
-function TPAtPlayersBody(playerName, enemysName)
-{
+function TPAtPlayersBody(playerName, enemysName) {
 	var _playerUnit = aGetPlayerUnit(playerName);
 	var _playerUnit2 = GetLeader(playerName);
 	var _playerDistance;
@@ -1310,8 +1307,8 @@ function TPAtPlayersBody(playerName, enemysName)
 	}	
 }
 
-function Guard() // Done
-{
+function Guard() { // Done
+
 	if(!NTC_InTown(me))
 	{
 		NTA_ClearPosition(15);
@@ -1319,8 +1316,7 @@ function Guard() // Done
 	return;
 }
 
-function hAttack()
-{
+function hAttack() {
 	if(!NTC_InTown(me))
 	{
 		if(NTA_CheckForCloseMonsters(30))
@@ -1334,8 +1330,8 @@ function hAttack()
 	Delay(1000);
 }
 
-function isATown(id)
-{
+function isATown(id) {
+
 	var _ret = false;
 	switch(id)
 	{
@@ -1348,8 +1344,8 @@ function isATown(id)
 	return _ret;
 }
 
-function TakeLeaderTP(toArea) // Done
-{
+function TakeLeaderTP(toArea) { // Done
+
 	isBusy = 1;
 	while(me.areaid == 0)
 		NTC_Delay(100);
@@ -1426,8 +1422,8 @@ function TakeLeaderTP(toArea) // Done
 	return _ret;
 }		
 
-function GiveGold( amount ) // Done
-{
+function GiveGold( amount ) { // Done
+
 	isBusy = 1;
 	_gold = me.GetStat(14);
 	if(amount != "")
@@ -1456,8 +1452,8 @@ function GiveGold( amount ) // Done
 	isBusy = 0;
 }
 
-function Quest( msg ) // Done (needs testing)
-{
+function Quest( msg ) { // Done (needs testing)
+
 	if(!NTC_InTown(me))
 		Town();
 	switch(msg)
@@ -1528,8 +1524,8 @@ function Quest( msg ) // Done (needs testing)
 	}
 }
 
-function Town() // Done
-{
+function Town() { // Done
+
 	if(!NTC_InTown(me))
 	{
 		isBusy = 1;
@@ -1613,8 +1609,8 @@ function Town() // Done
 	}
 }
 
-function Chant( msg ) // Done
-{
+function Chant( msg ) { // Done
+
 	if(msg == "on")
 	{
 		Say("!Auto enchant turned on!");
@@ -1668,8 +1664,8 @@ function Chant( msg ) // Done
 	isBusy = 0;
 }	
 
-function TP(msg) // Done
-{
+function TP(msg) { // Done
+
 	isBusy = 1;
 	switch(msg)
 	{
@@ -1739,8 +1735,8 @@ function TP(msg) // Done
 	isBusy = 0;
 }
 
-function CommandClear(msg) // Done
-{
+function CommandClear(msg) { // Done
+
 	isBusy = 1;
 	if(!NTC_InTown(me))
 	{
@@ -1765,8 +1761,7 @@ function CommandClear(msg) // Done
 	isBusy = 0;
 }
 
-function Rush( msg ) // Done (needs testing)
-{
+function Rush( msg ) // Done (needs testing) {
 	isBusy = 1;
 	isFollowingEnabled = false;
 	isAutoEnchantEnabled = false;
@@ -1805,15 +1800,13 @@ function Rush( msg ) // Done (needs testing)
 	isBusy = 0;
 }
 
-function Rush1()
-{
+function Rush1() {
 	if(NTConfig_Quest_Cain)
 		Extras.Cain();
 	Quests.Andy();
 }
 
-function Rush2()
-{
+function Rush2() {
 	if(NTConfig_Quest_Radament)
 		Extras.Radament();
 	if(me.diff == 0)
@@ -1824,23 +1817,20 @@ function Rush2()
 	Quests.Duriel();
 }
 
-function Rush3()
-{
+function Rush3() {
 	if(NTConfig_Quest_Tome)
 		Extras.Tome();
 	Quests.Travincal();
 	Quests.Mephisto();
 }
 
-function Rush4()
-{
+function Rush4() {
 	if(NTConfig_Quest_Izual)
 		Extras.Izual();
 	Quests.Diablo();
 }
 
-function Rush5()
-{
+function Rush5() {
 	if(NTConfig_Quest_Shenk)
 		Extras.Shenk();
 	if(NTConfig_Quest_Anya)
@@ -1851,8 +1841,7 @@ function Rush5()
 		Quests.Baal();
 }
 
-function Imbue()
-{
+function Imbue() {
 	if(!NTTM_CheckAct(1))
 	{
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_CheckAct()");
@@ -1896,8 +1885,8 @@ function Imbue()
 // Internal functions
 // ******************************************************************************
 
-function WaypointNameToID(name) // for Nith, you have to say 'nit' instead of 'hal'.  Conflicts with 'hal'ls of the dead.
-{
+function WaypointNameToID(name) { // for Nith, you have to say 'nit' instead of 'hal'.  Conflicts with 'hal'ls of the dead.
+
 	var partial = name.substring(0, 3);
 	var returnID = -1;
 	
@@ -2018,8 +2007,7 @@ function WaypointNameToID(name) // for Nith, you have to say 'nit' instead of 'h
 	return returnID;
 }
 
-function AreaHasWaypoint(area)
-{
+function AreaHasWaypoint(area) {
 	var _ret = false;
 	switch(area)
 	{
@@ -2076,8 +2064,7 @@ function AreaHasWaypoint(area)
 }
 
 // from koltons script
-function GetLeader(name) 
-{
+function GetLeader(name) {
 	_party = GetPlayerUnit();
 	
 	if (_party) {
@@ -2092,8 +2079,7 @@ function GetLeader(name)
 }
 
 // from koltons script
-function GetLeaderUnit(name) 
-{
+function GetLeaderUnit(name) {
 	var _unit = NTC_FindUnit(NTC_UNIT_PLAYER);
 	
 	if (_unit) {
@@ -2106,8 +2092,7 @@ function GetLeaderUnit(name)
 	return false;
 }
 
-function aGetPlayerUnit(name) 
-{
+function aGetPlayerUnit(name) {
 	var _unit = NTC_FindUnit(NTC_UNIT_PLAYER);
 	
 	if (_unit) {
@@ -2121,8 +2106,7 @@ function aGetPlayerUnit(name)
 }
 
 // from koltons script
-function CheckAct(leader) 
-{
+function CheckAct(leader) {
 	if (leader.areaid <= 39) {
 		return 1;
 	} else if(leader.areaid >= 40 && leader.areaid <= 74) {
@@ -2135,8 +2119,7 @@ function CheckAct(leader)
 	else return 5;
 }
 
-function GetPlayerActWaypointID(leader)
-{
+function GetPlayerActWaypointID(leader) {
 	if (leader.areaid <= 39) {
 		return 1;
 	} else if(leader.areaid >= 40 && leader.areaid <= 74) {
@@ -2149,8 +2132,7 @@ function GetPlayerActWaypointID(leader)
 	else return 109;
 }
 
-function CheckLeader(name)
-{	
+function CheckLeader(name) {	
 	_player = GetPlayerUnit();
 	if(_player)
 	{
@@ -2165,21 +2147,18 @@ function CheckLeader(name)
 	return false;
 }
 
-function NTH_GetDistance(sx, sy, ex, ey)
-{
+function NTH_GetDistance(sx, sy, ex, ey) {
 	// Laziness
 }
 
-function Whisper(name, msg)
-{
+function Whisper(name, msg) {
 	// Sends a in-game whisper via @charname msg
 	// This does NOT get you IP bans or realms downs
 	// :)
 	Say("@" + name + " " + msg);
 }
 
-function LogActionPl0x(message)
-{
+function LogActionPl0x(message) {
 	// Debugging stuff
 	var time = new Date();
 	var hour   = time.getHours();
