@@ -740,9 +740,9 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			isFollowingEnabled = !isFollowingEnabled;
 		}
 		if(isFollowingEnabled)
-			Say("~Follow on");
+			Print(COLOR_4 + "Follow on";
 		else
-			Say("~Follow off");
+			Print(COLOR_4 + "Follow off";
 		break;
 	case "bo":
 	case "buff":
