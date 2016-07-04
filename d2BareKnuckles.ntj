@@ -732,8 +732,10 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		Print(COLOR_4 + "Follow off");
 		break;
 	case ",":				// while in town, got to portal area
+		isFollowingEnabled = false;
 		NTTM_TownMove("portalspot");
 		Delay(250);
+		Print(COLOR_4 + "Ready at town portal");
 		break;
 	case ";":
 	case "buff":
