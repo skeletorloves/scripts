@@ -21,9 +21,9 @@ var attackRange = 15;
 var _myName = "temp";
 var d2B_usingAFollower = false; 		// using a follower, then make townportals d2B_myTP()
 //var d2B_actPausedAt = 1;			// continue from the beginning of the section paused at
-var d2B_toggleHelper = false;			// for engaging helper	
+						// for keeping track of where we left off during a pause (placed in: NTBotGame.ntj)
+var d2B_toggleHelper = true;			// for engaging helper	
 
-// var d2B_actPausedAt: for keeping track of where we left off during a pause (placed in: NTBotGame.ntj)
 
 function NTMain() {
 	
