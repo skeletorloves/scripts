@@ -769,7 +769,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		if(!isBusy)
 			Chant( msg2 );				// Chant functions.
 		break;
-	case "town":
+	case "'":
 		if(!isBusy)
 		{
 			isFollowingEnabled = false;
