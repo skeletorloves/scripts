@@ -503,7 +503,7 @@ function Action() {
 		if(isFollowingEnabled)	{Follow();}
 	}
 	if(NTC_InTown(me)) {
-		if(NTTMGR_CheckScrolls(1) < 4) {NTTMGR_TownManager();}
+		if(NTTMGR_CheckScrolls(1) < 8) {NTTMGR_TownManager();}
 	}
 }
 
@@ -723,15 +723,19 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			if(!TakeLeaderTP())
 				Town();
 		break;
-	case ".":
+	case ".":				// follow
 		isFollowingEnabled = true;
 		Print(COLOR_4 + "Follow on");
 		break;
-	case "..":
+	case "..":				// unfollow
 		isFollowingEnabled = false;
 		Print(COLOR_4 + "Follow off");
 		break;
-	case "bo":
+	case ",":				// while in town, got to portal area
+		NTTM_TownMove("portalspot");
+		Delay(250);
+		break;
+	case "b":
 	case "buff":
 		if(!isBusy)
 		{
