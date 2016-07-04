@@ -723,26 +723,13 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			if(!TakeLeaderTP())
 				Town();
 		break;
-	case "follow":
-		if(msg2 == "on")
-		{
-			isFollowingEnabled = true;
-			break;
-		}
-		else
-		if(msg2 == "off")
-		{
-			isFollowingEnabled = false;
-			break;
-		}
-		else
-		{
-			isFollowingEnabled = !isFollowingEnabled;
-		}
-		if(isFollowingEnabled)
-			Print(COLOR_4 + "Follow on";
-		else
-			Print(COLOR_4 + "Follow off";
+	case ".":
+		isFollowingEnabled = true;
+		Print(COLOR_4 + "Follow on");
+		break;
+	case "..":
+		isFollowingEnabled = false;
+		Print(COLOR_4 + "Follow off");
 		break;
 	case "bo":
 	case "buff":
