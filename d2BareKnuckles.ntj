@@ -767,7 +767,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		if(!isBusy)
 		{
 			isFollowingEnabled = false;
-			Say("~Follow off");
+			Print(COLOR_4 + "Follow off");
 			if(!TakeLeaderTP())
 				Town();
 		}
