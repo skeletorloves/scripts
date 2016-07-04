@@ -739,10 +739,10 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		break;
 	case ";":
 	case "buff":
-		if(!isBusy)
+		if(!isBusy && !NTC_InTown(me))
 		{
 			NTP_DoPrecast( true );
-			Chant( msg2 );
+			//Chant( msg2 );
 		}
 		break;
 	case "help":
