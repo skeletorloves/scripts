@@ -735,7 +735,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		NTTM_TownMove("portalspot");
 		Delay(250);
 		break;
-	case "b":
+	case ";":
 	case "buff":
 		if(!isBusy)
 		{
