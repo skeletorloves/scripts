@@ -1761,7 +1761,7 @@ function CommandClear(msg) { // Done
 	isBusy = 0;
 }
 
-function Rush( msg ) // Done (needs testing) {
+function Rush( msg ) // { Done (needs testing) 
 	isBusy = 1;
 	isFollowingEnabled = false;
 	isAutoEnchantEnabled = false;
