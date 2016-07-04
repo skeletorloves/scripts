@@ -15,7 +15,7 @@ var isAutoEnchantEnabled = false;
 var leaderUnit;
 var leaderPlayerUnit;
 var followRange = 5;
-var attackRange = 15;
+var attackRange = 5;
 
 
 //var d2B_actPausedAt = 1;			// continue from the beginning of the section paused at
