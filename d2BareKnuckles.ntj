@@ -418,7 +418,7 @@ function d2H_load() {
 	
 	return;
 }
-function d2_wait4leader() {
+function d2H_wait4leader() {
 	var leaderInGame = false;				// Wait for the leader to join the game
 	for(i = 0; i < NTConfig_PartyMaxTime+1; i++)
 	{
