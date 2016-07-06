@@ -19,8 +19,8 @@ var attackRange = 5;
 
 var d2B_myPause = "";				// a temp place for where retrieved bot pause string is stored
 var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Number(myPause)
-// d2B_storePause(a)
-// d2B_retrievePause()
+// d2B_storePause(a)				// a 1 as an initializer had been placed into: line 150 of LeaderStarter.ntj
+// d2B_retrievePause()				// NT_File("logs/messagecommands/"+me.charname+"-pause.txt", 1, "1" + "/");
 
 //var d2B_actPausedAt = 1;			// continue from the beginning of the section paused at
 						// for keeping track of where we left off during a pause 
