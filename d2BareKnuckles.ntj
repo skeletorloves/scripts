@@ -79,7 +79,9 @@ function NTMain() {
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
 			Delay(Random(8000,12000));
 			if(d2B_myPauseValue > 13) {
-				d2B_myPauseValue = 0;
+				d2B_myPause = "1";
+				d2B_storePause(d2B_myPause);
+				Delay(300);
 				NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 			}
 		}
