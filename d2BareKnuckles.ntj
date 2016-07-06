@@ -19,7 +19,7 @@ var attackRange = 5;
 
 var d2B_myPause = "";				// a temp place for where retrieved bot pause string is stored
 var d2B_myPauseValue = 1;				// the pause numerical value of: myPauseValue = Number(myPause)
-// d2B_storePause()
+// d2B_storePause(a)
 // d2B_retrievePause()
 
 //var d2B_actPausedAt = 1;			// continue from the beginning of the section paused at
@@ -2192,15 +2192,16 @@ function LogActionPl0x(message) {
 //	Write/Read functions...
 //
 
-function d2B_storePause() {
-	NT_File("logs/messagecomands/"+me.name+"-pause.txt", 1, myPauseValue + "/"); // for leader to print game/pw to txt
+function d2B_storePause(a_d2B_myPauseValue) {
+	NT_File("logs/messagecomands/"+me.name+"-pause.txt", 1, a_d2B_myPauseValue + "/"); // for leader to print game/pw to txt
+	return;
 }
 function d2B_retrievePause() { 				
 	// to retrieve where bot last paused at: (me.name)-pause.txt
 	//
 	// d2B_line 	= store the complete bot pause date string from the text file
 	// d2B_pause 	= temporary var for opening, verifying, and reading, text file
-	// myPause	= store solely the needed bot paused string from the text file 
+	// d2B_myPause	= store solely the needed bot paused string from the text file 
 	
 	var d2B_line;
 	var d2B_pause = FileOpen("logs/messagecomands/"+me.name+"-pause.txt", 0); // open file in read only
@@ -2209,7 +2210,7 @@ function d2B_retrievePause() {
 	}
 	if(d2B_pause){ 
 		d2B_line = d2B_pause.ReadLine(); 	//retrieve line & set the pause var to it so we can check it against the game we may want to join
-		myPause = d2B_line.substring(0, d2B_line.indexOf('/')); //extracting game name from beginning of line to the "/"
+		d2B_myPause = d2B_line.substring(0, d2B_line.indexOf('/')); //extracting game name from beginning of line to the "/"
 		//gamepassword = grabLine.substring(grabLine.indexOf('/') + 1, grabLine.length); //Parse after symbol till end of line.	
 		d2B_pause.Close();	
 	}
