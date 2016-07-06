@@ -18,7 +18,7 @@ var followRange = 5;
 var attackRange = 5;
 
 var d2B_myPause = "";				// a temp place for where retrieved bot pause string is stored
-var d2B_myPauseValue = 1;				// the pause numerical value of: myPauseValue = Number(myPause)
+var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Number(myPause)
 // d2B_storePause(a)
 // d2B_retrievePause()
 
@@ -2214,7 +2214,7 @@ function d2B_retrievePause() {
 		//gamepassword = grabLine.substring(grabLine.indexOf('/') + 1, grabLine.length); //Parse after symbol till end of line.	
 		d2B_pause.Close();	
 	}
-	return;
+	return d2B_myPause;
 }
 // modes 0 = read only, 1 = overwrite the file, 2 = add to file
 function NT_File(path, mode, msg, delay) { //big thanks to all the koreans out there
