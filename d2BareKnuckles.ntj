@@ -17,15 +17,15 @@ var leaderPlayerUnit;
 var followRange = 5;
 var attackRange = 5;
 
-var myPause = "";				// a temp place for where retrieved bot pause string is stored
-var myPauseValue = 1;				// the pause numerical value of: myPauseValue = Number(myPause)
+var d2B_myPause = "";				// a temp place for where retrieved bot pause string is stored
+var d2B_myPauseValue = 1;				// the pause numerical value of: myPauseValue = Number(myPause)
 // d2B_storePause()
 // d2B_retrievePause()
 
 //var d2B_actPausedAt = 1;			// continue from the beginning of the section paused at
 						// for keeping track of where we left off during a pause 
 						// placed in: D2Etal/scripts/libs/controlInfo.ntl
-var d2B_toggleHelper = true;			// for engaging helper 	
+var d2B_toggleHelper = false;			// for engaging helper 	
 var _myName = "temp";
 var d2B_usingAFollower = false; 		// using a follower, then make townportals d2B_myTP()
 
@@ -35,12 +35,14 @@ function NTMain() {
 	d2B_load();   						// initializing & loading thingies
 	NTConfig_SkipRegularMonsters = true;			// toggle atk to regular monsters
 	
+	d2B_myPauseValue = Number(d2B_retrievePause());		// retrieve & convert to numerical value the pause value
+	
 	if(d2B_toggleHelper == false) {
 	
-		while(d2B_actPausedAt != 0) { 
-			Print(COLOR_3 + "Case mode # " + d2B_actPausedAt);
-			Say("/msg *" + _myName + " Case mode # " + d2B_actPausedAt);
-			switch(d2B_actPausedAt) {
+		while(d2B_myPauseValue != 0) { 
+			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
+			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
+			switch(d2B_myPauseValue) {
 				case 1: d2B_bloodmoor();		// blood moore thingy
 					break;
 				case 2: d2B_coldplains();		// cold plains thingy
@@ -69,12 +71,15 @@ function NTMain() {
 				case 13: d2B_cata();			// catacombs thingy
 					break;
 			}
-			d2B_actPausedAt = d2B_actPausedAt + 1;
-			Print(COLOR_4 + "Case mode # " + d2B_actPausedAt);
-			Say("/msg *" + _myName + " Case mode # " + d2B_actPausedAt);
+			d2B_myPauseValue = d2B_myPauseValue + 1;
+			d2B_myPause = d2B_myPauseValue.toString();
+			d2B_storePause(d2B_myPause);
+			
+			Print(COLOR_4 + "Case mode # " + d2B_myPauseValue);
+			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
 			Delay(Random(8000,12000));
-			if(d2B_actPausedAt > 13) {
-				d2B_actPausedAt = 0;
+			if(d2B_myPauseValue > 13) {
+				d2B_myPauseValue = 0;
 				NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 			}
 		}
