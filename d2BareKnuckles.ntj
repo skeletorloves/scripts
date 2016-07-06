@@ -18,6 +18,9 @@ var followRange = 5;
 var attackRange = 5;
 
 var myPause = "";				// a temp place for where retrieved bot pause string is stored
+var myPauseValue = 1;				// the pause numerical value of: myPauseValue = Number(myPause)
+// d2B_storePause()
+// d2B_retrievePause()
 
 //var d2B_actPausedAt = 1;			// continue from the beginning of the section paused at
 						// for keeping track of where we left off during a pause 
@@ -2185,10 +2188,9 @@ function LogActionPl0x(message) {
 //
 
 function d2B_storePause() {
-	
-	NT_File("logs/messagecomands/"+me.charname+"-nextgame.txt", 1, me.gamename + "/" + me.gamepassword); // for leader to print game/pw to txt
-
-function d2B_RetrievePause() { 				
+	NT_File("logs/messagecomands/"+me.name+"-pause.txt", 1, myPauseValue + "/"); // for leader to print game/pw to txt
+}
+function d2B_retrievePause() { 				
 	// to retrieve where bot last paused at: (me.name)-pause.txt
 	//
 	// d2B_line 	= store the complete bot pause date string from the text file
@@ -2207,4 +2209,50 @@ function d2B_RetrievePause() {
 		d2B_pause.Close();	
 	}
 	return;
+}
+// modes 0 = read only, 1 = overwrite the file, 2 = add to file
+function NT_File(path, mode, msg, delay) { //big thanks to all the koreans out there
+    var _msg  = "";
+    var _line = "";
+    var _fileHandle;
+    var _isFileCheck = false;
+
+    if (arguments.length < 3) { msg   = ""; }
+    if (arguments.length < 4) { delay = (mode > 0) ? 5 : 2; }
+
+    while (delay--) {
+        if (mode == 2 && !_isFileCheck) {
+            _fileHandle = FileOpen(path, 0);
+            if (!_fileHandle)
+                _fileHandle = FileOpen(path, 1);
+
+            if (_fileHandle)
+                _fileHandle.Close();
+
+            _isFileCheck = true;
+        }
+
+        _fileHandle = FileOpen(path, mode);
+        if (_fileHandle)
+            break;
+
+        if (delay)
+            Delay(200);
+    }
+
+    if (_fileHandle) {
+        if (mode == 0) {
+            while (!_fileHandle.eof) {
+                _line = _fileHandle.ReadLine();
+                if (_line || !_fileHandle.eof)
+                    _msg += _line + msg;
+            }
+        }
+        else if (msg)
+            _fileHandle.WriteLine(msg);
+
+        _fileHandle.Close();
+    }
+
+    return _msg;
 }
