@@ -41,7 +41,7 @@ function NTMain() {
 	
 	if(d2B_toggleHelper == false) {
 	
-		while((d2B_myPauseValue >= 0) && (d2B_myPauseValue <= 14)) { 
+		while(d2B_myPauseValue <= 14) { 
 			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
 			switch(d2B_myPauseValue) {
@@ -77,20 +77,22 @@ function NTMain() {
 				case 14: d2B_sewers();				// sewers thingy
 					break;
 			}
+			Print(COLOR_4 + "Case mode # " + d2B_myPauseValue + " done.");
+			Delay(Randome(1500,2500));
+			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue + " done.");
+			Delay(Random(1500,2500));
 			d2B_myPauseValue = d2B_myPauseValue + 1;
 			d2B_myPause = d2B_myPauseValue.toString();
-			d2B_storePause(d2B_myPause);
-			Print(COLOR_4 + "Case mode # " + d2B_myPauseValue);
-			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
-			Delay(Random(8000,12000));	
+			d2B_storePause(d2B_myPause);	
 		}
 		if(d2B_myPauseValue > 14) {
 			d2B_myPause = "1";
 			d2B_storePause(d2B_myPause);
-			Delay(1300);
+			Delay(Random(1500,2500));
 			Print(COLOR_4 + "Starting another run at case # " + d2B_myPauseValue);
-			Delay(1700);
+			Delay(Random(1500,2500));
 			Say("/msg *" + _myName + " Starting another run at case # " + d2B_myPauseValue);
+			Delay(Random(8500,12500));
 			NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 		}
 	}
@@ -102,6 +104,8 @@ function NTMain() {
 // main function scripts
 
 function d2B_bloodmoor() {
+	d2B_moveWP();
+	d2B_gotoWP(1);
 	d2B_chkAct(1);
 	NTTMGR_TownManager();
 	d2B_townMove("exit");	// exit town
@@ -285,6 +289,8 @@ function d2B_cata() {
 //
 
 function d2B_sewers() {
+	d2B_moveWP();
+	d2B_gotoWP(40);
 	NTTM_CheckAct(2);				// if not Lut Golein, then go to Lut Golein
 	
 	NTTM_Act2SewerTrapDoor();		// begins at the stairs enterance
@@ -301,7 +307,7 @@ function d2B_sewers() {
 
 	NTTM_CheckAct(2);				// return to Act 2 town	
 }
-
+function 
 // ________________________________________________________
 // common functions
 
@@ -454,7 +460,7 @@ function d2B_checkAct(a,b) {		// a: which act b: which town wp to go to
 
 function d2H_helper() {
 	d2H_load(); 		// load & initialize the needed files
-	d2H_wait4leader(); 	// check if leader is in game. Exit after delay if not.
+	d2H_wait4leader(); 	// check if leader is in game. Exit after Delay if not.
 	d2H_actOnLeader();	// respond to leader commands & actions
 
 	Delay(Random(2000,5000));
@@ -2266,16 +2272,16 @@ function d2B_retrievePause() {
 	return d2B_myPause;
 }
 // modes 0 = read only, 1 = overwrite the file, 2 = add to file
-function NT_File(path, mode, msg, delay) { //big thanks to all the koreans out there
+function NT_File(path, mode, msg, Delay) { //big thanks to all the koreans out there
     var _msg  = "";
     var _line = "";
     var _fileHandle;
     var _isFileCheck = false;
 
     if (arguments.length < 3) { msg   = ""; }
-    if (arguments.length < 4) { delay = (mode > 0) ? 5 : 2; }
+    if (arguments.length < 4) { Delay = (mode > 0) ? 5 : 2; }
 
-    while (delay--) {
+    while (Delay--) {
         if (mode == 2 && !_isFileCheck) {
             _fileHandle = FileOpen(path, 0);
             if (!_fileHandle)
@@ -2291,7 +2297,7 @@ function NT_File(path, mode, msg, delay) { //big thanks to all the koreans out t
         if (_fileHandle)
             break;
 
-        if (delay)
+        if (Delay)
             Delay(200);
     }
 
