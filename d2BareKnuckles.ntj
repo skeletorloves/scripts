@@ -41,7 +41,7 @@ function NTMain() {
 	
 	if(d2B_toggleHelper == false) {
 	
-		while(d2B_myPauseValue <= 14) { 
+		while(d2B_myPauseValue <= 15) { 
 			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
 			switch(d2B_myPauseValue) {
@@ -76,16 +76,18 @@ function NTMain() {
 					break;
 				case 14: d2B_sewers();				// sewers thingy
 					break;
+				case 15: d2B_rockywaste();			// rocky waste thingy
+					break;
 			}
 			Print(COLOR_4 + "Case mode # " + d2B_myPauseValue + " done.");
-			Delay(Randome(1500,2500));
+			Delay(Random(1500,2500));
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue + " done.");
 			Delay(Random(1500,2500));
 			d2B_myPauseValue = d2B_myPauseValue + 1;
 			d2B_myPause = d2B_myPauseValue.toString();
 			d2B_storePause(d2B_myPause);	
 		}
-		if(d2B_myPauseValue > 14) {
+		if(d2B_myPauseValue > 15) {
 			d2B_myPause = "1";
 			d2B_storePause(d2B_myPause);
 			Delay(Random(1500,2500));
@@ -307,7 +309,24 @@ function d2B_sewers() {
 
 	NTTM_CheckAct(2);				// return to Act 2 town	
 }
-function 
+function d2B_rockywaste() {
+	d2B_moveWP();
+	NTConfig_WalkFromGohlein();
+	NTTM_OutOfTown2();
+	NTP_DoPrecast(true);
+	d2B_clrLvlOC();
+	
+	d2B_moveToStair(me.areaid, 55);
+	d2B_takeStairs(55);
+	d2B_clrLvlOC();
+	
+	d2B_moveToStair(me.areaid, 59);
+	d2B_takeStairs(59);
+	d2B_clrLvlOC();
+	
+	NTTM_CheckAct(2);
+}
+
 // ________________________________________________________
 // common functions
 
