@@ -41,7 +41,7 @@ function NTMain() {
 	
 	if(d2B_toggleHelper == false) {
 	
-		while(d2B_myPauseValue <= 15) { 
+		while(d2B_myPauseValue <= 16) { 
 			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
 			switch(d2B_myPauseValue) {
@@ -78,6 +78,8 @@ function NTMain() {
 					break;
 				case 15: d2B_rockywaste();			// rocky waste thingy
 					break;
+				case 16: d2B_dryhills();			// dry hills thingy
+					break;
 			}
 			Print(COLOR_4 + "Case mode # " + d2B_myPauseValue + " done.");
 			Delay(Random(1500,2500));
@@ -87,13 +89,13 @@ function NTMain() {
 			d2B_myPause = d2B_myPauseValue.toString();
 			d2B_storePause(d2B_myPause);	
 		}
-		if(d2B_myPauseValue > 15) {
+		if(d2B_myPauseValue > 16) {
 			d2B_myPause = "1";
 			d2B_storePause(d2B_myPause);
 			Delay(Random(1500,2500));
-			Print(COLOR_4 + "Starting another run at case # " + d2B_myPauseValue);
+			Print(COLOR_4 + "Starting another run at case # " + d2B_myPause);
 			Delay(Random(1500,2500));
-			Say("/msg *" + _myName + " Starting another run at case # " + d2B_myPauseValue);
+			Say("/msg *" + _myName + " Starting another run at case # " + d2B_myPause);
 			Delay(Random(8500,12500));
 			NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 		}
@@ -311,7 +313,6 @@ function d2B_sewers() {
 }
 function d2B_rockywaste() {
 	d2B_moveWP();
-	NTConfig_WalkFromGohlein();
 	NTTM_OutOfTown2();
 	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
@@ -326,7 +327,25 @@ function d2B_rockywaste() {
 	
 	NTTM_CheckAct(2);
 }
-
+function d2B_dryhills() {
+	d2B_commonInitSetup(42);
+	NTP_DoPrecast(true);
+	d2B_clrLvlOC();
+	
+	d2B_moveToStair(me.areaid, 56);
+	d2B_takeStairs(56);
+	d2B_clrLvlOC();
+	
+	d2B_moveToStair(me.areaid, 57);
+	d2B_takeStairs(57);
+	d2B_clrLvlOC();
+	
+	d2B_moveToStair(me.areaid, 60);
+	d2B_takeStairs(60);
+	d2B_clrLvlOC();
+	
+	NTTM_CheckAct(2);
+}
 // ________________________________________________________
 // common functions
 
@@ -1384,7 +1403,7 @@ function TPAtPlayersBody(playerName, enemysName) {
 	}	
 }
 
-function Guard() { // Done
+function Guard() { 									// Done
 
 	if(!NTC_InTown(me))
 	{
@@ -1421,7 +1440,7 @@ function isATown(id) {
 	return _ret;
 }
 
-function TakeLeaderTP(toArea) { // Done
+function TakeLeaderTP(toArea) { 					// Done
 
 	isBusy = 1;
 	while(me.areaid == 0)
@@ -1499,7 +1518,7 @@ function TakeLeaderTP(toArea) { // Done
 	return _ret;
 }		
 
-function GiveGold( amount ) { // Done
+function GiveGold( amount ) { 						// Done
 
 	isBusy = 1;
 	_gold = me.GetStat(14);
@@ -1529,7 +1548,7 @@ function GiveGold( amount ) { // Done
 	isBusy = 0;
 }
 
-function Quest( msg ) { // Done (needs testing)
+function Quest( msg ) { 							// Done (needs testing)
 
 	if(!NTC_InTown(me))
 		Town();
@@ -1601,7 +1620,7 @@ function Quest( msg ) { // Done (needs testing)
 	}
 }
 
-function Town() { // Done
+function Town() { 									// Done
 
 	if(!NTC_InTown(me))
 	{
@@ -1686,7 +1705,7 @@ function Town() { // Done
 	}
 }
 
-function Chant( msg ) { // Done
+function Chant( msg ) { 							// Done
 
 	if(msg == "on")
 	{
@@ -1741,7 +1760,7 @@ function Chant( msg ) { // Done
 	isBusy = 0;
 }	
 
-function TP(msg) { // Done
+function TP(msg) { 									// Done
 
 	isBusy = 1;
 	switch(msg)
@@ -1812,7 +1831,7 @@ function TP(msg) { // Done
 	isBusy = 0;
 }
 
-function CommandClear(msg) { // Done
+function CommandClear(msg) { 						// Done
 
 	isBusy = 1;
 	if(!NTC_InTown(me))
@@ -1838,7 +1857,7 @@ function CommandClear(msg) { // Done
 	isBusy = 0;
 }
 
-function Rush( msg ) { //  Done (needs testing) 
+function Rush( msg ) { 								// Done (needs testing) 
 	isBusy = 1;
 	isFollowingEnabled = false;
 	isAutoEnchantEnabled = false;
