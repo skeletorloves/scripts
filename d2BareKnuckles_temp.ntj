@@ -72,8 +72,8 @@ function NTMain() {
 					break;
 				case 13: d2B_cata();			// catacombs thingy
 					break;
-				case 14: d2B_sewers();			// sewers thingy
-					break;
+				//case 14: d2B_sewers();			// sewers thingy
+				//	break;
 			}
 			d2B_myPauseValue = d2B_myPauseValue + 1;
 			d2B_myPause = d2B_myPauseValue.toString();
