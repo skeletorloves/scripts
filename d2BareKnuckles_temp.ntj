@@ -30,6 +30,8 @@ var _myName = "temp";
 var d2B_usingAFollower = false; 		// using a follower, then make townportals d2B_myTP()
 
 
+// d2B_CheckAct(peep) : for checking act of "me.areaid", "leader.areaid"
+
 function NTMain() {
 	
 	d2B_load();   						// initializing & loading thingies
@@ -69,6 +71,8 @@ function NTMain() {
 				case 12: d2B_innercloister();		// inner cloister thingy
 					break;
 				case 13: d2B_cata();			// catacombs thingy
+					break;
+				case 14: d2B_sewers();			// sewers thingy
 					break;
 			}
 			d2B_myPauseValue = d2B_myPauseValue + 1;
@@ -272,6 +276,19 @@ function d2B_cata() {
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
 
+//
+//	Act II
+//
+
+function d2B_sewers() {
+	if((d2B_CheckAct("me") != 2) &&  ) {
+	
+	;		// check to see if I am in act 2
+	
+	NTTM_Act2SewerTrapDoor();	// begins at the stairs enterance
+	
+
+
 // ________________________________________________________
 // common functions
 
@@ -394,7 +411,24 @@ function d2B_myTP() {
 	NTA_ClearPosition(5);
 	NTM_MakeTP();
 }
-
+function d2B_CheckAct(peep) {
+	if (peep.areaid <= 39) { return 1;}					// peep = "me", "leader"
+	else if(peep.areaid >= 40 && peep.areaid <= 74) { return 2; }
+	else if(peep.areaid >= 75 && peep.areaid <= 102) { return 3; }
+	else if(peep.areaid >= 103 && peep.areaid <= 108) { return 4; }
+	else return 5;
+}
+function d2B_wp(a) {
+	if(!NTTM_TownMove("waypoint")){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_TownMove()");
+		return;
+	}
+	NTTM_TownMove("portalspot");
+	if(!NTM_TakeWaypoint(a)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeWaypoint()");
+		return;
+	}
+}
 // ________________________________________________________
 // ________________________________________________________
 //
