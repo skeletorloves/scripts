@@ -30,7 +30,7 @@ var _myName = "temp";
 var d2B_usingAFollower = false; 		// using a follower, then make townportals d2B_myTP()
 
 
-// d2B_CheckAct(peep) : for checking act of "me.areaid", "leader.areaid"
+// d2B_checkAct(a,b)	a: which act b: which town wp to go to
 
 function NTMain() {
 	
@@ -41,53 +41,57 @@ function NTMain() {
 	
 	if(d2B_toggleHelper == false) {
 	
-		while(d2B_myPauseValue != 0) { 
+		while((d2B_myPauseValue >= 0) && (d2B_myPauseValue <= 14)) { 
 			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
 			switch(d2B_myPauseValue) {
-				case 1: d2B_bloodmoor();		// blood moore thingy
+				case 1: d2B_bloodmoor();			// blood moore thingy
 					break;
-				case 2: d2B_coldplains();		// cold plains thingy
+				case 2: d2B_coldplains();			// cold plains thingy
 					break;
 				case 3: d2B_burialgrounds();		// burial grounds thingy
 					break;
-				case 4: d2B_stonyfield();		// stony field thiny
+				case 4: d2B_stonyfield();			// stony field thiny
 					break;
 				case 5: d2B_undergroundpassage();	// underground passage thingy
 					break;
-				case 6: d2B_darkwood();			// dark wood thingy
+				case 6: d2B_darkwood();				// dark wood thingy
 					break;
-				case 7: d2B_blackmarsh();		// black marsh thingy
+				case 7: d2B_blackmarsh();			// black marsh thingy
 					break;
-				case 8: d2B_tamohighland();		// tamoe highland thingy
+				case 8: d2B_tamohighland();			// tamoe highland thingy
 					break;
 				case 9: d2B_outercloister();		// outer cloister thingy
 					break;
-				case 10: //d2B_barracks();		// barracks thingy
+				case 10: //d2B_barracks();			// barracks thingy
 					Delay(Random(8000,12000));
 					break;
-				case 11: d2B_jail();			// jail thingy
+				case 11: d2B_jail();				// jail thingy
+					Delay(Random(8000,12000));
 					break;
 				case 12: d2B_innercloister();		// inner cloister thingy
+					Delay(Random(8000,12000));
 					break;
-				case 13: d2B_cata();			// catacombs thingy
+				case 13: d2B_cata();				// catacombs thingy
 					break;
-				//case 14: d2B_sewers();			// sewers thingy
-				//	break;
+				case 14: d2B_sewers();				// sewers thingy
+					break;
 			}
 			d2B_myPauseValue = d2B_myPauseValue + 1;
 			d2B_myPause = d2B_myPauseValue.toString();
 			d2B_storePause(d2B_myPause);
-			
 			Print(COLOR_4 + "Case mode # " + d2B_myPauseValue);
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
-			Delay(Random(8000,12000));
-			if(d2B_myPauseValue > 13) {
-				d2B_myPause = "1";
-				d2B_storePause(d2B_myPause);
-				Delay(300);
-				NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
-			}
+			Delay(Random(8000,12000));	
+		}
+		if(d2B_myPauseValue > 14) {
+			d2B_myPause = "1";
+			d2B_storePause(d2B_myPause);
+			Delay(1300);
+			Print(COLOR_4 + "Starting another run at case # " + d2B_myPauseValue);
+			Delay(1700);
+			Say("/msg *" + _myName + " Starting another run at case # " + d2B_myPauseValue);
+			NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 		}
 	}
 	else if(d2B_toggleHelper == true) {d2H_helper();}		// for enabling a follower
@@ -281,13 +285,22 @@ function d2B_cata() {
 //
 
 function d2B_sewers() {
-	if((d2B_CheckAct("me") != 2) &&  ) {
+	NTTM_CheckAct(2);				// if not Lut Golein, then go to Lut Golein
 	
-	;		// check to see if I am in act 2
+	NTTM_Act2SewerTrapDoor();		// begins at the stairs enterance
+	NTP_DoPrecast(true);
+	d2B_clrLvlOC();
 	
-	NTTM_Act2SewerTrapDoor();	// begins at the stairs enterance
+	d2B_moveToStair(me.areaid,48);	// go to the stairs sewers lvl 2
+	d2B_takeStairs(48);
+	d2B_clrLvlOC();
 	
+	d2B_moveToStair(me.areaid,49);	// go to the stairs sewers lvl 3
+	d2B_takeStairs(49);
+	d2B_clrLvlOC();
 
+	NTTM_CheckAct(2);				// return to Act 2 town	
+}
 
 // ________________________________________________________
 // common functions
@@ -418,16 +431,16 @@ function d2B_CheckAct(peep) {
 	else if(peep.areaid >= 103 && peep.areaid <= 108) { return 4; }
 	else return 5;
 }
-function d2B_wp(a) {
-	if(!NTTM_TownMove("waypoint")){
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_TownMove()");
-		return;
+function d2B_checkAct(a,b) {		// a: which act b: which town wp to go to
+	if(!NTTM_CheckAct(a)) {
+			NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_CheckAct()");
+			return;
 	}
-	NTTM_TownMove("portalspot");
-	if(!NTM_TakeWaypoint(a)){
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeWaypoint()");
-		return;
-	}
+	NTTMGR_TownManager();
+	NTTM_TownMove("waypoint");
+	if(b) { NTM_TakeWaypoint(b) };
+	
+	return;
 }
 // ________________________________________________________
 // ________________________________________________________
