@@ -461,8 +461,13 @@ function d2B_canyon() {								// case: 22
 		if(!NTM_MoveToStair(me.areaid, 46)){
 			Print(COLOR_1 + "Beetle found! Gotta move it or lose it.");
 			Delay(Random(1000,2000));
-			NTTM_CheckAct(2);
-			return;
+			NTM_MoveTo(me.areaid, me.x+15, me.y+15);
+			Delay(500);
+			if(!NTM_MoveToStair(me.areaid, 46)){
+				NTTM_CheckAct(2);
+				return;
+			}
+			Print(COLOR_1 + "Gosh darn it. I think it worked.");
 		}
 		d2B_takeStairs(46);
 	}
@@ -472,7 +477,17 @@ function d2B_canyon() {								// case: 22
 //
 //	Act III
 //
-// function d2B_
+ function d2B_spiderforest() {						// case: 23
+	d2B_moveWP();
+	d2B_gotoWP(75);
+	NTTM_CheckAct(3);				// if not Lut Golein, then go to Lut Golein
+	
+	d2B_commonInitSetup(76);
+	NTP_DoPrecast(true);
+	d2B_clrLvlOC();
+
+	
+}
 // ________________________________________________________
 // common functions
 
