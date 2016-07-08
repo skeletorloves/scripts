@@ -120,7 +120,7 @@ function NTMain() {
 // ________________________________________________________
 // main function scripts
 
-function d2B_bloodmoor() {
+function d2B_bloodmoor() {							// case: 1
 	d2B_moveWP();
 	d2B_gotoWP(1);
 	d2B_chkAct(1);
@@ -140,7 +140,10 @@ function d2B_bloodmoor() {
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
-function d2B_coldplains() {
+//
+//	Act I
+//
+function d2B_coldplains() {							// case: 2
 	d2B_commonInitSetup(3);
 	d2B_clrLvlOC();
 	
@@ -154,7 +157,7 @@ function d2B_coldplains() {
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
-function d2B_burialgrounds() {
+function d2B_burialgrounds() {						// case: 3
 	d2B_commonInitSetup(3);
 	d2B_movePresetUnitTitle(17,7,8,15);	// move to burial grounds
 	d2B_clrLevel();
@@ -172,7 +175,7 @@ function d2B_burialgrounds() {
 
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
-function d2B_stonyfield() {
+function d2B_stonyfield() {							// case: 4
 	d2B_commonInitSetup(4);
 	d2B_clrLvlOC();
 	
@@ -182,7 +185,7 @@ function d2B_stonyfield() {
 
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
-function d2B_undergroundpassage() {
+function d2B_undergroundpassage() {					// case: 5
 	d2B_commonInitSetup(4);
 
 	d2B_moveToStair(me.areaid,10);
@@ -195,13 +198,13 @@ function d2B_undergroundpassage() {
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
-function d2B_darkwood() {
+function d2B_darkwood() {							// case: 6
 	d2B_commonInitSetup(5);
 	d2B_clrLvlOC();
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
-function d2B_blackmarsh() {
+function d2B_blackmarsh() {							// case: 7
 	d2B_commonInitSetup(6);
 	d2B_clrLvlOC();
 	
@@ -226,7 +229,7 @@ function d2B_blackmarsh() {
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
-function d2B_tamohighland() {
+function d2B_tamohighland() {						// case: 8
 	d2B_commonInitSetup(6);
 	NTP_DoPrecast();
 	
@@ -248,14 +251,14 @@ function d2B_tamohighland() {
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
-function d2B_outercloister() {
+function d2B_outercloister() {						// case: 9
 	d2B_commonInitSetup(27);
 	NTP_DoPrecast();
 	d2B_clrLvlOC();
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
-function d2B_barracks() {
+function d2B_barracks() {							// case: 10
 	d2B_commonInitSetup(27);
 	NTP_DoPrecast();
 	
@@ -264,14 +267,14 @@ function d2B_barracks() {
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
-function d2B_jail() {
+function d2B_jail() {								// case: 11
 	d2B_commonInitSetup(29);
 	NTP_DoPrecast();
 	d2B_clrLvlOC();
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
-function d2B_innercloister() {
+function d2B_innercloister() {						// case: 12
 	d2B_commonInitSetup(32);
 	NTP_DoPrecast();
 	d2B_clrLvlOC();
@@ -281,7 +284,7 @@ function d2B_innercloister() {
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
-function d2B_cata() {
+function d2B_cata() {								// case: 13
 	d2B_commonInitSetup(32);
 	
 	// clear all catacombs...
@@ -304,7 +307,6 @@ function d2B_cata() {
 //
 //	Act II
 //
-
 function d2B_sewers() {								// case: 14
 	d2B_moveWP();
 	d2B_gotoWP(40);
@@ -457,7 +459,7 @@ function d2B_canyon() {								// case: 22
 		d2B_clrLvlOC();
 				
 		if(!NTM_MoveToStair(me.areaid, 46)){
-			Print(COLOR_1 + "Wall bug found, moving to next script!");
+			Print(COLOR_1 + "Beetle found! Gotta move it or lose it.");
 			Delay(Random(1000,2000));
 			NTTM_CheckAct(2);
 			return;
@@ -467,6 +469,10 @@ function d2B_canyon() {								// case: 22
 	
 	NTTM_CheckAct(2);
 }
+//
+//	Act III
+//
+// function d2B_
 // ________________________________________________________
 // common functions
 
