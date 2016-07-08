@@ -41,7 +41,7 @@ function NTMain() {
 	
 	if(d2B_toggleHelper == false) {
 	
-		while(d2B_myPauseValue <= 17) { 
+		while(d2B_myPauseValue <= 20) { 
 			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
 			switch(d2B_myPauseValue) {
@@ -82,6 +82,12 @@ function NTMain() {
 					break;
 				case 17: d2B_faroasis();			// far oasis thingy
 					break;
+				case 18: d2B_lostcity();			// lost city thingy
+					break;
+				case 19: d2B_clawvipertemple();		// claw viper temple thingy
+					break;
+				case 20: d2B_haremtoceller();		// harem to celler thingy
+					break;
 			}
 			Print(COLOR_4 + "Case mode # " + d2B_myPauseValue + " done.");
 			Delay(Random(1500,2500));
@@ -91,7 +97,7 @@ function NTMain() {
 			d2B_myPause = d2B_myPauseValue.toString();
 			d2B_storePause(d2B_myPause);	
 		}
-		if(d2B_myPauseValue > 17) {
+		if(d2B_myPauseValue > 20) {
 			d2B_myPause = "1";
 			d2B_storePause(d2B_myPause);
 			Delay(Random(1500,2500));
@@ -362,6 +368,69 @@ function d2B_faroasis() {							// case: 17
 	
 	NTTM_CheckAct(2);
 }
+function d2B_lostcity() {							// case: 18
+	d2B_commonInitSetup(44);
+	NTP_DoPrecast(true);
+	d2B_clrLvlOC();
+
+	d2B_moveToStair(me.areaid, 65);
+	d2B_takeStairs(65);
+	d2B_clrLvlOC();
+
+	NTTM_CheckAct(2);
+}
+function d2B_clawvipertemple() {					// case: 19
+	d2B_commonInitSetup(44);
+	NTP_DoPrecast(true);
+	d2B_movePresetUnitTitle(45,37,0);
+	
+	d2B_takeStairs(58);
+	d2B_clrLvlOC();
+	
+	MissedThemStairs = false;
+	if(!NTM_MoveToStair(me.areaid, 61)){
+		MissedThemStairs = true;
+		Print(COLOR_1 + "Wall Bug Found, Trying To Correct");
+		NTM_MoveTo(me.areaid, me.x+15, me.y+15);
+		Print(COLOR_2 + "Success!");
+		
+		d2B_moveToStair(me.areaid, 61);
+		d2B_takeStairs(61);
+		d2B_clrLvlOC();
+	}
+	if(MissedThemStairs == false && !NTM_TakeStair(61)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeStair()");
+		return;
+	}
+	
+	NTP_DoPrecast();
+	d2B_clrLvlOC();
+
+	NTTM_CheckAct(2);
+}
+function d2B_haremtoceller() {						// case: 20
+	NTTM_CheckAct(2);
+	d2B_moveWP();
+	NTTM_TownMove("palace");
+	NTWP_GoToHarem();
+	
+	NTM_KoMoveToStair(50, 51);
+	d2B_takeStairs(51);
+	d2B_clrLvlOC();
+	
+	for(var i = 0 ; i < 3 ; i++){
+		NTM_KoMoveToStair(me.areaid, 52+i);
+		d2B_takeStairs(52+i);
+		if(me.areaid == 54 && NTConfig_ClearPalaceCellar == 0){
+			d2B_clrLvlOC();
+			NTSI_PickItems();
+		}
+	}
+
+	NTTM_CheckAct(2);
+}
+
+	
 // ________________________________________________________
 // common functions
 
