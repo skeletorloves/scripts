@@ -89,7 +89,7 @@ function NTMain() {
 					break;
 				case 20: d2B_haremtoceller();		// harem to celler thingy
 					break;
-				case 21L d2B_arcane();				// arcane thingy
+				case 21; d2B_arcane();				// arcane thingy
 					break
 			}
 			Print(COLOR_4 + "Case mode # " + d2B_myPauseValue + " done.");
@@ -100,7 +100,7 @@ function NTMain() {
 			d2B_myPause = d2B_myPauseValue.toString();
 			d2B_storePause(d2B_myPause);	
 		}
-		if(d2B_myPauseValue > 20) {
+		if(d2B_myPauseValue > 21) {
 			d2B_myPause = "1";
 			d2B_storePause(d2B_myPause);
 			Delay(Random(1500,2500));
