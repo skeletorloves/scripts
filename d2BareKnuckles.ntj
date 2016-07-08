@@ -23,8 +23,9 @@ var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Numb
 // d2B_retrievePause()				// NT_File("logs/messagecommands/"+me.charname+"-pause.txt", 1, "1" + "/");
 
 //var d2B_actPausedAt = 1;			// continue from the beginning of the section paused at
-						// for keeping track of where we left off during a pause 
-						// placed in: D2Etal/scripts/libs/controlInfo.ntl
+									// for keeping track of where we left off during a pause 
+									// placed in: D2Etal/scripts/libs/controlInfo.ntl
+
 var d2B_toggleHelper = false;			// for engaging helper 	
 var _myName = "temp";
 var d2B_usingAFollower = false; 		// using a follower, then make townportals d2B_myTP()
@@ -41,7 +42,7 @@ function NTMain() {
 	
 	if(d2B_toggleHelper == false) {
 	
-		while(d2B_myPauseValue <= 20) { 
+		while(d2B_myPauseValue <= 21) { 
 			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
 			switch(d2B_myPauseValue) {
@@ -88,6 +89,8 @@ function NTMain() {
 					break;
 				case 20: d2B_haremtoceller();		// harem to celler thingy
 					break;
+				case 21L d2B_arcane();				// arcane thingy
+					break
 			}
 			Print(COLOR_4 + "Case mode # " + d2B_myPauseValue + " done.");
 			Delay(Random(1500,2500));
@@ -429,8 +432,14 @@ function d2B_haremtoceller() {						// case: 20
 
 	NTTM_CheckAct(2);
 }
-
+function d2B_arcane() {								// case: 21
+	d2B_commonInitSetup(74);
+	NTP_DoPrecast(true);
+	d2B_clrLvlOC();
 	
+	NTTM_CheckAct(2);
+}
+		
 // ________________________________________________________
 // common functions
 
