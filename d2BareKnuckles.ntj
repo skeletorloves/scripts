@@ -42,7 +42,7 @@ function NTMain() {
 	
 	if(d2B_toggleHelper == false) {
 	
-		while(d2B_myPauseValue <= 21) { 
+		while(d2B_myPauseValue <= 22) { 
 			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
 			switch(d2B_myPauseValue) {
@@ -89,8 +89,10 @@ function NTMain() {
 					break;
 				case 20: d2B_haremtoceller();		// harem to celler thingy
 					break;
-				case 21; d2B_arcane();				// arcane thingy
-					break
+				case 21: d2B_arcane();				// arcane thingy
+					break;
+				case 22: d2B_canyon();				// canyon thingy
+					break;
 			}
 			Print(COLOR_4 + "Case mode # " + d2B_myPauseValue + " done.");
 			Delay(Random(1500,2500));
@@ -100,7 +102,7 @@ function NTMain() {
 			d2B_myPause = d2B_myPauseValue.toString();
 			d2B_storePause(d2B_myPause);	
 		}
-		if(d2B_myPauseValue > 21) {
+		if(d2B_myPauseValue > 22) {
 			d2B_myPause = "1";
 			d2B_storePause(d2B_myPause);
 			Delay(Random(1500,2500));
@@ -424,6 +426,7 @@ function d2B_haremtoceller() {						// case: 20
 	for(var i = 0 ; i < 3 ; i++){
 		NTM_KoMoveToStair(me.areaid, 52+i);
 		d2B_takeStairs(52+i);
+		d2B_clrLvlOC();
 		if(me.areaid == 54 && NTConfig_ClearPalaceCellar == 0){
 			d2B_clrLvlOC();
 			NTSI_PickItems();
@@ -439,7 +442,31 @@ function d2B_arcane() {								// case: 21
 	
 	NTTM_CheckAct(2);
 }
-		
+function d2B_canyon() {								// case: 22
+	var _taltomb;
+	var _stair = [69, 68, 67, 66, 70, 71, 72];
+	
+	d2B_commonInitSetup(46);
+	NTP_DoPrecast(true);
+	d2B_clrLvlOC();
+	
+	for(var i = 0; i < _stair.length; i++){
+		NTP_DoPrecast();
+		d2B_moveToStair(me.areaid, _stair[i]);
+		d2B_takeStairs(_stair[i]);
+		d2B_clrLvlOC();
+				
+		if(!NTM_MoveToStair(me.areaid, 46)){
+			Print(COLOR_1 + "Wall bug found, moving to next script!");
+			Delay(Random(1000,2000));
+			NTTM_CheckAct(2);
+			return;
+		}
+		d2B_takeStairs(46);
+	}
+	
+	NTTM_CheckAct(2);
+}
 // ________________________________________________________
 // common functions
 
