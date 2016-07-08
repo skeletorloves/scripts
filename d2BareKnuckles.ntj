@@ -452,7 +452,7 @@ function d2B_canyon() {								// case: 22
 	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
-	for(var i = 0; i < _stair.length; i++){
+	/* for(var i = 0; i < _stair.length; i++){
 		NTP_DoPrecast();
 		d2B_moveToStair(me.areaid, _stair[i]);
 		d2B_takeStairs(_stair[i]);
@@ -470,7 +470,7 @@ function d2B_canyon() {								// case: 22
 			Print(COLOR_1 + "Gosh darn it. I think it worked.");
 		}
 		d2B_takeStairs(46);
-	}
+	}*/
 	
 	NTTM_CheckAct(2);
 }
