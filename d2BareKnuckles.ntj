@@ -47,6 +47,9 @@ function NTMain() {
 		NTTM_TownMove("waypoint");
 		Delay(700);
 		
+		Print(COLOR_2 + "Taking an extended break, so as to give the peeps time to enter game...");
+		Delay(Random(25000,40000));
+		
 		while(d2B_myPauseValue <= 22) { 
 			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
