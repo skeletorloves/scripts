@@ -619,7 +619,7 @@ function d2B_clrLvlOC() {
 function d2B_myTP(a,b,c) {				// (a: false = delay true = no delay) (b: bo true/false) (c: send followers to town true/false)
 	if(c) {
 		Say("'");
-		Delay(Random(6000,7000));
+		Delay(Random(8000,12000));
 	}
 	if(!a) {					
 		Say(",");						// make sure everyone is at the portal area
