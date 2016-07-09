@@ -6,10 +6,10 @@
 
 var debug = false;
 
-var pathRushBots = "NTRush/rushbots/";
-var isBusy = false;
-var isPaused = false;
-var isFollowingEnabled = true;
+var pathRushBots = "NTRush/rushbots/";						// . .. follow, unfollow
+var isBusy = false;											// ;	precast, buff
+var isPaused = false;										// '	town & unfollow
+var isFollowingEnabled = true;								// ,	in town move to portal area
 var isAttackEnabled = false;
 var isAutoEnchantEnabled = false;
 var leaderUnit;
@@ -32,10 +32,12 @@ var d2B_usingAFollower = false; 		// using a follower, then make townportals d2B
 
 
 // d2B_checkAct(a,b)	a: which act b: which town wp to go to
+// d2B_myTP(a) 			a: false = delay true = no delay
+
 
 function NTMain() {
 	
-	d2B_load();   						// initializing & loading thingies
+	d2B_load();   									// initializing & loading thingies
 	NTConfig_SkipRegularMonsters = true;			// toggle atk to regular monsters
 	
 	d2B_myPauseValue = Number(d2B_retrievePause());		// retrieve & convert to numerical value the pause value
@@ -120,6 +122,9 @@ function NTMain() {
 // ________________________________________________________
 // main function scripts
 
+//
+//	Act I
+//
 function d2B_bloodmoor() {							// case: 1
 	d2B_moveWP();
 	d2B_gotoWP(1);
@@ -128,31 +133,32 @@ function d2B_bloodmoor() {							// case: 1
 	d2B_townMove("exit");	// exit town
 	NTC_PingDelay(200);
 	NTTM_OutOfAct1();
-	if(d2B_usingAFollower) {d2B_myTP();}
+	if(d2B_usingAFollower) {d2B_myTP(false);}
 	NTP_DoPrecast(true);
 	
 	d2B_clrLvlOC();		// clear level & open chests
 	
 	d2B_moveToStair(2,8);
 	d2B_takeStairs(8);
+	if(d2B_usingAFollower) {d2B_myTP(true);}
 	NTP_DoPrecast();
 	d2B_clrLvlOC();
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
-//
-//	Act I
-//
 function d2B_coldplains() {							// case: 2
 	d2B_commonInitSetup(3);
+	if(d2B_usingAFollower) {d2B_myTP(false);}
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(3,9);
 	d2B_takeStairs(9);
+	if(d2B_usingAFollower) {d2B_myTP(true);}
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(9,13);
 	d2B_takeStairs(13);
+	if(d2B_usingAFollower) {d2B_myTP(true);}
 	d2B_clrLvlOC();
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
@@ -606,9 +612,15 @@ function d2B_clrLvlOC() {
 	d2B_openChests();
 	return;
 }
-function d2B_myTP() {
+function d2B_myTP(a) {			// a: false = delay true = no delay
+	if(!a) {Say(",");}					// make sure everyone is at the portal area
 	NTA_ClearPosition(5);
+	if(!a) {Delay(Random(2300,4000));}
 	NTM_MakeTP();
+	Delay(300);
+	Say(".");
+	if(!a) {Delay(Random(6300,8000));}	// enough delay for all to arrive
+	return;
 }
 function d2B_CheckAct(peep) {
 	if (peep.areaid <= 39) { return 1;}					// peep = "me", "leader"
