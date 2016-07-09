@@ -44,7 +44,9 @@ function NTMain() {
 	d2B_myPauseValue = Number(d2B_retrievePause());		// retrieve & convert to numerical value the pause value
 	
 	if(d2B_toggleHelper == false) {
-	
+		NTTM_TownMove("waypoint");
+		Delay(700);
+		
 		while(d2B_myPauseValue <= 22) { 
 			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
@@ -131,9 +133,10 @@ function d2B_bloodmoor() {							// case: 1
 	d2B_gotoWP(1);
 	d2B_chkAct(1);
 	NTTMGR_TownManager();
-	d2B_townMove("exit");	// exit town
+	d2B_townMove("exit");							// exit town
 	NTC_PingDelay(200);
 	NTTM_OutOfAct1();
+	NTM_TeleportTo(me.x+1, me.y+3);					// for keeping merc near
 	if(d2B_usingAFollower) d2B_myTP(false, true);
 	NTP_DoPrecast(true);
 	
@@ -632,9 +635,9 @@ function d2B_bo() {						//for instructing a bo barb
 	Say(_myBoBarb + " b,");				// make sure barb is at the portal area
 	Delay(Random(5000,6000));
 	Say(_myBoBarb + " b.");				// tell barb to come through tp
-	Delay(Random(3000,4000));
+	Delay(Random(8000,9000));
 	Say(_myBoBarb + " b;");				// instruct barb to precast
-	Delay(Random(6000,8000));
+	Delay(Random(8000,11000));
 	Say(_myBoBarb + " b'");				// send barb back to town
 	return;
 }
