@@ -33,7 +33,7 @@ var _myName = "temp";				// peep to msg of what's a-happenin'
 var _myBoBarb = "temp";				// bo barb name
 
 // d2B_checkAct(a,b)	a: which act b: which town wp to go to
-// d2B_myTP(a,b) 		(a: false = delay true = no delay) (b: false = no bo true = bo)
+// d2B_myTP(a,b,c) 		(a: false = delay true = no delay) (b: bo true/false) (c: send followers to town true/false)
 
 
 function NTMain() {
@@ -137,14 +137,14 @@ function d2B_bloodmoor() {							// case: 1
 	NTC_PingDelay(200);
 	NTTM_OutOfAct1();
 	NTM_TeleportTo(me.x+1, me.y+3);					// for keeping merc near
-	if(d2B_usingAFollower) d2B_myTP(false, true);
+	if(d2B_usingAFollower) d2B_myTP(false, true, false);
 	NTP_DoPrecast(true);
 	
 	d2B_clrLvlOC();		// clear level & open chests
 	
 	d2B_moveToStair(2,8);
 	d2B_takeStairs(8);
-	if(d2B_usingAFollower) d2B_myTP(true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true);
 	NTP_DoPrecast();
 	d2B_clrLvlOC();
 	
@@ -152,17 +152,17 @@ function d2B_bloodmoor() {							// case: 1
 }
 function d2B_coldplains() {							// case: 2
 	d2B_commonInitSetup(3);
-	if(d2B_usingAFollower) d2B_myTP(false, true);
+	if(d2B_usingAFollower) d2B_myTP(false, true, false);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(3,9);
 	d2B_takeStairs(9);
-	if(d2B_usingAFollower) d2B_myTP(true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false,true);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(9,13);
 	d2B_takeStairs(13);
-	if(d2B_usingAFollower) d2B_myTP(true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true);
 	d2B_clrLvlOC();
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
@@ -616,7 +616,11 @@ function d2B_clrLvlOC() {
 	d2B_openChests();
 	return;
 }
-function d2B_myTP(a,b) {					// a: false = delay true = no delay
+function d2B_myTP(a,b,c) {				// (a: false = delay true = no delay) (b: bo true/false) (c: send followers to town true/false)
+	if(c) {
+		Say("'");
+		Delay(Random(6000,7000));
+	}
 	if(!a) {					
 		Say(",");						// make sure everyone is at the portal area
 		Delay(Random(5300,6000));
