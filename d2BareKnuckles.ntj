@@ -33,7 +33,7 @@ var _myName = "temp";				// peep to msg of what's a-happenin'
 var _myBoBarb = "temp";				// bo barb name
 
 // d2B_checkAct(a,b)	a: which act b: which town wp to go to
-// d2B_myTP(a,b,c) 		(a: false = delay true = no delay) (b: bo true/false) (c: send followers to town true/false)
+// d2B_myTP(a,b) 		(a: false = delay true = no delay) (b: bo true/false)
 
 
 function NTMain() {
@@ -140,14 +140,17 @@ function d2B_bloodmoor() {							// case: 1
 	NTC_PingDelay(200);
 	NTTM_OutOfAct1();
 	NTM_TeleportTo(me.x+1, me.y+3);					// for keeping merc near
-	if(d2B_usingAFollower) d2B_myTP(false, true, false);
+	Delay(300);
+	d2B_moveToStair(2,8);							// head to front of den as a starting point
+	
+	if(d2B_usingAFollower) d2B_myTP(false, true);
 	NTP_DoPrecast(true);
 	
 	d2B_clrLvlOC();		// clear level & open chests
 	
 	d2B_moveToStair(2,8);
 	d2B_takeStairs(8);
-	if(d2B_usingAFollower) d2B_myTP(true, false, true);
+	if(d2B_usingAFollower) d2B_myTP(true, false);
 	NTP_DoPrecast();
 	d2B_clrLvlOC();
 	
@@ -155,17 +158,18 @@ function d2B_bloodmoor() {							// case: 1
 }
 function d2B_coldplains() {							// case: 2
 	d2B_commonInitSetup(3);
-	if(d2B_usingAFollower) d2B_myTP(false, true, false);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(3,9);
 	d2B_takeStairs(9);
-	if(d2B_usingAFollower) d2B_myTP(true, false,true);
+	if(d2B_usingAFollower) d2B_myTP(true, false);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(9,13);
 	d2B_takeStairs(13);
-	if(d2B_usingAFollower) d2B_myTP(true, false, true);
+	if(d2B_usingAFollower) d2B_myTP(true, false);
 	d2B_clrLvlOC();
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
@@ -173,6 +177,8 @@ function d2B_coldplains() {							// case: 2
 function d2B_burialgrounds() {						// case: 3
 	d2B_commonInitSetup(3);
 	d2B_movePresetUnitTitle(17,7,8,15);	// move to burial grounds
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_clrLevel();
 	
 	d2B_moveToStair(me.areaid,19);	// enter the mausoleum
@@ -190,6 +196,8 @@ function d2B_burialgrounds() {						// case: 3
 }
 function d2B_stonyfield() {							// case: 4
 	d2B_commonInitSetup(4);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
 	d2B_movePresetUnitMonster(737, 10, 10);
@@ -202,6 +210,8 @@ function d2B_undergroundpassage() {					// case: 5
 	d2B_commonInitSetup(4);
 
 	d2B_moveToStair(me.areaid,10);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_takeStairs(10);
 	d2B_clrLvlOC();
 	
@@ -213,12 +223,16 @@ function d2B_undergroundpassage() {					// case: 5
 }
 function d2B_darkwood() {							// case: 6
 	d2B_commonInitSetup(5);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
 function d2B_blackmarsh() {							// case: 7
 	d2B_commonInitSetup(6);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid,11);	// clear the hole
@@ -244,6 +258,8 @@ function d2B_blackmarsh() {							// case: 7
 }
 function d2B_tamohighland() {						// case: 8
 	d2B_commonInitSetup(6);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	NTP_DoPrecast();
 	
 	d2B_moveToStair(7,12);	// go to the enterance of tamoe highland pit
@@ -266,14 +282,16 @@ function d2B_tamohighland() {						// case: 8
 }
 function d2B_outercloister() {						// case: 9
 	d2B_commonInitSetup(27);
-	NTP_DoPrecast();
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
 function d2B_barracks() {							// case: 10
 	d2B_commonInitSetup(27);
-	NTP_DoPrecast();
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	
 	d2B_movePresetUnitMonster(28, 754, -5, 5);	// go to where main monster is in the malus dude
 	d2B_clrLvlOC();
@@ -282,14 +300,16 @@ function d2B_barracks() {							// case: 10
 }
 function d2B_jail() {								// case: 11
 	d2B_commonInitSetup(29);
-	NTP_DoPrecast();
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
 }
 function d2B_innercloister() {						// case: 12
 	d2B_commonInitSetup(32);
-	NTP_DoPrecast();
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
 	d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
@@ -302,8 +322,9 @@ function d2B_cata() {								// case: 13
 	
 	// clear all catacombs...
 	d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_takeStairs(34);
-	NTP_DoPrecast();
 	d2B_clrLvlOC();
 	
 	for(var i = 35; i <= 37; i++) {
@@ -619,11 +640,7 @@ function d2B_clrLvlOC() {
 	d2B_openChests();
 	return;
 }
-function d2B_myTP(a,b,c) {				// (a: false = delay true = no delay) (b: bo true/false) (c: send followers to town true/false)
-	if(c) {
-		Say("'");
-		Delay(Random(8000,12000));
-	}
+function d2B_myTP(a,b) {				// (a: false = delay true = no delay) (b: bo true/false)
 	if(!a) {					
 		Say(",");						// make sure everyone is at the portal area
 		Delay(Random(5300,6000));
