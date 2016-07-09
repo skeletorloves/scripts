@@ -656,7 +656,7 @@ function d2B_myTP(a,b) {				// (a: false = delay true = no delay) (b: bo true/fa
 	}					
 	NTA_ClearPosition(5);
 	Delay(700);
-	Delay(Random(2300,4000);
+	Delay(Random(2300,4000));
 	NTM_MakeTP();
 	Delay(300);
 	Say(".");
