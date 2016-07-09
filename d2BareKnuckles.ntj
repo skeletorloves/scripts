@@ -149,8 +149,8 @@ function d2B_bloodmoor() {							// case: 1
 	d2B_clrLvlOC();		// clear level & open chests
 	
 	d2B_moveToStair(2,8);
-	d2B_takeStairs(8);
 	if(d2B_usingAFollower) d2B_myTP(true, false);
+	d2B_takeStairs(8);
 	NTP_DoPrecast();
 	d2B_clrLvlOC();
 	
@@ -163,13 +163,13 @@ function d2B_coldplains() {							// case: 2
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(3,9);
-	d2B_takeStairs(9);
 	if(d2B_usingAFollower) d2B_myTP(true, false);
+	d2B_takeStairs(9);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(9,13);
-	d2B_takeStairs(13);
 	if(d2B_usingAFollower) d2B_myTP(true, false);
+	d2B_takeStairs(13);
 	d2B_clrLvlOC();
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
@@ -625,6 +625,7 @@ function d2B_moveToStair(a,b) {
 	return;
 }
 function d2B_takeStairs(a) {
+	Delay(Random(4000,6000));
 	if(!NTM_TakeStair(a)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeStair()");
 		return;
@@ -655,7 +656,7 @@ function d2B_myTP(a,b) {				// (a: false = delay true = no delay) (b: bo true/fa
 	}					
 	NTA_ClearPosition(5);
 	Delay(700);
-	if(!a) {Delay(Random(2300,4000));}
+	Delay(Random(2300,4000);
 	NTM_MakeTP();
 	Delay(300);
 	Say(".");
