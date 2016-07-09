@@ -630,13 +630,13 @@ function d2B_myTP(a,b) {					// a: false = delay true = no delay
 	return;
 }
 function d2B_bo() {						//for instructing a bo barb
-	Say(_myBoBarb + " b,");				// make sure barb is at the portal area
+	Say(_myBoBarb + " ,");				// make sure barb is at the portal area
 	Delay(Random(5000,6000));
-	Say(_myBoBarb + " b.");				// tell barb to come through tp
+	Say(_myBoBarb + " .");				// tell barb to come through tp
 	Delay(Random(5000,6000));
-	Say(_myBoBarb + " b;");				// instruct barb to precast
+	Say(_myBoBarb + " ;");				// instruct barb to precast
 	Delay(Random(8000,11000));
-	Say(_myBoBarb + " b'");				// send barb back to town
+	Say(_myBoBarb + " '");				// send barb back to town
 	return;
 }
 function d2B_CheckAct(peep) {
@@ -997,21 +997,24 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			if(!TakeLeaderTP())
 				Town();
 		break;
-	case ".":				// follow
+	case "b.":				// follow
+		isPaused = false;
 		isFollowingEnabled = true;
 		Print(COLOR_4 + "Follow on");
 		break;
-	case "..":				// unfollow
+	case "b..":				// unfollow
 		isFollowingEnabled = false;
 		Print(COLOR_4 + "Follow off");
 		break;
-	case ",":				// while in town, got to portal area
+	case "b,":				// while in town, got to portal area
+		isPause = false;
 		isFollowingEnabled = false;
 		NTTM_TownMove("portalspot");
 		Delay(250);
 		Print(COLOR_4 + "Ready at town portal");
+		isPause = true;
 		break;
-	case ";":
+	case "b;":
 	case "buff":
 		if(!isBusy && !NTC_InTown(me))
 		{
@@ -1043,13 +1046,14 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		if(!isBusy)
 			Chant( msg2 );				// Chant functions.
 		break;
-	case "'":
+	case "b'":
 		if(!isBusy)
 		{
 			isFollowingEnabled = false;
 			Print(COLOR_4 + "Follow off");
 			if(!TakeLeaderTP())
 				Town();
+			isPause = true;
 		}
 		break;
 	case "gold":
