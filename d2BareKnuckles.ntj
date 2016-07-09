@@ -28,11 +28,11 @@ var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Numb
 
 var d2B_toggleHelper = false;			// for engaging helper 	
 var _myName = "temp";
-var d2B_usingAFollower = false; 		// using a follower, then make townportals d2B_myTP()
+var d2B_usingAFollower = true; 		// using a follower, then make townportals d2B_myTP()
 
 
 // d2B_checkAct(a,b)	a: which act b: which town wp to go to
-// d2B_myTP(a) 			a: false = delay true = no delay
+// d2B_myTP(a,b) 		(a: false = delay true = no delay) (b: false = no bo true = bo)
 
 
 function NTMain() {
@@ -612,14 +612,28 @@ function d2B_clrLvlOC() {
 	d2B_openChests();
 	return;
 }
-function d2B_myTP(a) {			// a: false = delay true = no delay
-	if(!a) {Say(",");}					// make sure everyone is at the portal area
+function d2B_myTP(a) {					// a: false = delay true = no delay
+	if(!a) {					
+		Say(",");						// make sure everyone is at the portal area
+		Delay(Random(5300,6000));
+	}					
 	NTA_ClearPosition(5);
 	if(!a) {Delay(Random(2300,4000));}
 	NTM_MakeTP();
 	Delay(300);
 	Say(".");
 	if(!a) {Delay(Random(6300,8000));}	// enough delay for all to arrive
+	d2B_bo();
+	return;
+}
+function d2B_bo() {						//for instructing a bo barb
+	Say("b,");							// make sure barb is at the portal area
+	Delay(Random(3000,4000));
+	Say("b.");							// tell barb to come through tp
+	Delay(Random(2000,3000));
+	Say("b;");							// instruct barb to precast
+	Delay(Random(3000,4000));
+	Say("b'");							// send barb back to town
 	return;
 }
 function d2B_CheckAct(peep) {
