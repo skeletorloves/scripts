@@ -133,7 +133,7 @@ function d2B_bloodmoor() {							// case: 1
 	d2B_townMove("exit");	// exit town
 	NTC_PingDelay(200);
 	NTTM_OutOfAct1();
-	if(d2B_usingAFollower) {d2B_myTP(false);}
+	if(d2B_usingAFollower) {d2B_myTP(false, true);}
 	NTP_DoPrecast(true);
 	
 	d2B_clrLvlOC();		// clear level & open chests
