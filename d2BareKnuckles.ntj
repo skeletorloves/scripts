@@ -636,13 +636,13 @@ function d2B_myTP(a,b,c) {				// (a: false = delay true = no delay) (b: bo true/
 	return;
 }
 function d2B_bo() {						//for instructing a bo barb
-	Say(_myBoBarb + " b,");				// make sure barb is at the portal area
+	Say("b,");				// make sure barb is at the portal area
 	Delay(Random(5000,6000));
-	Say(_myBoBarb + " b.");				// tell barb to come through tp
+	Say("b.");				// tell barb to come through tp
 	Delay(Random(8000,9000));
-	Say(_myBoBarb + " b;");				// instruct barb to precast
+	Say("b;");				// instruct barb to precast
 	Delay(Random(8000,11000));
-	Say(_myBoBarb + " b'");				// send barb back to town
+	Say("b'");				// send barb back to town
 	return;
 }
 function d2B_CheckAct(peep) {
