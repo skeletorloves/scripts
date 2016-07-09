@@ -113,7 +113,7 @@ function NTMain() {
 			NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 		}
 	}
-	else if(d2B_toggleHelper == true) {d2H_helper();}		// for enabling a follower
+	else if(d2B_toggleHelper == true) d2H_helper();		// for enabling a follower
 	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 }
 
