@@ -573,7 +573,7 @@ function d2B_storePeeps() {						// store name of leader & followers in storePee
 	Delay(Random(5000,8000));
 	
 	for(i=0; i < Names.length; i++) {
-		Say("/msg *" + _myName + " i = " + i + " and it stores: " + Name[i]);
+		Say("/msg *" + _myName + " i = " + i + " and it stores: " + Names[i]);
 		Delay(Random(5000,8000));
 	}
 	return;
