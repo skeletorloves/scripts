@@ -26,7 +26,7 @@ var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Numb
 									// for keeping track of where we left off during a pause 
 									// placed in: D2Etal/scripts/libs/controlInfo.ntl
 
-var d2B_toggleHelper = false;			// for engaging helper 	
+var d2B_toggleHelper = "test";			// for engaging helper 	and for testing
 var d2B_usingAFollower = true; 			// using a follower, then make townportals d2B_myTP()
 	
 var _myName = "temp";				// peep to msg of what's a-happenin'
@@ -34,6 +34,9 @@ var _myBoBarb = "temp";				// bo barb name
 
 // d2B_checkAct(a,b)	a: which act b: which town wp to go to
 // d2B_myTP(a,b) 		(a: false = delay true = no delay) (b: bo true/false)
+
+// A goal: 	store and retrieve the names of the leader and followers
+//			msg these to _myName as a means to see if all are in
 
 
 function NTMain() {
@@ -43,6 +46,16 @@ function NTMain() {
 	
 	d2B_myPauseValue = Number(d2B_retrievePause());		// retrieve & convert to numerical value the pause value
 	
+	if(d2B_toggleHelper == "test") {
+		NTTM_TownMove("waypoint");
+		Delay(700);
+		
+		Print(COLOR_2 + "Taking an extended break, so as to give the peeps time to enter game...");
+		Delay(Random(35000,40000));
+		d2B_storePeeps();
+		Print(COLOR_2 + "Taking another extended break...");
+		Delay(Random(35000,40000));
+	}
 	if(d2B_toggleHelper == false) {
 		NTTM_TownMove("waypoint");
 		Delay(700);
@@ -522,9 +535,48 @@ function d2B_canyon() {								// case: 22
 
 	
 }
+
+// ________________________________________________________
+//  goal functions
+//
+
+function d2B_storePeeps() {						// store name of leader & followers in storePeeps.txt
+	var HostileAccount;
+	var Accounts = [];
+	var Class = [];
+	var Levels = [];
+	var Names = [];
+	
+	var TheTime = MyTime();
+	var Today = new Date().toLocaleFormat("%d %b");
+	
+	var Player = GetPlayerUnit();
+	if(Player){
+		do{
+			if(Names.indexOf(Player.name) == -1){
+				Names.push(Player.name);
+				Class.push(_classid(Player.classid));
+				Levels.push(Player.level);
+				Accounts.push(HostileAccount);
+			}
+			// send msg to _myName
+			Say("/msg *" + _myName + " Hey, I see... " + Player.name);
+			Delay(Random(5000,8000));
+			
+		} while(Player.GetNext())
+	}
+	
+	Delay(750);
+	// send msg to _myName of the stored data
+	
+	
+	
+	return;
+}
+
 // ________________________________________________________
 // common functions
-
+//
 function d2B_load() {
  	Include("libs/common/NTCommon.ntl");
 	NTC_IncludeLibs();
@@ -2560,4 +2612,33 @@ function NT_File(path, mode, msg, Delay) { //big thanks to all the koreans out t
     }
 
     return _msg;
+}
+function MyTime() {
+	var NW = new Date();
+	var HR = NW.getHours();
+	var MM = NW.getMinutes();
+	var SS = NW.getSeconds();
+	var DT;
+
+	if (HR < 12){ DT = "AM"; }
+	if (HR > 11){ DT = "PM"; }
+	if (HR > 12){ HR = HR - 12; }
+	if (HR == 0){ HR = 12; }
+	if (HR < 10){ HR = "0" + HR; }
+	if (MM < 10){ MM = "0" + MM; }
+	if (SS < 10){ SS = "0" + SS; }
+
+	TheTime = HR + ":" + MM + ":" + SS + " " + DT;
+	return TheTime;
+}
+function _classid(i) {
+	switch(i){
+		case 0:	return "Amazon";
+		case 1: return "Sorceress";
+		case 2: return "Necromancer";
+		case 3: return "Paladin";
+		case 4: return "Barbarian";
+		case 5: return "Druid";
+		case 6: return "Assassin";
+	} return;
 }
