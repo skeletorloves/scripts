@@ -4,6 +4,7 @@
 
 // *** Global helper vars ***
 
+var peeps = [];												// d2B_Peeps()
 var debug = false;
 
 var pathRushBots = "NTRush/rushbots/";						// . .. follow, unfollow
@@ -52,7 +53,7 @@ function NTMain() {
 		
 		Print(COLOR_2 + "Taking an extended break, so as to give the peeps time to enter game...");
 		Delay(Random(35000,40000));
-		d2B_storePeeps();
+		d2B_Peeps();
 		Print(COLOR_2 + "Taking another extended break...");
 		Delay(Random(35000,40000));
 	}
@@ -540,42 +541,29 @@ function d2B_canyon() {								// case: 22
 //  goal functions
 //
 
-function d2B_storePeeps() {						// store name of leader & followers in storePeeps.txt
-	var HostileAccount;
-	var Accounts = [];
-	var Class = [];
-	var Levels = [];
-	var Names = [];
-	
+function d2B_Peeps() {						// store name of leader & followers in storePeeps.txt
+											// 
 	var TheTime = MyTime();
 	var Today = new Date().toLocaleFormat("%d %b");
 	
 	var Player = GetPlayerUnit();
 	if(Player){
 		do{
-			if(Names.indexOf(Player.name) == -1){
-				Names.push(Player.name);
-				Class.push(_classid(Player.classid));
-				Levels.push(Player.level);
-				Accounts.push(HostileAccount);
+			if(_peeps.indexOf(Player.name) == -1){
+				_peeps.push(Player.name);
+				
 			}
-			// send msg to _myName
-			Say("/msg *" + _myName + " Hey, I see... " + Player.name);
-			Delay(Random(5000,8000));
-			
 		} while(Player.GetNext())
 	}
 	
 	Delay(750);
 	// send msg to _myName of the stored data
 	
-	Say("/msg *" + _myName + " There are " + Names.length + " names in the Names array.");
-	Delay(Random(5000,8000));
-	
-	for(i=0; i < Names.length; i++) {
-		Say("/msg *" + _myName + " i = " + i + " and it stores: " + Names[i]);
-		Delay(Random(5000,8000));
+	for(i=1; i < peeps.length; i++) {
+		Say("/msg *" + _myName + " i = " + i + ". " + peeps[i]);
 	}
+	
+	
 	return;
 }
 
