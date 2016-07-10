@@ -47,6 +47,7 @@ function NTMain() {
 	d2B_myPauseValue = Number(d2B_retrievePause());		// retrieve & convert to numerical value the pause value
 	
 	if(d2B_toggleHelper == "test") {
+		
 		NTTM_TownMove("waypoint");
 		Delay(700);
 		
