@@ -4,7 +4,8 @@
 
 // *** Global helper vars ***
 
-var peeps = [];												// d2B_Peeps()
+var _peeps = [];											// d2B_Peeps()
+var _peepsNum = 0;											// number of peeps (incl. leader)
 var debug = false;
 
 var pathRushBots = "NTRush/rushbots/";						// . .. follow, unfollow
@@ -51,10 +52,15 @@ function NTMain() {
 		NTTM_TownMove("waypoint");
 		Delay(700);
 		
-		Print(COLOR_2 + "Taking an extended break, so as to give the peeps time to enter game...");
+		Print(COLOR_3 + "Taking an extended break, so as to give the peeps time to enter game...");
 		Delay(Random(35000,40000));
 		d2B_Peeps();
-		Print(COLOR_2 + "Taking another extended break...");
+		Delay(700);
+		Print(COLOR_3 + "Checking in on peeps");
+		Delay(1000);
+		if(!d2B_rPeepsInGame()) {
+			Print(COLOR_1 + _peeps[1] + " is not in the game.");
+		}
 		Delay(Random(35000,40000));
 	}
 	if(d2B_toggleHelper == false) {
@@ -559,12 +565,25 @@ function d2B_Peeps() {						// store name of leader & followers in storePeeps.tx
 	Delay(750);
 	// send msg to _myName of the stored data
 	
-	for(i=1; i < peeps.length; i++) {
-		Say("/msg *" + _myName + " i = " + i + ". " + peeps[i]);
+	_peepsNum = _peeps.length;
+	
+	for(i=1; i < _peeps.length; i++) {
+		Say("/msg *" + _myName + " " + i + ". " + _peeps[i]);
+		Delay(Random(5000,7000));
 	}
-	
-	
 	return;
+}
+function d2B_rPeepsInGame() {
+
+	// for checking if everyone is in game...
+	// if so, do continue
+	// if not, check to see if enough tine has elapsed and if so exit game
+	
+	if(_peeps[1].ingame) {
+		Print(COLOR_4 + _peeps[1] + " is in the game.");
+		return true;
+	}
+	return false;
 }
 
 // ________________________________________________________
