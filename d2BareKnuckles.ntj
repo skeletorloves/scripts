@@ -380,6 +380,7 @@ function d2B_cata() {								// case: 13
 //	Act II
 //
 function d2B_sewers() {								// case: 14
+	Delay(Random(10000,15000));
 	Say("ummm 2");					// send team to act 2 portal area
 	Delay(Random(10000,15000));
 	d2B_moveWP();
@@ -618,7 +619,7 @@ function d2B_Peeps() {								// store name of leader & followers in storePeeps.
 function d2B_rPeepsInGame(notify) {					// return (true, _teamSize) : _teamSize accounts for all extra peeps minus that boer
 	Print(COLOR_3 + "Checking in on peeps");
 	Delay(1000);
-	Say("/msg *" + _myName + "Peep check-in");
+	Say("/msg *" + _myName + " Peep check-in");
 	Delay(300);
 	// for checking if everyone is in game...
 	// if so, do continue
@@ -709,7 +710,7 @@ function d2B_gotoWP(a) {
 	}
 	return;
 }
-function d2B_movePresetUnitTitle(a,b,c,d) {
+function d2B_movePresetUnitTitle(a,b,c,d) {			// NTM_MoveToPresetUnit(areaid, unittype, classid, offsetx, offsety, clearpath)
 	if(c != 0) {
 		if(!NTM_MoveToPresetUnit(a, NTC_UNIT_TILE, b, c, d)){
 			NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
