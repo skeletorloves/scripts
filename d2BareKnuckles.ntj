@@ -54,6 +54,8 @@ function NTMain() {
 		
 		Print(COLOR_2 + "Taking an extended break, so as to give the peeps time to enter game...");
 		Delay(Random(35000,40000));
+		Say(",");
+		Delay(Random(7300,10000));
 		
 		// check to see if peeps have arrived...
 		
@@ -366,7 +368,12 @@ function d2B_cata() {								// case: 13
 		d2B_clrLvlOC();
 	}
 	
+	d2B_movePresetUnitTitle(me.areaid,18,0);
+	
 	d2B_endCase(1);	// return to Act 1 town
+	Delay(1000);
+	Say("'");
+	Delay(Random(8300,12000));
 }
 
 //
@@ -374,13 +381,13 @@ function d2B_cata() {								// case: 13
 //
 function d2B_sewers() {								// case: 14
 	Say("ummm 2");					// send team to act 2 portal area
-	Delay(750);
+	Delay(Random(10000,15000));
 	d2B_moveWP();
 	d2B_gotoWP(40);
 	NTTM_CheckAct(2);				// if not Lut Golein, then go to Lut Golein
 	
 	Say("ummm 2");					// saying this again as a precaution
-	Delay(Random(12000,17000));
+	Delay(Random(25000,30000));
 	
 	NTTM_Act2SewerTrapDoor();		// begins at the stairs enterance
 	if(d2B_usingAFollower) d2B_myTP(false, true);
@@ -402,14 +409,17 @@ function d2B_sewers() {								// case: 14
 function d2B_rockywaste() {							// case: 15
 	d2B_moveWP();
 	NTTM_OutOfTown2();
+	if(d2B_usingAFollower) d2B_myTP(false, true);
 	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid, 55);
+	if(d2B_usingAFollower) d2B_myTP(true, false);
 	d2B_takeStairs(55);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid, 59);
+	if(d2B_usingAFollower) d2B_myTP(true, false);
 	d2B_takeStairs(59);
 	d2B_clrLvlOC();
 	
@@ -417,18 +427,22 @@ function d2B_rockywaste() {							// case: 15
 }
 function d2B_dryhills() {							// case: 16
 	d2B_commonInitSetup(42);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
 	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid, 56);
+	if(d2B_usingAFollower) d2B_myTP(true, false);
 	d2B_takeStairs(56);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid, 57);
+	if(d2B_usingAFollower) d2B_myTP(true, false);
 	d2B_takeStairs(57);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid, 60);
+	if(d2B_usingAFollower) d2B_myTP(true, false);
 	d2B_takeStairs(60);
 	d2B_clrLvlOC();
 	
@@ -436,11 +450,13 @@ function d2B_dryhills() {							// case: 16
 }
 function d2B_faroasis() {							// case: 17
 	d2B_commonInitSetup(43);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
 	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
 	for(var i = 0 ; i < 3 ; i++){
 			d2B_moveToStair(me.areaid, 62+i);
+			if(d2B_usingAFollower) d2B_myTP(true, false);
 			d2B_takeStairs(62+i);
 			NTP_DoPrecast(true);
 			d2B_clrLvlOC();
@@ -450,10 +466,12 @@ function d2B_faroasis() {							// case: 17
 }
 function d2B_lostcity() {							// case: 18
 	d2B_commonInitSetup(44);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
 	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 
 	d2B_moveToStair(me.areaid, 65);
+	if(d2B_usingAFollower) d2B_myTP(true, false);
 	d2B_takeStairs(65);
 	d2B_clrLvlOC();
 
@@ -464,6 +482,7 @@ function d2B_clawvipertemple() {					// case: 19
 	NTP_DoPrecast(true);
 	d2B_movePresetUnitTitle(45,37,0);
 	
+	if(d2B_usingAFollower) d2B_myTP(false, true);
 	d2B_takeStairs(58);
 	d2B_clrLvlOC();
 	
@@ -475,6 +494,7 @@ function d2B_clawvipertemple() {					// case: 19
 		Print(COLOR_2 + "Success!");
 		
 		d2B_moveToStair(me.areaid, 61);
+		if(d2B_usingAFollower) d2B_myTP(true, false);
 		d2B_takeStairs(61);
 		d2B_clrLvlOC();
 	}
@@ -482,7 +502,7 @@ function d2B_clawvipertemple() {					// case: 19
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeStair()");
 		return;
 	}
-	
+	if(d2B_usingAFollower) d2B_myTP(true, false);
 	NTP_DoPrecast();
 	d2B_clrLvlOC();
 
@@ -495,11 +515,13 @@ function d2B_haremtoceller() {						// case: 20
 	NTWP_GoToHarem();
 	
 	NTM_KoMoveToStair(50, 51);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
 	d2B_takeStairs(51);
 	d2B_clrLvlOC();
 	
 	for(var i = 0 ; i < 3 ; i++){
 		NTM_KoMoveToStair(me.areaid, 52+i);
+		if(d2B_usingAFollower) d2B_myTP(true, false);
 		d2B_takeStairs(52+i);
 		d2B_clrLvlOC();
 		if(me.areaid == 54 && NTConfig_ClearPalaceCellar == 0){
@@ -512,6 +534,7 @@ function d2B_haremtoceller() {						// case: 20
 }
 function d2B_arcane() {								// case: 21
 	d2B_commonInitSetup(74);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
 	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
@@ -522,6 +545,7 @@ function d2B_canyon() {								// case: 22
 	var _stair = [69, 68, 67, 66, 70, 71, 72];
 	
 	d2B_commonInitSetup(46);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
 	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
@@ -1156,6 +1180,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			isFollowingEnabled = false;
 			Delay(Random(1000,10000));
 			NTTM_CheckAct(Number(msg2));
+			Delay(Random(4000,60000));
 			d2B_townMove("portalspot");
 		}
 		break;
