@@ -4,13 +4,15 @@
 
 // *** Global helper vars ***
 
+var _peeps = [];											// d2B_Peeps()
+var _peepsNum = 0;											// number of peeps (incl. leader)
 var debug = false;
 
 var pathRushBots = "NTRush/rushbots/";						// . .. follow, unfollow
 var isBusy = false;											// ;	precast, buff
 var isPaused = false;										// '	town & unfollow
-var isFollowingEnabled = false;								// ,	in town move to portal area
-var isAttackEnabled = true;
+var isFollowingEnabled = true;								// ,	in town move to portal area
+var isAttackEnabled = false;
 var isAutoEnchantEnabled = false;
 var leaderUnit;
 var leaderPlayerUnit;
@@ -26,26 +28,42 @@ var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Numb
 									// for keeping track of where we left off during a pause 
 									// placed in: D2Etal/scripts/libs/controlInfo.ntl
 
-var d2B_toggleHelper = true;				// for engaging helper 	
-var d2B_usingAFollower = false; 			// using a follower, then make townportals d2B_myTP()
+var d2B_toggleHelper = true;			// for engaging helper 	and for testing
+var d2B_usingAFollower = true; 			// using a follower, then make townportals d2B_myTP()
 	
 var _myName = "temp";				// peep to msg of what's a-happenin'
 var _myBoBarb = "temp";				// bo barb name
-var _leaderName = "temp";			// so as to follow from the leader's case action thingy
 
 // d2B_checkAct(a,b)	a: which act b: which town wp to go to
-// d2B_myTP(a,b) 		(a: false = delay true = no delay) (b: false = no bo true = bo)
+// d2B_myTP(a,b) 		(a: false = delay true = no delay) (b: bo true/false)
+
+// A goal: 	store and retrieve the names of the leader and followers
+//			msg these to _myName as a means to see if all are in
 
 
 function NTMain() {
 	
 	d2B_load();   									// initializing & loading thingies
-	NTConfig_SkipRegularMonsters = true;			// toggle atk to regular monsters
+	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters
 	
 	d2B_myPauseValue = Number(d2B_retrievePause());		// retrieve & convert to numerical value the pause value
 	
 	if(d2B_toggleHelper == false) {
-	
+		NTTM_TownMove("waypoint");
+		Delay(700);
+		
+		Print(COLOR_2 + "Taking an extended break, so as to give the peeps time to enter game...");
+		Delay(Random(35000,40000));
+		
+		// check to see if peeps have arrived...
+		
+		d2B_Peeps();
+		if(d2B_rPeepsInGame(true)) {
+			Print(COLOR_7 + "All peeps are in the game.");
+			Delay(1000);
+			Say("/msg *" + _myName + " All peeps in!");
+		}
+		
 		while(d2B_myPauseValue <= 22) { 
 			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
@@ -104,11 +122,11 @@ function NTMain() {
 			Delay(Random(1500,2500));
 			d2B_myPauseValue = d2B_myPauseValue + 1;
 			d2B_myPause = d2B_myPauseValue.toString();
-			//d2B_storePause(d2B_myPause);	
+			d2B_storePause(d2B_myPause);	
 		}
 		if(d2B_myPauseValue > 22) {
-			//d2B_myPause = "1";
-			//d2B_storePause(d2B_myPause);
+			d2B_myPause = "1";
+			d2B_storePause(d2B_myPause);
 			Delay(Random(1500,2500));
 			Print(COLOR_4 + "Starting another run at case # " + d2B_myPause);
 			Delay(Random(1500,2500));
@@ -116,6 +134,23 @@ function NTMain() {
 			Delay(Random(8500,12500));
 			NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 		}
+	}
+	if(d2B_toggleHelper == "test") {
+		NTTM_TownMove("waypoint");
+		Delay(700);
+		
+		Print(COLOR_3 + "Taking an extended break, so as to give the peeps time to enter game...");
+		Delay(Random(35000,40000));
+		d2B_Peeps();
+		Delay(700);
+		Print(COLOR_3 + "Checking in on peeps");
+		Delay(1000);
+		if(d2B_rPeepsInGame()) {
+			Print(COLOR_7 + "All peeps are in the game.");
+		}
+		Delay(2000);
+		Print(COLOR_2 + "Another delay...");
+		Delay(Random(35000,40000));
 	}
 	else if(d2B_toggleHelper == true) {d2H_helper();}		// for enabling a follower
 	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
@@ -132,35 +167,40 @@ function d2B_bloodmoor() {							// case: 1
 	d2B_gotoWP(1);
 	d2B_chkAct(1);
 	NTTMGR_TownManager();
-	d2B_townMove("exit");	// exit town
+	d2B_townMove("exit");							// exit town
 	NTC_PingDelay(200);
 	NTTM_OutOfAct1();
+	NTM_TeleportTo(me.x+1, me.y+3);					// for keeping merc near
+	Delay(300);
+	d2B_moveToStair(2,8);							// head to front of den as a starting point
+	
 	if(d2B_usingAFollower) d2B_myTP(false, true);
 	NTP_DoPrecast(true);
 	
 	d2B_clrLvlOC();		// clear level & open chests
 	
 	d2B_moveToStair(2,8);
-	d2B_takeStairs(8);
 	if(d2B_usingAFollower) d2B_myTP(true, false);
+	d2B_takeStairs(8);
 	NTP_DoPrecast();
 	d2B_clrLvlOC();
 	
-	NTTM_CheckAct(1);	// return to Act 1 town
+	d2B_endCase(1);	// return to Act 1 town
 }
 function d2B_coldplains() {							// case: 2
 	d2B_commonInitSetup(3);
 	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(3,9);
-	d2B_takeStairs(9);
 	if(d2B_usingAFollower) d2B_myTP(true, false);
+	d2B_takeStairs(9);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(9,13);
-	d2B_takeStairs(13);
 	if(d2B_usingAFollower) d2B_myTP(true, false);
+	d2B_takeStairs(13);
 	d2B_clrLvlOC();
 	
 	NTTM_CheckAct(1);	// return to Act 1 town
@@ -168,6 +208,8 @@ function d2B_coldplains() {							// case: 2
 function d2B_burialgrounds() {						// case: 3
 	d2B_commonInitSetup(3);
 	d2B_movePresetUnitTitle(17,7,8,15);	// move to burial grounds
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_clrLevel();
 	
 	d2B_moveToStair(me.areaid,19);	// enter the mausoleum
@@ -181,22 +223,26 @@ function d2B_burialgrounds() {						// case: 3
 	d2B_takeStairs(18);
 	d2B_clrLvlOC();
 
-	NTTM_CheckAct(1);	// return to Act 1 town
+	d2B_endCase(1);	// return to Act 1 town
 }
 function d2B_stonyfield() {							// case: 4
 	d2B_commonInitSetup(4);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
 	d2B_movePresetUnitMonster(737, 10, 10);
 	d2B_usePortal("Portal",38);			// use portal to enter tristram
 	d2B_clrLvlOC();
 
-	NTTM_CheckAct(1);	// return to Act 1 town
+	d2B_endCase(1);	// return to Act 1 town
 }
 function d2B_undergroundpassage() {					// case: 5
 	d2B_commonInitSetup(4);
 
 	d2B_moveToStair(me.areaid,10);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_takeStairs(10);
 	d2B_clrLvlOC();
 	
@@ -204,16 +250,20 @@ function d2B_undergroundpassage() {					// case: 5
 	d2B_takeStairs(14);
 	d2B_clrLvlOC();
 	
-	NTTM_CheckAct(1);	// return to Act 1 town
+	d2B_endCase(1);	// return to Act 1 town
 }
 function d2B_darkwood() {							// case: 6
 	d2B_commonInitSetup(5);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
-	NTTM_CheckAct(1);	// return to Act 1 town
+	d2B_endCase(1);	// return to Act 1 town
 }
 function d2B_blackmarsh() {							// case: 7
 	d2B_commonInitSetup(6);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid,11);	// clear the hole
@@ -224,7 +274,7 @@ function d2B_blackmarsh() {							// case: 7
 	d2B_takeStairs(15);
 	d2B_clrLvlOC();
 	
-	NTTM_CheckAct(1);	// return to Act 1 town
+	d2B_endCase(1);	// return to Act 1 town
 	
 	d2B_commonInitSetup(6);
 	
@@ -235,10 +285,12 @@ function d2B_blackmarsh() {							// case: 7
 		d2B_clrLvlOC();
 	}
 	
-	NTTM_CheckAct(1);	// return to Act 1 town
+	d2B_endCase(1);	// return to Act 1 town
 }
 function d2B_tamohighland() {						// case: 8
 	d2B_commonInitSetup(6);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	NTP_DoPrecast();
 	
 	d2B_moveToStair(7,12);	// go to the enterance of tamoe highland pit
@@ -257,48 +309,53 @@ function d2B_tamohighland() {						// case: 8
 	
 	//d2B_movePresetUnitTitle(me.areaid, 397, 1, 1);	// go to the special chest of the pit
 	
-	NTTM_CheckAct(1);	// return to Act 1 town
+	d2B_endCase(1);	// return to Act 1 town
 }
 function d2B_outercloister() {						// case: 9
 	d2B_commonInitSetup(27);
-	NTP_DoPrecast();
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
-	NTTM_CheckAct(1);	// return to Act 1 town
+	d2B_endCase(1);	// return to Act 1 town
 }
 function d2B_barracks() {							// case: 10
 	d2B_commonInitSetup(27);
-	NTP_DoPrecast();
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	
 	d2B_movePresetUnitMonster(28, 754, -5, 5);	// go to where main monster is in the malus dude
 	d2B_clrLvlOC();
 	
-	NTTM_CheckAct(1);	// return to Act 1 town
+	d2B_endCase(1);	// return to Act 1 town
 }
 function d2B_jail() {								// case: 11
 	d2B_commonInitSetup(29);
-	NTP_DoPrecast();
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
-	NTTM_CheckAct(1);	// return to Act 1 town
+	d2B_endCase(1);	// return to Act 1 town
 }
 function d2B_innercloister() {						// case: 12
 	d2B_commonInitSetup(32);
-	NTP_DoPrecast();
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
 	d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
 	d2B_clrLvlOC();					// clear the cathedral
 	
-	NTTM_CheckAct(1);	// return to Act 1 town
+	d2B_endCase(1);	// return to Act 1 town
 }
 function d2B_cata() {								// case: 13
 	d2B_commonInitSetup(32);
 	
 	// clear all catacombs...
 	d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
 	d2B_takeStairs(34);
-	NTP_DoPrecast();
 	d2B_clrLvlOC();
 	
 	for(var i = 35; i <= 37; i++) {
@@ -309,7 +366,7 @@ function d2B_cata() {								// case: 13
 		d2B_clrLvlOC();
 	}
 	
-	NTTM_CheckAct(1);	// return to Act 1 town
+	d2B_endCase(1);	// return to Act 1 town
 }
 
 //
@@ -496,9 +553,67 @@ function d2B_canyon() {								// case: 22
 
 	
 }
+
+// ________________________________________________________
+//  goal functions
+//
+function d2B_Peeps() {								// store name of leader & followers in storePeeps.txt
+											// 
+	var TheTime = MyTime();
+	var Today = new Date().toLocaleFormat("%d %b");
+	
+	var Player = GetPlayerUnit();
+	if(Player){
+		do{
+			if(_peeps.indexOf(Player.name) == -1){
+				_peeps.push(Player.name);
+				
+			}
+		} while(Player.GetNext())
+	}
+	
+	Delay(750);
+	// send msg to _myName of the stored data
+	
+	_peepsNum = _peeps.length;
+	
+	for(i=1; i < _peeps.length; i++) {
+		Say("/msg *" + _myName + " " + i + ". " + _peeps[i]);
+		Delay(Random(5000,7000));
+	}
+	return;
+}
+function d2B_rPeepsInGame(notify) {					// return (true, _teamSize) : _teamSize accounts for all extra peeps minus that boer
+	Print(COLOR_3 + "Checking in on peeps");
+	Delay(1000);
+	Say("/msg *" + _myName + "Peep check-in");
+	Delay(300);
+	// for checking if everyone is in game...
+	// if so, do continue
+	// if not, check to see if enough tine has elapsed and if so exit game
+	
+	var allIn = true;
+	var _teamSize = -1;	// -1 due to not wishing to account for the bo barb
+	
+	for(i=1; i < _peeps.length; i++) {
+		if(!NTC_InMyParty(_peeps[i])) {
+			_teamSize = _teamSize - 1;
+			if(notify) Print(COLOR_2 + _peeps[i] + " is not the game.");
+			allIn = false;
+			Delay(Random(3000,5000));
+			if(notify) Say("/msg *" + _myName + " " + _peeps[i] + " missing.");
+		} else _teamSize = _teamSize + 1;
+	}
+	Delay(Random(3000,4000));
+	if(notify) Say("/msg *" + _myName + " Of the " + (_peeps.length - 1) + " extra peeps, there are " + _teamSize);
+	Delay(300);
+	if(!allIn) return false;
+	return true;
+}
+
 // ________________________________________________________
 // common functions
-
+//
 function d2B_load() {
  	Include("libs/common/NTCommon.ntl");
 	NTC_IncludeLibs();
@@ -538,6 +653,14 @@ function d2B_townMove(a) {
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_TownMove()");
 		return;
 	}
+	return;
+}
+function d2B_endCase(a) {
+	NTM_MakeTP();
+	Delay(300);
+	Say("'");
+	Delay(Random(4000,6000));
+	NTTM_CheckAct(a);
 	return;
 }
 function d2B_moveWP() {
@@ -591,6 +714,7 @@ function d2B_moveToStair(a,b) {
 	return;
 }
 function d2B_takeStairs(a) {
+	Delay(Random(4000,6000));
 	if(!NTM_TakeStair(a)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeStair()");
 		return;
@@ -614,14 +738,14 @@ function d2B_clrLvlOC() {
 	d2B_openChests();
 	return;
 }
-function d2B_myTP(a,b) {					// a: false = delay true = no delay
+function d2B_myTP(a,b) {				// (a: false = delay true = no delay) (b: bo true/false)
 	if(!a) {					
 		Say(",");						// make sure everyone is at the portal area
 		Delay(Random(5300,6000));
 	}					
 	NTA_ClearPosition(5);
 	Delay(700);
-	if(!a) {Delay(Random(2300,4000));}
+	Delay(Random(2300,4000));
 	NTM_MakeTP();
 	Delay(300);
 	Say(".");
@@ -630,13 +754,13 @@ function d2B_myTP(a,b) {					// a: false = delay true = no delay
 	return;
 }
 function d2B_bo() {						//for instructing a bo barb
-	Say(_myBoBarb + " b,");				// make sure barb is at the portal area
+	Say("b,");				// make sure barb is at the portal area
 	Delay(Random(5000,6000));
-	Say(_myBoBarb + " b.");				// tell barb to come through tp
-	Delay(Random(5000,6000));
-	Say(_myBoBarb + " b;");				// instruct barb to precast
+	Say("b.");				// tell barb to come through tp
+	Delay(Random(8000,9000));
+	Say("b;");				// instruct barb to precast
 	Delay(Random(8000,11000));
-	Say(_myBoBarb + " b'");				// send barb back to town
+	Say("b'");				// send barb back to town
 	return;
 }
 function d2B_CheckAct(peep) {
@@ -1019,6 +1143,14 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			//Chant( msg2 );
 		}
 		break;
+	case "ummm":							// send peeps to act 1 town and by the portal area
+		if(msg2) {							// 1,2,3,4,5 <--- acts
+			isFollowingEnabled = false;
+			d2B_moveWP();
+			NTTM_CheckAct(msg2);
+			d2B_townMove("portalspot");
+		}
+		break;
 	case "help":
 		if(!isBusy)
 			DisplayHelp( msg2 );		// Display help menu.
@@ -1044,7 +1176,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			Chant( msg2 );				// Chant functions.
 		break;
 	case "'":
-		if(!isBusy && !NTC_InTown(me))
+		if(!isBusy)
 		{
 			isFollowingEnabled = false;
 			Print(COLOR_4 + "Follow off");
@@ -2468,9 +2600,9 @@ function d2B_retrievePause() {
 	// d2B_myPause	= store solely the needed bot paused string from the text file 
 	
 	var d2B_line;
-	var d2B_pause = FileOpen("logs/messagecomands/" + _leaderName + "-pause.txt", 0); // open file in read only
+	var d2B_pause = FileOpen("logs/messagecomands/"+me.name+"-pause.txt", 0); // open file in read only
 	if(!d2B_pause){
-		var d2B_pause = FileOpen("logs/messagecomands/" + _leaderName + "-pause.txt", 1); // No file? Create it
+		var d2B_pause = FileOpen("logs/messagecomands/"+me.name+"-pause.txt", 1); // No file? Create it
 	}
 	if(d2B_pause){ 
 		d2B_line = d2B_pause.ReadLine(); 	//retrieve line & set the pause var to it so we can check it against the game we may want to join
@@ -2525,4 +2657,33 @@ function NT_File(path, mode, msg, Delay) { //big thanks to all the koreans out t
     }
 
     return _msg;
+}
+function MyTime() {
+	var NW = new Date();
+	var HR = NW.getHours();
+	var MM = NW.getMinutes();
+	var SS = NW.getSeconds();
+	var DT;
+
+	if (HR < 12){ DT = "AM"; }
+	if (HR > 11){ DT = "PM"; }
+	if (HR > 12){ HR = HR - 12; }
+	if (HR == 0){ HR = 12; }
+	if (HR < 10){ HR = "0" + HR; }
+	if (MM < 10){ MM = "0" + MM; }
+	if (SS < 10){ SS = "0" + SS; }
+
+	TheTime = HR + ":" + MM + ":" + SS + " " + DT;
+	return TheTime;
+}
+function _classid(i) {
+	switch(i){
+		case 0:	return "Amazon";
+		case 1: return "Sorceress";
+		case 2: return "Necromancer";
+		case 3: return "Paladin";
+		case 4: return "Barbarian";
+		case 5: return "Druid";
+		case 6: return "Assassin";
+	} return;
 }
