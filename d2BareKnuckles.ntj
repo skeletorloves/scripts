@@ -373,19 +373,27 @@ function d2B_cata() {								// case: 13
 //	Act II
 //
 function d2B_sewers() {								// case: 14
+	Say("ummm 2");					// send team to act 2 portal area
+	Delay(750);
 	d2B_moveWP();
 	d2B_gotoWP(40);
 	NTTM_CheckAct(2);				// if not Lut Golein, then go to Lut Golein
 	
+	Say("ummm 2");					// saying this again as a precaution
+	Delay(Random(12000,17000));
+	
 	NTTM_Act2SewerTrapDoor();		// begins at the stairs enterance
+	if(d2B_usingAFollower) d2B_myTP(false, true);
 	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid,48);	// go to the stairs sewers lvl 2
+	if(d2B_usingAFollower) d2B_myTP(true, false);
 	d2B_takeStairs(48);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid,49);	// go to the stairs sewers lvl 3
+	if(d2B_usingAFollower) d2B_myTP(true, false);
 	d2B_takeStairs(49);
 	d2B_clrLvlOC();
 
@@ -1146,8 +1154,8 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 	case "ummm":							// send peeps to act 1 town and by the portal area
 		if(msg2) {							// 1,2,3,4,5 <--- acts
 			isFollowingEnabled = false;
-			d2B_moveWP();
-			NTTM_CheckAct(msg2);
+			Delay(Random(1000,10000));
+			NTTM_CheckAct(Number(msg2));
 			d2B_townMove("portalspot");
 		}
 		break;
