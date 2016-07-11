@@ -605,7 +605,7 @@ function d2B_rPeepsInGame(notify) {					// return (true, _teamSize) : _teamSize 
 		} else _teamSize = _teamSize + 1;
 	}
 	Delay(Random(3000,4000));
-	if(notify) Say("/msg *" + _myName + " Of the " + (_peeps.length - 1) + " peeps, there are " + _teamSize);
+	if(notify) Say("/msg *" + _myName + " Of the " + (_peeps.length - 1) + " extra peeps, there are " + _teamSize);
 	Delay(300);
 	if(!allIn) return false;
 	return true;
