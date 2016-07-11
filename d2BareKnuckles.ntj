@@ -44,27 +44,10 @@ var _myBoBarb = "temp";				// bo barb name
 function NTMain() {
 	
 	d2B_load();   									// initializing & loading thingies
-	NTConfig_SkipRegularMonsters = true;			// toggle atk to regular monsters
+	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters
 	
 	d2B_myPauseValue = Number(d2B_retrievePause());		// retrieve & convert to numerical value the pause value
 	
-	if(d2B_toggleHelper == "test") {
-		NTTM_TownMove("waypoint");
-		Delay(700);
-		
-		Print(COLOR_3 + "Taking an extended break, so as to give the peeps time to enter game...");
-		Delay(Random(35000,40000));
-		d2B_Peeps();
-		Delay(700);
-		Print(COLOR_3 + "Checking in on peeps");
-		Delay(1000);
-		if(d2B_rPeepsInGame()) {
-			Print(COLOR_7 + "All peeps are in the game.");
-		}
-		Delay(2000);
-		Print(COLOR_2 + "Another delay...");
-		Delay(Random(35000,40000));
-	}
 	if(d2B_toggleHelper == false) {
 		NTTM_TownMove("waypoint");
 		Delay(700);
@@ -75,7 +58,7 @@ function NTMain() {
 		// check to see if peeps have arrived...
 		
 		d2B_Peeps();
-		if(d2B_rPeepsInGame()) {
+		if(d2B_rPeepsInGame(true)) {
 			Print(COLOR_7 + "All peeps are in the game.");
 			Delay(1000);
 			Say("/msg *" + _myName + " All peeps in!");
@@ -151,6 +134,23 @@ function NTMain() {
 			Delay(Random(8500,12500));
 			NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 		}
+	}
+	if(d2B_toggleHelper == "test") {
+		NTTM_TownMove("waypoint");
+		Delay(700);
+		
+		Print(COLOR_3 + "Taking an extended break, so as to give the peeps time to enter game...");
+		Delay(Random(35000,40000));
+		d2B_Peeps();
+		Delay(700);
+		Print(COLOR_3 + "Checking in on peeps");
+		Delay(1000);
+		if(d2B_rPeepsInGame()) {
+			Print(COLOR_7 + "All peeps are in the game.");
+		}
+		Delay(2000);
+		Print(COLOR_2 + "Another delay...");
+		Delay(Random(35000,40000));
 	}
 	else if(d2B_toggleHelper == true) {d2H_helper();}		// for enabling a follower
 	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
@@ -583,24 +583,31 @@ function d2B_Peeps() {								// store name of leader & followers in storePeeps.
 	}
 	return;
 }
-function d2B_rPeepsInGame() {
+function d2B_rPeepsInGame(notify) {					// return (true, _teamSize) : _teamSize accounts for all extra peeps minus that boer
 	Print(COLOR_3 + "Checking in on peeps");
 	Delay(1000);
-	
+	Say("/msg *" + _myName + "Peep check-in");
+	Delay(300);
 	// for checking if everyone is in game...
 	// if so, do continue
 	// if not, check to see if enough tine has elapsed and if so exit game
+	
 	var allIn = true;
+	var _teamSize = -1;	// -1 due to not wishing to account for the bo barb
 	
 	for(i=1; i < _peeps.length; i++) {
 		if(!NTC_InMyParty(_peeps[i])) {
-			Print(COLOR_2 + _peeps[i] + " is not the game.");
+			_teamSize = _teamSize - 1;
+			if(notify) Print(COLOR_2 + _peeps[i] + " is not the game.");
 			allIn = false;
 			Delay(Random(3000,5000));
-			Say("/msg *" + _myName + " " + _peeps[i] + " missing.");
-		}
+			if(notify) Say("/msg *" + _myName + " " + _peeps[i] + " missing.");
+		} else _teamSize = _teamSize + 1;
 	}
-	if(!allIn) { return false; }
+	Delay(Random(3000,4000));
+	if(notify) Say("/msg *" + _myName + " Of the " + (_peeps.length - 1) + " peeps, there are " + _teamSize);
+	Delay(300);
+	if(!allIn) return false;
 	return true;
 }
 
