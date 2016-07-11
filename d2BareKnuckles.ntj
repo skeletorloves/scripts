@@ -28,7 +28,7 @@ var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Numb
 									// for keeping track of where we left off during a pause 
 									// placed in: D2Etal/scripts/libs/controlInfo.ntl
 
-var d2B_toggleHelper = "false";			// for engaging helper 	and for testing
+var d2B_toggleHelper = false;			// for engaging helper 	and for testing
 var d2B_usingAFollower = true; 			// using a follower, then make townportals d2B_myTP()
 	
 var _myName = "temp";				// peep to msg of what's a-happenin'
@@ -1141,6 +1141,14 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		{
 			NTP_DoPrecast( true );
 			//Chant( msg2 );
+		}
+		break;
+	case "ummm":							// send peeps to act 1 town and by the portal area
+		if(msg2) {							// 1,2,3,4,5 <--- acts
+			isFollowingEnabled = false;
+			d2B_moveWP();
+			NTTM_CheckAct(msg2);
+			d2B_townMove("portalspot");
 		}
 		break;
 	case "help":
