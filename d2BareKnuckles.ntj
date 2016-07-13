@@ -636,6 +636,17 @@ function d2B_chaos(){									// case: 24
 		return;
 	}
 	
+	NTM_MoveTo(108, 7795, 5295);
+
+	for (i = 0; i < 80; i += 1) {
+		if (GetUnit(NTC_UNIT_MONSTER, 243)) {
+			break;
+		}
+		NTCS_DiaSpam();
+	}
+	NTA_KillMonster(243)) {
+	d2B_clrLvlOC();
+	
 	NTTM_CheckAct(4);
 }
 
