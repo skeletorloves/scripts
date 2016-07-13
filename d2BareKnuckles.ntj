@@ -2972,3 +2972,372 @@ function NT_OpenSealInt(classid) {
 		}
 	} return false;
 }
+function NTA_MonsterStats(unit) {
+	this.name = unit.name;
+	this.x = unit.x;
+	this.y = unit.y;
+	this.gid = unit.gid;
+	this.classid = unit.classid;
+	this.spectype = unit.spectype;
+}
+
+function DistanceSort(unitA, unitB) {
+	if (GetDistance(me.x, me.y, unitA.x, unitA.y) < GetDistance(me.x, me.y, unitB.x, unitB.y)) {
+		return -1;
+	}
+	return 1;
+}
+
+function EntranceSort(unitA, unitB) {
+	if (GetDistance(unitA.x, unitA.y, 7790, 5544) < GetDistance(unitB.x, unitB.y, 7790, 5544)) {
+		return -1;
+	}
+	return 1;
+}
+
+function SealSort(unitA, unitB) {
+	if (GetDistance(unitA.x, unitA.y, 7784, 5310) < GetDistance(unitB.x, unitB.y, 7784, 5310)) {
+		return -1;
+	}
+	return 1;
+}
+
+function SealSortB(unitA, unitB) {
+	if (GetDistance(unitA.x, unitA.y, 7800, 5255) < GetDistance(unitB.x, unitB.y, 7800, 5255)) {
+		return -1;
+	}
+	return 1;
+}
+
+function NTCS_Preattack(name) {
+	var i, n, target, pos, positions;
+
+	target = NTC_FindUnit(1, name, 10);
+
+	switch (me.classid) {
+		case NTC_CHAR_CLASS_AMAZON:
+			break;
+		case NTC_CHAR_CLASS_SORCERESS:
+			break;
+		case NTC_CHAR_CLASS_NECROMANCER:
+			break;
+		case NTC_CHAR_CLASS_PALADIN:
+			if (!target) {
+				return;
+			}
+			positions = [[6, 11], [0, 8], [8, -1], [-9, 2], [0, -11], [8, -8]];
+			for (i = 0; i < positions.length; i += 1) {
+				if (CheckCollision(me.areaid, target.x + positions[i][0], target.y + positions[i][1], 1)) { // check if we can move there
+					NTM_MoveTo(108, target.x + positions[i][0], target.y + positions[i][1]);
+					NTC_PutSkill(NTConfig_AttackSkill[2], NTC_HAND_RIGHT);
+					for (n = 0; n < 8; n += 1) {
+						NTC_CastSkill(NTConfig_AttackSkill[1], 2);
+						target = NTC_FindUnit(1, name, 10);
+						if(target){break;}
+					}
+					break;
+				}
+			}
+			break;
+		case NTC_CHAR_CLASS_BARBARIAN:
+			if (!target || NTConfig_AttackSkill[0] < 0) {
+				return;
+			}
+			pos = me.GetOptimalAttackPos(target.areaid, target.x, target.y, 20, 4);
+			if (pos) {
+				NTM_MoveTo(108, pos[0], pos[1]);
+			}
+			for (i = 0; i < 2; i += 1) {
+				NTC_CastSkill(130, NTC_HAND_RIGHT);
+				NTC_Delay(150);
+			}
+			break;
+		case NTC_CHAR_CLASS_DRUID:
+			break;
+		case NTC_CHAR_CLASS_ASSASSIN:
+			break;
+	}
+}
+function NTT_CheckPotionSafe() {
+	var i, items, hpCheck, mpCheck;
+	items = me.GetItems();
+	if (NTConfig_BeltColType.indexOf("hp") > -1) {
+		for (i = 0; i < items.length; i += 1) {
+			if (!hpCheck && items[i].mode === 2 && items[i].code.indexOf("hp") > -1) {
+				hpCheck = true;
+			}
+		}
+	} else {
+		hpCheck = true;
+	}
+	if (NTConfig_BeltColType.indexOf("mp") > -1) {
+		for (i = 0; i < items.length; i += 1) {
+			if (!mpCheck && items[i].mode === 2 && items[i].code.indexOf("mp") > -1) {
+				mpCheck = true;
+			}
+		}
+	} else {
+		mpCheck = true;
+	}
+	return !(hpCheck && mpCheck);
+}
+
+function NTA_Dodge(target, distance) {
+	var i, j, coordx, coordy, monster, count,
+		maxcount = 999,
+		coords = [],
+		goodCoords = [],
+		monList = [],
+		angles = [45, 90, 135, 180, 225, 270, 305, 360];
+	for (i = 0; i < angles.length; i += 1) {
+		coordx = Math.round((Math.cos(angles[i] * Math.PI / 180)) * distance + target.x);
+		coordy = Math.round((Math.sin(angles[i] * Math.PI / 180)) * distance + target.y);
+		if (CheckCollision(me.areaid, coordx, coordy, 1)) {
+			coords.push([coordx, coordy]);
+		}
+	}
+	if (coords.length === 0) { // no valid positions - don't move
+		return true;
+	}
+	coords.sort(NTA_SortRooms);
+	monster = GetUnit(1);
+	if (monster) {
+		do {
+			if (monster.hp > 0) {
+				monList.push(new NTA_MonsterStats(target));
+			}
+		} while (monster.GetNext());
+	}
+	for (i = 0; i < coords.length; i += 1) {
+		count = 0;
+		for (j = 0; j < monList.length; j += 1) {
+			if (monList[j].hp > 0 && GetDistance(monList[j].x, monList[j].y, coords[i][0], coords[i][1]) < 10) {
+				count += 1;
+			}
+		}
+		if (count < maxcount) {
+			goodCoords = [coords[i][0], coords[i][1]];
+			maxcount = count;
+			if (count === 0) {
+				break;
+			}
+		}
+	}
+	if (goodCoords.length > 0) { // just in case goodCoords is empty (shouldn't happen)
+		if (Math.abs(me.x - goodCoords[0]) < 3 && Math.abs(me.y - goodCoords[1]) < 3) { // close enough
+			return true;
+		}
+		Say("!Dodge " + target.name);
+		NTM_MoveTo(me.areaid, goodCoords[0], goodCoords[1]);
+	}
+	return true;
+}
+
+function NTCS_ClearPosition(range, sortFunc, spectype, classid) {
+	var i, orgx, orgy, monList, ignoreList, target, result,
+		gidAttack = [],
+		dodgeIDs = [310, 362],
+		attackcount = 0;
+	if (NTConfig_AttackSkill[1] < 0 || NTConfig_AttackSkill[3] < 0) {
+		return false;
+	}
+	switch (arguments.length) {
+	case 0:
+		range = 20;
+	case 1:
+		sortFunc = DistanceSort;
+	case 2:
+		spectype = false;
+	case 3:
+		classid = false;
+		break;
+	}
+	orgx = me.x;
+	orgy = me.y;
+	ignoreList = [];
+	MainLoop : while (attackcount < 300) {
+		monList = [];
+		target = NTC_FindUnit(NTC_UNIT_MONSTER);
+		if (target) {
+			do {
+				if (target.IsAttackable()) {
+					if ((me.classid === 1 || me.classid === 2 || me.classid === 6) && NTConfig_Dodge && GetDistance(me, target) < 7 && dodgeIDs.indexOf(target.classid) > -1) {
+						NTA_Dodge(target, 15);
+						continue MainLoop;
+					}
+					if (ignoreList.indexOf(target.gid) < 0 && GetDistance(orgx, orgy, target.x, target.y) <= range) {
+						if (NTA_IsValidMonster(target)) {
+							monList.push(new NTA_MonsterStats(target));
+						} else {
+							ignoreList.push(target.gid);
+						}
+					}
+				}
+			} while (target.GetNext());
+		}
+		if (monList.length === 0) {
+			break;
+		}
+		monList.sort(sortFunc);
+		target = NTC_FindUnit(NTC_UNIT_MONSTER, monList[0].gid);
+		if (target && target.IsAttackable() && OutOfBounds(target)) {
+			result = NTA_Attack(target, attackcount % 30 === 0);
+			switch (result) {
+			case 1:
+				monList.shift();
+				ignoreList.push(target.gid);
+				break;
+			case 2:
+			case 3:
+				if(!gidAttack[target.gid]) {
+					gidAttack[target.gid] = 0;
+				}
+				gidAttack[target.gid] += 1;
+				if (gidAttack[target.gid] > NTConfig_LowMaxAttacks) {
+					monList.shift();
+					ignoreList.push(target.gid);
+				}
+				attackcount += 1;
+				if (target.mode === 0 || target.mode === 12) {
+					NTSI_FastPick();
+				}
+				break;
+			default:
+				return false;
+			}
+		} else {
+			monList.shift();
+			ignoreList.push(target.gid);
+		}
+	}
+	switch (me.classid) {
+		case NTC_CHAR_CLASS_PALADIN:
+			if (attackcount > 2 && (parseInt(me.hp * 100/ me.hpmax) < NTConfig_UseRedemptionHP || parseInt(me.mp * 100 / me.mpmax) < NTConfig_UseRedemptionMP)) {
+				if (NTC_PutSkill(124, NTC_HAND_RIGHT)) {
+					NTC_PingDelay(1000);
+				}
+			}
+			break;
+		case NTC_CHAR_CLASS_NECROMANCER:
+			if (typeof(NTA_SkeletonArmy) === 'function') { // old summon code
+				NTA_SkeletonArmy(NTConfig_SkeletonArmy);
+				NTA_MageArmy(NTConfig_MageArmy);
+				NTA_ReviveArmy(NTConfig_ReviveArmy);
+			} else {
+				NTA_RaiseArmy(); // new summon code
+			}
+			break;
+		case NTC_CHAR_CLASS_SORCERESS:
+			if (me.GetState(30) === 0) {
+				NTC_CastSkill(58, NTC_HAND_RIGHT);
+			}
+			break;
+		case NTC_CHAR_CLASS_BARBARIAN:
+			if (attackcount > 0) {
+				if (typeof(MWL_FindItem) === 'function') { // in case of using muddy's item find (like myself)
+					MWL_FindItem(20);
+				} else if (NTConfig_UseFindItem && !NTA_CheckForCloseMonsters(10)) {
+					NTA_FindItem(NTConfig_FindItemRange);
+				}
+			}
+			break;
+	}
+	if (attackcount > 0) {
+		NTSI_PickItems();
+	}
+	if (NTConfig_OpenChest) {
+		OpenStashes(range);
+	}
+	if (NTT_CheckMerc() && me.areaid == 108) {
+		NTTMGR_VisitTown();
+	}
+	if (NTT_CheckPotionSafe()) {
+		NTTMGR_VisitTown();
+	}
+	if (NTConfig_IdInField) {
+		if (!NTT_CheckSpace(NTConfig_FreeSpaceXY[0], NTConfig_FreeSpaceXY[1])) {
+			NT_FieldID();
+		}
+	} return true;
+}
+
+function NTA_SortRooms(a, b) {
+	if (GetDistance(me.x, me.y, a[0], a[1]) < GetDistance(me.x, me.y, b[0], b[1])) {
+		return -1;
+	}
+	return 1;
+}
+
+function NTCS_DiaSpam(){
+	if(me.classid == NTC_CHAR_CLASS_AMAZON && NTConfig_DiaSpam > 0){
+			return NTC_CastSkill(NTConfig_DiaSpam, 0, 7792, 5291);
+	}
+	else if(me.classid == NTC_CHAR_CLASS_SORCERESS && NTConfig_DiaSpam > 0){
+			return NTC_CastSkill(NTConfig_DiaSpam, 0, 7792, 5291);
+	}
+	else if(me.classid == NTC_CHAR_CLASS_NECROMANCER && NTConfig_DiaSpam > 0){
+			return NTC_CastSkill(NTConfig_DiaSpam, 0, 7792, 5291);
+	}
+	else if(me.classid == NTC_CHAR_CLASS_PALADIN){
+		if(NTConfig_AttackSkill[3] == 112){
+			NTC_PutSkill(NTConfig_AttackSkill[3], NTC_HAND_LEFT);
+			NTC_PutSkill(NTConfig_AttackSkill[4], NTC_HAND_RIGHT);
+			return NTC_CastSkill(NTConfig_AttackSkill[3], 2, 7792, 5291);
+		}
+	}
+	else if(me.classid == NTC_CHAR_CLASS_BARBARIAN  && NTConfig_DiaSpam > 0){
+				return NTC_CastSkill(NTConfig_DiaSpam, 0, 7792, 5291);
+	}
+	else if(me.classid == NTC_CHAR_CLASS_DRUID){
+		if(NTConfig_AttackSkill[3] == 245)
+			return NTC_CastSkill(NTConfig_AttackSkill[3], 2, 7792, 5291);
+	}
+	else if(me.classid == NTC_CHAR_CLASS_ASSASSIN){
+		var _attackPos = [7780, 5288, 7792, 5281, 7803, 5289, 7799, 5302, 7785, 5301];
+		if(NTConfig_UseTraps && !_trapsPreCasted){
+			for(var i=0;i<5;i++) {
+				if(i == 0 || i == 2 || i == 3) // Added delays to prevent trap miscast
+					NTC_Delay(25);
+				if(NTConfig_ActBossTrapSet[i] > 0)
+					NTC_CastSkill(NTConfig_ActBossTrapSet[i], NTC_HAND_RIGHT, _attackPos[i*2],_attackPos[(i*2)+1]);
+			}
+			_trapsPreCasted = true;
+		}
+		if(NTConfig_AttackSkill[3] == 256) {
+			if(me.GetSkillStatus(NTConfig_AttackSkill[3]) != 8) {
+				return NTC_CastSkill(NTConfig_AttackSkill[3], 2, 7792, 5291);
+			}
+		}
+	}
+	Delay(250);
+}
+
+function OutOfBounds(Monst){
+	
+			if(Monst.x < 7787 && Monst.y > 5501)
+				return false;
+			if(Monst.x > 7901 && Monst.y > 5501)
+				return false;				
+			if(Monst.x < 7767 && Monst.y > 5321)
+				return false;
+			if(Monst.x >7821 && Monst.y > 5321)
+				return false;
+			if(Monst.x < 7816 && Monst.x > 7772 && Monst.y > 5452 && Monst.y < 5477)
+				return false;
+			//if(Monst.x < 7792 && Monst.x > 7772 && Monst.y > 5451 && Monst.y < 5432)// location changes ? fix
+				//return false;	
+				
+			//if(Monst.x < 7816 && Monst.x > 7791 && Monst.y < 5412 && Monst.y > 5387)// location changes ? fix
+				//return false;
+			
+			if(Monst.x < 7816 && Monst.x > 7772 && Monst.y < 5387 && Monst.y > 5366)
+				return false;
+				
+			if(Monst.x <7767 && Monst.y < 5267)
+				return false;
+			if(Monst.x >7822 && Monst.y < 5267)
+				return false;
+			if(Monst.y < 5147)
+				return false;
+	return true;
+}
