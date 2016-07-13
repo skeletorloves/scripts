@@ -608,7 +608,7 @@ function d2B_canyon() {								// case: 22
 //
 //	Act VI
 //
-function chaos(){									// case: 24
+function d2B_chaos(){									// case: 24
 	d2B_commonInitSetup(107);
 	if(d2B_usingAFollower) d2B_myTP(false, true);
 	Delay(1000);
