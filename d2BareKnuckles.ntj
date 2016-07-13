@@ -635,7 +635,6 @@ function d2B_chaos(){									// case: 24
 	
 	if (!NT_OpenSealsInt()) {
 		NTC_SendMsgToScript("NTBotGame.ntj", "NT_OpenSealsInt()");
-		return;
 	}
 	
 	NTM_MoveTo(108, 7795, 5295);
@@ -2945,6 +2944,7 @@ function NT_OpenVenomSealInt(type) {
 	if(NTConfig_IdInField){
 		NT_FieldID();
 	}
+	return true;
 }
 
 function NT_OpenSealInt(classid) {
