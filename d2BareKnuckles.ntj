@@ -235,10 +235,12 @@ function d2B_blackmarsh() {							// case: 7
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid,11);	// clear the hole
+	if(d2B_usingAFollower) d2B_myTP(true, false);
 	d2B_takeStairs(11);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid,15);	// clear the hole
+	if(d2B_usingAFollower) d2B_myTP(true, false);
 	d2B_takeStairs(15);
 	d2B_clrLvlOC();
 	
@@ -248,6 +250,7 @@ function d2B_blackmarsh() {							// case: 7
 	
 	for(var i = 0 ; i < 6 ; i++) {
 		d2B_moveToStair(me.areaid,20+i);	// go to the forgotten tower and do tower things
+		if(d2B_usingAFollower) d2B_myTP(true, false);
 		d2B_takeStairs(20+i);
 		NTP_DoPrecast();
 		d2B_clrLvlOC();
