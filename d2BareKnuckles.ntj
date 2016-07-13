@@ -609,6 +609,8 @@ function d2B_canyon() {								// case: 22
 //	Act VI
 //
 function d2B_chaos(){									// case: 24
+	NTConfig_FastChaos = false;
+	NTConfig_LeechSupport = false;
 	d2B_commonInitSetup(107);
 	if(d2B_usingAFollower) d2B_myTP(false, true);
 	Delay(1000);
