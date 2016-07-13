@@ -19,6 +19,7 @@ var leaderPlayerUnit;
 var followRange = 5;
 var attackRange = 5;
 
+
 var d2B_myPause = "";				// a temp place for where retrieved bot pause string is stored
 var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Number(myPause)
 // d2B_storePause(a)				// a 1 as an initializer had been placed into: line 150 of LeaderStarter.ntj
