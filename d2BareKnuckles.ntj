@@ -67,58 +67,19 @@ function NTMain() {
 			Say("/msg *" + _myName + " All peeps in!");
 		}
 		
-		while(d2B_myPauseValue <= 24) { 
+		while(d2B_myPauseValue <= 2) { 
 			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
 			switch(d2B_myPauseValue) {
-				case 1: d2B_bloodmoor();			// blood moore thingy
+				case 1: Say("ummm 1");
+					d2B_chkAct(1);
+					Delay(Random(20000,25000));
+					d2B_blackmarsh();			// black marsh thingy
 					break;
-				case 2: d2B_coldplains();			// cold plains thingy
-					break;
-				case 3: d2B_burialgrounds();		// burial grounds thingy
-					break;
-				case 4: d2B_stonyfield();			// stony field thiny
-					break;
-				case 5: d2B_undergroundpassage();	// underground passage thingy
-					break;
-				case 6: d2B_darkwood();				// dark wood thingy
-					break;
-				case 7: d2B_blackmarsh();			// black marsh thingy
-					break;
-				case 8: d2B_tamohighland();			// tamoe highland thingy
-					break;
-				case 9: d2B_outercloister();		// outer cloister thingy
-					break;
-				case 10: //d2B_barracks();			// barracks thingy
-					Delay(Random(8000,12000));
-					break;
-				case 11: d2B_jail();				// jail thingy
-					Delay(Random(8000,12000));
-					break;
-				case 12: d2B_innercloister();		// inner cloister thingy
-					Delay(Random(8000,12000));
-					break;
-				case 13: d2B_cata();				// catacombs thingy
-					break;
-				case 14: d2B_sewers();				// sewers thingy
-					break;
-				case 15: d2B_rockywaste();			// rocky waste thingy
-					break;
-				case 16: d2B_dryhills();			// dry hills thingy
-					break;
-				case 17: d2B_faroasis();			// far oasis thingy
-					break;
-				case 18: d2B_lostcity();			// lost city thingy
-					break;
-				case 19: d2B_clawvipertemple();		// claw viper temple thingy
-					break;
-				case 20: d2B_haremtoceller();		// harem to celler thingy
-					break;
-				case 21: d2B_arcane();				// arcane thingy
-					break;
-				case 22: d2B_canyon();				// canyon thingy
-					break;
-				case 24: d2B_chaos();				// chaos thingy
+				case 2: Say("ummm 2");
+					d2B_chkAct(2);
+					Delay(Random(20000,25000));
+					d2B_chaos();				// chaos thingy
 					break;
 			}
 			Print(COLOR_4 + "Case mode # " + d2B_myPauseValue + " done.");
@@ -129,7 +90,7 @@ function NTMain() {
 			d2B_myPause = d2B_myPauseValue.toString();
 			d2B_storePause(d2B_myPause);	
 		}
-		if(d2B_myPauseValue > 24) {
+		if(d2B_myPauseValue > 2) {
 			d2B_myPause = "1";
 			d2B_storePause(d2B_myPause);
 			Delay(Random(1500,2500));
@@ -646,7 +607,7 @@ function d2B_chaos(){									// case: 24
 		NTCS_DiaSpam();
 	}
 	NTA_KillMonster(243);
-	d2B_clrLvlOC();
+	Delay(1000);
 	
 	NTTM_CheckAct(4);
 }
@@ -3376,3 +3337,55 @@ function OutOfBounds(Monst){
 				return false;
 	return true;
 }
+/* switch(d2B_myPauseValue) {
+				case 1: d2B_bloodmoor();			// blood moore thingy
+					break;
+				case 2: d2B_coldplains();			// cold plains thingy
+					break;
+				case 3: d2B_burialgrounds();		// burial grounds thingy
+					break;
+				case 4: d2B_stonyfield();			// stony field thiny
+					break;
+				case 5: d2B_undergroundpassage();	// underground passage thingy
+					break;
+				case 6: d2B_darkwood();				// dark wood thingy
+					break;
+				case 7: d2B_blackmarsh();			// black marsh thingy
+					break;
+				case 8: d2B_tamohighland();			// tamoe highland thingy
+					break;
+				case 9: d2B_outercloister();		// outer cloister thingy
+					break;
+				case 10: //d2B_barracks();			// barracks thingy
+					Delay(Random(8000,12000));
+					break;
+				case 11: d2B_jail();				// jail thingy
+					Delay(Random(8000,12000));
+					break;
+				case 12: d2B_innercloister();		// inner cloister thingy
+					Delay(Random(8000,12000));
+					break;
+				case 13: d2B_cata();				// catacombs thingy
+					break;
+				case 14: d2B_sewers();				// sewers thingy
+					break;
+				case 15: d2B_rockywaste();			// rocky waste thingy
+					break;
+				case 16: d2B_dryhills();			// dry hills thingy
+					break;
+				case 17: d2B_faroasis();			// far oasis thingy
+					break;
+				case 18: d2B_lostcity();			// lost city thingy
+					break;
+				case 19: d2B_clawvipertemple();		// claw viper temple thingy
+					break;
+				case 20: d2B_haremtoceller();		// harem to celler thingy
+					break;
+				case 21: d2B_arcane();				// arcane thingy
+					break;
+				case 22: d2B_canyon();				// canyon thingy
+					break;
+				case 24: d2B_chaos();				// chaos thingy
+					break;
+			}
+*/
