@@ -45,7 +45,7 @@ var _myBoBarb = "temp";				// bo barb name
 function NTMain() {
 	
 	d2B_load();   									// initializing & loading thingies
-	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters
+	NTConfig_SkipRegularMonsters = true;			// toggle atk to regular monsters
 	
 	d2B_myPauseValue = Number(d2B_retrievePause());		// retrieve & convert to numerical value the pause value
 	
@@ -69,7 +69,9 @@ function NTMain() {
 		
 		while(d2B_myPauseValue <= 2) { 
 			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
+			Delay(Random(4000,5000));
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
+			Delay(Random(5000,6000));
 			switch(d2B_myPauseValue) {
 				case 1: Say("ummm 1");
 					d2B_chkAct(1);
