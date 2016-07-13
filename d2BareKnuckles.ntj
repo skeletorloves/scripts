@@ -380,7 +380,7 @@ function d2B_cata() {								// case: 13
 //	Act II
 //
 function d2B_sewers() {								// case: 14
-	Delay(Random(150000,25000));
+	Delay(Random(15000,25000));
 	Say("ummm 2");					// send team to act 2 portal area
 	Delay(Random(25000,35000));
 	d2B_moveWP();
@@ -410,6 +410,8 @@ function d2B_sewers() {								// case: 14
 function d2B_rockywaste() {							// case: 15
 	d2B_moveWP();
 	NTTM_OutOfTown2();
+	NTP_DoPrecast(true);
+	d2B_moveToStair(me.areaid, 55);
 	if(d2B_usingAFollower) d2B_myTP(false, true);
 	NTP_DoPrecast(true);
 	d2B_clrLvlOC();
@@ -437,15 +439,29 @@ function d2B_dryhills() {							// case: 16
 	d2B_takeStairs(56);
 	d2B_clrLvlOC();
 	
-	d2B_moveToStair(me.areaid, 57);
+	/* MissedThemStairs = false;
+	if(!NTM_MoveToStair(me.areaid, 57)){
+		MissedThemStairs = true;
+		Print(COLOR_1 + "Wall Bug Found, Trying To Correct");
+		NTM_MoveTo(me.areaid, me.x+15, me.y+15);
+		Print(COLOR_2 + "Success!");
+		
+		d2B_moveToStair(me.areaid, 57);
+		if(d2B_usingAFollower) d2B_myTP(true, false);
+		d2B_takeStairs(57);
+		d2B_clrLvlOC();
+	}
+	if(MissedThemStairs == false && !NTM_TakeStair(57)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeStair()");
+	}
 	if(d2B_usingAFollower) d2B_myTP(true, false);
-	d2B_takeStairs(57);
+	NTP_DoPrecast();
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid, 60);
 	if(d2B_usingAFollower) d2B_myTP(true, false);
 	d2B_takeStairs(60);
-	d2B_clrLvlOC();
+	d2B_clrLvlOC(); */
 	
 	NTTM_CheckAct(2);
 }
@@ -501,7 +517,6 @@ function d2B_clawvipertemple() {					// case: 19
 	}
 	if(MissedThemStairs == false && !NTM_TakeStair(61)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeStair()");
-		return;
 	}
 	if(d2B_usingAFollower) d2B_myTP(true, false);
 	NTP_DoPrecast();
@@ -783,6 +798,7 @@ function d2B_myTP(a,b) {				// (a: false = delay true = no delay) (b: bo true/fa
 	Delay(300);
 	Say(".");
 	if(!a) {Delay(Random(8300,11000));}	// enough delay for all to arrive
+	Delay(Random(4000,5000));
 	if(b) d2B_bo();						// enable barb boer
 	return;
 }
