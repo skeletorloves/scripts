@@ -611,6 +611,8 @@ function d2B_canyon() {								// case: 22
 function d2B_chaos(){									// case: 24
 	NTConfig_FastChaos = false;
 	NTConfig_LeechSupport = false;
+	NTConfig_IdInField = false;
+	
 	d2B_commonInitSetup(107);
 	if(d2B_usingAFollower) d2B_myTP(false, true);
 	Delay(1000);
@@ -644,7 +646,7 @@ function d2B_chaos(){									// case: 24
 		}
 		NTCS_DiaSpam();
 	}
-	NTA_KillMonster(243)) {
+	NTA_KillMonster(243);
 	d2B_clrLvlOC();
 	
 	NTTM_CheckAct(4);
@@ -2929,11 +2931,13 @@ function NT_OpenVenomSealInt(type) {
 	}
 
 	NTCS_Preattack(GetLocaleString(2853));
-	NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 362 : null);
-	
+	if(!NTConfig_EvenFasterChaos){
+		NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 362 : null);
+	}
 	NTA_KillMonster(GetLocaleString(2853)); // Infector of Souls
-	NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 362 : null);
-
+	if(!NTConfig_EvenFasterChaos){
+		NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 362 : null);
+	}
 	if (!NT_OpenSealInt(393)) {
 		return false;
 	}
