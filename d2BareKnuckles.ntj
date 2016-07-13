@@ -66,7 +66,7 @@ function NTMain() {
 			Say("/msg *" + _myName + " All peeps in!");
 		}
 		
-		while(d2B_myPauseValue <= 18) { 
+		while(d2B_myPauseValue <= 24) { 
 			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
 			switch(d2B_myPauseValue) {
@@ -117,6 +117,8 @@ function NTMain() {
 					break;
 				case 22: d2B_canyon();				// canyon thingy
 					break;
+				case 24: d2B_chaos();				// chaos thingy
+					break;
 			}
 			Print(COLOR_4 + "Case mode # " + d2B_myPauseValue + " done.");
 			Delay(Random(1500,2500));
@@ -126,7 +128,7 @@ function NTMain() {
 			d2B_myPause = d2B_myPauseValue.toString();
 			d2B_storePause(d2B_myPause);	
 		}
-		if(d2B_myPauseValue > 18) {
+		if(d2B_myPauseValue > 24) {
 			d2B_myPause = "1";
 			d2B_storePause(d2B_myPause);
 			Delay(Random(1500,2500));
@@ -601,6 +603,40 @@ function d2B_canyon() {								// case: 22
 
 	
 }
+
+//
+//	Act VI
+//
+function chaos(){									// case: 24
+	d2B_commonInitSetup(107);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	Delay(1000);
+	Say("'");										// send the peeps back to town
+	
+	NTM_MoveTo(108, 7790, 5544);
+	NTM_MakeTP();
+	Delay(300);
+	Say(".");
+	
+	NTCS_ClearPosition(30, EntranceSort);
+	Delay(Random(2000.3000));
+	Say(".");
+	var FrontToStarX = [7792,7794,7791,7777,7813,7769,7782,7802,7819,7768,7770,7791,7819, 7804];
+	var FrontToStarY = [5564,5529,5495,5486,5486,5445,5421,5421,5446,5390,5355,5355,5376, 5340];
+	for (var i = 0; i < FrontToStarX.length; i += 1) {
+		NTM_MoveTo(108, FrontToStarX[i], FrontToStarY[i]);
+		NTCS_ClearPosition(35, EntranceSort);
+	}
+	
+	if (!NT_OpenSealsInt()) {
+		NTC_SendMsgToScript("NTBotGame.ntj", "NT_OpenSealsInt()");
+		return;
+	}
+	
+	NTTM_CheckAct(4);
+}
+
+
 
 // ________________________________________________________
 //  goal functions
@@ -1233,6 +1269,8 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			if(!TakeLeaderTP())
 				Town();
 		}
+		Delay(Random(1000,2000));
+		d2B_townMove("portalspot");
 		break;
 	case "gold":
 		if(!isBusy)
@@ -2736,4 +2774,200 @@ function _classid(i) {
 		case 5: return "Druid";
 		case 6: return "Assassin";
 	} return;
+}
+
+//
+// act iv functions
+//
+function NT_OpenSealsInt() {
+	var _unit;
+	var _result;
+
+	_unit = GetPresetUnits(108, NTC_UNIT_OBJECT, 396);
+
+	if (!_unit) {
+		return false;
+	}
+	if (_unit[0].roomy * 5 + _unit[0].y == 5275) {
+		_result = NT_OpenVizierSealInt(1);
+	} else {
+		_result = NT_OpenVizierSealInt(2);
+	}
+	_unit = GetPresetUnits(108, NTC_UNIT_OBJECT, 394);
+	if (_unit[0].roomx * 5 + _unit[0].x == 7773) {
+		_result = NT_OpenDeSeisSealInt(1);
+	} else {
+		_result = NT_OpenDeSeisSealInt(2);
+	}
+	if (!_result) {
+		return false;
+	}
+	NTCS_ClearPosition(40, SealSortB);
+	
+	_unit = GetPresetUnits(108, NTC_UNIT_OBJECT, 392);
+	if (!_unit) {
+		return false;
+	}
+	if (_unit[0].roomx * 5 + _unit[0].x == 7893) {
+		_result = NT_OpenVenomSealInt(1);
+	} else {
+		_result = NT_OpenVenomSealInt(2);
+	}
+	NTP_DoPrecast(true);
+	return _result;
+}
+
+function NT_OpenVizierSealInt(type) {
+	var i;
+
+	if (type === 1) {
+		var vx = [7767,7756,7744,7747,7750,7741,7729,7720,7720,7721,7719,7712,7700,7687,7676, 7666];
+		var vy = [5292,5284,5275,5290,5303,5310,5314,5312,5301,5288,5273,5292,5294,5294,5292, 5307];
+	} else {
+		var vx = [7768,7755,7741,7733,7723,7714,7707,7680,7666, 7655];
+		var vy = [5289,5295,5282,5291,5300,5282,5315,5310,5311, 5282];
+	}
+	for (i = 0; i < vx.length; i += 1) {
+		NTM_MoveTo(108, vx[i], vy[i]);
+		NTCS_ClearPosition(30, SealSort);
+	}
+	if (!NT_OpenSealInt(395) || !NT_OpenSealInt(396)) {
+		return false;
+	}
+	if (type == 1) {
+		NTM_MoveTo(108, 7691, 5292);
+	} else {
+		NTM_MoveTo(108, 7695, 5316);
+	}
+
+	NTCS_Preattack(GetLocaleString(2851));
+	NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 306 : null);
+	
+	NTA_KillMonster(GetLocaleString(2851)); // Grand Vizier of Chaos
+	NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 306 : null);
+	
+	//PubSay("Vizier dead.");
+
+	if(NTConfig_IdInField){
+		NT_FieldID();
+	} return true;
+}
+
+function NT_OpenDeSeisSealInt(type) {
+	var i, n;
+
+	if (type === 1) {
+		var sx = [7791,7783,7800,7809,7785,7773,7773,7776,7794,7811,7817,7815,7798]; // Shape of "2"
+		var sy = [5265,5256,5247,5232,5230,5222,5212,5194,5194,5193,5177,5157,5155];
+	} else {
+		var sx = [7786,7801,7786,7787,7810,7811,7810,7790,7774,7773,7794]; // shape of an "S" or "5"
+		var sy = [5263,5249,5245,5227,5233,5215,5198,5194,5181,5156,5154];
+	}
+	for (var i = 0; i < sx.length; i += 1) {
+		NTM_MoveTo(108, sx[i], sy[i]);
+		NTCS_ClearPosition(30, type === 1 ? SealSort : SealSortB);
+	}
+	
+	if (!NT_OpenSealInt(394)) {
+		return false;
+	}
+	if (type == 1) {
+		NTM_MoveTo(108, 7797, 5201);
+		for (i = 0; i < 3; i += 1) {
+			NTM_TeleportTo(7794, 5227);
+		}
+	} else {
+		NTM_MoveTo(108, 7798, 5186);
+	}
+
+	NTCS_Preattack(GetLocaleString(2852));
+	NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 310 : null);
+	
+	NTA_KillMonster(GetLocaleString(2852)); // Lord De Seis
+	NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 310 : null);
+	
+	//PubSay("De Seis dead.");
+
+	if(NTConfig_IdInField){
+		NT_FieldID();
+	} return NTM_MoveTo(108, 7800, 5255);
+}
+
+function NT_OpenVenomSealInt(type) {
+	if (type === 1) {
+		var IX = [7825,7827,7834,7845,7855,7852,7875,7896,7917]; // shape of a "t"
+		var IY = [5293,5276,5291,5315,5301,5278,5293,5295,5291];
+	} else {
+		var IX = [7822,7826,7832,7850,7868,7877,7891,7907,7927,7932]; // looks like a hook
+		var IY = [5297,5278,5307,5278,5297,5276,5276,5276,5279,5298];
+	}
+	for (var i = 0; i < IX.length; i += 1) {
+		NTM_MoveTo(108, IX[i], IY[i]);
+		NTCS_ClearPosition(30, type === 1 ? SealSort : SealSortB);
+	}
+	if (!NT_OpenSealInt(392)) {
+		return false;
+	}
+	if (type === 1) {
+		type = 1; // temp
+	} else {
+		NTM_MoveTo(108, 7933, 5299);
+	}
+
+	NTCS_Preattack(GetLocaleString(2853));
+	NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 362 : null);
+	
+	NTA_KillMonster(GetLocaleString(2853)); // Infector of Souls
+	NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 362 : null);
+
+	if (!NT_OpenSealInt(393)) {
+		return false;
+	}
+	//PubSay("Infector dead.");
+
+	if(NTConfig_IdInField){
+		NT_FieldID();
+	}
+}
+
+function NT_OpenSealInt(classid) {
+	var warn;
+	switch (classid) {
+	case 396:
+	case 394:
+	case 392:
+		warn = true;
+		break;
+	default:
+		warn = false;
+		break;
+	}
+	var i, seal;
+	for (i = 0; i < 5; i += 1) {
+		NTM_MoveToPresetUnit(108, 2, classid, classid === 394 ? 5 : 2, classid === 394 ? 5 : 0);
+		seal = NTC_FindUnit(NTC_UNIT_OBJECT, classid);
+		if (!seal) {
+			return false;
+		}
+		if (seal.mode) { // for pubbies
+			if (warn) {
+				PubSay(NTConfig_CS_SealBasher);
+			}
+			return true;
+		}
+		warn = false;
+		NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, seal);
+		NTC_Delay(classid === 394 ? 1000 : 500);
+
+		if (!seal.mode) {
+			if (classid === 394 && CheckCollision(seal.x + 15, seal.y)) { // de seis optimization
+				NTM_MoveTo(108, seal.x + 15, seal.y);
+			} else {
+				NTM_MoveTo(108, seal.x - 5, seal.y - 5);
+			}
+			NTC_Delay(500);
+		} else {
+			return true;
+		}
+	} return false;
 }
