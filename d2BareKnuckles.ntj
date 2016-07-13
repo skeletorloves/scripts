@@ -2931,16 +2931,15 @@ function NT_OpenVenomSealInt(type) {
 	}
 
 	NTCS_Preattack(GetLocaleString(2853));
-	if(!NTConfig_EvenFasterChaos){
-		NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 362 : null);
-	}
+	NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 362 : null);
+	
 	NTA_KillMonster(GetLocaleString(2853)); // Infector of Souls
-	if(!NTConfig_EvenFasterChaos){
-		NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 362 : null);
-	}
-	if (!NT_OpenSealInt(393)) {
-		return false;
-	}
+	NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 362 : null);
+	
+	if(d2B_usingAFollower) d2B_myTP(true, true);
+	Delay(1000);
+	
+	NT_OpenSealInt(393);
 	//PubSay("Infector dead.");
 
 	if(NTConfig_IdInField){
