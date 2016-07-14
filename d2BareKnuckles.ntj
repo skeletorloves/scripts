@@ -65,7 +65,7 @@ function NTMain() {
 			Say("/msg *" + _myName + " All peeps in!");
 		}
 		
-		while(d2B_myPauseValue <= 2) { 
+		while(d2B_myPauseValue <= 3) { 
 			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
 			Delay(Random(4000,5000));
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
@@ -98,7 +98,7 @@ function NTMain() {
 			d2B_myPause = d2B_myPauseValue.toString();
 			d2B_storePause(d2B_myPause);	
 		}
-		if(d2B_myPauseValue > 2) {
+		if(d2B_myPauseValue > 3) {
 			d2B_myPause = "1";
 			d2B_storePause(d2B_myPause);
 			Delay(Random(1500,2500));
