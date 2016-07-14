@@ -1235,7 +1235,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			isFollowingEnabled = false;
 			Delay(Random(1000,10000));
 			NTTM_CheckAct(Number(msg2));
-			Delay(Random(4000,60000));
+			Delay(Random(4000,6000));
 			d2B_townMove("portalspot");
 		}
 		break;
