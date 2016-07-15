@@ -93,6 +93,10 @@ function NTMain() {
 					d2B_chkAct(5);
 					d2B_frigidhighlands();				// figid highland thingy
 					break;
+				case 5: NTConfig_SkipRegularMonsters = false;
+					d2B_chkAct(5);
+					d2B_worldstonekeep();				// world stone keep thingy
+					break;
 			}
 			Print(COLOR_4 + "Case mode # " + d2B_myPauseValue + " done.");
 			Delay(Random(1500,2500));
@@ -102,7 +106,7 @@ function NTMain() {
 			d2B_myPause = d2B_myPauseValue.toString();
 			d2B_storePause(d2B_myPause);	
 		}
-		if(d2B_myPauseValue > 4) {
+		if(d2B_myPauseValue > 5) {
 			d2B_myPause = "1";
 			d2B_storePause(d2B_myPause);
 			Delay(Random(1500,2500));
@@ -580,7 +584,7 @@ function d2B_canyon() {								// case: 22
 
 //
 //	Act VI
-function d2B_chaos(){									// case: 24
+function d2B_chaos(){								// case: 24
 	NTConfig_FastChaos = false;
 	NTConfig_LeechSupport = false;
 	NTConfig_IdInField = false;
@@ -643,18 +647,56 @@ function d2B_frigidhighlands() {
 	NTP_DoPrecast(true);
 	Delay(300);
 	Say("'");
-	Delay(300);
+	Delay(Random(2300,4000));
 	
 	NTM_MoveTo(me.areaid, 3750, 5090);
 	d2B_team(true);
 	d2B_clrLvlOC();
 	d2B_team(false);
 
-	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT,60));		// head to Abaddon enterance
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT,60);		// head to Abaddon enterance
+	NTM_TakeUnit(NTC_UNIT_OBJECT,60);
 	if(d2B_usingAFollower) d2B_myTP(false, true);
-	NTM_TakeUnit(NTC_UNIT_OBJECT,60));
 	
 	d2B_clrLvlOC();
+	d2B_team(false);
+	
+	NTTM_CheckAct(5);
+}
+function d2B_worldstonekeep() {
+	prewavespot = [15092, 5040];	// from: D2Etal/scripts/NTRush/rush_configs/Sorceress.ntl 
+	
+	d2B_commonInitSetup(129);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	Say("'");
+	Delay(Random(1500,2000));
+	
+	NTM_MoveToStair(me.areaid, 131,0,0,false);
+	d2B_takeStairs(130);
+	NTM_MoveToStair(me.areaid, 131,0,0,clearpath);
+	NTM_TakeStair(131);
+	
+	NTM_MoveTo(me.areaid, 15094, 5039, 1, true);				// orig(15112, 5068)
+	NTM_MakeTP();
+	Delay(300);
+	
+	/*if(NTConfig_CheckSoulKillers && NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(2904))) {
+		NTM_UsePortal("BluePortal", 109, me.charname);
+		Delay(300);
+		Print(COLOR_4 + "Oops... Souls & dolls!");
+		Delay(Random(4000,5000));
+		Say("/msg *" + _myName + " Oops... Souls & dolls!");
+		Delay(300);
+		NTTM_CheckAct(5);
+		return;
+	}*/
+
+	Say(".");
+	Delay(300);
+	NT_ClearThroneInt();
+	
+	d2B_throneWaves();
+	d2B_baal();
 	
 	NTTM_CheckAct(5);
 }
@@ -861,8 +903,9 @@ function d2B_myTP(a,b) {				// (a: false = delay true = no delay) (b: bo true/fa
 function d2B_team(a) {					// (a: false = send team to town true: bring team
 	NTM_MakeTP();
 	Delay(400);
-	if(a) Say(".");
+	if(a) Say(".");	
 	else if(!a) Say("'");
+	Delay(300);
 	return;
 }
 function d2B_bo() {						//for instructing a bo barb
@@ -3428,6 +3471,282 @@ function OutOfBounds(Monst){
 		return false;
 	return true;
 }
+//
+// act v functions
+//
+function NT_ClearThroneInt(){
+	var _attackpos = [15112, 5068, 15075, 5065, 15114, 5045, 15114, 5012, 15095, 5024, 15078, 5013, 15092, 5040];
+	for(var i = 0 ; i < _attackpos.length ; i += 2){
+		NTM_MoveTo(me.areaid, _attackpos[i], _attackpos[i+1]);
+		NTA_ClearPosition(25, true, 2);
+	}
+	return;
+}
+function d2B_throneWaves() {
+	while(1){
+		NTC_Delay(100);
+		NTM_MoveTo(me.areaid, prewavespot[0], prewavespot[1]);
+		if(me.GetState(2))
+			NTC_PutSkill(109, NTC_HAND_RIGHT);
+		for(i = 0 ; i < 6 ; i++){
+			_wave = NT_ThroneCheckInt();
+			if(_wave > 0)
+				break;
+			NTC_Delay(500);
+		}
+		_starttick = GetTickCount();
+		while(_wave == 0){
+			if(!NT_ThronePreAttackInt())
+				NTC_Delay(200);
+			if(GetTickCount()-_starttick > 17000){
+				NT_ClearThroneInt();
+				_starttick = GetTickCount();
+			}
+			_wave = NT_ThroneCheckInt();
+		}
+		switch(_wave){
+			case 1:
+				if(NTConfig_PreWaveTele){
+					NTM_TeleportTo(me.x+1, me.y+3);
+                }
+				NTA_ClearPosition(40, true, 2);
+				NTP_DoPrecast(true);
+				break;
+			case 2:
+				if(NTConfig_PreWaveTele){
+					NTM_TeleportTo(me.x+1, me.y+3);
+                }
+				if(NTConfig_HolyBoltBaal){
+					if (me.classid == NTC_CHAR_CLASS_PALADIN && NTConfig_AttackSkill[5] == 101)
+						achmel();
+				}
+				NTA_ClearPosition(40, true, 2);
+				if(NTConfig_Wave2PSNCheck && me.GetState(2) != -1){
+					NTTMGR_VisitTown();
+				}
+				break;
+			case 3:
+				if(NTConfig_PreWaveTele){
+					NTM_TeleportTo(me.x+1, me.y+3);
+                }
+				NTA_ClearPosition(40, true, 2);
+				if(NTConfig_Wave3Move > 0){
+					NT_CheckHydraInt();
+				}
+				else
+					NTC_Delay(3000);
+				break;
+			case 4:
+				if(NTConfig_PreWaveTele){
+					NTM_TeleportTo(me.x+1, me.y+3);
+                }
+				NTA_ClearPosition(40, true, 2);
+				break;
+			case 5:
+				if(NTConfig_PreWaveTele){
+					NTM_TeleportTo(me.x+1, me.y+3);
+                }
+				NTA_ClearPosition(40, true, 2);
+				break;
+			default:
+				if(NTConfig_PreWaveTele){
+					NTM_TeleportTo(me.x+1, me.y+3);
+                }
+				NTA_ClearPosition(40, true, 2);
+				break;
+		}
+		if(_wave != 0) // Need to force a one time cast/wave Assassin only
+			_trapsPreCasted = false;
+		if(_wave == 5)
+			break;
+	}
+	return;
+}	
+function d2B_baal() {
+	var _portal;
+	NTM_MoveTo(me.areaid, 15092, 5010);
+	NTP_DoPrecast(true);
+	
+	for(var i = 0; i < 60; i++) {
+		Delay(500);
+		if(!NTC_FindUnit(NTC_UNIT_MONSTER, 543)) {
+			break;
+		}
+		if(i >= 58) {
+			Say("looks like baal is bugged");
+		}
+	}
+	_portal = NTC_FindUnit(NTC_UNIT_OBJECT, 563, 1);
+	if(!_portal){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTC_FindUnit()");
+		return;
+	}
+	if(!NTM_UsePortal("Portal", 132, null, _portal)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_UsePortal()");
+		return;
+	}
+	NTM_MoveTo(me.areaid, 15138, 5916);
+	if(!NTA_KillMonster(544)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTA_KillMonster()");
+		return;
+	}
+	NTSI_PickItems();
+	
+	return;
+}
+function NT_ClearThroneInt(){
+	var _attackpos = [15112, 5068, 15075, 5065, 15114, 5045, 15114, 5012, 15095, 5024, 15078, 5013, 15092, 5040];
+	for(var i = 0 ; i < _attackpos.length ; i += 2){
+		NTM_MoveTo(me.areaid, _attackpos[i], _attackpos[i+1]);
+		NTA_ClearPosition(25, true, 2);
+	}
+}
+
+function NT_ThroneCheckInt(){
+	var _monster;
+	if(!NTC_FindUnit(NTC_UNIT_MONSTER, 543))
+		return 5;
+	_monster = NTC_FindUnit(NTC_UNIT_MONSTER);
+	if(_monster){
+		do{
+			if(NTA_IsValidMonster(_monster)){
+				if(_monster.classid == 23 || _monster.classid == 62)
+					return 1;
+				if(_monster.classid == 105 || _monster.classid == 381)
+					return 2;
+				if(_monster.classid == 557)
+					return 3;
+				if(_monster.classid == 558)
+					return 4;
+				if(_monster.classid == 571)
+					return 5;
+			}
+		} while(_monster.GetNext());
+	}
+	return 0;
+}
+
+function NT_ThronePreAttackInt(){
+	if(me.classid == NTC_CHAR_CLASS_SORCERESS){
+		if(NTConfig_PreWaveSpam > 0){
+			if(poscount == 1){
+				poscount = 2;
+				return NTC_CastSkill(NTConfig_PreWaveSpam, 0, KBLSpamPos[0], KBLSpamPos[1]);
+			}
+			else if(poscount == 2){
+				poscount = 3;
+				return NTC_CastSkill(NTConfig_PreWaveSpam, 0, KBLSpamPos[2], KBLSpamPos[3]);
+			}
+			else{
+				poscount = 1;
+				return NTC_CastSkill(NTConfig_PreWaveSpam, 0, KBLSpamPos[4], KBLSpamPos[5]);
+			}
+		}
+	}
+	else if(me.classid == NTC_CHAR_CLASS_DRUID){
+		if(NTConfig_AttackSkill[3] == 245){
+			if(!DruidPreAtt[2]){
+				return NTC_CastSkill(NTConfig_AttackSkill[3], 2, DruidPreAtt[0], DruidPreAtt[1]);
+			}
+			else{
+				if(poscount == 1){
+					poscount = 2;
+					return NTC_CastSkill(NTConfig_AttackSkill[3], 2, DruidPreAtt[0], DruidPreAtt[1]);
+				}
+				else if(poscount == 2){
+					poscount = 3;
+					return NTC_CastSkill(NTConfig_AttackSkill[3], 2, (DruidPreAtt[0]+3), DruidPreAtt[1]);
+				}
+				else{
+					poscount = 1;
+					return NTC_CastSkill(NTConfig_AttackSkill[3], 2, (DruidPreAtt[0]+5), DruidPreAtt[1]);
+				}
+			}
+		}
+	}
+	else if(me.classid == NTC_CHAR_CLASS_NECROMANCER){
+		if(NTConfig_PreWaveSpam > 0)
+			return NTC_CastSkill(NTConfig_PreWaveSpam, _NTA_SkillHand[NTConfig_PreWaveSpam], NecroPreAtt[0], NecroPreAtt[1]);
+	}
+	else if(me.classid == NTC_CHAR_CLASS_PALADIN){
+		if(NTConfig_AttackSkill[3] == 112){
+			NTC_PutSkill(NTConfig_AttackSkill[3], NTC_HAND_LEFT);
+			NTC_PutSkill(NTConfig_AttackSkill[4], NTC_HAND_RIGHT);
+			return NTC_CastSkill(NTConfig_AttackSkill[3], 2, 15092, 5028);
+		}
+	}
+	else if(me.classid == NTC_CHAR_CLASS_ASSASSIN){
+		var _attackPos = [15088,5023,15087,5032,15098,5022,15101,5034,15094,5029];
+		if(NTConfig_UseTraps && !_trapsPreCasted){
+			for(var i=0;i<5;i++) {
+				if(i == 0 || i == 2 || i == 3) // Added delays to prevent trap miscast
+					NTC_Delay(25);
+				if(NTConfig_TrapSet[i] > 0)
+					NTC_CastSkill(NTConfig_TrapSet[i], NTC_HAND_RIGHT, _attackPos[i*2],_attackPos[(i*2)+1]);
+			}
+			_trapsPreCasted = true;
+		}
+		if(NTConfig_AttackSkill[3] == 256)
+			if(me.GetSkillStatus(NTConfig_AttackSkill[3]) != 8)
+				return NTC_CastSkill(NTConfig_AttackSkill[3], 2, 15093, 5030);
+	}
+	return false;
+}
+
+function NT_CheckHydraInt(){
+	var _hydra1, _hydra2, _hydra3;
+	_hydra1 = NTC_FindUnit(NTC_UNIT_MONSTER, 351);
+	_hydra2 = NTC_FindUnit(NTC_UNIT_MONSTER, 352);
+	_hydra3 = NTC_FindUnit(NTC_UNIT_MONSTER, 353);
+	if((_hydra1 && _hydra1.GetStat(172) != 2 && _hydra1.GetState(105))
+	  || (_hydra2 && _hydra2.GetStat(172) != 2 && _hydra2.GetState(105))
+	  || (_hydra3 && _hydra3.GetStat(172) != 2 && _hydra3.GetState(105))){
+		if(NTConfig_Wave3Move == 1)
+			NTM_MoveTo(me.areaid, 15112, 5004); // right side
+		else if(NTConfig_Wave3Move == 2)
+			NTM_MoveTo(me.areaid, 15073, 5002); // left side
+		if(me.GetState(2))
+			NTC_PutSkill(109, NTC_HAND_RIGHT);
+		NTC_PingDelay(3000);
+	}
+}
+
+function achmel(){
+	var x = 0;
+	var _holdTargetHp = 0;
+	var _achmel = NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(21852));
+	while (_achmel && _achmel.hp > 0){
+		_holdTargetHp = _achmel.hp;
+		if (NTConfig_AttackSkill[6] > -1){ NTC_PutSkill(NTConfig_AttackSkill[6], NTC_HAND_RIGHT);}
+		for(var i = 0; i < 5 ; i++){
+			NTC_CastSkill(NTConfig_AttackSkill[5], NTC_HAND_LEFT, _achmel);
+		}
+		if(_holdTargetHp <= _achmel.hp && NTConfig_WalkAround) {
+			x++;
+			if(x % 2 == 0)
+				NTM_WalkTo(me.x+10, me.y);
+			else
+				NTM_WalkTo(me.x-10, me.y);
+		}
+	}
+	var _company = NTC_FindUnit(NTC_UNIT_MONSTER, 105);
+	do{
+		while (_company != null && _company.hp >0 && !_company.GetState(53) && !_company.GetState(96)){
+			_holdTargetHp = _company.hp;
+			for(var i = 0; i < 5 ; i++){
+				NTC_CastSkill(NTConfig_AttackSkill[5], NTC_HAND_LEFT, _company);
+			}
+			if(_holdTargetHp <= _company.hp && NTConfig_WalkAround) {
+				x++;
+				if(x % 2 == 0)
+					NTM_WalkTo(me.x+10, me.y);
+				else
+					NTM_WalkTo(me.x-10, me.y);
+			}
+		}
+	} while (_company && _company.GetNext());
+}
+
 /* switch(d2B_myPauseValue) {
 				case 1: d2B_bloodmoor();			// blood moore thingy
 					break;
