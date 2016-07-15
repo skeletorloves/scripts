@@ -65,7 +65,7 @@ function NTMain() {
 			Say("/msg *" + _myName + " All peeps in!");
 		}
 		
-		while(d2B_myPauseValue <= 3) { 
+		while(d2B_myPauseValue <= 4) { 
 			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
 			Delay(Random(4000,5000));
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
@@ -87,7 +87,11 @@ function NTMain() {
 					NTConfig_SkipRegularMonsters = true;
 					d2B_chkAct(5);
 					Delay(Random(20000,25000));
-					d2B_bloodyfoothills();				// bloody
+					d2B_bloodyfoothills();				// bloody foothills thingy
+					break;
+				case 4:	NTConfig_SkipRegularMonsters = false; 
+					d2B_chkAct(5);
+					d2B_frigidhighlands();				// figid highland thingy
 					break;
 			}
 			Print(COLOR_4 + "Case mode # " + d2B_myPauseValue + " done.");
@@ -98,7 +102,7 @@ function NTMain() {
 			d2B_myPause = d2B_myPauseValue.toString();
 			d2B_storePause(d2B_myPause);	
 		}
-		if(d2B_myPauseValue > 3) {
+		if(d2B_myPauseValue > 4) {
 			d2B_myPause = "1";
 			d2B_storePause(d2B_myPause);
 			Delay(Random(1500,2500));
@@ -135,7 +139,6 @@ function NTMain() {
 
 //
 //	Act I
-//
 function d2B_bloodmoor() {							// case: 1
 	d2B_moveWP();
 	d2B_gotoWP(1);
@@ -353,7 +356,6 @@ function d2B_cata() {								// case: 13
 
 //
 //	Act II
-//
 function d2B_sewers() {								// case: 14
 	Delay(Random(15000,25000));
 	Say("ummm 2");					// send team to act 2 portal area
@@ -564,7 +566,6 @@ function d2B_canyon() {								// case: 22
 }
 //
 //	Act III
-//
  function d2B_spiderforest() {						// case: 23
 	d2B_moveWP();
 	d2B_gotoWP(75);
@@ -579,7 +580,6 @@ function d2B_canyon() {								// case: 22
 
 //
 //	Act VI
-//
 function d2B_chaos(){									// case: 24
 	NTConfig_FastChaos = false;
 	NTConfig_LeechSupport = false;
@@ -625,9 +625,8 @@ function d2B_chaos(){									// case: 24
 
 //
 //	Act V
-//
-function d2B_bloodfoothills() {
-	d2B_commonInitSetup(11);
+function d2B_bloodyfoothills() {
+	d2B_commonInitSetup(111);
 	if(d2B_usingAFollower) d2B_myTP(false, true);
 	NTP_DoPrecast(true);
 
@@ -636,6 +635,29 @@ function d2B_bloodfoothills() {
 
 	NTTM_CheckAct(5);
 }	
+function d2B_frigidhighlands() {
+	// check to see if a d2B_clrLvlOC() cal will kill everything
+	
+	d2B_commonInitSetup(111);
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTP_DoPrecast(true);
+	Delay(300);
+	Say("'");
+	Delay(300);
+	
+	NTM_MoveTo(me.areaid, 3750, 5090);
+	d2B_team(true);
+	d2B_clrLvlOC();
+	d2B_team(false);
+
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT,60));		// head to Abaddon enterance
+	if(d2B_usingAFollower) d2B_myTP(false, true);
+	NTM_TakeUnit(NTC_UNIT_OBJECT,60));
+	
+	d2B_clrLvlOC();
+	
+	NTTM_CheckAct(5);
+}
 // ________________________________________________________
 //  goal functions
 //
@@ -687,7 +709,7 @@ function d2B_rPeepsInGame(notify) {					// return (true, _teamSize) : _teamSize 
 		} else _teamSize = _teamSize + 1;
 	}
 	Delay(Random(3000,4000));
-	if(notify) Say("/msg *" + _myName + " Of the " + (_peeps.length -1) + " extra peeps, there are " + (_peeps.length -_teamSize));
+	if(notify) Say("/msg *" + _myName + " Of the " + (_peeps.length - 1) + " extra peeps, there are " + (_teamSize));
 	Delay(300);
 	if(!allIn) return false;
 	return true;
@@ -805,7 +827,7 @@ function d2B_takeStairs(a) {
 }
 function d2B_clrLevel() {
 	if(!NTA_ClearLevel(true)){						// true: pickit enabled
-		NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
+		return;
 	}
 	return;
 }
@@ -834,6 +856,13 @@ function d2B_myTP(a,b) {				// (a: false = delay true = no delay) (b: bo true/fa
 	if(!a) {Delay(Random(8300,11000));}	// enough delay for all to arrive
 	Delay(Random(4000,5000));
 	if(b) d2B_bo();						// enable barb boer
+	return;
+}
+function d2B_team(a) {					// (a: false = send team to town true: bring team
+	NTM_MakeTP();
+	Delay(400);
+	if(a) Say(".");
+	else if(!a) Say("'");
 	return;
 }
 function d2B_bo() {						//for instructing a bo barb
