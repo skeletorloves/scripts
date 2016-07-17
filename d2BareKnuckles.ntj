@@ -595,20 +595,10 @@ function d2B_worldstonekeep() {
 	NTM_MoveToStair(me.areaid, 131,0,0,false);
 	NTM_TakeStair(131);
 	
-	NTM_MoveTo(me.areaid, 15094, 5039);				// orig(15112, 5068, 1, true)
+	NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
 	NTM_MakeTP();
-	Delay(300);
 	
-	/*if(NTConfig_CheckSoulKillers && NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(2904))) {
-		NTM_UsePortal("BluePortal", 109, me.charname);
-		Delay(300);
-		Print(COLOR_4 + "Oops... Souls & dolls!");
-		Delay(Random(4000,5000));
-		Say("/msg *" + _myName + " Oops... Souls & dolls!");
-		Delay(300);
-		NTTM_CheckAct(5);
-		return;
-	}*/
+	if(d2B_dollsoulChk()) return;
 
 	Say(".");
 	Delay(300);
@@ -616,11 +606,14 @@ function d2B_worldstonekeep() {
 	
 	d2B_throneWaves();
 	Delay(300);
+	
+	if(d2B_usingAFollower) d2B_myTP(false, true, true, false);
+	Delay(2000);
 	d2B_team(false);
 	Delay(Random(2300,4000));
 	
 	d2B_baal();
-	Delay(750);
+	Delay(Random(3000,4000));
 	
 	d2B_chkAct2(true,5);
 }
@@ -3566,7 +3559,7 @@ function d2B_baal() {
 	NTM_MoveTo(me.areaid, 15138, 5916);
     d2B_team(true);
 	
-	if(!NTA_KillMonster(544)){
+	if(!d2B_killBaal(544)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTA_KillMonster()");
 		return;
 	}
@@ -3725,6 +3718,59 @@ function achmel(){
 			}
 		}
 	} while (_company && _company.GetNext());
+}
+function d3B_dollsoulChk() {
+	// GetLocaleString(2903) = undead stygian doll | GetLocaleString(2904) = undead soul killer
+	if(NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(2904)) || NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(2903))) {
+		NTM_UsePortal("BluePortal", 109, me.charname);
+		Delay(300);
+		Print(COLOR_4 + "Oops... Souls & dolls!");
+		Delay(Random(4000,5000));
+		Say("/msg *" + _myName + " Oops... Souls & dolls!");
+		Delay(300);
+		NTTM_CheckAct(5);
+		Delay(Random(3000,5000));
+		Say("/msg *" + _myName + " Taking a 33s brk due to dolls.");
+		Delay(Random(30000,35000));
+		return true;
+	}
+	return false;
+}
+function d2B_killBaal(classid) {
+	var _target;
+
+	if (NTConfig_AttackSkill[1] < 0) { return false; }
+
+	_target = NTC_FindUnit(NTC_UNIT_MONSTER, classid, 5);
+
+	if (!_target) { return false; }
+
+	if (_target.IsAttackable()) {
+		var _attackcount = 0;
+		while (_attackcount < 300 && NTA_IsValidMonster(_target)) {
+			if (NTA_Attack(_target, (_attackcount % 30) == 0) < 2) {
+				break;
+			}
+			if(_attackcount == 0) {
+				if(NTTMGR_CheckCurse(NTConfig_CheckSelfSafe, NTConfig_CheckMercSafe, true)) {
+					NTTMGR_VisitTown();
+				} else if( NTTMGR_CheckSafe(NTConfig_CheckSelfSafe, NTConfig_CheckMercSafe, true)){
+					NTTMGR_VisitTown();
+				}
+			}
+			if((_attackcount % 5) == 0) {
+				if(NTTMGR_CheckCurse(NTConfig_CheckSelfSafe, NTConfig_CheckMercSafe, true)) {
+					NTTMGR_VisitTown();
+				} else if( NTTMGR_CheckSafe(NTConfig_CheckSelfSafe, NTConfig_CheckMercSafe, true)){
+					NTTMGR_VisitTown();
+				}
+			}
+			NTM_MoveTo(me.areaid, _target.x, _target.y)
+			_attackcount++;
+			_sorcattack++;
+		}
+	}
+	return (_target.hp <= 0 || _target.mode == 0 || _target.mode == 12);
 }
 //
 // switchies for switching
