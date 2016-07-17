@@ -2,7 +2,8 @@
 // d2Barebones.ntj for script shrinking
 //
 
-var d2B_toggleHelper = "grinding";			// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
+var d2B_cases = 5;
+var d2B_toggleHelper = "grinding";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 var d2B_usingAFollower = true; 			// using a follower, then make townportals d2B_myTP()
 	
 var _myName = "temp";				// peep to msg of what's a-happenin'
@@ -52,111 +53,20 @@ function NTMain() {
 	
 	if(d2B_toggleHelper != "helper") d2B_newGmDlyPeepChk();
 	
-	if(d2B_toggleHelper == false) {
+	if(d2B_toggleHelper != "testing") {
 		
-		while(d2B_myPauseValue <= 22) { 
+		while(d2B_myPauseValue <= d2B_cases) { 
 			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
 			Delay(Random(4000,5000));
 			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
 			Delay(Random(5000,6000));
 			
-			switch(d2B_myPauseValue) {
-				case 1: Say("ummm 1");
-					d2B_bloodmoor();				// blood moore thingy
-					break;
-				case 2: d2B_coldplains();			// cold plains thingy
-					break;
-				case 3: d2B_burialgrounds();		// burial grounds thingy
-					break;
-				case 4: d2B_stonyfield();			// stony field thiny
-					break;
-				case 5: d2B_undergroundpassage();	// underground passage thingy
-					break;
-				case 6: d2B_darkwood();				// dark wood thingy
-					break;
-				case 7: d2B_blackmarsh();			// black marsh thingy
-					break;
-				case 8: d2B_tamohighland();			// tamoe highland thingy
-					break;
-				case 9: d2B_outercloister();		// outer cloister thingy
-					break;
-				case 10: d2B_barracks();			// barracks thingy
-					Delay(Random(8000,12000));
-					break;
-				case 11: d2B_jail();				// jail thingy
-					break;
-				case 12: d2B_innercloister();		// inner cloister thingy
-					break;
-				case 13: d2B_cata();				// catacombs thingy
-					break;
-				case 14: Say("ummm 2");
-					d2B_sewers();					// sewers thingy
-					break;
-				case 15: d2B_rockywaste();			// rocky waste thingy
-					break;
-				case 16: d2B_dryhills();			// dry hills thingy
-					break;
-				case 17: d2B_faroasis();			// far oasis thingy
-					break;
-				case 18: d2B_lostcity();			// lost city thingy
-					break;
-				case 19: d2B_clawvipertemple();		// claw viper temple thingy
-					break;
-				case 20: d2B_haremtoceller();		// harem to celler thingy
-					break;
-				case 21: d2B_arcane();				// arcane thingy
-					break;
-				case 22: d2B_canyon();				// canyon thingy
-					break;
-				case 24: d2B_chaos();				// chaos thingy
-					break;
-			}
-			d2B_msgIncPause();	
-		}
-		if(d2B_myPauseValue > 22) {
-			d2B_msgResetPauseEnd();	
-		}
-	}
-	if(d2B_toggleHelper == "grinding") {
-		while(d2B_myPauseValue <= 4) { 
-			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
-			Delay(Random(4000,5000));
-			Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
-			Delay(Random(5000,6000));
+			if(d2B_toggleHelper == false) d2B_switchMain();				// for a list of action cases which are reasonably complete
+			if(d2B_toggleHelper == "grinding") d2B_switchGrinding();	// for a select list of action cases
 			
-			switch(d2B_myPauseValue) {
-				case 1: Say("ummm 1");
-					NTConfig_SkipRegularMonsters = false;
-					d2B_chkAct(1);
-					Delay(Random(20000,25000));
-					d2B_blackmarsh();					// black marsh thingy
-					break;
-				case 2: Say("ummm 4");
-					NTConfig_SkipRegularMonsters = false;
-					d2B_chkAct(4);
-					Delay(Random(20000,25000));
-					d2B_chaos();						// chaos thingy
-					break;
-				case 3: Say("ummm 5");
-					NTConfig_SkipRegularMonsters = false;
-					d2B_chkAct(5);
-					Delay(Random(20000,25000));
-					d2B_bloodyfoothills();				// bloody foothills thingy
-					break;
-				case 4: Say("ummm 5");	
-					NTConfig_SkipRegularMonsters = false; 
-					d2B_chkAct(5);
-					d2B_frigidhighlands();				// figid highland thingy
-					break;
-				case 5: Say("ummm 5"); 
-					NTConfig_SkipRegularMonsters = false;
-					d2B_chkAct(5);
-					d2B_worldstonekeep();				// world stone keep thingy
-					break;
-			}
 			d2B_msgIncPause();	
 		}
-		if(d2B_myPauseValue > 4) {
+		if(d2B_myPauseValue > d2B_cases) {
 			d2B_msgResetPauseEnd();	
 		}
 	}	
@@ -2942,7 +2852,7 @@ function MyTime() {
 	TheTime = HR + ":" + MM + ":" + SS + " " + DT;
 	return TheTime;
 }
-function _classid(i) {
+function classid(i) {
 	switch(i){
 		case 0:	return "Amazon";
 		case 1: return "Sorceress";
@@ -3816,86 +3726,91 @@ function achmel(){
 		}
 	} while (_company && _company.GetNext());
 }
-
-/* switch(d2B_myPauseValue) {
-				case 1: d2B_bloodmoor();			// blood moore thingy
-					break;
-				case 2: d2B_coldplains();			// cold plains thingy
-					break;
-				case 3: d2B_burialgrounds();		// burial grounds thingy
-					break;
-				case 4: d2B_stonyfield();			// stony field thiny
-					break;
-				case 5: d2B_undergroundpassage();	// underground passage thingy
-					break;
-				case 6: d2B_darkwood();				// dark wood thingy
-					break;
-				case 7: d2B_blackmarsh();			// black marsh thingy
-					break;
-				case 8: d2B_tamohighland();			// tamoe highland thingy
-					break;
-				case 9: d2B_outercloister();		// outer cloister thingy
-					break;
-				case 10: //d2B_barracks();			// barracks thingy
-					Delay(Random(8000,12000));
-					break;
-				case 11: d2B_jail();				// jail thingy
-					Delay(Random(8000,12000));
-					break;
-				case 12: d2B_innercloister();		// inner cloister thingy
-					Delay(Random(8000,12000));
-					break;
-				case 13: d2B_cata();				// catacombs thingy
-					break;
-				case 14: d2B_sewers();				// sewers thingy
-					break;
-				case 15: d2B_rockywaste();			// rocky waste thingy
-					break;
-				case 16: d2B_dryhills();			// dry hills thingy
-					break;
-				case 17: d2B_faroasis();			// far oasis thingy
-					break;
-				case 18: d2B_lostcity();			// lost city thingy
-					break;
-				case 19: d2B_clawvipertemple();		// claw viper temple thingy
-					break;
-				case 20: d2B_haremtoceller();		// harem to celler thingy
-					break;
-				case 21: d2B_arcane();				// arcane thingy
-					break;
-				case 22: d2B_canyon();				// canyon thingy
-					break;
-				case 24: d2B_chaos();				// chaos thingy
-					break;
-			}
+//
+// switchies for switching
+//
+function d2B_switchMain() {
 	switch(d2B_myPauseValue) {
-				case 1: Say("ummm 1");
-					NTConfig_SkipRegularMonsters = false;
-					d2B_chkAct(1);
-					Delay(Random(20000,25000));
-					d2B_blackmarsh();					// black marsh thingy
-					break;
-				case 2: Say("ummm 4");
-					NTConfig_SkipRegularMonsters = false;
-					d2B_chkAct(4);
-					Delay(Random(20000,25000));
-					d2B_chaos();						// chaos thingy
-					break;
-				case 3: Say("ummm 5");
-					NTConfig_SkipRegularMonsters = false;
-					d2B_chkAct(5);
-					Delay(Random(20000,25000));
-					d2B_bloodyfoothills();				// bloody foothills thingy
-					break;
-				case 4: Say("ummm 5");	
-					NTConfig_SkipRegularMonsters = false; 
-					d2B_chkAct(5);
-					d2B_frigidhighlands();				// figid highland thingy
-					break;
-				case 5: Say("ummm 5"); 
-					NTConfig_SkipRegularMonsters = false;
-					d2B_chkAct(5);
-					d2B_worldstonekeep();				// world stone keep thingy
-					break;
-			}
-*/
+		case 1: Say("ummm 1");
+			d2B_bloodmoor();				// blood moore thingy
+			break;
+		case 2: d2B_coldplains();			// cold plains thingy
+			break;
+		case 3: d2B_burialgrounds();		// burial grounds thingy
+			break;
+		case 4: d2B_stonyfield();			// stony field thiny
+			break;
+		case 5: d2B_undergroundpassage();	// underground passage thingy
+			break;
+		case 6: d2B_darkwood();				// dark wood thingy
+			break;
+		case 7: d2B_blackmarsh();			// black marsh thingy
+			break;
+		case 8: d2B_tamohighland();			// tamoe highland thingy
+			break;
+		case 9: d2B_outercloister();		// outer cloister thingy
+			break;
+		case 10: d2B_barracks();			// barracks thingy
+			Delay(Random(8000,12000));
+			break;
+		case 11: d2B_jail();				// jail thingy
+			break;
+		case 12: d2B_innercloister();		// inner cloister thingy
+			break;
+		case 13: d2B_cata();				// catacombs thingy
+			break;
+		case 14: Say("ummm 2");
+			d2B_sewers();					// sewers thingy
+			break;
+		case 15: d2B_rockywaste();			// rocky waste thingy
+			break;
+		case 16: d2B_dryhills();			// dry hills thingy
+			break;
+		case 17: d2B_faroasis();			// far oasis thingy
+			break;
+		case 18: d2B_lostcity();			// lost city thingy
+			break;
+		case 19: d2B_clawvipertemple();		// claw viper temple thingy
+			break;
+		case 20: d2B_haremtoceller();		// harem to celler thingy
+			break;
+		case 21: d2B_arcane();				// arcane thingy
+			break;
+		case 22: d2B_canyon();				// canyon thingy
+			break;
+		case 24: d2B_chaos();				// chaos thingy
+			break;
+	}
+}
+function d2B_switchGrinding() {
+	switch(d2B_myPauseValue) {
+		case 1: Say("ummm 1");
+			NTConfig_SkipRegularMonsters = false;
+			d2B_chkAct(1);
+			Delay(Random(20000,25000));
+			d2B_blackmarsh();					// black marsh thingy
+			break;
+		case 2: Say("ummm 4");
+			NTConfig_SkipRegularMonsters = false;
+			d2B_chkAct(4);
+			Delay(Random(20000,25000));
+			d2B_chaos();						// chaos thingy
+			break;
+		case 3: Say("ummm 5");
+			NTConfig_SkipRegularMonsters = false;
+			d2B_chkAct(5);
+			Delay(Random(20000,25000));
+			d2B_bloodyfoothills();				// bloody foothills thingy
+			break;
+		case 4: Say("ummm 5");	
+			NTConfig_SkipRegularMonsters = false; 
+			d2B_chkAct(5);
+			d2B_frigidhighlands();				// figid highland thingy
+			break;
+		case 5: Say("ummm 5"); 
+			NTConfig_SkipRegularMonsters = false;
+			d2B_chkAct(5);
+			d2B_worldstonekeep();				// world stone keep thingy
+			break;
+	}
+}
