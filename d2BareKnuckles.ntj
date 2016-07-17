@@ -50,7 +50,7 @@ function NTMain() {
 	NTTM_TownMove("waypoint");
 	Delay(700);
 	
-	d2B_newGmDlyPeepChk();
+	if(d2B_toggleHelper != "helper") d2B_newGmDlyPeepChk();
 	
 	if(d2B_toggleHelper == false) {
 		
@@ -117,7 +117,7 @@ function NTMain() {
 			d2B_msgResetPauseEnd();	
 		}
 	}
-	if(d2B_toggleHelper == "grinding" {
+	if(d2B_toggleHelper == "grinding") {
 		while(d2B_myPauseValue <= 4) { 
 			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
 			Delay(Random(4000,5000));
@@ -177,7 +177,7 @@ function NTMain() {
 		Print(COLOR_2 + "Another delay...");
 		Delay(Random(35000,40000));
 	}
-	else if(d2B_toggleHelper == true) {d2H_helper();}		// for enabling a follower
+	else if(d2B_toggleHelper == "helper") {d2H_helper();}		// for enabling a follower
 	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 }
 
@@ -623,10 +623,8 @@ function d2B_chaos(){								// case: 24
 	}
 	NTA_KillMonster(243);
 	Delay(1000);
-	d2B_team(false);
-	Delay(Random(2000,3000));
 	
-	NTTM_CheckAct(4);
+	d2B_chkAct2(true,4);
 }
 
 //
@@ -641,10 +639,8 @@ function d2B_bloodyfoothills() {
 	NTM_MoveTo(110, me.x+79, me.y+16);
 	d2B_team(true);
 	d2B_clrLvlOC();
-	d2B_team(false);
-	Delay(Random(2000,3000));
 	
-	NTTM_CheckAct(5);
+	d2B_chkAct2(true,5);
 }	
 function d2B_frigidhighlands() {
 	// check to see if a d2B_clrLvlOC() cal will kill everything
@@ -653,21 +649,28 @@ function d2B_frigidhighlands() {
 	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
 	Delay(Random(2000,3000));
 	d2B_team(false);
-	Delay(Random(2300,4000));
+	Delay(Random(5300,6000));
 	
-	NTM_MoveTo(me.areaid, 3750, 5090);
+	//NTM_MoveTo(me.areaid, 3750, 5090);
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT,60);		// head to Abaddon enterance
+	Delay(300);
 	d2B_team(true);
 	d2B_clrLvlOC();
 	d2B_team(false);
+	Delay(Random(5300,6000));
+	
+	
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT,60);		// head to Abaddon enterance
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
 	Delay(Random(2000,3000));
-
-	/*NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT,60);		// head to Abaddon enterance
+	d2B_team(false);
+	Delay(Random(5300,6000));
 	NTM_TakeUnit(NTC_UNIT_OBJECT,60);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	Delay(Random(2000,3000));
+	d2B_team(true);
+	d2B_clrLvlOC();
 	
-	d2B_team(false);*/
-	
-	NTTM_CheckAct(5);
+	d2B_chkAct2(true,5);
 }
 function d2B_worldstonekeep() {
 	prewavespot = [15092, 5040];	// from: D2Etal/scripts/NTRush/rush_configs/Sorceress.ntl 
@@ -708,9 +711,8 @@ function d2B_worldstonekeep() {
 	
 	d2B_baal();
 	Delay(750);
-	d2B_team(false);
-	Delay(Random(3000,4000));
-	NTTM_CheckAct(5);
+	
+	d2B_chkAct2(true,5);
 }
 // ________________________________________________________
 //  goal functions
@@ -803,7 +805,7 @@ function d2B_load() {
   
   	return;
 }
-Function d2B_newGmDlyPeepChk() {
+function d2B_newGmDlyPeepChk() {
 	Print(COLOR_2 + "Taking an extended break, so as to give the peeps time to enter game...");
 	Delay(Random(35000,40000));
 	Say(",");
@@ -966,7 +968,11 @@ function d2B_team(a) {					// (a: false = send team to town true: bring team
 	NTM_MakeTP();
 	Delay(400);
 	if(a) Say(".");	
-	else if(!a) Say("'");
+	else if(!a) {
+		Say("'");
+		Delay(Random(3000,4000));
+		return;
+	}
 	Delay(300);
 	return;
 }
