@@ -3,7 +3,7 @@
 //
 
 var d2B_cases = 2;
-var d2B_toggleHelper = "grinding";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions | leveling: Chaos & Throne
+var d2B_toggleHelper = "leveling";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions | leveling: Chaos & Throne
 var d2B_usingAFollower = true; 			// using a follower, then make townportals d2B_myTP()
 	
 var _msgMe = false;					// for enabling whispering to _myName 
