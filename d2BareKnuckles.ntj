@@ -2,8 +2,9 @@
 // d2Barebones.ntj for script shrinking
 //
 
-var d2B_cases = 2;
-var d2B_toggleHelper = "leveling";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions | leveling: Chaos & Throne
+var _dollChk = false;
+var d2B_cases = 1;
+var d2B_toggleHelper = "throne";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions | leveling: Chaos & Throne | throne
 var d2B_usingAFollower = true; 			// using a follower, then make townportals d2B_myTP()
 	
 var _msgMe = false;					// for enabling whispering to _myName 
@@ -65,6 +66,7 @@ function NTMain() {
 			if(d2B_toggleHelper == false) d2B_switchMain();				// for a list of action cases which are reasonably complete
 			if(d2B_toggleHelper == "grinding") d2B_switchGrinding();	// for a select list of action cases
 			if(d2B_toggleHelper == "leveling") d2B_switchChaosThrone();	// for a Chaos and Throne room leveling
+			if(d2B_toggleHelper == "throne") d2B_switcThrone();	// for Throne room leveling
 			
 			d2B_msgIncPause();	
 		}
@@ -600,7 +602,9 @@ function d2B_worldstonekeep() {
 	NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
 	NTM_MakeTP();
 	
-	if(d2B_dollsoulChk()) return;
+	if(_dollChk) {
+		if(d2B_dollsoulChk()) return;
+	}
 
 	Say(".");
 	Delay(300);
@@ -3456,6 +3460,8 @@ function NT_ClearThroneInt(){
 	return;
 }
 function d2B_throneWaves() {
+	Say("yo");
+	Delay(100);
 	while(1){
 		NTC_Delay(100);
 		NTM_MoveTo(me.areaid, prewavespot[0], prewavespot[1]);
@@ -3499,6 +3505,8 @@ function d2B_throneWaves() {
 				}
 				break;
 			case 3:
+			    Say(".");
+			    Delay(100);
 				if(NTConfig_PreWaveTele){
 					NTM_TeleportTo(me.x+1, me.y+3);
                 }
@@ -3506,10 +3514,14 @@ function d2B_throneWaves() {
 				if(NTConfig_Wave3Move > 0){
 					NT_CheckHydraInt();
 				}
-				else
+				else {
+					Say("yo");
 					NTC_Delay(3000);
+				}
 				break;
 			case 4:
+			   Say("yo");
+			   Delay(100);
 				if(NTConfig_PreWaveTele){
 					NTM_TeleportTo(me.x+1, me.y+3);
                 }
@@ -3879,10 +3891,11 @@ function d2B_switchChaosThron() {
 			NTConfig_SkipRegularMonsters = false;
 			d2B_chkAct(5);			
 			d2B_worldstonekeep();				// world stone keep thingy
-			Delay(300);
+			Delay(Random(8000,14000));
 			Say("ummm 4");
 			Delay(Random(10000,12000));
 			d2B_chkAct(4);
+			Delay(Random(10000,12000));
 			break;
 	}
 }
