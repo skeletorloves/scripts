@@ -497,14 +497,14 @@ function d2B_spiderforest() {						// case: 23
 	d2B_commonInitSetup(76);
 	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
 
-	NTTM_CheckAct(3);
+	d2B_chkAct2(true,3);
 }
 
 function d2B_greatMarsh() {							// case: 24
 	d2B_commonInitSetup(77);
 	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
 
-	d2B_chkAct(true,3);
+	d2B_chkAct2(true,3);
 }	
 function d2B_flayerJungle() {						// case: 25
 	d2B_commonInitSetup(78);
@@ -521,7 +521,7 @@ function d2B_flayerJungle() {						// case: 25
 		d2B_takeStairs(89+i);
 		d2B_clrLvlOC();
 	}
-	d2B_chkAct(true,3);
+	d2B_chkAct2(true,3);
 	d2B_commonInitSetup(78);
 	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
 	d2B_team(false);
@@ -543,23 +543,24 @@ function d2B_flayerJungle() {						// case: 25
 	
 	if(d2B_usingAFollower) d2B_myTP(true, false, true, true);
 	
-	d2B_chkAct(true,3);
+	d2B_chkAct2(true,3);
 }	
 function d2B_lowerKurast() {						// case: 26
 	d2B_commonInitSetup(79);
 	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
 	
-	d2B_chkAct(true,3);
+	d2B_chkAct2(true,3);
 }
 function d2B_Kurast() {								// case: 27
 	d2B_commonInitSetup(80);
 	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
 	
-	d2B_moveToStair(me.areaid, 90);
+	d2B_moveToStair(me.areaid, 94);
 	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
-	d2B_takeStairs(90);
+	d2B_takeStairs(94);
 	d2B_clrLvlOC();
-	d2B_chkAct(true,3);
+	d2B_chkAct2(true,3);
+	Delay(Random(4000,6000));
 	
 	d2B_commonInitSetup(80);
 	d2B_moveToStair(me.areaid, 95);
@@ -567,8 +568,27 @@ function d2B_Kurast() {								// case: 27
 	d2B_takeStairs(95);
 	d2B_clrLvlOC();
 	
-	d2B_chkAct(true,3);
-}		
+	d2B_chkAct2(true,3);
+}
+function d2B_upperKurast() {								// case: 28
+	d2B_commonInitSetup(81);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	
+	d2B_moveToStair(me.areaid, 97);		// Forgotten Tmeple enterance
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
+	d2B_takeStairs(97);
+	d2B_clrLvlOC();
+	d2B_chkAct2(true,3);
+	Delay(Random(4000,6000));
+	
+	d2B_commonInitSetup(81);
+	d2B_moveToStair(me.areaid, 96);		// Forgotten Reliquary enterance
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
+	d2B_takeStairs(96);
+	d2B_clrLvlOC();
+
+	d2B_chkAct2(true,3);
+}	
 //
 //	Act VI
 function d2B_chaos(){								// case: 24
