@@ -3,7 +3,7 @@
 //
 
 var _dollChk = true;
-var _dollSoul = false
+var _dollSoul = false;
 
 var d2B_cases = 1;
 var d2B_toggleHelper = "throne";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions | leveling: Chaos & Throne | throne
@@ -76,7 +76,7 @@ function NTMain() {
 			d2B_msgResetPauseEnd();	
 		}
 	}	
-	if(d2B_toggleHelper == "test") {
+	if(d2B_toggleHelper == "testing") {
 		NTTM_TownMove("waypoint");
 		Delay(700);
 		
@@ -86,9 +86,7 @@ function NTMain() {
 		Delay(700);
 		Print(COLOR_3 + "Checking in on peeps");
 		Delay(1000);
-		if(d2B_rPeepsInGame()) {
-			Print(COLOR_7 + "All peeps are in the game.");
-		}
+		if(d2B_rPeepsInGame()) Print(COLOR_7 + "All peeps are in the game.");
 		Delay(2000);
 		
 		d2B_canyon();
@@ -457,16 +455,16 @@ function d2B_arcane() {								// case: 21
 	d2B_commonInitSetup(74);
 	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
 	
-	NTTM_CheckAct(2);
+	d2B_chkAct(true,2);
 }
 function d2B_canyon() {								// case: 22
 	var _taltomb;
 	var _stair = [69, 68, 67, 66, 70, 71, 72];
 	
 	d2B_commonInitSetup(46);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
 	
-	for(var i = 0; i < _stair.lenth; i++){
+	for(var i = 0; i < _stair.length; i++){
 		NTP_DoPrecast();
 		d2B_moveToStair(me.areaid, _stair[i]);
 		d2B_takeStairs(_stair[i]);
@@ -490,17 +488,17 @@ function d2B_canyon() {								// case: 22
 					}
 				}
 			}
-				return;
+			if(!d2B_takeStairs(46)) return;
 		}
 		Print(COLOR_1 + "Gosh darn it. I think it worked.");
 		d2B_takeStairs(46);
 	}
 	
-	d2B_ChkAct2(true,2);
+	d2B_chkAct2(true,2);
 }
 //
 //	Act III
- function d2B_spiderforest() {						// case: 23
+function d2B_spiderforest() {						// case: 23
 	d2B_moveWP();
 	d2B_gotoWP(75);
 	NTTM_CheckAct(3);				// if not Lut Golein, then go to Lut Golein
@@ -511,6 +509,45 @@ function d2B_canyon() {								// case: 22
 	NTTM_CheckAct(3);
 }
 
+function d2B_greatMarsh() {							// case: 24
+	d2B_commonInitSetup(77);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+
+	d2B_chkAct(true,3);
+}	
+function d2B_flayerJungle() {
+	d2B_commonInitSetup(78);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	
+	d2B_moveToStair(me.areaid, 88);		// move to Flayer Dungeon enterance
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
+	d2B_takeStairs(88);
+	d2B_clrLvlOC();
+	
+	for(i=0; i<=1; (i=i+2)) {
+		d2B_moveToStair(me.areaid, 89+i);
+		if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
+		d2B_takeStairs(89+i);
+		d2B_clrLvlOC();
+	}
+	d2B_chkAct(true,3);
+	d2B_commonInitSetup(78);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
+	d2B_team(false);
+	
+	for(i=0; i<=1; i++){
+		d2B_moveToStair(me.areaid, 86+i);		// move to Swampy Pit enterance
+		Delay(Random(4000,6000));
+		d2B_takeStairs(86+i);
+		if(d2B_usingAFollower) d2B_myTP(true, false, true, true);
+	}
+	d2B_moveToStair(me.areaid, 90);		// move to Swampy Pit enterance
+	Delay(Random(4000,6000));
+	d2B_takeStairs(90);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, true);
+	
+	d2B_chkAct(true,3);
+}	
 //
 //	Act VI
 function d2B_chaos(){								// case: 24
@@ -3916,7 +3953,7 @@ function d2B_switchChaosThrone() {
 			d2B_worldstonekeep();				// world stone keep thingy
 			if(_dollSoul) {
 				Say("Dolls and/or souls, so going on a long pause...");
-				if(i=0; i<=5; i++) {
+				for(i=0; i<=5; i++) {
 					Delay(Random(15000,20000));
 					if(_msgMe) Say("/msg *" + _myName + " We just finished break #" + i + ".");
 				}
@@ -3941,7 +3978,7 @@ function d2B_switchThrone() {
 				Say("Dolls and/or souls, so going to do chaos...");
 				Delay(Random(7000,9000));
 				if(_msgMe) Say("/msg *" + _myName + " Dolls and/or souls, so going to do chaos...");
-				Delay(3300)
+				Delay(3300);
 				Say("ummmm 4");
 				NTConfig_SkipRegularMonsters = false;
 				d2B_chkAct(4);
