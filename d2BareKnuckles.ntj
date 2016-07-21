@@ -90,6 +90,9 @@ function NTMain() {
 			Print(COLOR_7 + "All peeps are in the game.");
 		}
 		Delay(2000);
+		
+		d2B_canyon();
+		
 		Print(COLOR_2 + "Another delay...");
 		Delay(Random(35000,40000));
 	}
@@ -463,7 +466,7 @@ function d2B_canyon() {								// case: 22
 	d2B_commonInitSetup(46);
 	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
 	
-	/* for(var i = 0; i < _stair.lenth; i++){
+	for(var i = 0; i < _stair.lenth; i++){
 		NTP_DoPrecast();
 		d2B_moveToStair(me.areaid, _stair[i]);
 		d2B_takeStairs(_stair[i]);
@@ -474,16 +477,26 @@ function d2B_canyon() {								// case: 22
 			Delay(Random(1000,2000));
 			NTM_MoveTo(me.areaid, me.x+15, me.y+15);
 			Delay(500);
-			if(!NTM_MoveToStair(me.areaid, 46)){
-				NTTM_CheckAct(2);
-				return;
+			if(!NTM_MoveToStair(me.areaid, 46)) {
+				NTM_MoveTo(me.areaid, me.x-15, me.y+15);
+				Delay(Random(500,,1200));
+				if(!NTM_MoveToStair(me.areaid, 46)) {
+					NTM_MoveTo(me.areaid, me.x-15, me.y-15);
+					Delay(Random(500,,1200));
+					if(!NTM_MoveToStair(me.areaid, 46)) {
+						NTM_MoveTo(me.areaid, me.x+15, me.y-15);
+						Delay(Random(500,,1200));
+						if(!NTM_MoveToStair(me.areaid, 46)) return;
+					}
+				}
 			}
-			Print(COLOR_1 + "Gosh darn it. I think it worked.");
+				return;
 		}
+		Print(COLOR_1 + "Gosh darn it. I think it worked.");
 		d2B_takeStairs(46);
-	}*/
+	}
 	
-	NTTM_CheckAct(2);
+	d2B_ChkAct2(true,2);
 }
 //
 //	Act III
