@@ -2,10 +2,12 @@
 // d2Barebones.ntj for script shrinking
 //
 
-var _dollChk = false;
+var _dollChk = true;
+var _dollSoul = false
+
 var d2B_cases = 1;
 var d2B_toggleHelper = "throne";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions | leveling: Chaos & Throne | throne
-var d2B_usingAFollower = true; 			// using a follower, then make townportals d2B_myTP()
+var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_myTP()
 	
 var _msgMe = false;					// for enabling whispering to _myName 
 var _myName = "temp";				// peep to msg of what's a-happenin'
@@ -66,7 +68,7 @@ function NTMain() {
 			if(d2B_toggleHelper == false) d2B_switchMain();				// for a list of action cases which are reasonably complete
 			if(d2B_toggleHelper == "grinding") d2B_switchGrinding();	// for a select list of action cases
 			if(d2B_toggleHelper == "leveling") d2B_switchChaosThrone();	// for a Chaos and Throne room leveling
-			if(d2B_toggleHelper == "throne") d2B_switcThrone();	// for Throne room leveling
+			if(d2B_toggleHelper == "throne") d2B_switchThrone();	// for Throne room leveling
 			
 			d2B_msgIncPause();	
 		}
@@ -594,18 +596,26 @@ function d2B_worldstonekeep() {
 	d2B_team(false);
 	Delay(Random(1500,2000));
 	
-	NTM_MoveToStair(me.areaid, 130,0,0,false);
+	d2B_moveToStair(me.areaid, 130);
 	d2B_takeStairs(130);
-	NTM_MoveToStair(me.areaid, 131,0,0,false);
-	NTM_TakeStair(131);
+	d2B_moveToStair(me.areaid, 131);
+	d2B_takeStairs(131);
 	
 	NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
 	NTM_MakeTP();
 	
 	if(_dollChk) {
-		if(d2B_dollsoulChk()) return;
+		if(d2B_dollsoulChk()) {
+		_dollSoul = true;
+		return;
+		}
+		Delay(100);
+		if(d2B_dollsoulChk()) {
+		_dollSoul = true;
+		return;
+		}
 	}
-
+	_dollSoul = false;
 	Say(".");
 	Delay(300);
 	NT_ClearThroneInt();
@@ -3878,7 +3888,7 @@ function d2B_switchGrinding() {
 			break;
 	}
 }
-function d2B_switchChaosThron() {
+function d2B_switchChaosThrone() {
 	switch(d2B_myPauseValue) {
 		case 1: Say("ummm 4");
 			NTConfig_SkipRegularMonsters = false;
@@ -3891,10 +3901,44 @@ function d2B_switchChaosThron() {
 			NTConfig_SkipRegularMonsters = false;
 			d2B_chkAct(5);			
 			d2B_worldstonekeep();				// world stone keep thingy
+			if(_dollSoul) {
+				Say("Dolls and/or souls, so going on a long pause...");
+				if(i=0; i<=5; i++) {
+					Delay(Random(15000,20000));
+					if(_msgMe) Say("/msg *" + _myName + " We just finished break #" + i + ".");
+				}
+			}
+			_soulDoll = false;
 			Delay(Random(8000,14000));
 			Say("ummm 4");
 			Delay(Random(10000,12000));
 			d2B_chkAct(4);
+			Delay(Random(10000,12000));
+			break;
+	}
+}
+function d2B_switchThrone() {
+	switch(d2B_myPauseValue) {
+		case 1: Say("ummm 5"); 
+			Delay(Random(10000,12000));
+			NTConfig_SkipRegularMonsters = false;
+			d2B_chkAct(5);			
+			d2B_worldstonekeep();				// world stone keep thingy
+			if(_dollSoul) {
+				Say("Dolls and/or souls, so going to do chaos...");
+				Delay(Random(7000,9000));
+				if(_msgMe) Say("/msg *" + _myName + " Dolls and/or souls, so going to do chaos...");
+				Delay(3300)
+				Say("ummmm 4");
+				NTConfig_SkipRegularMonsters = false;
+				d2B_chkAct(4);
+				Delay(Random(15000,24000));
+				d2B_chaos();						// chaos thingy
+				Say("ummmm 5");
+				Delay(Random(25000,34000));
+				d2B_chkAct(5);
+			}
+			_soulDoll = false;
 			Delay(Random(10000,12000));
 			break;
 	}
