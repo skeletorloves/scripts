@@ -78,16 +78,7 @@ function NTMain() {
 	}	
 	if(d2B_toggleHelper == "testing") {
 		NTTM_TownMove("waypoint");
-		Delay(700);
-		
-		Print(COLOR_3 + "Taking an extended break, so as to give the peeps time to enter game...");
-		Delay(Random(35000,40000));
-		d2B_Peeps();
-		Delay(700);
-		Print(COLOR_3 + "Checking in on peeps");
-		Delay(1000);
-		if(d2B_rPeepsInGame()) Print(COLOR_7 + "All peeps are in the game.");
-		Delay(2000);
+		Delay(2700);
 		
 		d2B_canyon();
 		
@@ -477,13 +468,13 @@ function d2B_canyon() {								// case: 22
 			Delay(500);
 			if(!NTM_MoveToStair(me.areaid, 46)) {
 				NTM_MoveTo(me.areaid, me.x-15, me.y+15);
-				Delay(Random(500,,1200));
+				Delay(Random(500,1200));
 				if(!NTM_MoveToStair(me.areaid, 46)) {
 					NTM_MoveTo(me.areaid, me.x-15, me.y-15);
-					Delay(Random(500,,1200));
+					Delay(Random(500,1200));
 					if(!NTM_MoveToStair(me.areaid, 46)) {
 						NTM_MoveTo(me.areaid, me.x+15, me.y-15);
-						Delay(Random(500,,1200));
+						Delay(Random(500,1200));
 						if(!NTM_MoveToStair(me.areaid, 46)) return;
 					}
 				}
@@ -515,7 +506,7 @@ function d2B_greatMarsh() {							// case: 24
 
 	d2B_chkAct(true,3);
 }	
-function d2B_flayerJungle() {
+function d2B_flayerJungle() {						// case: 25
 	d2B_commonInitSetup(78);
 	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
 	
@@ -535,16 +526,28 @@ function d2B_flayerJungle() {
 	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
 	d2B_team(false);
 	
+	/* deeNote: this needs to be adjusted as d2B_takeStairs(87) does not function
 	for(i=0; i<=1; i++){
 		d2B_moveToStair(me.areaid, 86+i);		// move to Swampy Pit enterance
 		Delay(Random(4000,6000));
 		d2B_takeStairs(86+i);
 		if(d2B_usingAFollower) d2B_myTP(true, false, true, true);
 	}
-	d2B_moveToStair(me.areaid, 90);		// move to Swampy Pit enterance
+	d2B_moveToStair(me.areaid, 90);
 	Delay(Random(4000,6000));
-	d2B_takeStairs(90);
+	d2B_takeStairs(90); */
+	
+	d2B_moveToStair(me.areaid, 86);		// move to Swampy Pit enterance
+	Delay(Random(4000,6000));
+	d2B_takeStairs(86);
+	
 	if(d2B_usingAFollower) d2B_myTP(true, false, true, true);
+	
+	d2B_chkAct(true,3);
+}	
+function d2B_lowerKurast() {						// case: 26
+	d2B_commonInitSetup(79);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
 	
 	d2B_chkAct(true,3);
 }	
@@ -712,7 +715,7 @@ function d2B_Peeps() {								// store name of leader & followers in storePeeps.
 	}
 	return;
 }
-function d2B_rPeepsInGame() {					// return (true, _teamSize) : _teamSize accounts for all extra peeps minus that boer
+function d2B_rPeepsInGame() {						// return (true, _teamSize) : _teamSize accounts for all extra peeps minus that boer
 	Print(COLOR_3 + "Checking in on peeps");
 	Delay(1000);
 	if(_msgMe) Say("/msg *" + _myName + " Peep check-in");
