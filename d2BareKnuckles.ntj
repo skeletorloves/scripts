@@ -644,8 +644,22 @@ function d2B_Meph() {
 	d2B_moveToStair(me.areaid, 102);
 	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
 	d2B_takeStairs(102);
+	
+	var _attackpos = [											// for killing duri council
+		17651, 8066, 17630, 8069, 17625, 8048, 17647, 8040, 	//bottom council members
+		17610, 8124, 17603, 8138, 17623, 8138, 17571, 8121, 	//left-side council member
+		17609, 8022, 17616, 8006, 17592, 8015, 17575, 8012  	// right-side council member
+		];
+	for(var i = 0 ; i < _attackpos.length ; i += 2){
+		NTM_MoveTo(me.areaid, _attackpos[i], _attackpos[i+1]);
+		NTA_ClearPosition();
+		NTSI_PickItems();
+	}
+	
+	NTM_MoveTo(me.areaid, 17564, 8069);							// time for Mpeh
+	NTA_KillMonster(242);
 	d2B_clrLvlOC();
-
+	Delay(Random(4000,5000));
 
 	d2B_chkAct2(true,3);
 }
