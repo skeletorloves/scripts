@@ -109,7 +109,7 @@ function d2B_bloodmoor() {							// case: 1
 	if(d2B_usingAFollower) d2B_myTP(true, true, true, true); // (delay,bo,precast,clr&chests)
 	
 	d2B_moveToStair(2,8);
-	if(d2B_usingAFollower) d2B_myTP(false, false, false, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
 	d2B_takeStairs(8);
 	NTP_DoPrecast();
 	d2B_clrLvlOC();
@@ -121,12 +121,12 @@ function d2B_coldplains() {							// case: 2
 	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
 	
 	d2B_moveToStair(3,9);
-	if(d2B_usingAFollower) d2B_myTP(false, false, false, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
 	d2B_takeStairs(9);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(9,13);
-	if(d2B_usingAFollower) d2B_myTP(false, false, false, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
 	d2B_takeStairs(13);
 	d2B_clrLvlOC();
 	
@@ -138,13 +138,16 @@ function d2B_burialgrounds() {						// case: 3
 	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
 	
 	d2B_moveToStair(me.areaid,19);	// enter the mausoleum
+	Delay(Random(4000,5000));
 	d2B_takeStairs(19);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid,17);
+	Delay(Random(4000,5000));
 	d2B_takeStairs(17);
 	
 	d2B_moveToStair(me.areaid,18);	// enter the crypt
+	Delay(Random(4000,5000));
 	d2B_takeStairs(18);
 	d2B_clrLvlOC();
 
@@ -155,6 +158,7 @@ function d2B_stonyfield() {							// case: 4
 	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
 
 	d2B_movePresetUnitMonster(737, 10, 10);
+	Delay(Random(6000,8000));
 	d2B_usePortal("Portal",38);			// use portal to enter tristram
 	d2B_clrLvlOC();
 
@@ -169,6 +173,7 @@ function d2B_undergroundpassage() {					// case: 5
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid,14);
+	Delay(Random(4000,5000));
 	d2B_takeStairs(14);
 	d2B_clrLvlOC();
 	
@@ -185,12 +190,12 @@ function d2B_blackmarsh() {							// case: 7
 	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
 	
 	d2B_moveToStair(me.areaid,11);	// clear the hole
-	if(d2B_usingAFollower) d2B_myTP(false, false, false, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
 	d2B_takeStairs(11);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid,15);	// clear the hole
-	if(d2B_usingAFollower) d2B_myTP(false, false, false, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
 	d2B_takeStairs(15);
 	d2B_clrLvlOC();
 	
@@ -200,7 +205,7 @@ function d2B_blackmarsh() {							// case: 7
 	
 	for(var i = 0 ; i < 6 ; i++) {
 		d2B_moveToStair(me.areaid,20+i);	// go to the forgotten tower and do tower things
-		if(d2B_usingAFollower) d2B_myTP(false, false, false, false);
+		if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
 		d2B_takeStairs(20+i);
 		NTP_DoPrecast();
 		d2B_clrLvlOC();
@@ -219,11 +224,13 @@ function d2B_tamohighland() {						// case: 8
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(7,12);	// go to the enterance of the tamoe highland pit
+	Delay(Random(4000,5000));
 	d2B_takeStairs(12);
 	NTP_DoPrecast();
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid,16);	// go to the 2nd level of the tamoe highland pit
+	Delay(Random(4000,5000));
 	d2B_takeStairs(16);
 	NTP_DoPrecast();
 	d2B_clrLvlOC();
@@ -276,6 +283,7 @@ function d2B_cata() {								// case: 13
 	for(var i = 35; i <= 37; i++) {
 	
 		d2B_movePresetUnitTitle(me.areaid,18,0);
+		Delay(Random(4000,5000));
 		d2B_takeStairs(i);
 		NTP_DoPrecast();
 		d2B_clrLvlOC();
@@ -4018,7 +4026,7 @@ function d2B_switchMain() {
 		case 22: d2B_canyon();				// canyon thingy
 			break;
 		case 23: Say("ummm 2");
-			d2B_spiderforest();				// canyon thingy
+			d2B_spiderForest();				// canyon thingy
 			break;
 		case 24: d2B_greatMarsh();				// canyon thingy
 			break;
