@@ -44,6 +44,7 @@ var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Numb
 // A goal: 	store and retrieve the names of the leader and followers
 //			msg these to _myName as a means to see if all are in
 
+// NTC_InTown(who); Etal fctn for determining if (who) is in town. W/o who, (who) then reverts to me.name
 
 function NTMain() {
 	
@@ -140,6 +141,7 @@ function d2B_burialgrounds() {						// case: 3
 	d2B_moveToStair(me.areaid,19);	// enter the mausoleum
 	Delay(Random(4000,5000));
 	d2B_takeStairs(19);
+	
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid,17);
@@ -1009,6 +1011,7 @@ function d2B_takeStairs(a) {
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeStair()");
 		return;
 	}
+	NTM_MakeTP();
 	return;
 }
 function d2B_clrLevel() {
@@ -1532,6 +1535,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		break;
 	case "'":
 		if(me.name == _myBoBarb) break;
+		if(!NTC_InTown()) break;
 		if(!isBusy)
 		{
 			isFollowingEnabled = false;
