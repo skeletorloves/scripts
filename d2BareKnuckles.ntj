@@ -5,13 +5,13 @@
 var _dollChk = true;
 var _dollSoul = false;
 
-var d2B_cases = 30;
+var d2B_cases = 22;
 var d2B_toggleHelper = false;			// helper: for engaging helper | testing: for testing | grinding: for specific zone functions | leveling: Chaos & Throne | throne
 var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_myTP()
 	
-var _msgMe = true;				// for enabling whispering to _myName 
-var _myName = "";				// peep to msg of what's a-happenin'
-var _myBoBarb = "";				// bo barb name
+var _msgMe = false;							// for enabling whispering to _myName 
+var _myName = "Samsquanch.";				// peep to msg of what's a-happenin'
+var _myBoBarb = "assortedCOOKIES";			// bo barb name
 
 
 // *** Global helper vars ***
@@ -39,12 +39,11 @@ var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Numb
 
 
 // d2B_checkAct(a,b)	a: which act b: which town wp to go to
-// d2B_myTP(true, true, true, true); // (delay,bo,precast,clr&chests)
+// d2B_myTP(true, true, true, true, false); // (delay,bo,precast,clr&chests)
 
 // A goal: 	store and retrieve the names of the leader and followers
 //			msg these to _myName as a means to see if all are in
 
-// NTC_InTown(who); Etal fctn for determining if (who) is in town. W/o who, (who) then reverts to me.name
 
 function NTMain() {
 	
@@ -107,10 +106,10 @@ function d2B_bloodmoor() {							// case: 1
 	Delay(300);
 	d2B_moveToStair(2,8);							// head to front of den as a starting point
 	
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true); // (delay,bo,precast,clr&chests)
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false); // (delay,bo,precast,clr&chests)
 	
 	d2B_moveToStair(2,8);
-	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, false, false);
 	d2B_takeStairs(8);
 	NTP_DoPrecast();
 	d2B_clrLvlOC();
@@ -119,15 +118,15 @@ function d2B_bloodmoor() {							// case: 1
 }
 function d2B_coldplains() {							// case: 2
 	d2B_commonInitSetup(3);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	
 	d2B_moveToStair(3,9);
-	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, false, false);
 	d2B_takeStairs(9);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(9,13);
-	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, false, false);
 	d2B_takeStairs(13);
 	d2B_clrLvlOC();
 	
@@ -136,12 +135,11 @@ function d2B_coldplains() {							// case: 2
 function d2B_burialgrounds() {						// case: 3
 	d2B_commonInitSetup(3);
 	d2B_movePresetUnitTitle(17,7,8,15);	// move to burial grounds
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	
 	d2B_moveToStair(me.areaid,19);	// enter the mausoleum
 	Delay(Random(4000,5000));
 	d2B_takeStairs(19);
-	
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid,17);
@@ -157,7 +155,7 @@ function d2B_burialgrounds() {						// case: 3
 }
 function d2B_stonyfield() {							// case: 4
 	d2B_commonInitSetup(4);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 
 	d2B_movePresetUnitMonster(737, 10, 10);
 	Delay(Random(6000,8000));
@@ -170,7 +168,7 @@ function d2B_undergroundpassage() {					// case: 5
 	d2B_commonInitSetup(4);
 
 	d2B_moveToStair(me.areaid,10);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, false, false);
 	d2B_takeStairs(10);
 	d2B_clrLvlOC();
 	
@@ -183,21 +181,21 @@ function d2B_undergroundpassage() {					// case: 5
 }
 function d2B_darkwood() {							// case: 6
 	d2B_commonInitSetup(5);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	
 	d2B_chkAct2(true,1);	// return to Act1 town
 }
 function d2B_blackmarsh() {							// case: 7
 	d2B_commonInitSetup(6);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	
 	d2B_moveToStair(me.areaid,11);	// clear the hole
-	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, false, false);
 	d2B_takeStairs(11);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid,15);	// clear the hole
-	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, false, false);
 	d2B_takeStairs(15);
 	d2B_clrLvlOC();
 	
@@ -207,7 +205,7 @@ function d2B_blackmarsh() {							// case: 7
 	
 	for(var i = 0 ; i < 6 ; i++) {
 		d2B_moveToStair(me.areaid,20+i);	// go to the forgotten tower and do tower things
-		if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
+		if(d2B_usingAFollower) d2B_myTP(true, false, true, false, false);
 		d2B_takeStairs(20+i);
 		NTP_DoPrecast();
 		d2B_clrLvlOC();
@@ -217,7 +215,7 @@ function d2B_blackmarsh() {							// case: 7
 }
 function d2B_tamohighland() {						// case: 8
 	d2B_commonInitSetup(6);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	d2B_team(false);
 	
 	d2B_moveToStair(7,12);	// go to the enterance of tamoe highland pit
@@ -241,13 +239,13 @@ function d2B_tamohighland() {						// case: 8
 }
 function d2B_outercloister() {						// case: 9
 	d2B_commonInitSetup(27);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	
 	d2B_chkAct2(true,1);	// return to Act 1 town
 }
 function d2B_barracks() {							// case: 10
 	d2B_commonInitSetup(27);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, false, false);
 	d2B_team(false);
 	
 	d2B_movePresetUnitMonster(28, 754, -5, 5);	// go to where main monster is in the malus dude
@@ -258,13 +256,13 @@ function d2B_barracks() {							// case: 10
 }
 function d2B_jail() {								// case: 11
 	d2B_commonInitSetup(29);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	
 	d2B_chkAct2(true,1);	// return to Act 1 town
 }
 function d2B_innercloister() {						// case: 12
 	d2B_commonInitSetup(32);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	d2B_team(false);
 	
 	d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
@@ -278,7 +276,7 @@ function d2B_cata() {								// case: 13
 	
 	// clear all catacombs...
 	d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
-	if(d2B_usingAFollower) d2B_myTP(true, true, false, false);
+	if(d2B_usingAFollower) d2B_myTP(true, true, false, false, false);
 	d2B_takeStairs(34);
 	d2B_clrLvlOC();
 	
@@ -291,11 +289,12 @@ function d2B_cata() {								// case: 13
 		d2B_clrLvlOC();
 	}
 	
-	d2B_movePresetUnitTitle(me.areaid,18,0);
+	Delay(Random(2000,3000));
+	NTM_MoveTo(me.areaid, 22594, 9622);
+	Delay(Random(4000,5000));
 	
 	d2B_chkAct2(true,1);	// return to Act 1 town
 }
-
 //
 //	Act II
 function d2B_sewers() {								// case: 14
@@ -307,45 +306,45 @@ function d2B_sewers() {								// case: 14
 	Delay(Random(25000,30000));
 	
 	NTTM_Act2SewerTrapDoor();		// begins at the stairs enterance
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	
 	d2B_moveToStair(me.areaid,48);	// go to the stairs sewers lvl 2
-	if(d2B_usingAFollower) d2B_myTP(false, false, false, false);
+	if(d2B_usingAFollower) d2B_myTP(false, false, false, false, true);
 	d2B_takeStairs(48);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid,49);	// go to the stairs sewers lvl 3
-	if(d2B_usingAFollower) d2B_myTP(false, false, false, false);
+	if(d2B_usingAFollower) d2B_myTP(false, false, false, false, true);
 	d2B_takeStairs(49);
 	d2B_clrLvlOC();
 
-	NTTM_CheckAct(2);				// return to Act 2 town	
+	d2B_chkAct2(true,2);				// return to Act 2 town	
 }
 function d2B_rockywaste() {							// case: 15
 	d2B_moveWP();
 	NTTM_OutOfTown2();
 	NTP_DoPrecast(true);
 	d2B_moveToStair(me.areaid, 55);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	
 	d2B_moveToStair(me.areaid, 55);
-	if(d2B_usingAFollower) d2B_myTP(false, false, false, false);
+	if(d2B_usingAFollower) d2B_myTP(false, false, false, false, true);
 	d2B_takeStairs(55);
 	d2B_clrLvlOC();
 	
 	d2B_moveToStair(me.areaid, 59);
-	if(d2B_usingAFollower) d2B_myTP(false, false, false, false);
+	if(d2B_usingAFollower) d2B_myTP(false, false, false, false, true);
 	d2B_takeStairs(59);
 	d2B_clrLvlOC();
 	
-	NTTM_CheckAct(2);
+	d2B_chkAct2(true,2);
 }
 function d2B_dryhills() {							// case: 16
 	d2B_commonInitSetup(42);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	
 	d2B_moveToStair(me.areaid, 56);
-	if(d2B_usingAFollower) d2B_myTP(false, false, false, false);
+	if(d2B_usingAFollower) d2B_myTP(false, false, false, false, true);
 	d2B_takeStairs(56);
 	d2B_clrLvlOC();
 	
@@ -373,39 +372,39 @@ function d2B_dryhills() {							// case: 16
 	d2B_takeStairs(60);
 	d2B_clrLvlOC(); */
 	
-	NTTM_CheckAct(2);
+	d2B_chkAct2(true,2);
 }
 function d2B_faroasis() {							// case: 17
 	d2B_commonInitSetup(43);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	
 	for(var i = 0 ; i < 3 ; i++){
-			d2BmoveToStair(me.areaid, 62+i);
-			if(d2B_usingAFollower) d2B_myTP(false, false, false, false);
+			d2B_moveToStair(me.areaid, 62+i);
+			if(d2B_usingAFollower) d2B_myTP(false, false, false, false, true);
 			d2B_takeStairs(62+i);
 			NTP_DoPrecast(true);
 			d2B_clrLvlOC();
 	}
 	
-	NTTM_CheckAct(2);
+	d2B_chkAct2(true,2);
 }
 function d2B_lostcity() {							// case: 18
 	d2B_commonInitSetup(44);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	
 	d2B_moveToStair(me.areaid, 65);
-	if(d2B_usingAFollower) d2B_myTP(false, false, false, false);
+	if(d2B_usingAFollower) d2B_myTP(false, false, false, false, true);
 	d2B_takeStairs(65);
 	d2B_clrLvlOC();
 
-	NTTM_CheckAct(2);
+	d2B_chkAct2(true,2);
 }
 function d2B_clawvipertemple() {					// case: 19
 	d2B_commonInitSetup(44);
 	NTP_DoPrecast(true);
 	d2B_movePresetUnitTitle(45,37,0);
 	
-	if(d2B_usingAFollower) d2B_myTP(false, false, false, false);
+	if(d2B_usingAFollower) d2B_myTP(false, false, false, false, true);
 	d2B_takeStairs(58);
 	d2B_clrLvlOC();
 	
@@ -417,16 +416,16 @@ function d2B_clawvipertemple() {					// case: 19
 		Print(COLOR_2 + "Success!");
 		
 		d2B_moveToStair(me.areaid, 61);
-		if(d2B_usingAFollower) d2B_myTP(false, false, false, false);
+		if(d2B_usingAFollower) d2B_myTP(false, false, false, false, true);
 		d2B_takeStairs(61);
 		d2B_clrLvlOC();
 	}
 	if(MissedThemStairs == false && !NTM_TakeStair(61)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeStair()");
 	}
-	if(d2B_usingAFollower) d2B_myTP(false, false, true, true);;
+	if(d2B_usingAFollower) d2B_myTP(false, false, true, true, false);
 
-	NTTM_CheckAct(2);
+	d2B_chkAct2(true,2);
 }
 function d2B_haremtoceller() {						// case: 20
 	NTTM_CheckAct(2);
@@ -435,39 +434,44 @@ function d2B_haremtoceller() {						// case: 20
 	NTWP_GoToHarem();
 	
 	NTM_KoMoveToStair(50, 51);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, false, false);
+	d2B_team(false);
 	d2B_takeStairs(51);
 	d2B_clrLvlOC();
 	
 	for(var i = 0 ; i < 3 ; i++){
 		NTM_KoMoveToStair(me.areaid, 52+i);
-		if(d2B_usingAFollower) d2B_myTP(false, false, false, false);
 		d2B_takeStairs(52+i);
-		d2B_clrLvlOC();
+		if(d2B_usingAFollower) d2B_myTP(true, false, true, true, 5000, 10000);
 		if(me.areaid == 54 && NTConfig_ClearPalaceCellar == 0){
 			d2B_clrLvlOC();
 			NTSI_PickItems();
 		}
+		d2B_team(false);
 	}
 
-	NTTM_CheckAct(2);
+	d2B_chkAct2(true,2);
 }
 function d2B_arcane() {								// case: 21
 	d2B_commonInitSetup(74);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	
-	d2B_chkAct(true,2);
+	d2B_chkAct2(true,2);
 }
 function d2B_canyon() {								// case: 22
 	var _taltomb;
 	var _stair = [69, 68, 67, 66, 70, 71, 72];
 	
 	d2B_commonInitSetup(46);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
+	d2B_chkAct2(true,2);
+	
+	d2B_commonInitSetup(46);
 	
 	for(var i = 0; i < _stair.length; i++){
 		NTP_DoPrecast();
 		d2B_moveToStair(me.areaid, _stair[i]);
+		if(d2B_usingAFollower) d2B_myTP(true, true, true, false, false);
 		d2B_takeStairs(_stair[i]);
 		d2B_clrLvlOC();
 				
@@ -505,35 +509,35 @@ function d2B_spiderForest() {						// case: 23
 	NTTM_CheckAct(3);				// if not Lut Golein, then go to Lut Golein
 	
 	d2B_commonInitSetup(76);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 
 	d2B_chkAct2(true,3);
 }
 
 function d2B_greatMarsh() {							// case: 24
 	d2B_commonInitSetup(77);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 
 	d2B_chkAct2(true,3);
 }	
 function d2B_flayerJungle() {						// case: 25
 	d2B_commonInitSetup(78);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	
 	d2B_moveToStair(me.areaid, 88);		// move to Flayer Dungeon enterance
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, false, false);
 	d2B_takeStairs(88);
 	d2B_clrLvlOC();
 	
 	for(i=0; i<=1; (i=i+2)) {
 		d2B_moveToStair(me.areaid, 89+i);
-		if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
+		if(d2B_usingAFollower) d2B_myTP(true, false, true, false, false);
 		d2B_takeStairs(89+i);
 		d2B_clrLvlOC();
 	}
 	d2B_chkAct2(true,3);
 	d2B_commonInitSetup(78);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, false, false);
 	d2B_team(false);
 	
 	/* deeNote: this needs to be adjusted as d2B_takeStairs(87) does not function
@@ -557,16 +561,16 @@ function d2B_flayerJungle() {						// case: 25
 }	
 function d2B_lowerKurast() {						// case: 26
 	d2B_commonInitSetup(79);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	
 	d2B_chkAct2(true,3);
 }
 function d2B_Kurast() {								// case: 27
 	d2B_commonInitSetup(80);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	
 	d2B_moveToStair(me.areaid, 94);
-	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, false, false);
 	d2B_takeStairs(94);
 	d2B_clrLvlOC();
 	d2B_chkAct2(true,3);
@@ -574,7 +578,7 @@ function d2B_Kurast() {								// case: 27
 	
 	d2B_commonInitSetup(80);
 	d2B_moveToStair(me.areaid, 95);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, false, false);
 	d2B_takeStairs(95);
 	d2B_clrLvlOC();
 	
@@ -582,10 +586,10 @@ function d2B_Kurast() {								// case: 27
 }
 function d2B_upperKurast() {						// case: 28
 	d2B_commonInitSetup(81);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	
 	d2B_moveToStair(me.areaid, 97);		// Forgotten Tmeple enterance
-	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, false, false);
 	d2B_takeStairs(97);
 	d2B_clrLvlOC();
 	d2B_chkAct2(true,3);
@@ -593,7 +597,7 @@ function d2B_upperKurast() {						// case: 28
 	
 	d2B_commonInitSetup(81);
 	d2B_moveToStair(me.areaid, 96);		// Forgotten Reliquary enterance
-	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, false, false);
 	d2B_takeStairs(96);
 	d2B_clrLvlOC();
 
@@ -609,7 +613,7 @@ function d2B_Travincal() {							// case: 29
 	var WPX = me.x;
 	var WPY = me.y;
 	
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, false, false);
 	Delay(Random(4000,5000));
 
 	_waypoint = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(22526), 5);
@@ -631,7 +635,7 @@ function d2B_Travincal() {							// case: 29
 	NTM_MoveTo(83, WPX, WPY);
 	
 	d2B_moveToStair(82, 98);		// Ruined Fane enterance
-	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, false, false);
 	Delay(Random(4000,5000));
 	d2B_takeStairs(98);
 	d2B_clrLvlOC();
@@ -641,7 +645,7 @@ function d2B_Travincal() {							// case: 29
 	d2B_commonInitSetup(83);
 	d2B_moveToStair(82, 99);		// Ruined Fane enterance
 	Delay(Random(4000,5000));
-	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, false, false);
 	d2B_takeStairs(99);
 	d2B_clrLvlOC();
 
@@ -649,10 +653,10 @@ function d2B_Travincal() {							// case: 29
 }
 function d2B_Meph() {								// case: 30
 	d2B_commonInitSetup(101);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, true, false);
 	
 	d2B_moveToStair(me.areaid, 102);
-	if(d2B_usingAFollower) d2B_myTP(true, false, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, false, true, false, false);
 	d2B_takeStairs(102);
 	
 	var _attackpos = [											// for killing duri council
@@ -675,34 +679,13 @@ function d2B_Meph() {								// case: 30
 }
 //
 //	Act VI
-function d2B_outerSteps() {							// case: 31
-	d2B_chkAct(4);
-	NTTM_TownMove("exit");
-	NTM_MoveTo(104, 5170, 5090, 5);
-	
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
-	
-	d2B_chkAct2(true,4);
-}
-function d2B_plainsOfDespair() {					// case: 32
-	d2B_commonInitSetup(106);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
-	
-	d2B_chkAct2(true,4);
-}
-function d2B_riverOfFlame() {						// case: 33
-	d2B_commonInitSetup(107);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, true);
-	
-	d2B_chkAct2(true,4);
-}
-function d2B_chaos(){								// case: 34
+function d2B_chaos(){								// case: 31
 	NTConfig_FastChaos = false;
 	NTConfig_LeechSupport = false;
 	NTConfig_IdInField = false;
 	
 	d2B_commonInitSetup(107);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, false, false);
 	Delay(1000);
 	d2B_team(false);									// send the peeps back to town
 	
@@ -743,7 +726,7 @@ function d2B_chaos(){								// case: 34
 //	Act V
 function d2B_bloodyfoothills() {
 	d2B_commonInitSetup(111);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, false, false);
     Delay(Random(2000,3000));
 	d2B_team(false);
 	Delay(1000);
@@ -758,7 +741,7 @@ function d2B_frigidhighlands() {
 	// check to see if a d2B_clrLvlOC() cal will kill everything
 	
 	d2B_commonInitSetup(111);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, false, false);
 	Delay(Random(2000,3000));
 	d2B_team(false);
 	Delay(Random(5300,6000));
@@ -773,7 +756,7 @@ function d2B_frigidhighlands() {
 	
 	
 	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT,60);		// head to Abaddon enterance
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, false, false);
 	Delay(Random(2000,3000));
 	d2B_team(false);
 	Delay(Random(5300,6000));
@@ -788,7 +771,7 @@ function d2B_worldstonekeep() {
 	prewavespot = [15092, 5040];	// from: D2Etal/scripts/NTRush/rush_configs/Sorceress.ntl 
 	
 	d2B_commonInitSetup(129);
-	if(d2B_usingAFollower) d2B_myTP(true, true, true, false);
+	if(d2B_usingAFollower) d2B_myTP(true, true, true, false, false);
 	d2B_team(false);
 	Delay(Random(1500,2000));
 	
@@ -819,7 +802,7 @@ function d2B_worldstonekeep() {
 	d2B_throneWaves();
 	Delay(300);
 	
-	if(d2B_usingAFollower) d2B_myTP(false, true, true, false);
+	if(d2B_usingAFollower) d2B_myTP(false, true, true, false, false);
 	Delay(2000);
 	d2B_team(false);
 	Delay(Random(2300,4000));
@@ -954,11 +937,16 @@ function d2B_chkAct() {
 	return;
 }
 function d2B_chkAct2(a,b) {							// a: true sends team to town | b: act 1 thru 5
-	if(a) d2B_team(false);
+	if(a) {
+		Delay(Random(10000,14000));
+		d2B_team(false);
+		Delay(Random(3000,5000));
+	}
 	if(!NTTM_CheckAct(b)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_CheckAct()");
-		return;
 	}
+	Delay(Random(3000,5000));
+	d2B_moveWP();
 	return;
 }
 function d2B_townMove(a) {
@@ -1020,9 +1008,8 @@ function d2B_usePortal(a,b){
 	return;
 }
 function d2B_moveToStair(a,b) {
-	if(!NTM_MoveToStair(a, b)){
+	if(!NTM_MoveToStair(a, b)) {
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToStair()");
-		return;
 	}
 	return;
 }
@@ -1030,9 +1017,13 @@ function d2B_takeStairs(a) {
 	Delay(Random(4000,6000));
 	if(!NTM_TakeStair(a)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeStair()");
-		return;
 	}
-	NTM_MakeTP();
+	if(d2B_usingAFollower) {
+		NTM_MakeTP();
+		Delay(300);
+		Say(".");
+		Delay(Random(5000,7000));
+	}
 	return;
 }
 function d2B_clrLevel() {
@@ -1052,7 +1043,7 @@ function d2B_clrLvlOC() {
 	d2B_openChests();
 	return;
 }
-function d2B_myTP(a,b,c,d) {				// (a: delay | b: bo true/false | c: precast | d: clr level chests) 
+function d2B_myTP(a,b,c,d,e,f) {				// (a: delay | b: bo true/false | c: precast | d: clr level chests | e,f: delay(random(e,f))) 
 	if(a) {					
 		Say(",");						// make sure everyone is at the portal area
 		Delay(Random(5300,6000));
@@ -1079,6 +1070,7 @@ function d2B_myTP(a,b,c,d) {				// (a: delay | b: bo true/false | c: precast | d
 	}
 	if(c) NTP_DoPrecast(true);
 	if(d) d2B_clrLvlOC();
+	if(e) Delay(Random(e,f));
 }
 function d2B_team(a) {					// (a: false = send team to town true: bring team
 	NTM_MakeTP();
@@ -1155,25 +1147,25 @@ function d2H_load() {
 	
 	NTConfig_DoNotFollowAreas = [0];		// Won't take a WP or TP to these areas
 	NTConfig_DoNotAttackAreas = [0];		// Won't attack in these areas
-	NTConfig_AllowCommands = true;							// Allows leader to issue commands such as 'exit', 'town', 'follow', etc.  'follow' is ON by default.
-	NTConfig_PortalAtLeechersCorpses = false;				// Make a TP at players corpses when they die near you
-		NTConfig_MessageDeadPlayers = false;				// Send a msg to those players when they die
-		NTConfig_DeadPlayerMsg = "My tp for your corpse";	// The actual message to send
-	NTConfig_GreetPlayers = false;							// Greet players who join your party
-		NTConfig_GreetMsg = "Hello, %name%!";				// The message to send
-	NTConfig_HelperHumor = false;							// 0.3% chance to say a silly phrase and skip doing the command you issued.
-	NTConfig_Quest_Cain		= true;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Radament	= true;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Izual	= true;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Tome		= true;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Shenk	= true;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Anya		= true;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Ancients	= true;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Baal		= true;						// true/false to do quests when using rush commands
-	NTConfig_TpHarem		= true;						// true/false to tp at harem after duriel
-	NTConfig_KillCouncils	= true;						// true/false to kill all counsel members
-	NTConfig_ClearCS 		= false;					// true/false to clear CS when doing diablo quest
-	NTConfig_CSDodge 		= true;						// dodge in CS
+	NTConfig_AllowCommands = true;								// Allows leader to issue commands such as 'exit', 'town', 'follow', etc.  'follow' is ON by default.
+	NTConfig_PortalAtLeechersCorpses = false;						// Make a TP at players corpses when they die near you
+		NTConfig_MessageDeadPlayers = false;						// Send a msg to those players when they die
+		NTConfig_DeadPlayerMsg = "My tp for your corpse";				// The actual message to send
+	NTConfig_GreetPlayers = false;								// Greet players who join your party
+		NTConfig_GreetMsg = "Hello, %name%!";						// The message to send
+	NTConfig_HelperHumor = false;								// 0.3% chance to say a silly phrase and skip doing the command you issued.
+	NTConfig_Quest_Cain		= false;						// true/false to do quests when using rush commands
+	NTConfig_Quest_Radament		= false;						// true/false to do quests when using rush commands
+	NTConfig_Quest_Izual		= false;						// true/false to do quests when using rush commands
+	NTConfig_Quest_Tome		= false;						// true/false to do quests when using rush commands
+	NTConfig_Quest_Shenk		= false;						// true/false to do quests when using rush commands
+	NTConfig_Quest_Anya		= false;						// true/false to do quests when using rush commands
+	NTConfig_Quest_Ancients		= false;						// true/false to do quests when using rush commands
+	NTConfig_Quest_Baal		= false;						// true/false to do quests when using rush commands
+	NTConfig_TpHarem		= false;						// true/false to tp at harem after duriel
+	NTConfig_KillCouncils		= false;						// true/false to kill all counsel members
+	NTConfig_ClearCS 		= false;						// true/false to clear CS when doing diablo quest
+	NTConfig_CSDodge 		= false;						// dodge in CS
 	
 	return;
 }
@@ -1519,6 +1511,10 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				}
 				break;
 			case "'":
+				if(NTC_InTown(me.name)) {
+					isFollowingEnabled = false;
+					break;
+				}
 				if(!isBusy) {
 					isFollowingEnabled = false;
 					Print(COLOR_4 + "Follow off");
@@ -1556,7 +1552,10 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		break;
 	case "'":
 		if(me.name == _myBoBarb) break;
-		if(!NTC_InTown()) break;
+		if(NTC_InTown(me.name)) {
+			isFollowingEnabled = false;
+			break;
+		}
 		if(!isBusy)
 		{
 			isFollowingEnabled = false;
@@ -3215,7 +3214,7 @@ function NT_OpenVenomSealInt(type) {
 	NTA_KillMonster(GetLocaleString(2853)); // Infector of Souls
 	NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 362 : null);
 	
-	if(d2B_usingAFollower) d2B_myTP(false, true, true, false);
+	if(d2B_usingAFollower) d2B_myTP(false, true, true, false, false);
 	Delay(1000);
 	
 	NT_OpenSealInt(393);
@@ -4004,6 +4003,7 @@ function d2B_killBaal(classid) {
 function d2B_switchMain() {
 	switch(d2B_myPauseValue) {
 		case 1: Say("ummm 1");
+			Delay(Random(12000,16000));
 			d2B_bloodmoor();				// blood moore thingy
 			break;
 		case 2: d2B_coldplains();			// cold plains thingy
@@ -4022,7 +4022,7 @@ function d2B_switchMain() {
 			break;
 		case 9: d2B_outercloister();		// outer cloister thingy
 			break;
-		case 10: d2B_barracks();			// barracks thingy
+		case 10: //d2B_barracks();			// barracks thingy deeNotes: needs to be fixed
 			Delay(Random(8000,12000));
 			break;
 		case 11: d2B_jail();				// jail thingy
@@ -4032,6 +4032,7 @@ function d2B_switchMain() {
 		case 13: d2B_cata();				// catacombs thingy
 			break;
 		case 14: Say("ummm 2");
+			Delay(Random(12000,16000));
 			d2B_sewers();					// sewers thingy
 			break;
 		case 15: d2B_rockywaste();			// rocky waste thingy
@@ -4050,7 +4051,8 @@ function d2B_switchMain() {
 			break;
 		case 22: d2B_canyon();				// canyon thingy
 			break;
-		case 23: Say("ummm 2");
+		case 23: Say("ummm 3");
+			Delay(Random(12000,16000));
 			d2B_spiderForest();				// canyon thingy
 			break;
 		case 24: d2B_greatMarsh();				// canyon thingy
@@ -4067,13 +4069,9 @@ function d2B_switchMain() {
 			break;
 		case 30: d2B_Meph();				// canyon thingy
 			break;
-		case 31: d2B_outerSteps();				// outer steps thingy
-			break;
-		case 32: d2B_plainsOfDespair();			// plains of despair thingy
-			break;
-		case 33: d2B_riverOfFlame();		// river of flame thingy
-			break
-		case 34: d2B_chaos();				// chaos thingy
+		case 31: Say("ummm 4");
+			Delay(Random(12000,16000));
+			d2B_chaos();				// chaos thingy
 			break;
 	}
 }
