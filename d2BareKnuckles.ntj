@@ -24,7 +24,7 @@ var debug = false;
 var pathRushBots = "NTRush/rushbots/";						// . .. follow, unfollow
 var isBusy = false;											// ;	precast, buff
 var isPaused = false;										// '	town & unfollow
-var isFollowingEnabled = true;								// ,	in town move to portal area
+var isFollowingEnabled = false;								// ,	in town move to portal area
 var isAttackEnabled = true;
 var isAutoEnchantEnabled = false;
 var leaderUnit;
@@ -56,6 +56,7 @@ function NTMain() {
 	NTTM_TownMove("waypoint");
 	Delay(700);
 	
+	if(d2B_toggleHelper == "helper") {d2H_helper();}		// for enabling a follower
 	if(d2B_toggleHelper != "helper") d2B_newGmDlyPeepChk();
 	
 	if(d2B_toggleHelper != "testing") {
@@ -86,7 +87,6 @@ function NTMain() {
 		Print(COLOR_2 + "Another delay...");
 		Delay(Random(35000,40000));
 	}
-	else if(d2B_toggleHelper == "helper") {d2H_helper();}		// for enabling a follower
 	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 }
 
@@ -217,7 +217,7 @@ function d2B_blackmarsh() {							// case: 7
 }
 function d2B_blackMarsh2() {						// a useful delay for when dolls are found in throne room
 	Delay(Random(3000,5000));
-	Say("ummm 1");
+	d2B_msg("ummm 1");
 	Delay(Random(15000,20000));
 	d2B_commonInitSetup(6);
 	
@@ -226,7 +226,7 @@ function d2B_blackMarsh2() {						// a useful delay for when dolls are found in 
 	Delay(4000);
 	for(var i = 0 ; i < 6 ; i++) {
 		d2B_moveToStair(me.areaid,20+i);	// go to the forgotten tower and do tower things
-		d2B_takeStairs(20+i);
+		NTM_TakeStair(20+i);
 		if(i==5) {
 			d2B_myTP(true, false, true, true, 4000,7000);
 		}
@@ -234,7 +234,7 @@ function d2B_blackMarsh2() {						// a useful delay for when dolls are found in 
 	
 	d2B_chkAct2(true,1);	// return to Act 1 town
 	Delay(Random(4000,7000));
-	Say("ummm 4");
+	d2B_msg("ummm 4");
 	Delay(300);
 	d2B_chkAct(4);
 	for(i=0; i<=5; i++) {
@@ -331,7 +331,7 @@ function d2B_sewers() {								// case: 14
 	d2B_gotoWP(40);
 	NTTM_CheckAct(2);				// if not Lut Golein, then go to Lut Golein
 	
-	Say("ummm 2");					// saying this again as a precaution
+	d2B_msg("ummm 2");					// saying this again as a precaution
 	Delay(Random(25000,30000));
 	
 	NTTM_Act2SewerTrapDoor();		// begins at the stairs enterance
@@ -721,11 +721,11 @@ function d2B_chaos(){								// case: 31
 	NTM_MoveTo(108, 7790, 5544);
 	NTM_MakeTP();
 	Delay(300);
-	Say(".");
+	d2B_msg(".");
 	
 	NTCS_ClearPosition(30, EntranceSort);
 	Delay(Random(2000.3000));
-	Say(".");
+	d2B_msg(".");
 	var FrontToStarX = [7792,7794,7791,7777,7813,7769,7782,7802,7819,7768,7770,7791,7819, 7804];
 	var FrontToStarY = [5564,5529,5495,5486,5486,5445,5421,5421,5446,5390,5355,5355,5376, 5340];
 	for (var i = 0; i < FrontToStarX.length; i += 1) {
@@ -824,7 +824,7 @@ function d2B_worldstonekeep() {
 		}
 	}
 	_dollSoul = false;
-	Say(".");
+	d2B_msg(".");
 	Delay(300);
 	NT_ClearThroneInt();
 	
@@ -935,7 +935,7 @@ function d2B_load() {
 function d2B_newGmDlyPeepChk() {
 	Print(COLOR_2 + "Taking an extended break, so as to give the peeps time to enter game...");
 	Delay(Random(35000,40000));
-	Say(",");
+	d2B_msg(",");
 	Delay(Random(7300,10000));
 		
 	// check to see if peeps have arrived...
@@ -994,7 +994,7 @@ function d2B_townMove(a) {
 function d2B_endCase(a) {
 	NTM_MakeTP();
 	Delay(300);
-	Say("'");
+	d2B_msg("'");
 	Delay(Random(4000,6000));
 	NTTM_CheckAct(a);
 	return;
@@ -1056,7 +1056,7 @@ function d2B_takeStairs(a) {
 	if(d2B_usingAFollower) {
 		NTM_MakeTP();
 		Delay(300);
-		Say(".");
+		d2B_msg(".");
 		Delay(Random(5000,7000));
 	}
 	return;
@@ -1081,7 +1081,7 @@ function d2B_clrLvlOC() {
 function d2B_myTP(a,b,c,d,e,f) {				// (a: delay | b: bo true/false | c: precast | d: clr level chests | e,f: delay(random(e,f))) 
 	if(!d2B_usingAFollower) return;
 	if(a) {					
-		Say(",");						// make sure everyone is at the portal area
+		d2B_msg(",");						// make sure everyone is at the portal area
 		Delay(Random(5300,6000));
 	}					
 	NTA_ClearPosition(5);
@@ -1089,7 +1089,7 @@ function d2B_myTP(a,b,c,d,e,f) {				// (a: delay | b: bo true/false | c: precast
 	Delay(Random(2300,4000));
 	NTM_MakeTP();
 	Delay(300);
-	Say(".");
+	d2B_msg(".");
 	if(!a) {Delay(Random(8300,11000));}	// enough delay for all to arrive
 	Delay(Random(4000,5000));
 	if(b) {
@@ -1098,9 +1098,9 @@ function d2B_myTP(a,b,c,d,e,f) {				// (a: delay | b: bo true/false | c: precast
 		while(_myBoBarb.areaid == me.areaid) {
 			if(_msgMe) Say("/msg *" + _myName + " Darn. " + _myBoBarb + " has not gone to town.");
 			Delay(Random(5000,6000));
-			Say("b ..");
+			d2B_msg("b ..");
 			Delay(1200);
-			Say("b '");
+			d2B_msg("b '");
 			Delay(1200);
 		}
 	}
@@ -1111,9 +1111,9 @@ function d2B_myTP(a,b,c,d,e,f) {				// (a: delay | b: bo true/false | c: precast
 function d2B_team(a) {					// (a: false = send team to town true: bring team
 	NTM_MakeTP();
 	Delay(400);
-	if(a) Say(".");	
+	if(a) d2B_msg(".");	
 	else if(!a) {
-		Say("'");
+		d2B_msg("'");
 		Delay(Random(3000,4000));
 		return;
 	}
@@ -1121,13 +1121,13 @@ function d2B_team(a) {					// (a: false = send team to town true: bring team
 	return;
 }
 function d2B_bo() {						//for instructing a bo barb
-	Say("b ,");				// make sure barb is at the portal area
+	d2B_msg("b ,");				// make sure barb is at the portal area
 	Delay(Random(5000,6000));
-	Say("b .");				// tell barb to come through tp
+	d2B_msg("b .");				// tell barb to come through tp
 	Delay(Random(8000,9000));
-	Say("b ;");				// instruct barb to precast
+	d2B_msg("b ;");				// instruct barb to precast
 	Delay(Random(8000,11000));
-	Say("b '");				// send barb back to town
+	d2B_msg("b '");				// send barb back to town
 	return;
 }
 function d2B_CheckAct(peep) {
@@ -1146,6 +1146,11 @@ function d2B_checkAct(a,b) {		// a: which act b: which town wp to go to
 	NTTM_TownMove("waypoint");
 	if(b) { NTM_TakeWaypoint(b) };
 	
+	return;
+}
+function d2B_msg(a) {
+	Say(a);
+	Delay(300);
 	return;
 }
 // ________________________________________________________
@@ -3282,9 +3287,9 @@ function NT_OpenSealInt(classid) {
 			return false;
 		}
 		if (seal.mode) { // for pubbies
-			if (warn) {
+			/*if (warn) {
 				PubSay(NTConfig_CS_SealBasher);
-			}
+			}*/
 			return true;
 		}
 		warn = false;
@@ -3703,7 +3708,7 @@ function NT_ClearThroneInt(){
 	return;
 }
 function d2B_throneWaves() {
-	Say("yo");
+	d2B_msg("yo");
 	Delay(100);
 	while(1){
 		NTC_Delay(100);
@@ -3748,7 +3753,7 @@ function d2B_throneWaves() {
 				}
 				break;
 			case 3:
-			    Say(".");
+			    d2B_msg(".");
 			    Delay(100);
 				if(NTConfig_PreWaveTele){
 					NTM_TeleportTo(me.x+1, me.y+3);
@@ -3758,12 +3763,12 @@ function d2B_throneWaves() {
 					NT_CheckHydraInt();
 				}
 				else {
-					Say("yo");
+					d2B_msg("yo");
 					NTC_Delay(3000);
 				}
 				break;
 			case 4:
-			   Say("yo");
+			   d2B_msg("yo");
 			   Delay(100);
 				if(NTConfig_PreWaveTele){
 					NTM_TeleportTo(me.x+1, me.y+3);
@@ -3801,7 +3806,7 @@ function d2B_baal() {
 			break;
 		}
 		if(i >= 58) {
-			Say("looks like baal is bugged");
+			d2B_msg("looks like baal is bugged");
 		}
 	}
 	_portal = NTC_FindUnit(NTC_UNIT_OBJECT, 563, 1);
@@ -4038,7 +4043,7 @@ function d2B_killBaal(classid) {
 //
 function d2B_switchMain() {
 	switch(d2B_myPauseValue) {
-		case 1: Say("ummm 1");
+		case 1: d2B_msg("ummm 1");
 			Delay(Random(12000,16000));
 			d2B_bloodmoor();				// blood moore thingy
 			break;
@@ -4067,7 +4072,7 @@ function d2B_switchMain() {
 			break;
 		case 13: d2B_cata();				// catacombs thingy
 			break;
-		case 14: Say("ummm 2");
+		case 14: d2B_msg("ummm 2");
 			Delay(Random(12000,16000));
 			d2B_sewers();					// sewers thingy
 			break;
@@ -4087,7 +4092,7 @@ function d2B_switchMain() {
 			break;
 		case 22: d2B_canyon();				// canyon thingy
 			break;
-		case 23: Say("ummm 3");
+		case 23: d2B_msg("ummm 3");
 			Delay(Random(12000,16000));
 			d2B_spiderForest();				// canyon thingy
 			break;
@@ -4105,7 +4110,7 @@ function d2B_switchMain() {
 			break;
 		case 30: d2B_Meph();				// canyon thingy
 			break;
-		case 31: Say("ummm 4");
+		case 31: d2B_msg("ummm 4");
 			Delay(Random(12000,16000));
 			d2B_chaos();				// chaos thingy
 			break;
@@ -4113,30 +4118,30 @@ function d2B_switchMain() {
 }
 function d2B_switchGrinding() {
 	switch(d2B_myPauseValue) {
-		case 1: Say("ummm 1");
+		case 1: d2B_msg("ummm 1");
 			NTConfig_SkipRegularMonsters = false;
 			d2B_chkAct(1);
 			Delay(Random(20000,25000));
 			d2B_blackmarsh();					// black marsh thingy
 			break;
-		case 2: Say("ummm 4");
+		case 2: d2B_msg("ummm 4");
 			NTConfig_SkipRegularMonsters = false;
 			d2B_chkAct(4);
 			Delay(Random(20000,25000));
 			d2B_chaos();						// chaos thingy
 			break;
-		case 3: Say("ummm 5");
+		case 3: d2B_msg("ummm 5");
 			NTConfig_SkipRegularMonsters = false;
 			d2B_chkAct(5);
 			Delay(Random(20000,25000));
 			d2B_bloodyfoothills();				// bloody foothills thingy
 			break;
-		case 4: Say("ummm 5");	
+		case 4: d2B_msg("ummm 5");	
 			NTConfig_SkipRegularMonsters = false; 
 			d2B_chkAct(5);
 			d2B_frigidhighlands();				// figid highland thingy
 			break;
-		case 5: Say("ummm 5"); 
+		case 5: d2B_msg("ummm 5"); 
 			NTConfig_SkipRegularMonsters = false;
 			d2B_chkAct(5);
 			d2B_worldstonekeep();				// world stone keep thingy
@@ -4145,26 +4150,26 @@ function d2B_switchGrinding() {
 }
 function d2B_switchChaosThrone() {
 	switch(d2B_myPauseValue) {
-		case 1: Say("ummm 4");
+		case 1: d2B_msg("ummm 4");
 			NTConfig_SkipRegularMonsters = false;
 			d2B_chkAct(4);
 			Delay(Random(20000,25000));
 			d2B_chaos();						// chaos thingy
 			break;
-	case 2: Say("ummm 5"); 
+	case 2: d2B_msg("ummm 5"); 
 			Delay(Random(10000,12000));
 			NTConfig_SkipRegularMonsters = false;
 			d2B_chkAct(5);			
 			d2B_worldstonekeep();				// world stone keep thingy
 			if(_dollSoul) {
-				Say("Dolls and/or souls, so going to do countess as a filler...");
+				d2B_msg("Dolls and/or souls, so going to do countess as a filler...");
 				Delay(300);
 				d2B_blackMarsh2();
 				_soulDoll = false;
 				break;
 			}
 			Delay(Random(8000,14000));
-			Say("ummm 4");
+			d2B_msg("ummm 4");
 			Delay(Random(10000,12000));
 			d2B_chkAct(4);
 			Delay(Random(10000,12000));
@@ -4173,22 +4178,22 @@ function d2B_switchChaosThrone() {
 }
 function d2B_switchThrone() {
 	switch(d2B_myPauseValue) {
-		case 1: Say("ummm 5"); 
+		case 1: d2B_msg("ummm 5"); 
 			Delay(Random(10000,12000));
 			NTConfig_SkipRegularMonsters = false;
 			d2B_chkAct(5);			
 			d2B_worldstonekeep();				// world stone keep thingy
 			if(_dollSoul) {
-				Say("Dolls and/or souls, so going to do chaos...");
+				d2B_msg("Dolls and/or souls, so going to do chaos...");
 				Delay(Random(7000,9000));
 				if(_msgMe) Say("/msg *" + _myName + " Dolls and/or souls, so going to do chaos...");
 				Delay(3300);
-				Say("ummmm 4");
+				d2B_msg("ummmm 4");
 				NTConfig_SkipRegularMonsters = false;
 				d2B_chkAct(4);
 				Delay(Random(15000,24000));
 				d2B_chaos();						// chaos thingy
-				Say("ummmm 5");
+				d2B_msg("ummmm 5");
 				Delay(Random(25000,34000));
 				d2B_chkAct(5);
 			}
