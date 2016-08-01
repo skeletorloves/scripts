@@ -215,7 +215,7 @@ function d2B_blackmarsh() {							// case: 7
 	
 	d2B_chkAct2(true,1);	// return to Act 1 town
 }
-function d2B_blackMarsh2() {							// case: 7
+function d2B_blackMarsh2() {						// a useful delay for when dolls are found in throne room
 	Delay(Random(3000,5000));
 	Say("ummm 1");
 	Delay(Random(15000,20000));
@@ -805,9 +805,9 @@ function d2B_worldstonekeep() {
 	Delay(Random(1500,2000));
 	
 	d2B_moveToStair(me.areaid, 130);
-	d2B_takeStairs(130);
+	NTM_TakeStair(130);
 	d2B_moveToStair(me.areaid, 131);
-	d2B_takeStairs(131);
+	NTM_TakeStair(131);
 	
 	NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
 	NTM_MakeTP();
