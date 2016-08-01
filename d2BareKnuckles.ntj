@@ -8,11 +8,11 @@ var _dollSoul = false;
 var d2B_cases = 22;
 var d2B_toggleHelper = false;			// helper: for engaging helper | testing: for testing | grinding: for specific zone functions | leveling: Chaos & Throne | throne
 var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_myTP()
-var d2B_refill = true;				// enable/disable NTTM_TownManager()
+var d2B_refill = true;					// enable/disable NTTM_TownManager()
 	
-var _msgMe = false;				// for enabling whispering to _myName 
-var _myName = "";				// peep to msg of what's a-happenin'
-var _myBoBarb = "";				// bo barb name
+var _msgMe = false;							// for enabling whispering to _myName 
+var _myName = "";							// peep to msg of what's a-happenin'
+var _myBoBarb = "";							// bo barb name
 
 
 // *** Global helper vars ***
@@ -25,12 +25,12 @@ var pathRushBots = "NTRush/rushbots/";						// . .. follow, unfollow
 var isBusy = false;											// ;	precast, buff
 var isPaused = false;										// '	town & unfollow
 var isFollowingEnabled = true;								// ,	in town move to portal area
-var isAttackEnabled = false;
+var isAttackEnabled = true;
 var isAutoEnchantEnabled = false;
 var leaderUnit;
 var leaderPlayerUnit;
-var followRange = 5;
-var attackRange = 5;
+var followRange = 3;
+var attackRange = 3;
 
 var d2B_myPause = "";				// a temp place for where retrieved bot pause string is stored
 var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Number(myPause)
@@ -228,7 +228,7 @@ function d2B_blackMarsh2() {							// case: 7
 		d2B_moveToStair(me.areaid,20+i);	// go to the forgotten tower and do tower things
 		d2B_takeStairs(20+i);
 		if(i==5) {
-			d2B_myTP(true, false, true, true, 4000,7000));
+			d2B_myTP(true, false, true, true, 4000,7000);
 		}
 	}
 	
