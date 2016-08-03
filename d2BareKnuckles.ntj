@@ -1512,7 +1512,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 	case ";":
 	case "j":
 		var x_tmp = Random(10,20);
-		var x_tmp = Random(10,20);
+		var y_tmp = Random(10,20);
 		NTM_MoveTo(me.areaid, me.x+x_tmp, me.y+y_tmp);
 		break;
 	case "buff":
