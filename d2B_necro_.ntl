@@ -132,10 +132,10 @@ function NT_LoadConfig()
 	NTConfig_FreeSpace = 4;								// Number of free columns. If bot has less than this amount after id'ing, it will go to stash.
 
 	// These numbers correspond to your inventory. Set 0 to keep whatever is there, 1 to have the bot manage the slot.
-	NTConfig_Columns[0] = [0,0,0,0,0,0,0,0,0,0];
-	NTConfig_Columns[1] = [0,0,0,0,0,0,0,0,0,0];
-	NTConfig_Columns[2] = [0,0,0,0,0,0,0,0,0,0];
-	NTConfig_Columns[3] = [0,0,0,0,0,0,0,0,0,0];
+	NTConfig_Columns[0] = [1,1,1,1,1,1,1,1,0,0];
+	NTConfig_Columns[1] = [1,1,1,1,1,1,1,1,0,0];
+	NTConfig_Columns[2] = [1,1,1,1,1,1,1,1,0,0];
+	NTConfig_Columns[3] = [1,1,1,1,1,1,1,1,0,0];
 
 	NTConfig_MinGoldToStash = 100000;					// Maximum gold amount carried before going to stash
 
@@ -392,8 +392,8 @@ function NT_LoadConfig()
 	// Class Specific Settings
 	//------------------------------------------------------------------------------
 
-	NTConfig_Curse[0] = 0; 				// Curse to boss. Set to 0 if you won't
-	NTConfig_Curse[1] = 0; 				// Curse to others. Set to 0 if you won't
+	NTConfig_Curse[0] = 91; 				// Curse to boss. Set to 0 if you won't
+	NTConfig_Curse[1] = 91; 				// Curse to others. Set to 0 if you won't
 
 	NTConfig_TeleStomp = false;				// Teleport onto a boss or immune monster.
 	NTConfig_ActiveSummon = false;			// Summon between attacks.
