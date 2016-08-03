@@ -1509,12 +1509,12 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		Delay(250);
 		Print(COLOR_4 + "Ready at town portal");
 		break;
-	case ";":
 	case "j":
 		var x_tmp = Random(10,20);
 		var y_tmp = Random(10,20);
 		NTM_MoveTo(me.areaid, me.x+x_tmp, me.y+y_tmp);
 		break;
+	case ";":
 	case "buff":
 		if(me.name == _myBoBarb) break;
 		if(!isBusy && !NTC_InTown(me))
