@@ -819,8 +819,11 @@ function d2B_worldstonekeep() {
 		}
 	}
 	_dollSoul = false;
+	NTM_MoveTo(me.areaid, 15094, 5039);				// safe: 15118, 5051 | centre: 15094, 5039 | orig(15112, 5068, 1, true)
+	NTM_MakeTP();
 	d2B_msg(".");
-	Delay(300);
+	NTA_ClearPosition();
+	
 	NT_ClearThroneInt();
 	
 	d2B_throneWaves();
