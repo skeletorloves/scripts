@@ -5,7 +5,7 @@
 var _dollChk = true;
 var _dollSoul = false;
 
-var d2B_cases = 22;
+var d2B_cases = 1;
 var d2B_toggleHelper = false;			// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
 										// necroBaal: get skellies then baal with non tele necro peeps
