@@ -6,13 +6,19 @@ var _dollChk = true;
 var _dollSoul = false;
 
 var d2B_cases = 22;
-var d2B_toggleHelper = false;			// helper: for engaging helper | testing: for testing | grinding: for specific zone functions | leveling: Chaos & Throne | throne
+var d2B_toggleHelper = false;			// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
+										// leveling: Chaos & Throne | throne
+										// necroBaal: get skellies then baal with non tele necro peeps
+var _nonTelePeeps = false;				// if followers can tele
+
+
 var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_myTP()
 var d2B_refill = true;					// enable/disable NTTM_TownManager()
 	
 var _msgMe = false;							// for enabling whispering to _myName 
 var _myName = "";							// peep to msg of what's a-happenin'
 var _myBoBarb = "";							// bo barb name
+var _myChantress = "";						// my chantress
 
 
 // *** Global helper vars ***
@@ -70,10 +76,11 @@ function NTMain() {
 			if(_msgMe) Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
 			Delay(Random(5000,6000));
 			
-			if(d2B_toggleHelper == false) d2B_switchMain();				// for a list of action cases which are reasonably complete
-			if(d2B_toggleHelper == "grinding") d2B_switchGrinding();	// for a select list of action cases
-			if(d2B_toggleHelper == "leveling") d2B_switchChaosThrone();	// for a Chaos and Throne room leveling
-			if(d2B_toggleHelper == "throne") d2B_switchThrone();	// for Throne room leveling
+			if(d2B_toggleHelper == false) d2B_switchMain();					// for a list of action cases which are reasonably complete
+			if(d2B_toggleHelper == "grinding") d2B_switchGrinding();		// for a select list of action cases
+			if(d2B_toggleHelper == "leveling") d2B_switchChaosThrone();		// for a Chaos and Throne room leveling
+			if(d2B_toggleHelper == "throne") d2B_switchThrone();			// for Throne room leveling
+			if(d2B_toggleHelper == "necroBaal") d2B_switchnecroBaal();	// for chaos & baal leveling w/ non teleing necros
 			
 			d2B_msgIncPause();	
 		}
@@ -720,7 +727,6 @@ function d2B_chaos(){								// case: 31
 	
 	d2B_chkAct2(true,4);
 }
-
 //
 //	Act V
 function d2B_bloodyfoothills() {
@@ -766,6 +772,25 @@ function d2B_frigidhighlands() {
 	
 	d2B_chkAct2(true,5);
 }
+function d2B_makeSkellies() {
+	d2B_commonInitSetup(111);
+	d2B_myTP(true, true, true, false, false);
+    Delay(Random(2000,3000));
+	
+	NTM_MoveTo(me.areaid, 3750, 5090); // are where Eldritch is
+	NTA_ClearPosition();
+	NTSI_PickItems();
+	d2B_team(false);
+	
+	if(!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 776, -5, 5)) {		// go to where shenk is
+			NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
+	}
+	d2B_team(true);
+	NTA_ClearPosition();
+	NTSI_PickItems();
+	
+	d2B_chkAct2(true,5);
+}
 function d2B_worldstonekeep() {
 	prewavespot = [15092, 5040];	// from: D2Etal/scripts/NTRush/rush_configs/Sorceress.ntl 
 	
@@ -802,9 +827,9 @@ function d2B_worldstonekeep() {
 	Delay(300);
 	
 	d2B_myTP(false, true, true, false, false);
-	Delay(2000);
+	Delay(4000);
 	d2B_team(false);
-	Delay(Random(2300,4000));
+	Delay(Random(4500,6000));
 	
 	d2B_baal();
 	Delay(Random(3000,4000));
@@ -1492,18 +1517,18 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				Town();
 		break;
 	case ".":				// follow
-		if(me.name == _myBoBarb) break;
+		if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
 		isFollowingEnabled = true;
 		Print(COLOR_4 + "Follow on");
 		break;
 	case "..":				// unfollow
-		if(me.name == _myBoBarb) break;
+		if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
 		isFollowingEnabled = false;
 		Print(COLOR_4 + "Follow off");
 		break;
 	case ",":				// while in town, got to portal area
 		if(!NTC_InTown(me)) break;
-		if(me.name == _myBoBarb) break;
+		if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
 		isFollowingEnabled = false;
 		NTTM_TownMove("portalspot");
 		Delay(250);
@@ -1518,7 +1543,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		break;
 	case ";":
 	case "buff":
-		if(me.name == _myBoBarb) break;
+		if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
 		if(!isBusy && !NTC_InTown(me))
 		{
 			NTP_DoPrecast( true );
@@ -1574,6 +1599,53 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				break;
 		}
 		break;
+	case "c":
+		if(me.name != _myChantress) break;
+		switch(msg2) {							// for bo town barb only
+			case ".":
+				isFollowingEnabled = true;
+				Print(COLOR_4 + "Follow on");
+				break;
+			case "..":
+				isFollowingEnabled = false;
+				Print(COLOR_4 + "Follow off");
+				break;
+			case ",":							// while in town, got to portal area	
+				if(!NTC_InTown(me)) break;
+				isFollowingEnabled = false;
+				NTTM_TownMove("portalspot");
+				Delay(250);
+				Print(COLOR_4 + "Ready at town portal");
+				break;
+			case ";":
+				if(!isBusy && !NTC_InTown(me)) {
+					NTP_DoPrecast( true );
+					//Chant( msg2 );
+				}
+				break;
+			case "'":
+				if(NTC_InTown(me.name)) {
+					isFollowingEnabled = false;
+					break;
+				}
+				if(!isBusy) {
+					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
+					if(!TakeLeaderTP())
+						Town();
+				}
+				Delay(Random(1000,2000));
+				d2B_townMove("portalspot");
+				break;
+			case "refill":
+				if(!NTC_InTown(me)) break;
+				refillChanter();
+				break;
+		}
+		break;
+	case "c2":
+		Chant2();
+		break;
 	case "help":
 		if(!isBusy)
 			DisplayHelp( msg2 );		// Display help menu.
@@ -1599,7 +1671,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			Chant( msg2 );				// Chant functions.
 		break;
 	case "'":
-		if(me.name == _myBoBarb) break;
+		if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
 		if(NTC_InTown(me.name)) {
 			isFollowingEnabled = false;
 			break;
@@ -2436,6 +2508,53 @@ function Town() { 									// Done
 	}
 }
 
+function Chant2() { 								// for chantress helper
+	if(me.name != _myChantress) return;
+	
+	if(!NTC_InTown(me) && NTC_GetSkillLevel(52))
+	{
+		// Enchant player
+		var _player = NTC_FindUnit(NTC_UNIT_PLAYER);
+		//var _merc = NTC_FindUnit(NTC_UNIT_MERC);
+		if(!_player)
+			return;
+		do
+		{
+			if(_player.name !== me.name && GetDistance(me, _player) <= 20 && NTC_InMyParty(_player.name))
+			{	
+				NTC_Delay(250);
+				NTC_CastSkill(52, NTC_HAND_RIGHT, _player);
+			}
+			
+			// Enchant merc
+			var _merc = NTC_FindUnit(NTC_UNIT_MERC);
+			if (_merc)
+			{
+				do
+				{
+					if(NTC_CheckOwner(_merc, _player.name) && GetDistance(me, _merc) < 20 && _merc.hp > 0 && _player.name !== me.name)
+					{
+						NTC_Delay(250);
+						NTC_CastSkill(52, NTC_HAND_RIGHT, _merc);
+					}
+				} while (_merc.GetNext());
+			}
+		} while( _player.GetNext() )
+	}
+	else
+	{
+		_tmp = Random(0,1);
+		if(_tmp) Say("No");
+		else if(!_temp) Say("way");
+		Delay(300);
+	}
+}
+function refillChanter() {							// for sending chantress to act 4 and refilling their
+	if(me.name != _myChantress) return;
+	NTTM_CheckAct(4);								// send chantress to act 4 and refill
+	NTTMGR_TownManager();
+	return;
+}	
 function Chant( msg ) { 							// Done
 
 	if(msg == "on")
@@ -2486,7 +2605,10 @@ function Chant( msg ) { 							// Done
 	}
 	else
 	{
-		Say("I'm in town!  Say 'help tp' for more information.");
+		tmp = Random(0,1);
+		if(_tmp) Say("No");
+		else if(!_temp) Say("way");
+		Delay(300);
 	}
 	isBusy = 0;
 }	
@@ -3169,6 +3291,7 @@ function NT_OpenVizierSealInt(type) {
 	}
 	for (i = 0; i < vx.length; i += 1) {
 		NTM_MoveTo(108, vx[i], vy[i]);
+		
 		NTCS_ClearPosition(30, SealSort);
 	}
 	if (!NT_OpenSealInt(395) || !NT_OpenSealInt(396)) {
@@ -3712,7 +3835,7 @@ function NT_ClearThroneInt(){
 	return;
 }
 function d2B_throneWaves() {
-	d2B_msg("yo");
+	d2B_msg(".");
 	Delay(100);
 	while(1){
 		NTC_Delay(100);
@@ -3772,7 +3895,7 @@ function d2B_throneWaves() {
 				}
 				break;
 			case 4:
-			   d2B_msg("yo");
+			   d2B_msg(".");
 			   Delay(100);
 				if(NTConfig_PreWaveTele){
 					NTM_TeleportTo(me.x+1, me.y+3);
@@ -3830,6 +3953,7 @@ function d2B_baal() {
 		return;
 	}
 	NTSI_PickItems();
+	Delay(Random(2000,4000));
 	
 	return;
 }
@@ -4204,5 +4328,26 @@ function d2B_switchThrone() {
 			_soulDoll = false;
 			Delay(Random(10000,12000));
 			break;
+	}
+}
+function d2B_switchnecroBaal() {
+	switch(d2B_myPauseValue) {
+		case 1: d2B_msg("ummm 5");
+				Delay(Random(15000,20000));
+				d2B_chkAct(5);
+				d2B_makeSkellies();
+				Delay(Random(4000,5000));
+				d2B_chkAct(5);
+				d2B_worldstonekeep();				// world stone keep thingy
+				if(_dollSoul) {
+					d2B_msg("Dolls and/or souls, so going to take a break...");
+					Delay(Random(7000,9000));
+					if(_msgMe) Say("/msg *" + _myName + " Dolls and/or souls, so going to take a break...");
+					Delay(Random(25000,34000));
+					d2B_chkAct(5);
+				}
+				_soulDoll = false;
+				Delay(Random(10000,12000));
+				break;
 	}
 }
