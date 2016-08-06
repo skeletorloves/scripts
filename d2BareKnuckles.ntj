@@ -720,6 +720,7 @@ function d2B_chaos(){								// case: 31
 	}
 	
 	NTM_MoveTo(108, 7795, 5295);
+	d2B_team(true);
 
 	for (i = 0; i < 80; i += 1) {
 		if (GetUnit(NTC_UNIT_MONSTER, 243)) {
@@ -943,6 +944,18 @@ function d2B_msgResetPauseEnd() {
 	if(_msgMe) Say("/msg *" + _myName + " Starting another run at case # " + d2B_myPause);
 	Delay(Random(8500,12500));
 	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
+}
+function d2B_isTeamInTown() {
+	var Player = GetPlayerUnit();
+	if(Player){
+		do{
+			if(_peeps.indexOf(Player.name) == -1){
+				_peeps.push(Player.name);	
+			}
+		} while(Player.GetNext())
+	}
+	
+	return true;
 }
 // ________________________________________________________
 // common functions
@@ -3331,7 +3344,8 @@ function NT_OpenVizierSealInt(type) {
 		NTSI_PickItems();
 		Delay(Random(2000,4000));
 		d2B_team(false);
-		Delay(Random(4000,6000));
+		//d2B_isTeamInTown();
+		Delay(Random(2000,3000));
 	}
 	if(NTConfig_IdInField){
 		NT_FieldID();
