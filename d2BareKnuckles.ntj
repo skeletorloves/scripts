@@ -8,7 +8,7 @@ var _dollSoul = false;
 var d2B_cases = 1;
 var d2B_toggleHelper = false;			// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
-										// necroBaal: get skellies then baal with non tele necro peeps
+										// necroBaal / necroCBaal: chaos and/or baal with non tele necro peeps
 var _nonTelePeeps = false;				// if followers can tele
 
 
@@ -695,20 +695,25 @@ function d2B_chaos(){								// case: 31
 	Delay(1000);
 	d2B_team(false);									// send the peeps back to town
 	
-	NTM_MoveTo(108, 7790, 5544);
-	NTM_MakeTP();
-	Delay(300);
-	d2B_msg(".");
+	NTM_MoveTo(108, 7790, 5544);						// tele to just inside the enterance
 	
-	NTCS_ClearPosition(30, EntranceSort);
-	Delay(Random(2000.3000));
-	d2B_msg(".");
-	var FrontToStarX = [7792,7794,7791,7777,7813,7769,7782,7802,7819,7768,7770,7791,7819, 7804];
-	var FrontToStarY = [5564,5529,5495,5486,5486,5445,5421,5421,5446,5390,5355,5355,5376, 5340];
-	for (var i = 0; i < FrontToStarX.length; i += 1) {
-		NTM_MoveTo(108, FrontToStarX[i], FrontToStarY[i]);
-		NTCS_ClearPosition(35, EntranceSort);
+	if(!_nonTelePeeps) {
+		NTM_MakeTP();
+		Delay(300);
+		d2B_msg(".");
+
+		NTCS_ClearPosition(30, EntranceSort);
+		Delay(Random(2000.3000));
+		d2B_msg(".");
+		var FrontToStarX = [7792,7794,7791,7777,7813,7769,7782,7802,7819,7768,7770,7791,7819, 7804];
+		var FrontToStarY = [5564,5529,5495,5486,5486,5445,5421,5421,5446,5390,5355,5355,5376, 5340];
+		for (var i = 0; i < FrontToStarX.length; i += 1) {
+			NTM_MoveTo(108, FrontToStarX[i], FrontToStarY[i]);
+			NTCS_ClearPosition(35, EntranceSort);
+		}
 	}
+	
+	NTM_MoveTo(108, 7794, 5292);						// tele to centre of chaos
 	
 	if (!NT_OpenSealsInt()) {
 		NTC_SendMsgToScript("NTBotGame.ntj", "NT_OpenSealsInt()");
@@ -723,6 +728,7 @@ function d2B_chaos(){								// case: 31
 		NTCS_DiaSpam();
 	}
 	NTA_KillMonster(243);
+	NTSI_PickItems();
 	Delay(1000);
 	
 	d2B_chkAct2(true,4);
@@ -3267,7 +3273,7 @@ function NT_OpenSealsInt() {
 	if (!_result) {
 		return false;
 	}
-	NTCS_ClearPosition(40, SealSortB);
+	if(!_nonTelePeeps) NTCS_ClearPosition(40, SealSortB);
 	
 	_unit = GetPresetUnits(108, NTC_UNIT_OBJECT, 392);
 	if (!_unit) {
@@ -3292,11 +3298,16 @@ function NT_OpenVizierSealInt(type) {
 		var vx = [7768,7755,7741,7733,7723,7714,7707,7680,7666, 7655];
 		var vy = [5289,5295,5282,5291,5300,5282,5315,5310,5311, 5282];
 	}
-	for (i = 0; i < vx.length; i += 1) {
-		NTM_MoveTo(108, vx[i], vy[i]);
-		
-		NTCS_ClearPosition(30, SealSort);
+	if(!_nonTelePeeps) {
+		for (i = 0; i < vx.length; i += 1) {
+			NTM_MoveTo(108, vx[i], vy[i]);
+			NTCS_ClearPosition(30, SealSort);
+		}
 	}
+	
+	if(_nonTelePeeps) NTM_MoveTo(108, vx[0], vy[0]);
+		
+	
 	if (!NT_OpenSealInt(395) || !NT_OpenSealInt(396)) {
 		return false;
 	}
@@ -3305,15 +3316,21 @@ function NT_OpenVizierSealInt(type) {
 	} else {
 		NTM_MoveTo(108, 7695, 5316);
 	}
-
-	NTCS_Preattack(GetLocaleString(2851));
-	NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 306 : null);
 	
-	NTA_KillMonster(GetLocaleString(2851)); // Grand Vizier of Chaos
-	NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 306 : null);
+	if(!_nonTelePeeps) {
+		NTCS_Preattack(GetLocaleString(2851));
+		NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 306 : null);
+		
+		NTA_KillMonster(GetLocaleString(2851)); // Grand Vizier of Chaos
+		NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 306 : null);
+	}
 	
-	//PubSay("Vizier dead.");
-
+	if(_nonTelePeeps) {
+		d2B_team(true);
+		NTCS_ClearPosition(40);
+		NTSI_PickItems();
+		d2B_team(true);
+	}
 	if(NTConfig_IdInField){
 		NT_FieldID();
 	} return true;
