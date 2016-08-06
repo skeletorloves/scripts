@@ -713,7 +713,7 @@ function d2B_chaos(){								// case: 31
 		}
 	}
 	
-	NTM_MoveTo(108, 7794, 5292);						// tele to centre of chaos
+	NTM_MoveTo(108, 7794, 5292);						// tele to the centre of chaos
 	
 	if (!NT_OpenSealsInt()) {
 		NTC_SendMsgToScript("NTBotGame.ntj", "NT_OpenSealsInt()");
@@ -3327,9 +3327,9 @@ function NT_OpenVizierSealInt(type) {
 	
 	if(_nonTelePeeps) {
 		d2B_team(true);
-		NTCS_ClearPosition(40);
+		NTCS_ClearPosition(30);
 		NTSI_PickItems();
-		d2B_team(true);
+		d2B_team(false);
 	}
 	if(NTConfig_IdInField){
 		NT_FieldID();
@@ -3346,10 +3346,14 @@ function NT_OpenDeSeisSealInt(type) {
 		var sx = [7786,7801,7786,7787,7810,7811,7810,7790,7774,7773,7794]; // shape of an "S" or "5"
 		var sy = [5263,5249,5245,5227,5233,5215,5198,5194,5181,5156,5154];
 	}
-	for (var i = 0; i < sx.length; i += 1) {
-		NTM_MoveTo(108, sx[i], sy[i]);
-		NTCS_ClearPosition(30, type === 1 ? SealSort : SealSortB);
+	if(!_nonTelePeeps) {
+		for (var i = 0; i < sx.length; i += 1) {
+			NTM_MoveTo(108, sx[i], sy[i]);
+			NTCS_ClearPosition(30, type === 1 ? SealSort : SealSortB);
+		}
 	}
+	
+	if(_nonTelePeeps) NTM_MoveTo(108, sx[0], sy[0]);
 	
 	if (!NT_OpenSealInt(394)) {
 		return false;
@@ -3363,17 +3367,25 @@ function NT_OpenDeSeisSealInt(type) {
 		NTM_MoveTo(108, 7798, 5186);
 	}
 
-	NTCS_Preattack(GetLocaleString(2852));
-	NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 310 : null);
+	if(!_nonTelePeeps) {
+		NTCS_Preattack(GetLocaleString(2852));
+		NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 310 : null);
+		
+		NTA_KillMonster(GetLocaleString(2852)); // Lord De Seis
+		NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 310 : null);
+	}
 	
-	NTA_KillMonster(GetLocaleString(2852)); // Lord De Seis
-	NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 310 : null);
-	
-	//PubSay("De Seis dead.");
+	if(_nonTelePeeps) {
+		d2B_team(true);
+		NTCS_ClearPosition(30);
+		NTSI_PickItems();
+		d2B_team(false);
+	}
 
 	if(NTConfig_IdInField){
 		NT_FieldID();
-	} return NTM_MoveTo(108, 7800, 5255);
+	} 
+	return NTM_MoveTo(108, 7800, 5255);
 }
 
 function NT_OpenVenomSealInt(type) {
