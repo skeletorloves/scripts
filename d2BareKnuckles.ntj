@@ -5,11 +5,11 @@
 var _dollChk = true;
 var _dollSoul = false;
 
-var d2B_cases = 1;
-var d2B_toggleHelper = false;			// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
+var d2B_cases = 2;
+var d2B_toggleHelper = "leveling";			// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
 										// necroBaal / necroCBaal: chaos and/or baal with non tele necro peeps
-var _nonTelePeeps = false;				// if followers can tele
+var _nonTelePeeps = true;				// if followers can tele
 
 
 var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_myTP()
@@ -950,7 +950,7 @@ function d2B_isTeamInTown() {
 	for(i=1; i < _peeps.length; i++) {
 		if(me.areaid != _peeps[i].areaid) --_inTownPeeps;
 	}
-	return _inTown; // if false, then all peeps are in town
+	return _inTownPeeps; // if false, then all peeps are in town
 }
 // ________________________________________________________
 // common functions
@@ -3394,7 +3394,10 @@ function NT_OpenDeSeisSealInt(type) {
 		NTSI_PickItems();
 		Delay(Random(2000,4000));
 		d2B_team(false);
-		Delay(Random(4000,6000));
+		Delay(Random(2000,4000));
+		if(d2B_isTeamInTown()) {
+			Say("/f m Not everyone is in town.");
+		} else Say("/f m Everyone is in town.");
 	}
 
 	if(NTConfig_IdInField){
@@ -3448,7 +3451,10 @@ function NT_OpenVenomSealInt(type) {
 	
 	if(_nonTelePeeps) {
 		d2B_team(false);
-		Delay(Random(4000,6000));
+		Delay(Random(2000,4000));
+		if(d2B_isTeamInTown()) {
+			Say("/f m Not everyone is in town.");
+		} else Say("/f m Everyone is in town.");
 	}
 	
 	NT_OpenSealInt(393);
