@@ -946,16 +946,11 @@ function d2B_msgResetPauseEnd() {
 	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 }
 function d2B_isTeamInTown() {
-	var Player = GetPlayerUnit();
-	if(Player){
-		do{
-			if(_peeps.indexOf(Player.name) == -1){
-				_peeps.push(Player.name);	
-			}
-		} while(Player.GetNext())
+	var _inTownPeeps = _peeps.length;
+	for(i=1; i < _peeps.length; i++) {
+		if(me.areaid != _peeps[i].areaid) --_inTownPeeps;
 	}
-	
-	return true;
+	return _inTown; // if false, then all peeps are in town
 }
 // ________________________________________________________
 // common functions
@@ -3344,8 +3339,10 @@ function NT_OpenVizierSealInt(type) {
 		NTSI_PickItems();
 		Delay(Random(2000,4000));
 		d2B_team(false);
-		//d2B_isTeamInTown();
 		Delay(Random(2000,3000));
+		if(d2B_isTeamInTown()) {
+			Say("/f m Not everyone is in town.");
+		} else Say("/f m Everyone is in town.");
 	}
 	if(NTConfig_IdInField){
 		NT_FieldID();
