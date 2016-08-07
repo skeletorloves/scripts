@@ -946,11 +946,33 @@ function d2B_msgResetPauseEnd() {
 	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 }
 function d2B_isTeamInTown() {
-	var _inTownPeeps = _peeps.length;
-	for(i=1; i < _peeps.length; i++) {
-		if(me.areaid != _peeps[i].areaid) --_inTownPeeps;
+	var Player = GetPlayerUnit();
+	
+	if(Player){
+		while(Player.GetNext()) {
+			if(me.areaid == Player.areaid) {
+				Say("/f m At least one peep: " + Player "'s area id is not in town.");
+				Delay(Random(2000,3000));
+				Say("..");							// tell peeps to not follow
+				Delay(300);
+				NTTM_CheckAct(4);					// send leader to town
+				Say(".");							// this may press peeps who are not in town to go to town
+				Delay(Random(4000,6000));
+				Say("..");
+				NTM_UsePortal("BluePortal", 108);	// go back to the chaos sanctuary
+				break;
+			}
+		}
 	}
-	return _inTownPeeps; // if false, then all peeps are in town
+	
+	
+	/*for(i=1; i < _peeps.length; i++) {
+		if(me.areaid != _peeps[i].areaid) {
+			Say("/f m peep: " + _peeps[i] "'s area id is: " + _peeps[i].areaid);
+			_inTownPeeps == _inTownPeeps - 1;
+		}
+	}*/
+	return;
 }
 // ________________________________________________________
 // common functions
