@@ -221,14 +221,14 @@ function d2B_blackMarsh2() {						// a useful delay for when dolls are found in 
 	Delay(Random(15000,20000));
 	d2B_commonInitSetup(6);
 	
-	d2B_myTP(true, true, true, false, false);
+	/*d2B_myTP(true, true, true, false, false);
 	d2B_team(false);
-	Delay(4000);
+	Delay(4000);*/
 	for(var i = 0 ; i < 6 ; i++) {
 		d2B_moveToStair(me.areaid,20+i);	// go to the forgotten tower and do tower things
 		NTM_TakeStair(20+i);
 		if(i==5) {
-			d2B_myTP(true, false, true, true, 4000,7000);
+			d2B_countess();
 		}
 	}
 	
@@ -241,6 +241,63 @@ function d2B_blackMarsh2() {						// a useful delay for when dolls are found in 
 		Delay(Random(15000,20000));
 		if(_msgMe) Say("/msg *" + _myName + " We just finished break #" + i + ".");
 	}
+}
+function d2B_countess() {
+	_countess = NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(2875), 5);
+	
+	if(me.y > 11060 && me.y <= 11078){
+		if(_countess.y <= 11054)
+			NTM_MoveTo(me.areaid, 12537, 11042);
+		if(_countess.y > 11056 && _countess.y <= 11070){
+			if(_countess.x < 12533)
+				NTM_MoveTo(me.areaid, 12518, 11057);
+			else
+				NTM_MoveTo(me.areaid, 12548, 11057);
+		}
+		if(_countess.y > 11070 && _countess.y <= 11085){
+			if(_countess.x < 12533)
+				NTM_MoveTo(me.areaid, 12518, 11083);
+			else
+				NTM_MoveTo(me.areaid, 12548, 11083);
+		}
+		if(_countess.y > 11086)
+			NTM_MoveTo(me.areaid, 12542, 11098);
+	}
+	else{
+		if(_countess.x <= 12550){
+			NTM_MoveTo(me.areaid, 12562, 11057);
+			NTM_MoveTo(me.areaid, 12548, 11043);
+		}
+		if(_countess.x > 12550 && _countess.x <= 12561){
+			if(_countess.y < 11027)
+				NTM_MoveTo(me.areaid, 12577, 11043);
+			else{
+				NTM_MoveTo(me.areaid, 12565, 11043);
+				NTM_MoveTo(me.areaid, 12577, 11025);
+			}
+		}
+		if(_countess.x > 12561 && _countess.x <= 12579){
+			if(_countess.y < 11027)
+				NTM_MoveTo(me.areaid, 12555, 11043);
+			else{
+				NTM_MoveTo(me.areaid, 12565, 11043);
+				NTM_MoveTo(me.areaid, 12555, 11025);
+			}
+		}
+		if(_countess.x > 12579){
+			NTM_MoveTo(me.areaid, 12578, 11057);
+			NTM_MoveTo(me.areaid, 12582, 11043);
+		}
+	}
+	d2B_team(true);
+	NTA_ClearPosition();
+	NTSI_PickItems();
+	
+	d2B_chkAct2(true, 4);
+	Delay(Random(4000,6000));
+	Say("ummm 4");
+	Delay(Random(4000,6000));
+	return;
 }
 function d2B_tamohighland() {						// case: 8
 	d2B_commonInitSetup(6);
@@ -951,28 +1008,22 @@ function d2B_isTeamInTown() {
 	if(Player){
 		while(Player.GetNext()) {
 			if(me.areaid == Player.areaid) {
-				Say("/f m At least one peep: " + Player "'s area id is not in town.");
+				Say("/f m At least one peep: " + Player.name + "'s area id is not in town.");
 				Delay(Random(2000,3000));
 				Say("..");							// tell peeps to not follow
-				Delay(300);
+				Delay(Random(1000,2000));
 				NTTM_CheckAct(4);					// send leader to town
 				Say(".");							// this may press peeps who are not in town to go to town
-				Delay(Random(4000,6000));
+				Delay(Random(5000,6000));
 				Say("..");
+				Delay(Random(2000,3000));
 				NTM_UsePortal("BluePortal", 108);	// go back to the chaos sanctuary
-				break;
+				//break;
+				return false;
 			}
 		}
 	}
-	
-	
-	/*for(i=1; i < _peeps.length; i++) {
-		if(me.areaid != _peeps[i].areaid) {
-			Say("/f m peep: " + _peeps[i] "'s area id is: " + _peeps[i].areaid);
-			_inTownPeeps == _inTownPeeps - 1;
-		}
-	}*/
-	return;
+	return true;
 }
 // ________________________________________________________
 // common functions
@@ -3363,8 +3414,8 @@ function NT_OpenVizierSealInt(type) {
 		d2B_team(false);
 		Delay(Random(2000,3000));
 		if(d2B_isTeamInTown()) {
-			Say("/f m Not everyone is in town.");
-		} else Say("/f m Everyone is in town.");
+			Say("/f m Everyone is in town.");
+		} else Say("/f m Someone is not in town.");
 	}
 	if(NTConfig_IdInField){
 		NT_FieldID();
@@ -3418,8 +3469,8 @@ function NT_OpenDeSeisSealInt(type) {
 		d2B_team(false);
 		Delay(Random(2000,4000));
 		if(d2B_isTeamInTown()) {
-			Say("/f m Not everyone is in town.");
-		} else Say("/f m Everyone is in town.");
+			Say("/f m Everyone is in town.");
+		} else Say("/f m Someone is not in town.");
 	}
 
 	if(NTConfig_IdInField){
@@ -3475,8 +3526,8 @@ function NT_OpenVenomSealInt(type) {
 		d2B_team(false);
 		Delay(Random(2000,4000));
 		if(d2B_isTeamInTown()) {
-			Say("/f m Not everyone is in town.");
-		} else Say("/f m Everyone is in town.");
+			Say("/f m Everyone is in town.");
+		} else Say("/f m Someone is not in town.");
 	}
 	
 	NT_OpenSealInt(393);
