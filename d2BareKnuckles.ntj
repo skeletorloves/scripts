@@ -292,11 +292,16 @@ function d2B_countess() {
 	d2B_team(true);
 	NTA_ClearPosition();
 	NTSI_PickItems();
+	Delay(2000,4000));
 	
-	d2B_chkAct2(true, 4);
+	d2B_team(false);
+	Delay(4000,6000));
+	d2B_isTeamInTown();
+	
+	NTTM_CheckAct(4);
 	Delay(Random(4000,6000));
 	Say("ummm 4");
-	Delay(Random(4000,6000));
+	Delay(Random(8000,10000));
 	return;
 }
 function d2B_tamohighland() {						// case: 8
@@ -789,6 +794,8 @@ function d2B_chaos(){								// case: 31
 	NTSI_PickItems();
 	Delay(1000);
 	
+	d2B_myTP(true, true, false, false, false);
+	
 	d2B_chkAct2(true,4);
 }
 //
@@ -859,9 +866,10 @@ function d2B_worldstonekeep() {
 	prewavespot = [15092, 5040];	// from: D2Etal/scripts/NTRush/rush_configs/Sorceress.ntl 
 	
 	d2B_commonInitSetup(129);
-	d2B_myTP(true, true, true, false, false);
+	Delay(500);
+	/*d2B_myTP(true, true, true, false, false);
 	d2B_team(false);
-	Delay(Random(1500,2000));
+	Delay(Random(1500,2000));*/
 	
 	d2B_moveToStair(me.areaid, 130);
 	NTM_TakeStair(130);
@@ -1008,7 +1016,7 @@ function d2B_isTeamInTown() {
 	if(Player){
 		while(Player.GetNext()) {
 			if(me.areaid == Player.areaid) {
-				Say("/f m At least one peep: " + Player.name + "'s area id is not in town.");
+				d2B_msg("At least one peep is not in town.");
 				Delay(Random(2000,3000));
 				Say("..");							// tell peeps to not follow
 				Delay(Random(1000,2000));
@@ -1019,11 +1027,12 @@ function d2B_isTeamInTown() {
 				Delay(Random(2000,3000));
 				NTM_UsePortal("BluePortal", 108);	// go back to the chaos sanctuary
 				//break;
-				return false;
+				return;
 			}
 		}
 	}
-	return true;
+	d2B_msg("Everyone is in town.");
+	return;
 }
 // ________________________________________________________
 // common functions
@@ -1260,6 +1269,11 @@ function d2B_checkAct(a,b) {						// (a: which act b: which town wp to go to)
 	return;
 }
 function d2B_msg(a) {
+	if(!d2B_usingAFollower) {
+		Say("/f m " + a);
+		Delay(300);
+		return;
+	}
 	Say(a);
 	Delay(300);
 	return;
@@ -3413,9 +3427,7 @@ function NT_OpenVizierSealInt(type) {
 		Delay(Random(2000,4000));
 		d2B_team(false);
 		Delay(Random(2000,3000));
-		if(d2B_isTeamInTown()) {
-			Say("/f m Everyone is in town.");
-		} else Say("/f m Someone is not in town.");
+		d2B_isTeamInTown();
 	}
 	if(NTConfig_IdInField){
 		NT_FieldID();
@@ -3468,9 +3480,7 @@ function NT_OpenDeSeisSealInt(type) {
 		Delay(Random(2000,4000));
 		d2B_team(false);
 		Delay(Random(2000,4000));
-		if(d2B_isTeamInTown()) {
-			Say("/f m Everyone is in town.");
-		} else Say("/f m Someone is not in town.");
+		d2B_isTeamInTown();
 	}
 
 	if(NTConfig_IdInField){
@@ -3525,9 +3535,7 @@ function NT_OpenVenomSealInt(type) {
 	if(_nonTelePeeps) {
 		d2B_team(false);
 		Delay(Random(2000,4000));
-		if(d2B_isTeamInTown()) {
-			Say("/f m Everyone is in town.");
-		} else Say("/f m Someone is not in town.");
+		d2B_isTeamInTown();
 	}
 	
 	NT_OpenSealInt(393);
@@ -4477,21 +4485,21 @@ function d2B_switchThrone() {
 function d2B_switchnecroBaal() {
 	switch(d2B_myPauseValue) {
 		case 1: d2B_msg("ummm 5");
-				Delay(Random(15000,20000));
+			Delay(Random(15000,20000));
+			d2B_chkAct(5);
+			d2B_makeSkellies();
+			Delay(Random(4000,5000));
+			d2B_chkAct(5);
+			d2B_worldstonekeep();				// world stone keep thingy
+			if(_dollSoul) {
+				d2B_msg("Dolls and/or souls, so going to take a break...");
+				Delay(Random(7000,9000));
+				if(_msgMe) Say("/msg *" + _myName + " Dolls and/or souls, so going to take a break...");
+				Delay(Random(25000,34000));
 				d2B_chkAct(5);
-				d2B_makeSkellies();
-				Delay(Random(4000,5000));
-				d2B_chkAct(5);
-				d2B_worldstonekeep();				// world stone keep thingy
-				if(_dollSoul) {
-					d2B_msg("Dolls and/or souls, so going to take a break...");
-					Delay(Random(7000,9000));
-					if(_msgMe) Say("/msg *" + _myName + " Dolls and/or souls, so going to take a break...");
-					Delay(Random(25000,34000));
-					d2B_chkAct(5);
-				}
-				_soulDoll = false;
-				Delay(Random(10000,12000));
-				break;
+			}
+			_soulDoll = false;
+			Delay(Random(10000,12000));
+			break;
 	}
 }
