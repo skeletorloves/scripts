@@ -292,7 +292,7 @@ function d2B_countess() {
 	d2B_team(true);
 	NTA_ClearPosition();
 	NTSI_PickItems();
-	Delay(2000,4000));
+	Delay(Random(2000,4000));
 	
 	d2B_team(false);
 	Delay(Random(4000,6000));
