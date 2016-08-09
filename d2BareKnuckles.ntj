@@ -295,7 +295,7 @@ function d2B_countess() {
 	Delay(2000,4000));
 	
 	d2B_team(false);
-	Delay(4000,6000));
+	Delay(Random(4000,6000));
 	d2B_isTeamInTown();
 	
 	NTTM_CheckAct(4);
