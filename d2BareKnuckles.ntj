@@ -6,9 +6,11 @@ var _dollChk = true;
 var _dollSoul = false;
 
 var d2B_cases = 2;
-var d2B_toggleHelper = "leveling";			// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
+var d2B_toggleHelper = "NecroRuns";			// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
+										// leveling2: Chaos, Throne, & Countess
 										// necroBaal / necroCBaal: chaos and/or baal with non tele necro peeps
+										// NecroRuns: for a sorc leader to run tightly with necro crew
 var _nonTelePeeps = true;				// if followers can tele
 
 
@@ -79,8 +81,10 @@ function NTMain() {
 			if(d2B_toggleHelper == false) d2B_switchMain();					// for a list of action cases which are reasonably complete
 			if(d2B_toggleHelper == "grinding") d2B_switchGrinding();		// for a select list of action cases
 			if(d2B_toggleHelper == "leveling") d2B_switchChaosThrone();		// for a Chaos and Throne room leveling
+			if(d2B_toggleHelper == "leveling2") d2B_switchcBaalCountess();	// for a Chaos, Throne, & Countess leveling
 			if(d2B_toggleHelper == "throne") d2B_switchThrone();			// for Throne room leveling
-			if(d2B_toggleHelper == "necroBaal") d2B_switchnecroBaal();	// for chaos & baal leveling w/ non teleing necros
+			if(d2B_toggleHelper == "necroBaal") d2B_switchnecroBaal();		// for chaos & baal leveling w/ non teleing necros
+			if(d2B_toggleHelper == "NecroRuns") d2B_switchNecroRuns();		// for a sorc leader to run tightly with necro crew
 			
 			d2B_msgIncPause();	
 		}
@@ -125,8 +129,25 @@ function d2B_bloodmoor() {							// case: 1
 
 	d2B_chkAct2(true,1);	// return to Act 1 town
 }
-function d2B_coldplains() {							// case: 2
+function d2B_coldplains(a) {						// case: 2 | (true: all of cold plains | false: just bishibosh)
 	d2B_commonInitSetup(3);
+	
+	if(!a) {											// do bishibosh
+		d2B_myTP(true, true, true, false, false);
+		d2B_team(true);
+		
+		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 15, -15);	// go yo bishibosh
+		d2B_team(false);
+		NTA_KillMonster(GetLocaleString(2869);
+		NTA_ClearPosition();
+		NTSI_PickItems();
+		OpenChestsInArea();
+		NTSI_PickItems();
+		
+		d2B_chkAct2(true,1);	// return to Act 1 town
+		return;
+	}
+		
 	d2B_myTP(true, true, true, true, false);
 	
 	d2B_moveToStair(3,9);
@@ -243,61 +264,67 @@ function d2B_blackMarsh2() {						// a useful delay for when dolls are found in 
 	}
 }
 function d2B_countess() {
-	_countess = NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(2875), 5);
-	
 	if(me.y > 11060 && me.y <= 11078){
-		if(_countess.y <= 11054)
-			NTM_MoveTo(me.areaid, 12537, 11042);
-		if(_countess.y > 11056 && _countess.y <= 11070){
-			if(_countess.x < 12533)
-				NTM_MoveTo(me.areaid, 12518, 11057);
-			else
-				NTM_MoveTo(me.areaid, 12548, 11057);
-		}
-		if(_countess.y > 11070 && _countess.y <= 11085){
-			if(_countess.x < 12533)
-				NTM_MoveTo(me.areaid, 12518, 11083);
-			else
-				NTM_MoveTo(me.areaid, 12548, 11083);
-		}
-		if(_countess.y > 11086)
-			NTM_MoveTo(me.areaid, 12542, 11098);
+		NTM_MoveTo(me.areaid, 12544, 11066);
 	}
-	else{
-		if(_countess.x <= 12550){
-			NTM_MoveTo(me.areaid, 12562, 11057);
-			NTM_MoveTo(me.areaid, 12548, 11043);
+	else{ 
+		NTM_MoveTo(me.areaid, 12570, 11057);
+	}
+	_countess = NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(2875), 5);
+	if(_countess) {
+		if(me.y > 11060 && me.y <= 11078){
+			if(_countess.y <= 11054)
+				NTM_MoveTo(me.areaid, 12537, 11042);
+			if(_countess.y > 11056 && _countess.y <= 11070){
+				if(_countess.x < 12533)
+					NTM_MoveTo(me.areaid, 12518, 11057);
+				else
+					NTM_MoveTo(me.areaid, 12548, 11057);
+			}
+			if(_countess.y > 11070 && _countess.y <= 11085){
+				if(_countess.x < 12533)
+					NTM_MoveTo(me.areaid, 12518, 11083);
+				else
+					NTM_MoveTo(me.areaid, 12548, 11083);
+			}
+			if(_countess.y > 11086)
+				NTM_MoveTo(me.areaid, 12542, 11098);
 		}
-		if(_countess.x > 12550 && _countess.x <= 12561){
-			if(_countess.y < 11027)
-				NTM_MoveTo(me.areaid, 12577, 11043);
-			else{
-				NTM_MoveTo(me.areaid, 12565, 11043);
-				NTM_MoveTo(me.areaid, 12577, 11025);
+		else{
+			if(_countess.x <= 12550){
+				NTM_MoveTo(me.areaid, 12562, 11057);
+				NTM_MoveTo(me.areaid, 12548, 11043);
+			}
+			if(_countess.x > 12550 && _countess.x <= 12561){
+				if(_countess.y < 11027)
+					NTM_MoveTo(me.areaid, 12577, 11043);
+				else{
+					NTM_MoveTo(me.areaid, 12565, 11043);
+					NTM_MoveTo(me.areaid, 12577, 11025);
+				}
+			}
+			if(_countess.x > 12561 && _countess.x <= 12579){
+				if(_countess.y < 11027)
+					NTM_MoveTo(me.areaid, 12555, 11043);
+				else{
+					NTM_MoveTo(me.areaid, 12565, 11043);
+					NTM_MoveTo(me.areaid, 12555, 11025);
+				}
+			}
+			if(_countess.x > 12579){
+				NTM_MoveTo(me.areaid, 12578, 11057);
+				NTM_MoveTo(me.areaid, 12582, 11043);
 			}
 		}
-		if(_countess.x > 12561 && _countess.x <= 12579){
-			if(_countess.y < 11027)
-				NTM_MoveTo(me.areaid, 12555, 11043);
-			else{
-				NTM_MoveTo(me.areaid, 12565, 11043);
-				NTM_MoveTo(me.areaid, 12555, 11025);
-			}
-		}
-		if(_countess.x > 12579){
-			NTM_MoveTo(me.areaid, 12578, 11057);
-			NTM_MoveTo(me.areaid, 12582, 11043);
-		}
-	}
-	d2B_team(true);
-	NTA_ClearPosition();
-	NTSI_PickItems();
-	Delay(Random(2000,4000));
-	
-	d2B_team(false);
-	Delay(Random(4000,6000));
-	d2B_isTeamInTown();
-	
+		d2B_team(true);
+		NTA_ClearPosition();
+		NTSI_PickItems();
+		Delay(Random(2000,4000));
+		
+		d2B_team(false);
+		Delay(Random(4000,6000));
+		d2B_isTeamInTown();
+	}	
 	NTTM_CheckAct(4);
 	Delay(Random(4000,6000));
 	Say("ummm 4");
@@ -897,6 +924,8 @@ function d2B_worldstonekeep() {
 	NTA_ClearPosition();
 	
 	NT_ClearThroneInt();
+	//d2B_msg("yo");
+	Say("yo");
 	
 	d2B_throneWaves();
 	Delay(300);
@@ -1269,7 +1298,7 @@ function d2B_checkAct(a,b) {						// (a: which act b: which town wp to go to)
 	return;
 }
 function d2B_msg(a) {
-	if(!d2B_usingAFollower) {
+	if(d2B_usingAFollower) {
 		Say("/f m " + a);
 		Delay(300);
 		return;
@@ -4030,6 +4059,9 @@ function d2B_throneWaves() {
 				if(NTConfig_Wave2PSNCheck && me.GetState(2) != -1){
 					NTTMGR_VisitTown();
 				}
+				//d2B_msg("yo");
+				Say("yo");
+				Delay(700);
 				break;
 			case 3:
 			    d2B_msg(".");
@@ -4042,7 +4074,8 @@ function d2B_throneWaves() {
 					NT_CheckHydraInt();
 				}
 				else {
-					d2B_msg("yo");
+					//d2B_msg("yo");
+					Say("yo");
 					NTC_Delay(3000);
 				}
 				break;
@@ -4327,7 +4360,7 @@ function d2B_switchMain() {
 			Delay(Random(12000,16000));
 			d2B_bloodmoor();				// blood moore thingy
 			break;
-		case 2: d2B_coldplains();			// cold plains thingy
+		case 2: d2B_coldplains(true);			// cold plains thingy | true: for clearing all of the cold plains
 			break;
 		case 3: d2B_burialgrounds();		// burial grounds thingy
 			break;
@@ -4446,12 +4479,48 @@ function d2B_switchChaosThrone() {
 				Delay(300);
 				d2B_blackMarsh2();
 				_soulDoll = false;
-				break;
 			}
 			Delay(Random(8000,14000));
 			d2B_msg("ummm 4");
 			Delay(Random(10000,12000));
+			NTTM_CheckAct(4);
+			Delay(Random(10000,12000));
+			break;
+	}
+}
+function d2B_switchcBaalCountess() {
+	switch(d2B_myPauseValue) {
+		case 1: d2B_msg("ummm 4");
+			NTConfig_SkipRegularMonsters = false;
 			d2B_chkAct(4);
+			Delay(Random(20000,25000));
+			d2B_chaos();						// chaos thingy
+			break;
+	case 2: d2B_msg("ummm 5"); 
+			Delay(Random(10000,12000));
+			NTConfig_SkipRegularMonsters = false;
+			d2B_chkAct(5);			
+			d2B_worldstonekeep();				// world stone keep thingy
+			if(_dollSoul) {
+				d2B_msg("Dolls and/or souls, so going to do a delay...");
+				Delay(Random(80000,100000));
+				_soulDoll = false;
+			}
+			Delay(Random(8000,14000));
+			d2B_msg("ummm 4");
+			Delay(Random(10000,12000));
+			NTTM_CheckAct(4);
+			Delay(Random(10000,12000));
+			break;
+	case 3: d2B_msg("ummm 1"); 
+			Delay(Random(10000,12000));
+			NTConfig_SkipRegularMonsters = false;
+			d2B_chkAct(1);
+			d2B_blackMarsh2();
+			Delay(Random(8000,14000));
+			d2B_msg("ummm 4");
+			Delay(Random(10000,12000));
+			NTTM_CheckAct(4);
 			Delay(Random(10000,12000));
 			break;
 	}
@@ -4503,3 +4572,16 @@ function d2B_switchnecroBaal() {
 			break;
 	}
 }
+
+function d2B_switchNecroRuns() {
+	switch(d2B_myPauseValue) {
+		case 1: d2B_msg("ummm 1");
+			Delay(Random(15000,20000));
+			d2B_chkAct(1);
+			d2B_coldplains(false);				// false: for Bishibosh
+			
+			Delay(Random(8000,14000));
+			d2B_msg("ummm 1");
+			Delay(Random(10000,12000));
+	}
+}			
