@@ -126,6 +126,7 @@ function d2B_bloodmoor(a) {							// case: 1
 		d2B_myTP(true, true, true, false, false);
 		d2B_team(false);
 		Delay(Random(3000,5000));
+		NTM_TakeStair(8);
 		
 		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 15, -15);	// 774: Corpsefire
 		d2B_team(true);
@@ -151,9 +152,11 @@ function d2B_coldplains(a) {						// case: 2 | (true: all of cold plains | false
 		d2B_myTP(true, true, true, false, false);
 		d2B_team(false);
 		Delay(Random(3000,5000));
+		d2B_isTeamInTown(1,3);
 		
 		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 15, -15);	// 734: Bishibosh
 		d2B_team(true);
+		
 		NTA_KillMonster(GetLocaleString(2869));								// 2869: Bishibosh 
 		NTA_ClearPosition(20);
 		NTSI_PickItems();
@@ -337,10 +340,11 @@ function d2B_countess() {
 		
 		d2B_team(false);
 		Delay(Random(4000,6000));
-		d2B_isTeamInTown();
 	}	
 	NTTM_CheckAct(4);
 	Delay(Random(4000,6000));
+	Say(".");
+	Delay(Random(8000,10000));
 	Say("ummm 4");
 	Delay(Random(8000,10000));
 	return;
@@ -1053,7 +1057,7 @@ function d2B_msgResetPauseEnd() {
 	Delay(Random(8500,12500));
 	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 }
-function d2B_isTeamInTown() {
+function d2B_isTeamInTown(a,b) {					// a: act | b: area of where the tp is open in and to go to
 	var Player = GetPlayerUnit();
 	
 	if(Player){
@@ -1063,12 +1067,12 @@ function d2B_isTeamInTown() {
 				Delay(Random(2000,3000));
 				Say("..");							// tell peeps to not follow
 				Delay(Random(1000,2000));
-				NTTM_CheckAct(4);					// send leader to town
+				NTTM_CheckAct(a);					// send leader to town
 				Say(".");							// this may press peeps who are not in town to go to town
 				Delay(Random(5000,6000));
 				Say("..");
 				Delay(Random(2000,3000));
-				NTM_UsePortal("BluePortal", 108);	// go back to the chaos sanctuary
+				NTM_UsePortal("BluePortal", b);	// go back to the chaos sanctuary
 				//break;
 				return;
 			}
@@ -3470,7 +3474,7 @@ function NT_OpenVizierSealInt(type) {
 		Delay(Random(2000,4000));
 		d2B_team(false);
 		Delay(Random(2000,3000));
-		d2B_isTeamInTown();
+		d2B_isTeamInTown(4,108);
 	}
 	if(NTConfig_IdInField){
 		NT_FieldID();
@@ -3523,7 +3527,7 @@ function NT_OpenDeSeisSealInt(type) {
 		Delay(Random(2000,4000));
 		d2B_team(false);
 		Delay(Random(2000,4000));
-		d2B_isTeamInTown();
+		d2B_isTeamInTown(4,108);
 	}
 
 	if(NTConfig_IdInField){
@@ -3578,7 +3582,7 @@ function NT_OpenVenomSealInt(type) {
 	if(_nonTelePeeps) {
 		d2B_team(false);
 		Delay(Random(2000,4000));
-		d2B_isTeamInTown();
+		d2B_isTeamInTown(4,108);
 	}
 	
 	NT_OpenSealInt(393);
@@ -4372,7 +4376,7 @@ function d2B_switchMain() {
 	switch(d2B_myPauseValue) {
 		case 1: d2B_msg("ummm 1");
 			Delay(Random(12000,16000));
-			d2B_bloodmoor();				// blood moore thingy
+			d2B_bloodmoor(true);				// blood moore thingy
 			break;
 		case 2: d2B_coldplains(true);			// cold plains thingy | true: for clearing all of the cold plains
 			break;
@@ -4592,18 +4596,14 @@ function d2B_switchNecroRuns() {
 		case 1: d2B_msg("ummm 1");
 			Delay(Random(15000,20000));
 			d2B_chkAct(1);
-			d2B_bloodmoor(false);				// false: for Corpsefire
-			
+			d2B_coldplains(false);				// false: for Bishibosh
 			Delay(Random(8000,14000));
-			d2B_msg("ummm 1");
-			Delay(Random(10000,12000));
+			break;
 		case 2: d2B_msg("ummm 1");
 			Delay(Random(15000,20000));
 			d2B_chkAct(1);
-			d2B_coldplains(false);				// false: for Bishibosh
-			
+			d2B_bloodmoor(false);				// false: for Corpsefire
 			Delay(Random(8000,14000));
-			d2B_msg("ummm 1");
-			Delay(Random(10000,12000));
+			break;
 	}
 }			
