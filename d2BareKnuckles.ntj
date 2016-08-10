@@ -109,7 +109,7 @@ function NTMain() {
 
 //
 //	Act I
-function d2B_bloodmoor() {							// case: 1
+function d2B_bloodmoor(a) {							// case: 1
 	d2B_moveWP();
 	d2B_gotoWP(1);
 	d2B_chkAct(1);
@@ -122,6 +122,21 @@ function d2B_bloodmoor() {							// case: 1
 	Delay(300);
 	
 	d2B_moveToStair(2,8);							// head to front of den as a starting point
+	if(!a) {
+		d2B_myTP(true, true, true, false, false);
+		d2B_team(false);
+		Delay(Random(3000,5000));
+		
+		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 15, -15);	// 774: Corpsefire
+		d2B_team(true);
+		NTA_KillMonster(GetLocaleString(3319));								// 3319: Corpsefire
+		NTA_ClearPosition(20);
+		NTSI_PickItems();
+		
+		d2B_chkAct2(true,1);	// return to Act 1 town
+		return;
+	}
+	
 	d2B_myTP(true, true, true, true, false); 		// (delay,bo,precast,clr&chests,delay(x,y))
 	d2B_moveToStair(2,8);
 	d2B_myTP(true, false, true, false, false);
@@ -134,14 +149,13 @@ function d2B_coldplains(a) {						// case: 2 | (true: all of cold plains | false
 	
 	if(!a) {											// do bishibosh
 		d2B_myTP(true, true, true, false, false);
-		d2B_team(true);
-		
-		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 15, -15);	// go yo bishibosh
 		d2B_team(false);
-		NTA_KillMonster(GetLocaleString(2869);
-		NTA_ClearPosition();
-		NTSI_PickItems();
-		OpenChestsInArea();
+		Delay(Random(3000,5000));
+		
+		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 15, -15);	// 734: Bishibosh
+		d2B_team(true);
+		NTA_KillMonster(GetLocaleString(2869));								// 2869: Bishibosh 
+		NTA_ClearPosition(20);
 		NTSI_PickItems();
 		
 		d2B_chkAct2(true,1);	// return to Act 1 town
@@ -4576,6 +4590,14 @@ function d2B_switchnecroBaal() {
 function d2B_switchNecroRuns() {
 	switch(d2B_myPauseValue) {
 		case 1: d2B_msg("ummm 1");
+			Delay(Random(15000,20000));
+			d2B_chkAct(1);
+			d2B_bloodmoor(false);				// false: for Corpsefire
+			
+			Delay(Random(8000,14000));
+			d2B_msg("ummm 1");
+			Delay(Random(10000,12000));
+		case 2: d2B_msg("ummm 1");
 			Delay(Random(15000,20000));
 			d2B_chkAct(1);
 			d2B_coldplains(false);				// false: for Bishibosh
