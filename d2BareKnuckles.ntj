@@ -131,7 +131,7 @@ function d2B_bloodmoor(a) {							// case: 1
 		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 15, -15);	// 774: Corpsefire
 		d2B_team(true);
 		NTA_KillMonster(GetLocaleString(3319));								// 3319: Corpsefire
-		NTA_ClearPosition(20);
+		NTA_ClearPosition(25);
 		NTSI_PickItems();
 		
 		d2B_chkAct2(true,1);	// return to Act 1 town
@@ -148,17 +148,17 @@ function d2B_bloodmoor(a) {							// case: 1
 function d2B_coldplains(a) {						// case: 2 | (true: all of cold plains | false: just bishibosh)
 	d2B_commonInitSetup(3);
 	
-	if(!a) {											// do bishibosh
+	if(!a) {										// do bishibosh
 		d2B_myTP(true, true, true, false, false);
 		d2B_team(false);
-		Delay(Random(3000,5000));
+		Delay(Random(5000,7000));
 		d2B_isTeamInTown(1,3);
 		
 		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 15, -15);	// 734: Bishibosh
 		d2B_team(true);
 		
 		NTA_KillMonster(GetLocaleString(2869));								// 2869: Bishibosh 
-		NTA_ClearPosition(20);
+		NTA_ClearPosition(25);
 		NTSI_PickItems();
 		
 		d2B_chkAct2(true,1);	// return to Act 1 town
@@ -1072,7 +1072,7 @@ function d2B_isTeamInTown(a,b) {					// a: act | b: area of where the tp is open
 				Delay(Random(5000,6000));
 				Say("..");
 				Delay(Random(2000,3000));
-				NTM_UsePortal("BluePortal", b);	// go back to the chaos sanctuary
+				NTM_UsePortal("BluePortal", b);	// go back to the place where the tp was made
 				//break;
 				return;
 			}
@@ -4599,9 +4599,7 @@ function d2B_switchNecroRuns() {
 			d2B_coldplains(false);				// false: for Bishibosh
 			Delay(Random(8000,14000));
 			break;
-		case 2: d2B_msg("ummm 1");
-			Delay(Random(15000,20000));
-			d2B_chkAct(1);
+		case 2: d2B_chkAct(1);
 			d2B_bloodmoor(false);				// false: for Corpsefire
 			Delay(Random(8000,14000));
 			break;
