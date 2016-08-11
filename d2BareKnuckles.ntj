@@ -141,10 +141,11 @@ function d2B_bloodmoor(a) {							// case: 1
 }
 function d2B_coldplains(a) {						// case: 2 | (true: all of cold plains | false: just bishibosh)
 	d2B_commonInitSetup(3);
-	d2B_myTP(true, true, true, false, false);
+	d2B_boSafe(1,35,35);								// a=1 act1 | b=35 cata 2wp | c=35 are of tpp to go through and return to
+	/*d2B_myTP(true, true, true, false, false);
 	d2B_team(false);
 	Delay(Random(4000,6000));
-	d2B_isTeamInTown(1,3);
+	d2B_isTeamInTown(1,3);*/
 	
 	if(!a) {										// do bishibosh
 		Delay(750);
@@ -206,7 +207,7 @@ function d2B_stonyfield(a) {						// case: 4
 		Delay(Random(4000,6000));
 		d2B_isTeamInTown(1,4);
 		d2B_movePresetUnitMonster(737, 10, 10);		// 737: Rakanishu
-		d2B-teamPro(true,2872,40,true,1);			// 2872: Rakanishu
+		d2B_teamPro(true,2872,40,true,1);			// 2872: Rakanishu
 		return;	
 	}
 	d2B_myTP(true, true, true, true, false);
@@ -1065,7 +1066,7 @@ function d2B_msgResetPauseEnd() {
 	Delay(Random(8500,12500));
 	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 }
-function d2B_isTeamInTown(a,b) {					// a: act | b: area of where the tp is open in and to go to
+function d2B_isTeamInTown(a,b) {					// a: act | b: area of where the tp is open in and to go to | b = false then stay put and wait for instructions 
 	var Player = GetPlayerUnit();
 	
 	if(Player){
@@ -1079,8 +1080,10 @@ function d2B_isTeamInTown(a,b) {					// a: act | b: area of where the tp is open
 				Say(".");							// this may press peeps who are not in town to go to town
 				Delay(Random(5000,6000));
 				Say("..");
-				Delay(Random(2000,3000));
-				NTM_UsePortal("BluePortal", b);	// go back to the place where the tp was made
+				if(!b) {
+					Delay(Random(2000,3000));
+					NTM_UsePortal("BluePortal", b);	// go back to the place where the tp was made
+				}
 				//break;
 				return;
 			}
@@ -1315,6 +1318,18 @@ function d2B_bo() {									//	for instructing a bo barb
 	Delay(Random(5000,6000));
 	return;
 }
+function d2B_boSafe(a,b,c) {							// (a: act town | b: wp to bo get bo at | c: area of tp to return to) 
+	if(!InTown()) { d2B_chkAct(a); }
+	d2B_moveWP();
+	d2B_gotoWP(a);
+	d2B_myTP(true,true,true,false,false);
+	d2B_msg("..");
+	Delay(Random(2000,5000));
+	d2b_team(false);
+	Delay(Random(5000,7000));
+	d2B_isTeamInTown(1,c);
+	return;
+}	
 function d2B_CheckAct(peep) {
 	if (peep.areaid <= 39) { return 1;}					// peep = "me", "leader"
 	else if(peep.areaid >= 40 && peep.areaid <= 74) { return 2; }
