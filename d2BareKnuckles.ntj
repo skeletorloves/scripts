@@ -143,6 +143,7 @@ function d2B_coldplains(a) {						// case: 2 | (true: all of cold plains | false
 	d2B_commonInitSetup(3);
 	d2B_myTP(true, true, true, false, false);
 	d2B_team(false);
+	Delay(Random(4000,6000));
 	d2B_isTeamInTown(1,3);
 	
 	if(!a) {										// do bishibosh
@@ -201,7 +202,8 @@ function d2B_stonyfield(a) {						// case: 4
 	if(!a) {										// do Rakanishu
 		Delay(750);
 		d2B_myTP(true, true, true, false, false);
-		Delay(4000,7000);
+		d2B_team(false);
+		Delay(Random(4000,6000));
 		d2B_isTeamInTown(1,4);
 		d2B_movePresetUnitMonster(737, 10, 10);		// 737: Rakanishu
 		d2B-teamPro(true,2872,40,true,1);			// 2872: Rakanishu
