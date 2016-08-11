@@ -109,6 +109,8 @@ function NTMain() {
 
 //
 //	Act I
+
+	
 function d2B_bloodmoor(a) {							// case: 1
 	d2B_moveWP();
 	d2B_gotoWP(1);
@@ -123,18 +125,10 @@ function d2B_bloodmoor(a) {							// case: 1
 	
 	d2B_moveToStair(2,8);							// head to front of den as a starting point
 	if(!a) {
-		d2B_myTP(true, true, true, false, false);
-		d2B_team(false);
-		Delay(Random(3000,5000));
+		Delay(750);
 		NTM_TakeStair(8);
-		
 		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 15, -15);	// 774: Corpsefire
-		d2B_team(true);
-		NTA_KillMonster(GetLocaleString(3319));								// 3319: Corpsefire
-		NTA_ClearPosition(40);
-		NTSI_PickItems();
-		
-		d2B_chkAct2(true,1);	// return to Act 1 town
+		d2B_teamPro(true,3319,40,true,1);									// 3319: Corpsefire
 		return;
 	}
 	
@@ -149,19 +143,9 @@ function d2B_coldplains(a) {						// case: 2 | (true: all of cold plains | false
 	d2B_commonInitSetup(3);
 	
 	if(!a) {										// do bishibosh
-		d2B_myTP(true, true, true, false, false);
-		d2B_team(false);
-		Delay(Random(5000,7000));
-		d2B_isTeamInTown(1,3);
-		
+		Delay(750);
 		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 15, -15);	// 734: Bishibosh
-		d2B_team(true);
-		
-		NTA_KillMonster(GetLocaleString(2869));								// 2869: Bishibosh 
-		NTA_ClearPosition(40);
-		NTSI_PickItems();
-		
-		d2B_chkAct2(true,1);	// return to Act 1 town
+		d2B_teamPro(true,2869,40,true,1);									// 2869: Bishibosh 
 		return;
 	}
 		
@@ -181,23 +165,19 @@ function d2B_coldplains(a) {						// case: 2 | (true: all of cold plains | false
 }
 function d2B_burialgrounds(a) {						// case: 3
 	d2B_commonInitSetup(3);
-	d2B_myTP(true, false, true, true, false);
+	if(!a) {										// do Blood Raven
+		Delay(750);
+		d2B_movePresetUnitTitle(17,7,8,15);	// move to burial grounds
+		d2B-teamPro(true,3111,40,true,1);
+		return;
+	}
+
+	d2B_myTP(true, true, true, false, false);
 	d2B_team(false);
 	Delay(Random(5000,7000));
 	d2B_isTeamInTown(1,3);
 	
 	d2B_movePresetUnitTitle(17,7,8,15);	// move to burial grounds
-	
-	if(!a) {										// do Blood Raven
-		d2B_team(true);
-		NTA_KillMonster(GetLocaleString(3111));
-		NTA_ClearPosition(40);
-		NTSI_PickItems();
-		
-		d2B_chkAct2(true,1);	// return to Act 1 town
-		return;
-	}
-
 	d2B_team(true);
 	
 	d2B_moveToStair(me.areaid,19);	// enter the mausoleum
@@ -1292,14 +1272,24 @@ function d2B_myTP(a,b,c,d,e,f) {					// (a: delay | b: bo true/false | c: precas
 }
 function d2B_team(a) {								// (a: false = send team to town true: bring team)
 	NTM_MakeTP();
-	Delay(400);
+	Delay(200);
 	if(a) d2B_msg(".");	
 	else if(!a) {
 		d2B_msg("'");
 		Delay(Random(3000,4000));
 		return;
 	}
-	Delay(300);
+	Delay(200);
+	return;
+}
+function d2B_teamPro(a,b,c,d,e) {
+	d2B_team(a);
+	NTA_KillMonster(GetLocaleString(b));
+	NTA_ClearPosition(c);
+	NTSI_PickItems();
+	d2B_msg("..");
+	Delay(700);
+	d2B_chkAct2(d,e);
 	return;
 }
 function d2B_bo() {									//	for instructing a bo barb
