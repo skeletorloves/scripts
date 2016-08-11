@@ -192,6 +192,7 @@ function d2B_burialgrounds(a) {						// case: 3
 		d2B_team(true);
 		NTA_KillMonster(GetLocaleString(3111));
 		NTA_ClearPosition(40);
+		NTSI_PickItems();
 		
 		d2B_chkAct2(true,1);	// return to Act 1 town
 		return;
