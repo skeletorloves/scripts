@@ -5,7 +5,7 @@
 var _dollChk = true;
 var _dollSoul = false;
 
-var d2B_cases = 3;
+var d2B_cases = 4;
 var d2B_toggleHelper = "NecroRuns";			// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
 										// leveling2: Chaos, Throne, & Countess
@@ -194,8 +194,14 @@ function d2B_burialgrounds(a) {						// case: 3
 
 	d2B_chkAct2(true,1);	// return to Act 1 town
 }
-function d2B_stonyfield() {							// case: 4
+function d2B_stonyfield(a) {							// case: 4
 	d2B_commonInitSetup(4);
+	if(!a) {										// do Rakanishu
+		Delay(750);
+		d2B_movePresetUnitMonster(737, 10, 10);		// 737: Rakanishu
+		d2B-teamPro(true,2872,40,true,1);			// 2872: Rakanishu
+		return;	
+	}
 	d2B_myTP(true, true, true, true, false);
 
 	d2B_movePresetUnitMonster(737, 10, 10);
@@ -4611,6 +4617,10 @@ function d2B_switchNecroRuns() {
 			break;
 		case 3: d2B_chkAct(1);					
 			d2B_burialgrounds(false);			// false: for Blood Raven		
+			Delay(Random(8000,14000));
+			break;
+		case 4: d2B_chkAct(1);					
+			d2B_stonyfield(false);			// false: for Blood Raven		
 			Delay(Random(8000,14000));
 			break;
 	}
