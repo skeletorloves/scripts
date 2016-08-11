@@ -168,7 +168,7 @@ function d2B_burialgrounds(a) {						// case: 3
 	if(!a) {										// do Blood Raven
 		Delay(750);
 		d2B_movePresetUnitTitle(17,7,8,15);	// move to burial grounds
-		d2B-teamPro(true,3111,40,true,1);
+		d2B_teamPro(true,3111,40,true,1);
 		return;
 	}
 
@@ -194,7 +194,7 @@ function d2B_burialgrounds(a) {						// case: 3
 
 	d2B_chkAct2(true,1);	// return to Act 1 town
 }
-function d2B_stonyfield(a) {							// case: 4
+function d2B_stonyfield(a) {						// case: 4
 	d2B_commonInitSetup(4);
 	if(!a) {										// do Rakanishu
 		Delay(750);
