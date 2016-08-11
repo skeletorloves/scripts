@@ -141,6 +141,9 @@ function d2B_bloodmoor(a) {							// case: 1
 }
 function d2B_coldplains(a) {						// case: 2 | (true: all of cold plains | false: just bishibosh)
 	d2B_commonInitSetup(3);
+	d2B_myTP(true, true, true, false, false);
+	d2B_team(false);
+	d2B_isTeamInTown(1,3);
 	
 	if(!a) {										// do bishibosh
 		Delay(750);
@@ -149,8 +152,6 @@ function d2B_coldplains(a) {						// case: 2 | (true: all of cold plains | false
 		return;
 	}
 		
-	d2B_myTP(true, true, true, true, false);
-	
 	d2B_moveToStair(3,9);
 	d2B_myTP(true, false, true, false, false);
 	d2B_takeStairs(9, true);
@@ -196,14 +197,17 @@ function d2B_burialgrounds(a) {						// case: 3
 }
 function d2B_stonyfield(a) {						// case: 4
 	d2B_commonInitSetup(4);
+	
 	if(!a) {										// do Rakanishu
 		Delay(750);
+		d2B_myTP(true, true, true, false, false);
+		Delay(4000,7000);
+		d2B_isTeamInTown(1,4);
 		d2B_movePresetUnitMonster(737, 10, 10);		// 737: Rakanishu
 		d2B-teamPro(true,2872,40,true,1);			// 2872: Rakanishu
 		return;	
 	}
 	d2B_myTP(true, true, true, true, false);
-
 	d2B_movePresetUnitMonster(737, 10, 10);
 	Delay(Random(6000,8000));
 	d2B_usePortal("Portal",38);			// use portal to enter tristram
