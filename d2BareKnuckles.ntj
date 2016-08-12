@@ -1328,10 +1328,15 @@ function d2B_team(a) {								// (a: false = send team to town true: bring team)
 }
 function d2B_teamPro(a,b,c,d,e,f) {					// things to whisper to team
 	d2B_team(a);
-	if(f) d2B_msg(f);
 	NTA_KillMonster(GetLocaleString(b));
+	Delay(300);
+	if(f) d2B_msg(f);								// extra follower instructions: e.g.: "n w"  necro make a bone wall
+	Delay(Random(3000,4000));
 	NTA_ClearPosition(c,1);							// a: distance | 1: enable pick items
 	NTSI_PickItems();
+	Delay(Random(2000,4000));
+	NTA_ClearPosition(c,1);
+	Delay(300);
 	d2B_msg("..");
 	Delay(Random(1700,3000));
 	d2B_chkAct2(d,e);
@@ -1393,9 +1398,9 @@ function d2B_msg(a) {
 	return;
 }
 function d2B_littleJMP() {
-	var x_tmp = Random(5,10);
+	var x_tmp = Random(3,8);
 	x_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
-	var y_tmp = Random(5,20);
+	var y_tmp = Random(3,8);
 	y_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
 	NTM_MoveTo(me.areaid, me.x+x_tmp, me.y+y_tmp);
 	return;
@@ -1874,11 +1879,14 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		if(!NTC_GetSkillLevel(78)) break;						// necromancer calls 78: bone wall
 		switch(msg2) {
 			case "w":
-				var x_tmp = Random(5,10);
-				x_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
-				var y_tmp = Random(5,20);
-				y_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
-				NTC_CastSkill(78, NTC_HAND_RIGHT, me.x+x_tmp, me.y+y_tmp);
+				for(i=0;i<2;i++) {
+					var x_tmp = Random(5,10);
+					x_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
+					var y_tmp = Random(5,20);
+					y_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
+					NTC_CastSkill(78, NTC_HAND_RIGHT, me.x+x_tmp, me.y+y_tmp);
+					Delay(Random(1000,1200));
+				}
 				break;
 		}
 		break;
@@ -2061,7 +2069,15 @@ function Follow( target ) {
 			}
 			else
 			{
-				NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
+				isFollowingEnabled = false;
+				Print(COLOR_4 + "Follow off");
+				Delay(700);
+				if(!TakeLeaderTP())
+					Town();
+				Delay(Random(1000,2000));
+				d2B_townMove("portalspot");
+				isFollowingEnabled = true;
+				//NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
 			}
 		}
 		else
@@ -2091,7 +2107,15 @@ function Follow( target ) {
 	// If we get an INVALID distance (too far away for GetDistance()), but we're in the same area, attempt to move to the leader
 	if(_distance === -1 && me.areaid === leaderPlayerUnit.areaid && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit))
 	{
-		NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
+		isFollowingEnabled = false;
+		Print(COLOR_4 + "Follow off");
+		Delay(700);
+		if(!TakeLeaderTP())
+			Town();
+		Delay(Random(1000,2000));
+		d2B_townMove("portalspot");
+		isFollowingEnabled = true;
+		//NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
 		return;
 	}
 	
@@ -2121,7 +2145,15 @@ function Follow( target ) {
 		{
 			if(leaderUnit)
 			{
-				NTM_GetCloserInt(leaderUnit);
+				isFollowingEnabled = false;
+				Print(COLOR_4 + "Follow off");
+				Delay(700);
+				if(!TakeLeaderTP())
+					Town();
+				Delay(Random(1000,2000));
+				d2B_townMove("portalspot");
+				isFollowingEnabled = true;
+				//NTM_GetCloserInt(leaderUnit);
 			}
 			else
 			{
@@ -2211,7 +2243,15 @@ function Follow( target ) {
 		{
 			if(leaderUnit)
 			{
-				NTM_GetCloserInt(leaderUnit);
+				isFollowingEnabled = false;
+				Print(COLOR_4 + "Follow off");
+				Delay(700);
+				if(!TakeLeaderTP())
+					Town();
+				Delay(Random(1000,2000));
+				d2B_townMove("portalspot");
+				isFollowingEnabled = true;
+				//NTM_GetCloserInt(leaderUnit);
 			}
 			else
 			{
@@ -2282,7 +2322,15 @@ function Follow( target ) {
 		{
 			if(leaderUnit)
 			{
-				NTM_GetCloserInt(leaderUnit);
+				isFollowingEnabled = false;
+				Print(COLOR_4 + "Follow off");
+				Delay(700);
+				if(!TakeLeaderTP())
+					Town();
+				Delay(Random(1000,2000));
+				d2B_townMove("portalspot");
+				isFollowingEnabled = true;
+				//NTM_GetCloserInt(leaderUnit);
 			}
 			else
 			{
@@ -2401,7 +2449,15 @@ function Follow( target ) {
 		{
 			if(leaderUnit)
 			{
-				NTM_GetCloserInt(leaderUnit);
+				isFollowingEnabled = false;
+				Print(COLOR_4 + "Follow off");
+				Delay(700);
+				if(!TakeLeaderTP())
+					Town();
+				Delay(Random(1000,2000));
+				d2B_townMove("portalspot");
+				isFollowingEnabled = true;
+				//NTM_GetCloserInt(leaderUnit);
 			}
 			else
 			{
