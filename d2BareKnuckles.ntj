@@ -5,7 +5,7 @@
 var _dollChk = true;
 var _dollSoul = false;
 
-var d2B_cases = 6;
+var d2B_cases = 7;
 var d2B_toggleHelper = "NecroRuns";			// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
 										// leveling2: Chaos, Throne, & Countess
@@ -427,7 +427,6 @@ function d2B_innercloister() {						// case: 12
 }
 function d2B_cata() {								// case: 13
 	d2B_commonInitSetup(32);
-	
 	// clear all catacombs...
 	d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
 	d2B_myTP(true, true, false, false, false);
@@ -446,6 +445,19 @@ function d2B_cata() {								// case: 13
 	Delay(Random(4000,5000));
 	
 	d2B_chkAct2(true,1);	// return to Act 1 town
+}
+function d2B_cata2() {								// case: 13
+	d2B_commonInitSetup(35);						// goto cata 2
+	
+	for(var i = 36 ; i <= 37 ; i++){
+		d2B_movePresetUnitTitle(me.areaid,18,0);
+		Delay(Random(1000,1500));
+		NTM_TakeStair(i);
+		Delay(300);
+	}
+	NTM_MoveTo(me.areaid, 22563, 9556);				// walls  right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547
+	d2B_teamPro(true,3021,40,true,1);				// 3021: Andarial						
+	return;	
 }
 //
 //	Act II
@@ -4674,6 +4686,10 @@ function d2B_switchNecroRuns() {
 			break;
 		case 6: d2B_chkAct(1);
 			d2B_barracks(false);				// false: for Treehead Woodfist
+			Delay(Random(8000,14000));
+			break;
+		case 7: d2B_chkAct(1);
+			d2B_cata2(false);				// false: for Treehead Woodfist
 			Delay(Random(8000,14000));
 			break;
 	}
