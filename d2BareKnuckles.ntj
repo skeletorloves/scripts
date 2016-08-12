@@ -101,6 +101,7 @@ function NTMain() {
 		Print(COLOR_2 + "Another delay...");
 		Delay(Random(35000,40000));
 	}
+	Delay(Random(15000,20000));
 	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 }
 
@@ -1156,6 +1157,7 @@ function d2B_chkAct2(a,b) {							// a: true sends team to town | b: act 1 thru 
 	}
 	Delay(Random(3000,5000));
 	d2B_moveWP();
+	Delay(Random(3000,5000));
 	return;
 }
 function d2B_townMgr() {
@@ -1310,19 +1312,21 @@ function d2B_teamPro(a,b,c,d,e) {
 	NTA_ClearPosition(c);
 	NTSI_PickItems();
 	d2B_msg("..");
-	Delay(700);
+	Delay(Random(1700,3000));
+	d2B_msg("..");
+	Delay(300);
 	d2B_chkAct2(d,e);
 	return;
 }
 function d2B_bo() {									//	for instructing a bo barb
 	d2B_msg("b ,");				// make sure barb is at the portal area
-	Delay(Random(5000,6000));
+	Delay(Random(7000,9000));
 	d2B_msg("b .");				// tell barb to come through tp
-	Delay(Random(8000,9000));
+	Delay(Random(8000,10000));
 	d2B_msg("b ;");				// instruct barb to precast
-	Delay(Random(8000,11000));
+	Delay(Random(10000,13000));
 	d2B_msg("b '");				// send barb back to town
-	Delay(Random(5000,6000));
+	Delay(Random(7000,9000));
 	return;
 }
 function d2B_boSafe(a,b,c) {							// (a: act town | b: wp to bo get bo at | c: area of tp to return to) 
@@ -1780,16 +1784,15 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				}
 				break;
 			case "'":
-				if(NTC_InTown(me.name)) {
+				if(InTown()) {
 					isFollowingEnabled = false;
 					break;
 				}
-				if(!isBusy) {
-					isFollowingEnabled = false;
-					Print(COLOR_4 + "Follow off");
-					if(!TakeLeaderTP())
-						Town();
-				}
+				isFollowingEnabled = false;
+				Print(COLOR_4 + "Follow off");
+				Delay(700);
+				if(!TakeLeaderTP())
+					Town();
 				Delay(Random(1000,2000));
 				d2B_townMove("portalspot");
 				break;
@@ -1820,16 +1823,15 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				}
 				break;
 			case "'":
-				if(NTC_InTown(me.name)) {
+				if(InTown()) {
 					isFollowingEnabled = false;
 					break;
 				}
-				if(!isBusy) {
-					isFollowingEnabled = false;
-					Print(COLOR_4 + "Follow off");
-					if(!TakeLeaderTP())
-						Town();
-				}
+				isFollowingEnabled = false;
+				Print(COLOR_4 + "Follow off");
+				Delay(700);
+				if(!TakeLeaderTP())
+					Town();
 				Delay(Random(1000,2000));
 				d2B_townMove("portalspot");
 				break;
@@ -1868,17 +1870,15 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		break;
 	case "'":
 		if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
-		if(NTC_InTown(me.name)) {
+		if(InTown()) {
 			isFollowingEnabled = false;
 			break;
 		}
-		if(!isBusy)
-		{
-			isFollowingEnabled = false;
-			Print(COLOR_4 + "Follow off");
-			if(!TakeLeaderTP())
-				Town();
-		}
+		isFollowingEnabled = false;
+		Print(COLOR_4 + "Follow off");
+		Delay(700);
+		if(!TakeLeaderTP())
+			Town();
 		Delay(Random(1000,2000));
 		d2B_townMove("portalspot");
 		break;
