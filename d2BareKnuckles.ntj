@@ -5,7 +5,7 @@
 var _dollChk = true;
 var _dollSoul = false;
 
-var d2B_cases = 4;
+var d2B_cases = 5;
 var d2B_toggleHelper = "NecroRuns";			// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
 										// leveling2: Chaos, Throne, & Countess
@@ -230,8 +230,14 @@ function d2B_undergroundpassage() {					// case: 5
 	
 	d2B_chkAct2(true,1);	// return to Act 1 town
 }
-function d2B_darkwood() {							// case: 6
+function d2B_darkwood(a) {							// case: 6
 	d2B_commonInitSetup(5);
+	if(!a) {
+		Delay(750);
+		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 30, 15, -15);		// 30: Treehead Woodfist
+		d2B_teamPro(true,2873,40,true,1);									// 2869: Treehead Woodfist 
+		return;
+	}
 	d2B_myTP(true, true, true, true, false);
 	
 	d2B_chkAct2(true,1);	// return to Act1 town
@@ -4647,7 +4653,11 @@ function d2B_switchNecroRuns() {
 			Delay(Random(8000,14000));
 			break;
 		case 4: d2B_chkAct(1);					
-			d2B_stonyfield(false);			// false: for Blood Raven		
+			d2B_stonyfield(false);				// false: for Blood Raven		
+			Delay(Random(8000,14000));
+			break;
+		case 5: d2B_chkAct(1);
+			d2B_darkwood(false);				// false: for Treehead Woodfist
 			Delay(Random(8000,14000));
 			break;
 	}
