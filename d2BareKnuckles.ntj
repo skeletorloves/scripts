@@ -455,7 +455,7 @@ function d2B_cata2() {								// case: 13
 		NTM_TakeStair(i);
 		Delay(300);
 	}
-	NTM_MoveTo(me.areaid, 22563, 9556);				// walls  right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547
+	NTM_MoveTo(me.areaid, 22545, 9517);				// walls  right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547 | 22545, 9517: towards the back where the rogues hang
 	d2B_teamPro(true,3021,40,true,1);				// 3021: Andarial						
 	return;	
 }
@@ -1781,9 +1781,9 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			d2B_townMove("portalspot");
 		}
 		break;
-	case "b":
+	case "b":											// barbarian calls
 		if(me.name != _myBoBarb) break;
-		switch(msg2) {							// for bo town barb only
+		switch(msg2) {									// for bo town barb only
 			case ".":
 				TakeLeaderTP();
 				isFollowingEnabled = true;
@@ -1793,7 +1793,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				isFollowingEnabled = false;
 				Print(COLOR_4 + "Follow off");
 				break;
-			case ",":							// while in town, got to portal area	
+			case ",":									// while in town, got to portal area	
 				if(!NTC_InTown(me)) break;
 				isFollowingEnabled = false;
 				NTTM_TownMove("portalspot");
@@ -1821,9 +1821,9 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				break;
 		}
 		break;
-	case "c":
+	case "c":											// sorceress calls
 		if(me.name != _myChantress) break;
-		switch(msg2) {							// for bo town barb only
+		switch(msg2) {									// for bo town barb only
 			case ".":
 				TakeLeaderTP();
 				isFollowingEnabled = true;
@@ -1833,7 +1833,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				isFollowingEnabled = false;
 				Print(COLOR_4 + "Follow off");
 				break;
-			case ",":							// while in town, got to portal area	
+			case ",":									// while in town, got to portal area	
 				if(!NTC_InTown(me)) break;
 				isFollowingEnabled = false;
 				NTTM_TownMove("portalspot");
@@ -1867,6 +1867,22 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		break;
 	case "c2":
 		Chant2();
+		break;
+	case "n":													// necromancer calls 78: bone wall
+		if(me.classid != NTC_CHAR_CLASS_NECROMANCER) break;
+		if(!NTC_GetSkillLevel(78)) break;
+		switch(msg2) {									// for bo town barb only
+			case "w":
+				for(i=0;i<2;i++) {
+					var x_tmp = Random(5,10);
+					x_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
+					var y_tmp = Random(5,20);
+					y_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
+					NTC_CastSkill(78, NTC_HAND_RIGHT, me.x+x_tmp, me.y+y_tmp);
+					Delay(Random(2000,2500));
+				}
+				break;
+		}
 		break;
 	case "help":
 		if(!isBusy)
