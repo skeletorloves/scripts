@@ -140,8 +140,9 @@ function d2B_bloodmoor(a) {							// case: 1
 	d2B_chkAct2(true,1);	// return to Act 1 town
 }
 function d2B_coldplains(a) {						// case: 2 | (true: all of cold plains | false: just bishibosh)
+	d2B_boSafe(1,35,false);							// a=1 act1 | b=35 cata 2wp | c=false stay in town
 	d2B_commonInitSetup(3);
-	d2B_boSafe(1,35,35);								// a=1 act1 | b=35 cata 2wp | c=35 are of tpp to go through and return to
+	
 	/*d2B_myTP(true, true, true, false, false);
 	d2B_team(false);
 	Delay(Random(4000,6000));
@@ -198,14 +199,11 @@ function d2B_burialgrounds(a) {						// case: 3
 	d2B_chkAct2(true,1);	// return to Act 1 town
 }
 function d2B_stonyfield(a) {						// case: 4
+	d2B_boSafe(1,35,false);							// a=1 act1 | b=35 cata 2wp | c=false stay in town
 	d2B_commonInitSetup(4);
 	
 	if(!a) {										// do Rakanishu
 		Delay(750);
-		d2B_myTP(true, true, true, false, false);
-		d2B_team(false);
-		Delay(Random(4000,6000));
-		d2B_isTeamInTown(1,4);
 		d2B_movePresetUnitMonster(737, 10, 10);		// 737: Rakanishu
 		d2B_teamPro(true,2872,40,true,1);			// 2872: Rakanishu
 		return;	
@@ -1131,6 +1129,9 @@ function d2B_commonInitSetup(a) {
 	
 	return;
 }
+function InTown(MyChar) {
+	return (me.areaid == 1 || me.areaid == 40 || me.areaid == 75 || me.areaid == 103 || me.areaid == 109);
+}
 function d2B_chkAct() {
 	if(!NTTM_CheckAct()){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_CheckAct()");
@@ -1321,11 +1322,12 @@ function d2B_bo() {									//	for instructing a bo barb
 function d2B_boSafe(a,b,c) {							// (a: act town | b: wp to bo get bo at | c: area of tp to return to) 
 	if(!InTown()) { d2B_chkAct(a); }
 	d2B_moveWP();
-	d2B_gotoWP(a);
+	d2B_gotoWP(b);
+	d2B_littleJMP();
 	d2B_myTP(true,true,true,false,false);
 	d2B_msg("..");
 	Delay(Random(2000,5000));
-	d2b_team(false);
+	d2B_team(false);
 	Delay(Random(5000,7000));
 	d2B_isTeamInTown(1,c);
 	return;
@@ -1356,6 +1358,14 @@ function d2B_msg(a) {
 	}
 	Say(a);
 	Delay(300);
+	return;
+}
+function d2B_littleJMP() {
+	var x_tmp = Random(5,20);
+	x_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
+	var y_tmp = Random(5,20);
+	y_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
+	NTM_MoveTo(me.areaid, me.x+x_tmp, me.y+y_tmp);
 	return;
 }
 // ________________________________________________________
@@ -1719,11 +1729,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		Print(COLOR_4 + "Ready at town portal");
 		break;
 	case "j":
-		var x_tmp = Random(5,20);
-		x_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
-		var y_tmp = Random(5,20);
-		y_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
-		NTM_MoveTo(me.areaid, me.x+x_tmp, me.y+y_tmp);
+		d2B_littleJMP();
 		break;
 	case ";":
 	case "buff":
