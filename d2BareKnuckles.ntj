@@ -129,7 +129,7 @@ function d2B_bloodmoor(a) {							// case: 1
 		Delay(750);
 		NTM_TakeStair(8);
 		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 15, -15);	// 774: Corpsefire
-		d2B_teamPro(true,3319,40,true,1);									// 3319: Corpsefire
+		d2B_teamPro(true,3319,40,true,1,"n w");									// 3319: Corpsefire
 		return;
 	}
 	
@@ -152,7 +152,7 @@ function d2B_coldplains(a) {						// case: 2 | (true: all of cold plains | false
 	if(!a) {										// do bishibosh
 		Delay(750);
 		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 15, -15);	// 734: Bishibosh
-		d2B_teamPro(true,2869,40,true,1);									// 2869: Bishibosh 
+		d2B_teamPro(true,2869,40,true,1,"n w");									// 2869: Bishibosh 
 		return;
 	}
 		
@@ -173,7 +173,7 @@ function d2B_burialgrounds(a) {						// case: 3
 	if(!a) {										// do Blood Raven
 		Delay(750);
 		d2B_movePresetUnitTitle(17,7,8,15);	// move to burial grounds
-		d2B_teamPro(true,3111,40,true,1);
+		d2B_teamPro(true,3111,40,true,1,"n w");
 		return;
 	}
 
@@ -206,7 +206,7 @@ function d2B_stonyfield(a) {						// case: 4
 	if(!a) {										// do Rakanishu
 		Delay(750);
 		d2B_movePresetUnitMonster(737, 10, 10);		// 737: Rakanishu
-		d2B_teamPro(true,2872,40,true,1);			// 2872: Rakanishu
+		d2B_teamPro(true,2872,40,true,1,"n w");			// 2872: Rakanishu
 		return;	
 	}
 	d2B_myTP(true, true, true, true, false);
@@ -236,7 +236,7 @@ function d2B_darkwood(a) {							// case: 6
 	if(!a) {
 		Delay(750);
 		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 30, 15, -15);		// 30: Treehead Woodfist
-		d2B_teamPro(true,2873,40,true,1);									// 2869: Treehead Woodfist 
+		d2B_teamPro(true,2873,40,true,1,"n w");									// 2869: Treehead Woodfist 
 		return;
 	}
 	d2B_myTP(true, true, true, true, false);
@@ -395,7 +395,7 @@ function d2B_barracks(a) {							// case: 10
 	if(!a) {
 		Delay(750);
 		NTM_MoveToPresetUnit(28, NTC_UNIT_MONSTER, 754, -5, 5);		// 28: the Smith
-		d2B_teamPro(true,2889,40,true,1);				// 2889: the Smith
+		d2B_teamPro(true,2889,40,true,1,"n w");				// 2889: the Smith
 		return;	
 	}
 	
@@ -456,7 +456,7 @@ function d2B_cata2() {								// case: 13
 		Delay(300);
 	}
 	NTM_MoveTo(me.areaid, 22545, 9517);				// walls  right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547 | 22545, 9517: towards the back where the rogues hang
-	d2B_teamPro(true,3021,40,true,1);				// 3021: Andarial						
+	d2B_teamPro(true,3021,40,true,1,,"n w");				// 3021: Andarial						
 	return;	
 }
 //
@@ -1326,8 +1326,9 @@ function d2B_team(a) {								// (a: false = send team to town true: bring team)
 	Delay(200);
 	return;
 }
-function d2B_teamPro(a,b,c,d,e) {
+function d2B_teamPro(a,b,c,d,e,f) {					// things to whisper to team
 	d2B_team(a);
+	if(f) d2B_msg(f);
 	NTA_KillMonster(GetLocaleString(b));
 	NTA_ClearPosition(c,1);							// a: distance | 1: enable pick items
 	NTSI_PickItems();
@@ -1868,19 +1869,16 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 	case "c2":
 		Chant2();
 		break;
-	case "n":													// necromancer calls 78: bone wall
+	case "n":													// for necromancer calls	
 		if(me.classid != NTC_CHAR_CLASS_NECROMANCER) break;
-		if(!NTC_GetSkillLevel(78)) break;
-		switch(msg2) {									// for bo town barb only
+		if(!NTC_GetSkillLevel(78)) break;						// necromancer calls 78: bone wall
+		switch(msg2) {
 			case "w":
-				for(i=0;i<2;i++) {
-					var x_tmp = Random(5,10);
-					x_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
-					var y_tmp = Random(5,20);
-					y_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
-					NTC_CastSkill(78, NTC_HAND_RIGHT, me.x+x_tmp, me.y+y_tmp);
-					Delay(Random(2000,2500));
-				}
+				var x_tmp = Random(5,10);
+				x_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
+				var y_tmp = Random(5,20);
+				y_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
+				NTC_CastSkill(78, NTC_HAND_RIGHT, me.x+x_tmp, me.y+y_tmp);
 				break;
 		}
 		break;
