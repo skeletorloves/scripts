@@ -200,7 +200,7 @@ function d2B_burialgrounds(a) {						// case: 3
 	d2B_chkAct2(true,1);	// return to Act 1 town
 }
 function d2B_stonyfield(a) {						// case: 4
-	d2B_boSafe(1,35,false);							// a=1 act1 | b=35 cata 2wp | c=false stay in town
+	if(!a) d2B_boSafe(1,35,false);					// a=1 act1 | b=35 cata 2wp | c=false stay in town
 	d2B_commonInitSetup(4);
 	
 	if(!a) {										// do Rakanishu
@@ -389,8 +389,16 @@ function d2B_outercloister() {						// case: 9
 	
 	d2B_chkAct2(true,1);	// return to Act 1 town
 }
-function d2B_barracks() {							// case: 10
+function d2B_barracks(a) {							// case: 10
+	if(!a) d2B_boSafe(1,35,false);
 	d2B_commonInitSetup(27);
+	if(!a) {
+		Delay(750);
+		d2B_movePresetUnitMonster(28, 754, -5, 5);		// 28: the Smith
+		d2B_teamPro(true,2889,40,true,1);				// 2889: the Smith
+		return;	
+	}
+	
 	d2B_myTP(true, true, true, false, false);
 	d2B_team(false);
 	
@@ -1309,13 +1317,14 @@ function d2B_team(a) {								// (a: false = send team to town true: bring team)
 function d2B_teamPro(a,b,c,d,e) {
 	d2B_team(a);
 	NTA_KillMonster(GetLocaleString(b));
-	NTA_ClearPosition(c);
+	NTA_ClearPosition(c,1);							// a: distance | 1: enable pick items
 	NTSI_PickItems();
 	d2B_msg("..");
 	Delay(Random(1700,3000));
-	d2B_msg("..");
-	Delay(300);
 	d2B_chkAct2(d,e);
+	d2B_msg("..");
+	Delay(2300);
+	d2B_msg("'");
 	return;
 }
 function d2B_bo() {									//	for instructing a bo barb
@@ -1371,7 +1380,7 @@ function d2B_msg(a) {
 	return;
 }
 function d2B_littleJMP() {
-	var x_tmp = Random(5,20);
+	var x_tmp = Random(5,10);
 	x_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
 	var y_tmp = Random(5,20);
 	y_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
