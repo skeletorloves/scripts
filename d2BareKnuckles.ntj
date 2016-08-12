@@ -5,7 +5,7 @@
 var _dollChk = true;
 var _dollSoul = false;
 
-var d2B_cases = 5;
+var d2B_cases = 6;
 var d2B_toggleHelper = "NecroRuns";			// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
 										// leveling2: Chaos, Throne, & Countess
@@ -394,7 +394,7 @@ function d2B_barracks(a) {							// case: 10
 	d2B_commonInitSetup(27);
 	if(!a) {
 		Delay(750);
-		d2B_movePresetUnitMonster(28, 754, -5, 5);		// 28: the Smith
+		NTM_MoveToPresetUnit(28, NTC_UNIT_MONSTER, 754, -5, 5);		// 28: the Smith
 		d2B_teamPro(true,2889,40,true,1);				// 2889: the Smith
 		return;	
 	}
@@ -1731,6 +1731,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		break;
 	case ".":				// follow
 		if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
+		TakeLeaderTP();
 		isFollowingEnabled = true;
 		Print(COLOR_4 + "Follow on");
 		break;
@@ -1772,6 +1773,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		if(me.name != _myBoBarb) break;
 		switch(msg2) {							// for bo town barb only
 			case ".":
+				TakeLeaderTP();
 				isFollowingEnabled = true;
 				Print(COLOR_4 + "Follow on");
 				break;
@@ -1811,6 +1813,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		if(me.name != _myChantress) break;
 		switch(msg2) {							// for bo town barb only
 			case ".":
+				TakeLeaderTP();
 				isFollowingEnabled = true;
 				Print(COLOR_4 + "Follow on");
 				break;
@@ -4667,6 +4670,10 @@ function d2B_switchNecroRuns() {
 			break;
 		case 5: d2B_chkAct(1);
 			d2B_darkwood(false);				// false: for Treehead Woodfist
+			Delay(Random(8000,14000));
+			break;
+		case 6: d2B_chkAct(1);
+			d2B_barracks(false);				// false: for Treehead Woodfist
 			Delay(Random(8000,14000));
 			break;
 	}
