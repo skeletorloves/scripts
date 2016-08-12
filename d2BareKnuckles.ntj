@@ -456,7 +456,7 @@ function d2B_cata2() {								// case: 13
 		Delay(300);
 	}
 	NTM_MoveTo(me.areaid, 22545, 9517);				// walls  right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547 | 22545, 9517: towards the back where the rogues hang
-	d2B_teamPro(true,3021,40,true,1,,"n w");				// 3021: Andarial						
+	d2B_teamPro(true,3021,40,true,1,"n w");				// 3021: Andarial						
 	return;	
 }
 //
