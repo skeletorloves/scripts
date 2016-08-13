@@ -14,13 +14,13 @@
 //		d2B_team(a)						(a: false sends team to town, false enables team to follow)
 //		d2B_teamPro(a,b,c,d,e,f)		(a: d2B_team(a) | b: GetLocaleString(b) | NTA_ClearPosition(c,1)
 //										d,e: d2B_chkAct2(d,e) | f: if(f) d2B_msg(f) )
-//		d2B_boSafe(a,b,c)				(a: NTTM_CheckAct(a) | b: d2B_gotoWP(b) | c: d2B_isTeamInTown(1,b) ) 
+//		d2B_boSafe(a,b,c)				(a: NTTM_CheckAct(a) | b: d2B_gotoWP(b) | c: d2B_isTeamInTown(1,c) ) 
 
 
 var _dollChk = true;
 var _dollSoul = false;
 
-var d2B_cases = 7;
+var d2B_cases = 8;
 var d2B_toggleHelper = "NecroRuns";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
 										// leveling2: Chaos, Throne, & Countess
@@ -69,7 +69,7 @@ var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Numb
 function NTMain() {
 	
 	d2B_load();   									// initializing & loading thingies
-	NTConfig_SkipRegularMonsters = true;			// toggle atk to regular monsters
+	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters
 	
 	d2B_myPauseValue = Number(d2B_retrievePause());		// retrieve & convert to numerical value the pause value
 	
@@ -465,18 +465,26 @@ function d2B_cata2() {								// case: 13
 		Delay(300);
 	}
 	NTM_MoveTo(me.areaid, 22545, 9517);				// walls  right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547 | 22545, 9517: towards the back where the rogues hang
-	d2B_teamPro(true,3021,40,true,1,"n w");				// 3021: Andarial						
+	d2B_teamPro(true,3021,40,true,1,"n w");			// 3021: Andarial						
 	return;	
 }
 //
 //	Act II
-function d2B_sewers() {								// case: 14
-	d2B_moveWP();
-	d2B_gotoWP(40);
-	NTTM_CheckAct(2);				// if not Lut Golein, then go to Lut Golein
+function d2B_sewers(a) {							// case: 14
+	NTTM_CheckAct(2);					// if not Lut Golein, then go to Lut Golein
 	
 	d2B_msg("ummm 2");					// saying this again as a precaution
 	Delay(Random(25000,30000));
+	
+	if(!a) {
+		d2B_boSafe(2,74,false);
+		d2B_commonInitSetup(48);
+		d2B_moveToStair(me.areaid, 49);
+		NTM_TakeStair(49);
+		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 355, 10, -10);	// 355: chest near to Radament
+		d2B_teamPro(true,2879,40,true,1,"n w");							// 2879: Radament
+		return;
+	}
 	
 	NTTM_Act2SewerTrapDoor();		// begins at the stairs enterance
 	d2B_myTP(true, true, true, true, false);
@@ -1891,13 +1899,15 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		if(!NTC_GetSkillLevel(78)) break;						// necromancer calls 78: bone wall
 		switch(msg2) {
 			case "w":
-				for(i=0;i<2;i++) {
-					var x_tmp = Random(5,10);
-					x_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
-					var y_tmp = Random(5,20);
-					y_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
-					NTC_CastSkill(78, NTC_HAND_RIGHT, me.x+x_tmp, me.y+y_tmp);
-					Delay(Random(1000,1200));
+				if(!InTown()) {
+					for(i=0;i<2;i++) {
+						var x_tmp = Random(5,10);
+						x_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
+						var y_tmp = Random(5,20);
+						y_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
+						NTC_CastSkill(78, NTC_HAND_RIGHT, me.x+x_tmp, me.y+y_tmp);
+						Delay(Random(1000,1200));
+					}
 				}
 				break;
 		}
@@ -4735,11 +4745,15 @@ function d2B_switchNecroRuns() {
 			Delay(Random(8000,14000));
 			break;
 		case 6: d2B_chkAct(1);
-			d2B_barracks(false);				// false: for Treehead Woodfist
+			d2B_barracks(false);				// false: for the Smith
 			Delay(Random(8000,14000));
 			break;
 		case 7: d2B_chkAct(1);
-			d2B_cata2(false);				// false: for Treehead Woodfist
+			d2B_cata2(false);					// false: for Andariel
+			Delay(Random(8000,14000));
+			break;
+		case 8: d2B_chkAct(2);
+			d2B_sewers(false);					// false: for Radament
 			Delay(Random(8000,14000));
 			break;
 	}
