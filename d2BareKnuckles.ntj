@@ -4755,6 +4755,10 @@ function d2B_switchNecroRuns() {
 		case 8: d2B_chkAct(2);
 			d2B_sewers(false);					// false: for Radament
 			Delay(Random(8000,14000));
+			d2B_msg("ummm 1");
+			Delay(Random(25000,30000));
+			d2B_chkAct(1);
+			Delay(Random(15000,18000));
 			break;
 	}
 }			
