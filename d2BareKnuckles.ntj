@@ -482,7 +482,7 @@ function d2B_sewers(a) {							// case: 14
 		d2B_moveToStair(me.areaid, 49);
 		NTM_TakeStair(49);
 		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 355, 10, -10);	// 355: chest near to Radament
-		d2B_teamPro(true,2879,40,true,1,"n w");							// 2879: Radament
+		d2B_teamPro(true,2879,40,true,2,"n w");							// 2879: Radament
 		return;
 	}
 	
@@ -518,16 +518,16 @@ function d2B_rockywaste() {							// case: 15
 }
 function d2B_dryhills(a) {							// case: 16
 	d2B_commonInitSetup(42);
-	if(!a) {
+	/*if(!a) {							// has to be fixed. It goes to lvl 57. But, it does not find Creeping
 		for(i=56; i<=57; i++) {
 			NTM_MoveToStair(me.areaid, i);		// halls stair
 			NTM_TakeStair(i);
 		}
 		Delay(750);
 		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 775, 10, -10);	// 775: Creeping Feature
-		d2B_teamPro(true,2883,40,true,1,"n w");								// 2883: Creeping Feature 
+		d2B_teamPro(true,2883,40,true,2,"n w");								// 2883: Creeping Feature 
 		return;
-	}
+	}*/
 		
 	d2B_myTP(true, true, true, true, false);
 	
@@ -561,8 +561,15 @@ function d2B_dryhills(a) {							// case: 16
 	
 	d2B_chkAct2(true,2);
 }
-function d2B_faroasis() {							// case: 17
+function d2B_faroasis(a) {							// case: 17
 	d2B_commonInitSetup(43);
+	if(!a) {
+		Delay(750);
+		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 747, 10, -10);	// 747: Beetleburst
+		d2B_teamPro(true,2882,40,true,2,"n w");								// 288w: Beetleburst 
+		return;
+	}
+	
 	d2B_myTP(true, true, true, true, false);
 	
 	for(var i = 0 ; i < 3 ; i++){
@@ -4769,6 +4776,10 @@ function d2B_switchNecroRuns() {
 			break;
 		case 9: d2B_chkAct(2);
 			d2B_dryhills(false);				// false: for Creeping Feature
+			Delay(Random(8000,14000));
+			break;
+		case 10: d2B_chkAct(2);
+			d2B_faroasis(false);				// false: for Creeping Feature
 			Delay(Random(8000,14000));
 			d2B_msg("ummm 1");
 			Delay(Random(25000,30000));
