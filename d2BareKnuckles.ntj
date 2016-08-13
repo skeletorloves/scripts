@@ -20,7 +20,7 @@
 var _dollChk = true;
 var _dollSoul = false;
 
-var d2B_cases = 8;
+var d2B_cases = 9;
 var d2B_toggleHelper = "NecroRuns";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
 										// leveling2: Chaos, Throne, & Countess
@@ -516,8 +516,19 @@ function d2B_rockywaste() {							// case: 15
 	
 	d2B_chkAct2(true,2);
 }
-function d2B_dryhills() {							// case: 16
+function d2B_dryhills(a) {							// case: 16
 	d2B_commonInitSetup(42);
+	if(!a) {
+		for(i=56; i<=57; i++) {
+			NTM_MoveToStair(me.areaid, i);		// halls stair
+			NTM_TakeStair(i);
+		}
+		Delay(750);
+		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 775, 10, -10);	// 775: Creeping Feature
+		d2B_teamPro(true,2883,40,true,1,"n w");								// 2883: Creeping Feature 
+		return;
+	}
+		
 	d2B_myTP(true, true, true, true, false);
 	
 	d2B_moveToStair(me.areaid, 56);
@@ -4754,6 +4765,10 @@ function d2B_switchNecroRuns() {
 			break;
 		case 8: d2B_chkAct(2);
 			d2B_sewers(false);					// false: for Radament
+			Delay(Random(8000,14000));
+			break;
+		case 9: d2B_chkAct(2);
+			d2B_dryhills(false);				// false: for Creeping Feature
 			Delay(Random(8000,14000));
 			d2B_msg("ummm 1");
 			Delay(Random(25000,30000));
