@@ -20,7 +20,7 @@
 var _dollChk = true;
 var _dollSoul = false;
 
-var d2B_cases = 9;
+var d2B_cases = 10;
 var d2B_toggleHelper = "NecroRuns";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
 										// leveling2: Chaos, Throne, & Countess
@@ -566,7 +566,7 @@ function d2B_faroasis(a) {							// case: 17
 	if(!a) {
 		Delay(750);
 		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 747, 10, -10);	// 747: Beetleburst
-		d2B_teamPro(true,2882,40,true,2,"n w");								// 288w: Beetleburst 
+		d2B_teamPro(true,2882,40,true,2,"n w");								// 2882: Beetleburst 
 		return;
 	}
 	
@@ -580,8 +580,14 @@ function d2B_faroasis(a) {							// case: 17
 	
 	d2B_chkAct2(true,2);
 }
-function d2B_lostcity() {							// case: 18
+function d2B_lostcity(a) {							// case: 18
 	d2B_commonInitSetup(44);
+	if(!a) {
+		Delay(750);
+		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 751, 10, -10);	// 751: Dark Elder
+		d2B_teamPro(true,2886,40,true,2,"n w");								// 2886: dark Elder 
+		return;
+	}
 	d2B_myTP(true, true, true, true, false);
 	
 	d2B_moveToStair(me.areaid, 65);
@@ -1371,7 +1377,7 @@ function d2B_teamPro(a,b,c,d,e,f) {					// (a: d2B_team(a) | b: GetLocaleString(
 	NTA_ClearPosition(c,1);							// a: distance | 1: enable pick items
 	NTSI_PickItems();
 	Delay(Random(2000,4000));
-	NTA_ClearPosition(c,1);
+	NTA_ClearPosition(c, true);
 	Delay(300);
 	d2B_msg("..");
 	Delay(Random(1700,3000));
@@ -4776,6 +4782,10 @@ function d2B_switchNecroRuns() {
 			break;
 		case 9: d2B_chkAct(2);
 			d2B_faroasis(false);				// false: for Creeping Feature
+			Delay(Random(8000,14000));
+			break;
+		case 10: d2B_chkAct(2);
+			d2B_lostcity(false);				// false: for Dark Elder
 			Delay(Random(8000,14000));
 			d2B_msg("ummm 1");
 			Delay(Random(25000,30000));
