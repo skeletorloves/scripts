@@ -4775,10 +4775,6 @@ function d2B_switchNecroRuns() {
 			Delay(Random(8000,14000));
 			break;
 		case 9: d2B_chkAct(2);
-			d2B_dryhills(false);				// false: for Creeping Feature
-			Delay(Random(8000,14000));
-			break;
-		case 10: d2B_chkAct(2);
 			d2B_faroasis(false);				// false: for Creeping Feature
 			Delay(Random(8000,14000));
 			d2B_msg("ummm 1");
