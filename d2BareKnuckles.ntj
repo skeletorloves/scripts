@@ -1,12 +1,27 @@
-//
-// d2BareKnuckles.ntj
-// _____________________________________________________________
+//	d2BareKnuckles.ntj
+
+
+//	__________________________________
+//		a collection of function calls
+		
+//		d2B_storePause(a)				a: 1 as an initializer had been placed into: line 150 of LeaderStarter.ntj
+//		d2B_retrievePause()				NT_File("logs/messagecommands/"+me.charname+"-pause.txt", 1, "1" + "/");
+		
+//		d2B_checkAct(a,b)				(a: which act to head to | b: which town wp to go to)
+//		d2B_myTP(a,b,c,d,e,f) 			(a: delay | b: bo true/false | c: precast | d: clr level/open chests | e,f: delay(random(e,f)))
+//		d2B_chkAct2(a,b)				(a: true sends team to town, false enables team to follow | b: act 1 thru 5)
+//		d2B_clrLvlOC()					clear level and open chests
+//		d2B_team(a)						(a: false sends team to town, false enables team to follow)
+//		d2B_teamPro(a,b,c,d,e,f)		(a: d2B_team(a) | b: GetLocaleString(b) | NTA_ClearPosition(c,1)
+//										d,e: d2B_chkAct2(d,e) | f: if(f) d2B_msg(f) )
+//		d2B_boSafe(a,b,c)				(a: NTTM_CheckAct(a) | b: d2B_gotoWP(b) | c: d2B_isTeamInTown(1,b) ) 
+
 
 var _dollChk = true;
 var _dollSoul = false;
 
 var d2B_cases = 7;
-var d2B_toggleHelper = "NecroRuns";			// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
+var d2B_toggleHelper = "NecroRuns";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
 										// leveling2: Chaos, Throne, & Countess
 										// necroBaal / necroCBaal: chaos and/or baal with non tele necro peeps
@@ -46,12 +61,6 @@ var attackRange = 3;
 var d2B_myPause = "";				// a temp place for where retrieved bot pause string is stored
 var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Number(myPause)
 
-// d2B_storePause(a)				// a 1 as an initializer had been placed into: line 150 of LeaderStarter.ntj
-// d2B_retrievePause()				// NT_File("logs/messagecommands/"+me.charname+"-pause.txt", 1, "1" + "/");
-
-
-// d2B_checkAct(a,b)	a: which act b: which town wp to go to
-// d2B_myTP(true, true, true, true, false); // (delay,bo,precast,clr&chests)
 
 // A goal: 	store and retrieve the names of the leader and followers
 //			msg these to _myName as a means to see if all are in
@@ -1326,7 +1335,8 @@ function d2B_team(a) {								// (a: false = send team to town true: bring team)
 	Delay(200);
 	return;
 }
-function d2B_teamPro(a,b,c,d,e,f) {					// things to whisper to team
+function d2B_teamPro(a,b,c,d,e,f) {					// (a: d2B_team(a) | b: GetLocaleString(b) | NTA_ClearPosition(c,1)
+													// d,e: d2B_chkAct2(d,e) | f: if(f) d2B_msg(f) )
 	d2B_team(a);
 	NTA_KillMonster(GetLocaleString(b));
 	Delay(300);
@@ -1356,8 +1366,8 @@ function d2B_bo() {									//	for instructing a bo barb
 	Delay(Random(7000,9000));
 	return;
 }
-function d2B_boSafe(a,b,c) {							// (a: act town | b: wp to bo get bo at | c: area of tp to return to) 
-	if(!InTown()) { d2B_chkAct(a); }
+function d2B_boSafe(a,b,c) {						// (a: NTTM_CheckAct(a) | b: d2B_gotoWP(b) | c: d2B_isTeamInTown(1,b) ) 
+	if(!InTown()) { NTTM_CheckAct(a); }
 	d2B_moveWP();
 	d2B_gotoWP(b);
 	d2B_littleJMP();
@@ -1510,6 +1520,8 @@ function d2H_wait4leader() {
 
 function d2H_actOnLeader() {
 	d2B_townMgr();
+	NTTM_TownMove("portalspot");
+	Delay(250);
 	while(CheckLeader(leaderName)) {
 		Action();
 		NTC_Delay(100);
@@ -2069,14 +2081,7 @@ function Follow( target ) {
 			}
 			else
 			{
-				isFollowingEnabled = false;
-				Print(COLOR_4 + "Follow off");
-				Delay(700);
-				if(!TakeLeaderTP())
-					Town();
-				Delay(Random(1000,2000));
-				d2B_townMove("portalspot");
-				isFollowingEnabled = true;
+				d2B_follow();
 				//NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
 			}
 		}
@@ -2107,14 +2112,7 @@ function Follow( target ) {
 	// If we get an INVALID distance (too far away for GetDistance()), but we're in the same area, attempt to move to the leader
 	if(_distance === -1 && me.areaid === leaderPlayerUnit.areaid && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit))
 	{
-		isFollowingEnabled = false;
-		Print(COLOR_4 + "Follow off");
-		Delay(700);
-		if(!TakeLeaderTP())
-			Town();
-		Delay(Random(1000,2000));
-		d2B_townMove("portalspot");
-		isFollowingEnabled = true;
+		d2B_follow();
 		//NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
 		return;
 	}
@@ -2145,14 +2143,7 @@ function Follow( target ) {
 		{
 			if(leaderUnit)
 			{
-				isFollowingEnabled = false;
-				Print(COLOR_4 + "Follow off");
-				Delay(700);
-				if(!TakeLeaderTP())
-					Town();
-				Delay(Random(1000,2000));
-				d2B_townMove("portalspot");
-				isFollowingEnabled = true;
+				d2B_follow();
 				//NTM_GetCloserInt(leaderUnit);
 			}
 			else
@@ -2243,14 +2234,7 @@ function Follow( target ) {
 		{
 			if(leaderUnit)
 			{
-				isFollowingEnabled = false;
-				Print(COLOR_4 + "Follow off");
-				Delay(700);
-				if(!TakeLeaderTP())
-					Town();
-				Delay(Random(1000,2000));
-				d2B_townMove("portalspot");
-				isFollowingEnabled = true;
+				d2B_follow();
 				//NTM_GetCloserInt(leaderUnit);
 			}
 			else
@@ -2322,14 +2306,7 @@ function Follow( target ) {
 		{
 			if(leaderUnit)
 			{
-				isFollowingEnabled = false;
-				Print(COLOR_4 + "Follow off");
-				Delay(700);
-				if(!TakeLeaderTP())
-					Town();
-				Delay(Random(1000,2000));
-				d2B_townMove("portalspot");
-				isFollowingEnabled = true;
+				d2B_follow();
 				//NTM_GetCloserInt(leaderUnit);
 			}
 			else
@@ -2449,14 +2426,7 @@ function Follow( target ) {
 		{
 			if(leaderUnit)
 			{
-				isFollowingEnabled = false;
-				Print(COLOR_4 + "Follow off");
-				Delay(700);
-				if(!TakeLeaderTP())
-					Town();
-				Delay(Random(1000,2000));
-				d2B_townMove("portalspot");
-				isFollowingEnabled = true;
+				d2B_follow();
 				//NTM_GetCloserInt(leaderUnit);
 			}
 			else
@@ -2472,7 +2442,17 @@ function Follow( target ) {
 		}
 	}
 }
-
+function d2B_follow() {
+	isFollowingEnabled = false;
+	Print(COLOR_4 + "Follow off");
+	Delay(700);
+	if(!TakeLeaderTP())
+		Town();
+	Delay(Random(1000,2000));
+	d2B_townMove("portalspot");
+	isFollowingEnabled = true;
+	return;
+}
 function TPAtPlayersBody(playerName, enemysName) {
 	var _playerUnit = aGetPlayerUnit(playerName);
 	var _playerUnit2 = GetLeader(playerName);
