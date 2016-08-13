@@ -651,12 +651,15 @@ function d2B_arcane(a) {							// case: 21
 	if(!a) {
 		Delay(750);
 		var _object = GetPresetUnits(me.areaid);
-		if(_object[i].id == 357) {
-			if(_object[i].x == 11 && _object[i].y == 11) NTM_MoveTo(me.areaid,  25450, 5030);
-			else if(_object[i].x == 26 && _object[i].y == 11) NTM_MoveTo(me.areaid,  25863, 5449);
-			else if(_object[i].x == 11 && _object[i].y == 21) NTM_MoveTo(me.areaid,  25445, 5869);
-			else NTM_MoveTo(me.areaid,  25023, 5449);
-		}	
+		for(var i = 0; i < _object.length; i++) {
+			if(_object[i].id == 357) {
+				if(_object[i].x == 11 && _object[i].y == 11) NTM_MoveTo(me.areaid,  25450, 5030);
+				else if(_object[i].x == 26 && _object[i].y == 11) NTM_MoveTo(me.areaid,  25863, 5449);
+				else if(_object[i].x == 11 && _object[i].y == 21) NTM_MoveTo(me.areaid,  25445, 5869);
+				else NTM_MoveTo(me.areaid,  25023, 5449);
+				break;
+			}
+		}
 		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 357, 2, 2);		// 357: the journal stand beside Summoner
 		d2B_team(true);
 		NTA_KillMonster(250);
