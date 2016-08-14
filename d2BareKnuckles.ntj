@@ -58,6 +58,7 @@ var leaderUnit;
 var leaderPlayerUnit;
 var followRange = 3;
 var attackRange = 3;
+var flwrAtk_Range = 10;				// used within the hAttack() function
 
 var d2B_myPause = "";				// a temp place for where retrieved bot pause string is stored
 var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Number(myPause)
@@ -2568,10 +2569,10 @@ function Guard() { 									// Done
 function hAttack() {
 	if(!NTC_InTown(me))
 	{
-		if(NTA_CheckForCloseMonsters(30))
+		if(NTA_CheckForCloseMonsters(flwrAtk_Range))
 		{
-			NTA_ClearPosition(30);
-			Delay(1000);
+			NTA_ClearPosition(flwrAtk_Range);
+			Delay(300);
 			return;
 		}
 		return;
