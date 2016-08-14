@@ -705,7 +705,7 @@ function d2B_canyon(a) {							// case: 22
 	
 	d2B_commonInitSetup(46);
 	
-	,for(var i = 0; i < _stair.length; i++){
+	for(var i = 0; i < _stair.length; i++){
 		NTP_DoPrecast();
 		d2B_moveToStair(me.areaid, _stair[i]);
 		d2B_myTP(true, true, true, false, false);
