@@ -918,19 +918,19 @@ function d2B_chaos(a){								// case: 31
 	
 	
 	if(!a) {
-		d2B_boSafe(4,107,4,false);
+		d2B_boSafe(4,107,4,107);
 		
 		var _iCoor = 0;
 		var _CScoords = [7796,5501,7800,5425,7792,5301,7734,5296,7795,5239,7845,5294];
 		
 		do{
-			if(!InTown()) NTM_MoveTo(me.areaid, _CScoords[_iCoor], _CScoords[_iCoor+1]);
+			NTM_MoveTo(me.areaid, _CScoords[_iCoor], _CScoords[_iCoor+1]);
 			d2B_team(true);
 			NTA_ClearPosition(40, true);
 			d2B_team(false);
 			Delay(Random(4000,5000));
 			_iCoor += 2;
-		} while (_iCoor <= (_CScoords.length -1))
+		} while (_iCoor < _CScoords.length)
 		
 		return;
 	}
@@ -1214,7 +1214,7 @@ function d2B_isTeamInTown(a,b) {					// a: act | b: area of where the tp is open
 				Say(".");							// this may press peeps who are not in town to go to town
 				Delay(Random(5000,6000));
 				Say("..");
-				if(!b) {
+				if(b) {
 					Delay(Random(2000,3000));
 					NTM_UsePortal("BluePortal", b);	// go back to the place where the tp was made
 				}
