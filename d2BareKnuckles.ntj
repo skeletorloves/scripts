@@ -15,13 +15,13 @@
 //		d2B_teamPro(a,b,c,d,e,f,g,h)	(a: d2B_team(a) | b: GetLocaleString(b) | NTA_ClearPosition(c,1)
 //										d,e: d2B_chkAct2(d,e) | f: if(f) d2B_msg(f) 
 //										g,h: original location of where team tp was made)
-//		d2B_boSafe(a,b,c)				(a: NTTM_CheckAct(a) | b: d2B_gotoWP(b) | c: d2B_isTeamInTown(1,c) ) 
-
+//		d2B_boSafe(a,b,c,d)				(a: NTTM_CheckAct(a) | b: d2B_gotoWP(b) | c,d: d2B_isTeamInTown(c,d) ) 
+//		d2B_isTeamInTown(a,b) {			(a: act | b: area of where the tp is open in and to go to | b = false then stay put and wait for instructions)
 
 var _dollChk = true;
 var _dollSoul = false;
 
-var d2B_cases = 12;
+var d2B_cases = 13;
 var d2B_toggleHelper = "NecroRuns";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
 										// leveling2: Chaos, Throne, & Countess
@@ -58,7 +58,7 @@ var leaderUnit;
 var leaderPlayerUnit;
 var followRange = 3;
 var attackRange = 3;
-var flwrAtk_Range = 10;				// used within the hAttack() function
+var flwrAtk_Range = 15;				// used within the hAttack() function
 
 var d2B_myPause = "";				// a temp place for where retrieved bot pause string is stored
 var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Number(myPause)
@@ -152,7 +152,7 @@ function d2B_bloodmoor(a) {							// case: 1
 	d2B_chkAct2(true,1);	// return to Act 1 town
 }
 function d2B_coldplains(a) {						// case: 2 | (true: all of cold plains | false: just bishibosh)
-	d2B_boSafe(1,35,false);							// a=1 act1 | b=35 cata 2wp | c=false stay in town
+	d2B_boSafe(1,35,1,false);							// (a: NTTM_CheckAct(a) | b: d2B_gotoWP(b) | c,d: d2B_isTeamInTown(c,d) ) 
 	d2B_commonInitSetup(3);
 	
 	/*d2B_myTP(true, true, true, false, false);
@@ -211,7 +211,7 @@ function d2B_burialgrounds(a) {						// case: 3
 	d2B_chkAct2(true,1);	// return to Act 1 town
 }
 function d2B_stonyfield(a) {						// case: 4
-	if(!a) d2B_boSafe(1,35,false);					// a=1 act1 | b=35 cata 2wp | c=false stay in town
+	if(!a) d2B_boSafe(1,35,1,false);					// a=1 act1 | b=35 cata 2wp | c=false stay in town
 	d2B_commonInitSetup(4);
 	
 	if(!a) {										// do Rakanishu
@@ -401,7 +401,7 @@ function d2B_outercloister() {						// case: 9
 	d2B_chkAct2(true,1);	// return to Act 1 town
 }
 function d2B_barracks(a) {							// case: 10
-	if(!a) d2B_boSafe(1,35,false);
+	if(!a) d2B_boSafe(1,35,1,false);
 	d2B_commonInitSetup(27);
 	if(!a) {
 		Delay(750);
@@ -481,7 +481,7 @@ function d2B_sewers(a) {							// case: 14
 	Delay(Random(30000,35000));
 	
 	if(!a) {
-		d2B_boSafe(2,74,false);
+		d2B_boSafe(4,107,4,false);
 		d2B_commonInitSetup(48);
 		d2B_moveToStair(me.areaid, 49);
 		NTM_TakeStair(49);
@@ -678,7 +678,7 @@ function d2B_arcane(a) {							// case: 21
 	
 	d2B_chkAct2(true,2);
 }
-function d2B_canyon(a) {								// case: 22
+function d2B_canyon(a) {							// case: 22
 	var _taltomb;
 	var _stair = [69, 68, 67, 66, 70, 71, 72];
 	
@@ -705,7 +705,7 @@ function d2B_canyon(a) {								// case: 22
 	
 	d2B_commonInitSetup(46);
 	
-	for(var i = 0; i < _stair.length; i++){
+	,for(var i = 0; i < _stair.length; i++){
 		NTP_DoPrecast();
 		d2B_moveToStair(me.areaid, _stair[i]);
 		d2B_myTP(true, true, true, false, false);
@@ -910,7 +910,32 @@ function d2B_Meph() {								// case: 30
 }
 //
 //	Act VI
-function d2B_chaos(){								// case: 31
+function d2B_chaos(a){								// case: 31
+	NTTM_CheckAct(4);					// if not Pandemonium Fortress, then go to Pandemonium Fortress
+	d2B_msg("ummm 4");					// saying this again as a precaution
+	Delay(Random(30000,35000));
+	
+	
+	
+	if(!a) {
+		d2B_boSafe(4,107,4,false);
+		
+		var _iCoor = 0;
+		var _CScoords = [7796,5501,7800,5425,7792,5301,7734,5296,7795,5239,7845,5294];
+		
+		do{
+			if(!InTown()) NTM_MoveTo(me.areaid, _CScoords[_iCoor], _CScoords[_iCoor+1]);
+			d2B_team(true);
+			NTA_ClearPosition(40, true);
+			d2B_team(false);
+			Delay(Random(4000,5000));
+			_iCoor += 2;
+		} while (_iCoor <= (_CScoords.length -1))
+		
+		return;
+	}
+	
+	d2B_commonInitSetup(48);
 	NTConfig_FastChaos = false;
 	NTConfig_LeechSupport = false;
 	NTConfig_IdInField = false;
@@ -1122,7 +1147,7 @@ function d2B_rPeepsInGame() {						// return (true, _teamSize) : _teamSize accou
 			if(_msgMe) Print(COLOR_2 + _peeps[i] + " is not the game.");
 			allIn = false;
 			Delay(Random(3000,5000));
-			if(msgMe) Say("/msg *" + _myName + " " + _peeps[i] + " missing.");
+			if(_msgMe) Say("/msg *" + _myName + " " + _peeps[i] + " missing.");
 		} else _teamSize = _teamSize + 1;
 	}
 	Delay(Random(3000,4000));
@@ -1443,7 +1468,7 @@ function d2B_bo() {									//	for instructing a bo barb
 	Delay(Random(7000,9000));
 	return;
 }
-function d2B_boSafe(a,b,c) {						// (a: NTTM_CheckAct(a) | b: d2B_gotoWP(b) | c: d2B_isTeamInTown(1,b) ) 
+function d2B_boSafe(a,b,c,d) {						// (a: NTTM_CheckAct(a) | b: d2B_gotoWP(b) | c: d2B_isTeamInTown(1,b) ) 
 	if(!InTown()) { NTTM_CheckAct(a); }
 	d2B_moveWP();
 	d2B_gotoWP(b);
@@ -1453,7 +1478,7 @@ function d2B_boSafe(a,b,c) {						// (a: NTTM_CheckAct(a) | b: d2B_gotoWP(b) | c
 	Delay(Random(2000,5000));
 	d2B_team(false);
 	Delay(Random(5000,7000));
-	d2B_isTeamInTown(1,c);
+	d2B_isTeamInTown(c,d);
 	return;
 }	
 function d2B_CheckAct(peep) {
@@ -2561,7 +2586,7 @@ function Guard() { 									// Done
 
 	if(!NTC_InTown(me))
 	{
-		NTA_ClearPosition(15);
+		NTA_ClearPosition(15);		// deeEdit orig: 15
 	}
 	return;
 }
@@ -2569,15 +2594,15 @@ function Guard() { 									// Done
 function hAttack() {
 	if(!NTC_InTown(me))
 	{
-		if(NTA_CheckForCloseMonsters(flwrAtk_Range))
+		if(NTA_CheckForCloseMonsters(flwrAtk_Range))	// deeEdits orig: 30
 		{
-			NTA_ClearPosition(flwrAtk_Range);
-			Delay(300);
+			NTA_ClearPosition(flwrAtk_Range);			// deeEdits orig: 30
+			Delay(300);									// deeEdits orig: 1000
 			return;
 		}
 		return;
 	}
-	Delay(1000);
+	Delay(300);											// deeEdits orig: 1000
 }
 
 function isATown(id) {
@@ -4849,9 +4874,15 @@ function d2B_switchNecroRuns() {
 		case 12: d2B_chkAct(2);
 			d2B_canyon(false);					// false: for Duriel
 			Delay(Random(8000,14000));
-			d2B_msg("ummm 1");
+			break;
+		case 13: d2B_msg("ummm 4");
 			Delay(Random(25000,30000));
-			d2B_chkAct(1);
+			d2B_chkAct(4);
+			d2B_chaos(false);					// false: for using non tele team
+			Delay(Random(8000,14000));
+			d2B_msg("ummm 4");
+			Delay(Random(25000,30000));
+			d2B_chkAct(4);
 			Delay(Random(15000,18000));
 			break;
 	}
