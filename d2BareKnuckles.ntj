@@ -3664,7 +3664,7 @@ function d2B_openAllSeals() {
 	d2B_sealThingy();
 	NT_OpenSealInt(393);
 	NTM_MoveTo(108, 7792, 5301); // back to the centre
-	
+	d2B_team(true);
 	// Diablo
 	//
 	for (i = 0; i < 80; i += 1) {
