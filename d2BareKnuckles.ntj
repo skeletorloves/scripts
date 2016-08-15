@@ -2049,6 +2049,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			TP(msg2);					// TP functions.
 		break;
 	case "quest":
+		if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 		if(!isBusy)
 			Quest( msg2 );				// Quest functions.
 		break;
