@@ -158,6 +158,99 @@ var Extras =  {
 		return true;
 	},
 	
+	Wirtsleg: function() {
+		var _wirtbody, _cube, _leg, _portal, _stash, _items, i, _npc, prearea;
+		
+		for (i = 0; i < 10; i++){
+			_leg = NTC_FindUnit(NTC_UNIT_ITEM, 88);
+			if (_leg)
+			break;
+		}
+		_items = me.GetItems();
+		for (i = 0; i < _items.length;i++){
+			if (_items[i].classid == 88) {
+				Print ("Already Got Leg");
+				_leg = _items[i];
+			}
+		}
+		if (!_leg){
+			if(!NTTM_TownMove("waypoint")){
+				NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_TownMove()");
+				return;
+			}
+			if(!NTM_TakeWaypoint(4)){
+				NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeWaypoint()");
+				return;
+			}
+			NTP_DoPrecast();
+			if(!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 10, 10)){
+				NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
+				return;
+			}
+			if(!NTM_UsePortal("Portal", 38)){
+				NTC_SendMsgToScript("NTBotGame.ntj", "NTM_UsePortal()");
+				return;
+			}
+			NTM_MoveTo(me.areaid, 25047, 5178);
+			if(NTA_ClearPosition(10)){
+				if(NTConfig_IdInField){
+					if (!NTT_CheckSpace(NTConfig_FreeSpaceXY[0], NTConfig_FreeSpaceXY[1])) {
+						NT_FieldID();
+					}
+				}
+				NTSI_PickItems();
+				if(NTConfig_IdInField){
+					if (!NTT_CheckSpace(NTConfig_FreeSpaceXY[0], NTConfig_FreeSpaceXY[1])) {
+						NT_FieldID();
+					}
+				}
+			}
+			_wirtbody = NTC_FindUnit(NTC_UNIT_OBJECT, 268);
+			if(!_wirtbody){
+				NTC_SendMsgToScript("NTBotGame.ntj", "Wirt's body not found.");
+				return;
+			}
+			if(NTM_MoveTo(_wirtbody.areaid, _wirtbody.x+3, _wirtbody.y)){
+				if(NTC_OpenChest(_wirtbody)){
+					NTC_PingDelay(500);
+					for (i = 0; i < 10; i++){
+						_leg = NTC_FindUnit(NTC_UNIT_ITEM, 88);
+						if (_leg)
+						break;
+					}
+					if(!NTT_CheckSpace(_leg.xsize, _leg.ysize)){
+						_prearea = me.areaid
+						if(NTTM_CheckAct()){
+							NTTMGR_TownManager(true);
+							NTTM_TownMove("portalspot")
+							NTM_UsePortal("BluePortal", _prearea)
+						}
+					}
+					for (i = 0; i < 20; i++){
+						if ((i % 5) == 0){
+							if (_leg.mode == 3 || _leg.mode == 5){
+								if (NTC_ClearCursor())
+								NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _leg);
+							}
+						}
+						NTC_PingDelay(100);
+						if (_leg.mode != 3 && _leg.mode != 5){
+							Print(COLOR_4 + "Got Leg");
+							NTC_PingDelay(200);
+							break;
+						}
+					}
+				}
+			}
+			if(!_leg){
+				NTC_SendMsgToScript("NTBotGame.ntj", "Sigh... No leg.");
+				return;
+			}
+			NTM_MakeTP(1);
+		}
+		return true;
+	},
+	
 	Radament: function() {
 		var _rad, _chest, _chestx, _chesty, _radtp;
 
