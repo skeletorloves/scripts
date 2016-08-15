@@ -3687,6 +3687,11 @@ function d2B_openAllSeals() {
 function d2B_sealThingy() {
 	d2B_team(true);
 	NTA_ClearPosition(40, true);
+	
+	if(!NTA_KillMonster(GetLocaleString(2851)) Delay(300);	// 2851: Vizier
+	if(!NTA_KillMonster(GetLocaleString(2852)) Delay(300);	// 2582: Lord De Seis
+	if(!NTA_KillMonster(GetLocaleString(2853)) Delay(300);	// 2853: Infector of Souls
+	
 	d2B_team(false);
 }
 function NT_OpenSealsInt() {
