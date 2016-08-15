@@ -918,13 +918,21 @@ function d2B_chaos(a){								// case: 31
 	
 	
 	if(!a) {
-		d2B_boSafe(4,107,4,107);
+		d2B_commonInitSetup(107);
+		d2B_myTP(true, true, true, false, false);
+		d2B_team(false);									// send the peeps back to town
+		Delay(Random(5000,7000));
+		d2B_isTeamInTown(4,107);
 		
 		var _iCoor = 0;
 		var _CScoords = [7796,5501,7800,5425,7792,5301,7734,5296,7795,5239,7845,5294];
 		
 		do{
-			NTM_MoveTo(me.areaid, _CScoords[_iCoor], _CScoords[_iCoor+1]);
+			NTM_MoveTo(108, _CScoords[_iCoor], _CScoords[_iCoor+1]);
+			if(_iCoor == 4) {
+				d2B_openAllSeals();
+				NTM_MoveTo(108, _CScoords[_iCoor], _CScoords[_iCoor+1]);
+			}
 			d2B_team(true);
 			NTA_ClearPosition(40, true);
 			d2B_team(false);
@@ -3624,6 +3632,18 @@ function classid(i) {
 //
 // act iv functions
 //
+function d2B_openAllSeals() {
+	// Vizier seals
+	NT_OpenSealInt(395);
+	NT_OpenSealInt(396);
+	// Seis seal
+	NT_OpenSealInt(394);
+	// Venom seals
+	NT_OpenSealInt(392);
+	//NT_OpenSealInt(393);
+	//NTM_MoveTo(108, 7792, 5301); // back to the centre
+	return;
+}
 function NT_OpenSealsInt() {
 	var _unit;
 	var _result;
