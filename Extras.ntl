@@ -158,7 +158,7 @@ var Extras =  {
 		return true;
 	},
 	
-	Wirtsleg: function() {
+	WirtsLeg: function() {
 		var _wirtbody, _cube, _leg, _portal, _stash, _items, i, _npc, prearea;
 		
 		for (i = 0; i < 10; i++){
