@@ -1572,6 +1572,7 @@ function d2H_load() {
 		NTConfig_GreetMsg = "Hello, %name%!";						// The message to send
 	NTConfig_HelperHumor 	= false;						// 0.3% chance to say a silly phrase and skip doing the command you issued.
 	NTConfig_Quest_Cain		= true;						// true/false to do quests when using rush commands
+	NTConfig_Quest_WirtsLeg	= true;						// true/false to do quests when using rush commands
 	NTConfig_Quest_Radament	= true;						// true/false to do quests when using rush commands
 	NTConfig_Quest_Izual	= true;						// true/false to do quests when using rush commands
 	NTConfig_Quest_Tome		= true;						// true/false to do quests when using rush commands
@@ -1581,10 +1582,11 @@ function d2H_load() {
 	NTConfig_Quest_Baal		= true;						// true/false to do quests when using rush commands
 	NTConfig_TpHarem		= true;						// true/false to tp at harem after duriel
 	NTConfig_KillCouncils	= true;						// true/false to kill all counsel members
-	NTConfig_ClearCS 		= true;						// true/false to clear CS when doing diablo quest
+	NTConfig_ClearCS 		= false;						// true/false to clear CS when doing diablo quest
 	NTConfig_CSDodge 		= true;						// dodge in CS
 	
 	Scripts.Command = false; // Overrides all other scripts set here
+	Scripts.WirtsLeg = true;
 	Scripts.Andy = true;
 	Scripts.Radament = true;
 	Scripts.Cube = true;
@@ -2048,16 +2050,18 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		if(!isBusy)
 			TP(msg2);					// TP functions.
 		break;
-	case "quest":
+	case "q":
 		if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 		if(!isBusy)
 			Quest( msg2 );				// Quest functions.
 		break;
 	case "rush":
+		if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 		if(!isBusy)
 			Rush( msg2 );				// Rush functions.
 		break;
 	case "chant":
+		if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 		if(!isBusy)
 			Chant( msg2 );				// Chant functions.
 		break;
@@ -2768,6 +2772,9 @@ function Quest( msg ) { 							// Done (needs testing)
 			break;
 		case "cain":
 			Extras.Cain();
+			break;
+		case "leg":
+			Extras.WirtsLeg();
 			break;
 		case "andy":
 		case "andariel":
