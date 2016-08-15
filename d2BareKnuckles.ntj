@@ -942,6 +942,8 @@ function d2B_chaos(a){								// case: 31
 			_iCoor += 2;
 		} while (_iCoor < _CScoords.length)
 		
+		d2B_myTP(true, true, true, false, false);
+		d2B_chkAct2(true,4);
 		return;
 	}
 	
@@ -3689,13 +3691,14 @@ function d2B_sealThingy(a) {
 	NTA_ClearPosition(40, true);
 	
 	switch(a) {
-		case 1: if(!NTA_KillMonster(GetLocaleString(2851)) Delay(300);	// 2851: Vizier
+		case 1: if(!NTA_KillMonster(GetLocaleString(2851))) Delay(300);	// 2851: Vizier
 			break;
-		case 2: if(!NTA_KillMonster(GetLocaleString(2852)) Delay(300);	// 2582: Lord De Seis
+		case 2: if(!NTA_KillMonster(GetLocaleString(2852))) Delay(300);	// 2582: Lord De Seis
 			break;
-		case 3: if(!NTA_KillMonster(GetLocaleString(2853)) Delay(300);	// 2853: Infector of Souls
+		case 3: if(!NTA_KillMonster(GetLocaleString(2853))) Delay(300);	// 2853: Infector of Souls
 			break;
 	}
+	
 	d2B_team(false);
 }
 function NT_OpenSealsInt() {
@@ -4966,6 +4969,11 @@ function d2B_switchChaos() {
 			Delay(Random(25000,30000));
 			d2B_chkAct(4);
 			d2B_chaos(false);					// false: for using non tele team
+			break;
+		case 2: d2B_msg("ummm 1");
+			Delay(Random(25000,30000));
+			d2B_chkAct(1);
+			d2B_cata2();
 			Delay(Random(8000,14000));
 			d2B_msg("ummm 4");
 			Delay(Random(25000,30000));
