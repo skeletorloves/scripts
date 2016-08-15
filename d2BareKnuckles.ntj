@@ -21,8 +21,8 @@
 var _dollChk = true;
 var _dollSoul = false;
 
-var d2B_cases = 1;
-var d2B_toggleHelper = "Chaos";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
+var d2B_cases = 2;
+var d2B_toggleHelper = "Chaos";			// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
 										// leveling2: Chaos, Throne, & Countess
 										// necroBaal / necroCBaal: chaos and/or baal with non tele necro peeps
@@ -1571,18 +1571,36 @@ function d2H_load() {
 	NTConfig_GreetPlayers = false;									// Greet players who join your party
 		NTConfig_GreetMsg = "Hello, %name%!";						// The message to send
 	NTConfig_HelperHumor 	= false;						// 0.3% chance to say a silly phrase and skip doing the command you issued.
-	NTConfig_Quest_Cain		= false;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Radament	= false;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Izual	= false;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Tome		= false;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Shenk	= false;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Anya		= false;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Ancients	= false;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Baal		= false;						// true/false to do quests when using rush commands
-	NTConfig_TpHarem		= false;						// true/false to tp at harem after duriel
-	NTConfig_KillCouncils	= false;						// true/false to kill all counsel members
-	NTConfig_ClearCS 		= false;						// true/false to clear CS when doing diablo quest
-	NTConfig_CSDodge 		= false;						// dodge in CS
+	NTConfig_Quest_Cain		= true;						// true/false to do quests when using rush commands
+	NTConfig_Quest_Radament	= true;						// true/false to do quests when using rush commands
+	NTConfig_Quest_Izual	= true;						// true/false to do quests when using rush commands
+	NTConfig_Quest_Tome		= true;						// true/false to do quests when using rush commands
+	NTConfig_Quest_Shenk	= true;						// true/false to do quests when using rush commands
+	NTConfig_Quest_Anya		= true;						// true/false to do quests when using rush commands
+	NTConfig_Quest_Ancients	= true;						// true/false to do quests when using rush commands
+	NTConfig_Quest_Baal		= true;						// true/false to do quests when using rush commands
+	NTConfig_TpHarem		= true;						// true/false to tp at harem after duriel
+	NTConfig_KillCouncils	= true;						// true/false to kill all counsel members
+	NTConfig_ClearCS 		= true;						// true/false to clear CS when doing diablo quest
+	NTConfig_CSDodge 		= true;						// dodge in CS
+	
+	Scripts.Command = false; // Overrides all other scripts set here
+	Scripts.Andy = true;
+	Scripts.Radament = true;
+	Scripts.Cube = true;
+	Scripts.Ammy = true;
+	Scripts.Staff = true;
+	Scripts.Summoner = true;
+	Scripts.Duriel = true;
+	Scripts.Tome = true;
+	Scripts.Travincal = true;
+	Scripts.Mephisto = true;
+	Scripts.Izual = true;
+	Scripts.Diablo = true;
+	Scripts.Shenk = true;
+	Scripts.Anya = true;
+	Scripts.Ancients = true;
+	Scripts.Baal = true;
 	
 	return;
 }
