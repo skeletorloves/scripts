@@ -468,8 +468,8 @@ function d2B_cata2() {								// case: 13
 		NTM_TakeStair(i);
 		Delay(300);
 	}
-	NTM_MoveTo(me.areaid, 22545, 9517);				// walls  right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547 | 22545, 9517: towards the back where the rogues hang
-	d2B_teamPro(true,3021,40,true,1,"n w",false);			// 3021: Andarial						
+	NTM_MoveTo(me.areaid, 22545, 9517);						// walls  right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547 | 22545, 9517: towards the back where the rogues hang
+	d2B_teamPro(true,3021,40,true,1,"n w", 22545, 9517);	// 3021: Andarial						
 	return;	
 }
 //
@@ -3636,13 +3636,35 @@ function d2B_openAllSeals() {
 	// Vizier seals
 	NT_OpenSealInt(395);
 	NT_OpenSealInt(396);
+	d2B_sealThingy();
 	// Seis seal
 	NT_OpenSealInt(394);
+	d2B_sealThingy();
 	// Venom seals
 	NT_OpenSealInt(392);
-	//NT_OpenSealInt(393);
-	//NTM_MoveTo(108, 7792, 5301); // back to the centre
+	d2B_sealThingy();
+	NT_OpenSealInt(393);
+	NTM_MoveTo(108, 7792, 5301); // back to the centre
+	
+	for (i = 0; i < 80; i += 1) {
+		if (GetUnit(NTC_UNIT_MONSTER, 243)) {
+			break;
+		}
+		NTCS_DiaSpam();
+	}
+	NTA_KillMonster(243);
+	NTSI_PickItems();
+	Delay(1000);
+	
+	d2B_myTP(true, true, false, false, false);
+	
+	d2B_chkAct2(true,4);
 	return;
+}
+function d2B_sealThingy() {
+	d2B_team(true);
+	NTA_ClearPosition(40, true);
+	d2B_team(false);
 }
 function NT_OpenSealsInt() {
 	var _unit;
@@ -3844,7 +3866,6 @@ function NT_OpenVenomSealInt(type) {
 	}
 	return true;
 }
-
 function NT_OpenSealInt(classid) {
 	var warn;
 	switch (classid) {
