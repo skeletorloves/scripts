@@ -3633,19 +3633,40 @@ function classid(i) {
 // act iv functions
 //
 function d2B_openAllSeals() {
+	var _unit;
+	
 	// Vizier seals
+	//
 	NT_OpenSealInt(395);
 	NT_OpenSealInt(396);
 	d2B_sealThingy();
+	
 	// Seis seal
+	//
 	NT_OpenSealInt(394);
+	_unit = GetPresetUnits(108, NTC_UNIT_OBJECT, 394);
+	if (_unit[0].roomx * 5 + _unit[0].x == 7773) {
+		NTM_MoveTo(108, 7797, 5201);
+	} else {
+		NTM_MoveTo(108, 7798, 5186);
+	}
 	d2B_sealThingy();
+	
 	// Venom seals
+	//
 	NT_OpenSealInt(392);
+	_unit = GetPresetUnits(108, NTC_UNIT_OBJECT, 392);
+	if (_unit[0].roomx * 5 + _unit[0].x == 7893) {
+		Delay(300);
+	} else {
+		NTM_MoveTo(108, 7933, 5299);
+	}
 	d2B_sealThingy();
 	NT_OpenSealInt(393);
 	NTM_MoveTo(108, 7792, 5301); // back to the centre
 	
+	// Diablo
+	//
 	for (i = 0; i < 80; i += 1) {
 		if (GetUnit(NTC_UNIT_MONSTER, 243)) {
 			break;
