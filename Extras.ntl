@@ -1,5160 +1,847 @@
-//	d2BareKnuckles.ntj
+var Extras =  {
+	Cain: function() {
+		var i, n, xx, yy, _unit, _treex, _treey,
+			_stoneArray = new Array(10);
 
-
-//	__________________________________
-//		a collection of function calls
-		
-//		d2B_storePause(a)				a: 1 as an initializer had been placed into: line 150 of LeaderStarter.ntj
-//		d2B_retrievePause()				NT_File("logs/messagecommands/"+me.charname+"-pause.txt", 1, "1" + "/");
-		
-//		d2B_checkAct(a,b)				(a: which act to head to | b: which town wp to go to)
-//		d2B_myTP(a,b,c,d,e,f) 			(a: delay | b: bo true/false | c: precast | d: clr level/open chests | e,f: delay(random(e,f)))
-//		d2B_chkAct2(a,b)				(a: true sends team to town, false enables team to follow | b: act 1 thru 5)
-//		d2B_clrLvlOC()					clear level and open chests
-//		d2B_team(a)						(a: false sends team to town, false enables team to follow)
-//		d2B_teamPro(a,b,c,d,e,f,g,h)	(a: d2B_team(a) | b: GetLocaleString(b) | NTA_ClearPosition(c,1)
-//										d,e: d2B_chkAct2(d,e) | f: if(f) d2B_msg(f) 
-//										g,h: original location of where team tp was made)
-//		d2B_boSafe(a,b,c,d)				(a: NTTM_CheckAct(a) | b: d2B_gotoWP(b) | c,d: d2B_isTeamInTown(c,d) ) 
-//		d2B_isTeamInTown(a,b) {			(a: act | b: area of where the tp is open in and to go to | b = false then stay put and wait for instructions)
-
-var _dollChk = true;
-var _dollSoul = false;
-
-var d2B_cases = 2;
-var d2B_toggleHelper = "CBaalNoTele";	// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
-										// leveling: Chaos & Throne | throne
-										// leveling2: Chaos, Throne, & Countess
-										// necroBaal / necroCBaal: chaos and/or baal with non tele necro peeps
-										// NecroRuns: for a sorc leader to run tightly with necro crew
-										// Chaos: for chaos only
-										// CBaalNoTele: for cbaaling with a non tele team
-
-var _nonTelePeeps = true;				// if followers can tele
-
-var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_myTP()
-var d2B_refill = true;					// enable/disable NTTM_TownManager()
-	
-var _msgMe = false;							// for enabling whispering to _myName 
-var _myName = "";							// peep to msg of what's a-happenin'
-var _myBoBarb = "";							// bo barb name
-var _myChantress = "";						// my chantress
-
-
-// *** Global helper vars ***
-
-var _peeps = [];						// d2B_Peeps()
-var _peepsNum = 0;						// number of peeps (incl. leader)
-var _peepsIn = false;					// d2B_peepsIn() for verifying if peeps are still in game
-
-
-var debug = false;
-
-var pathRushBots = "NTRush/rushbots/";						// . .. follow, unfollow
-var isBusy = false;											// ;	precast, buff
-var isPaused = false;										// '	town & unfollow
-var isFollowingEnabled = false;								// ,	in town move to portal area
-var isAttackEnabled = true;
-var isAutoEnchantEnabled = false;
-var leaderUnit;
-var leaderPlayerUnit;
-var followRange = 3;
-var attackRange = 3;
-var flwrAtk_Range = 15;				// used within the hAttack() function
-
-var d2B_myPause = "";				// a temp place for where retrieved bot pause string is stored
-var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Number(myPause)
-
-
-// A goal: 	store and retrieve the names of the leader and followers
-//			msg these to _myName as a means to see if all are in
-
-
-function NTMain() {
-	
-	d2B_load();   									// initializing & loading thingies
-	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters
-	
-	d2B_myPauseValue = Number(d2B_retrievePause());		// retrieve & convert to numerical value the pause value
-	
-	NTTM_TownMove("waypoint");
-	Delay(700);
-	
-	if(d2B_toggleHelper == "helper") {d2H_helper();}		// for enabling a follower
-	if(d2B_toggleHelper != "helper") d2B_newGmDlyPeepChk();
-	
-	if(d2B_toggleHelper != "testing") {
-		
-		while(d2B_myPauseValue <= d2B_cases) { 
-			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
-			Delay(Random(4000,5000));
-			if(_msgMe) Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
-			Delay(Random(5000,6000));
-			
-			if(d2B_toggleHelper == false) d2B_switchMain();					// for a list of action cases which are reasonably complete
-			if(d2B_toggleHelper == "grinding") d2B_switchGrinding();		// for a select list of action cases
-			if(d2B_toggleHelper == "leveling") d2B_switchChaosThrone();		// for a Chaos and Throne room leveling
-			if(d2B_toggleHelper == "leveling2") d2B_switchcBaalCountess();	// for a Chaos, Throne, & Countess leveling
-			if(d2B_toggleHelper == "throne") d2B_switchThrone();			// for Throne room leveling
-			if(d2B_toggleHelper == "necroBaal") d2B_switchnecroBaal();		// for chaos & baal leveling w/ non teleing necros
-			if(d2B_toggleHelper == "NecroRuns") d2B_switchNecroRuns();		// for a sorc leader to run tightly with necro crew
-			if(d2B_toggleHelper == "Chaos") d2B_switchChaos();				// for a sorc leader to run tightly with necro crew
-			if(d2B_toggleHelper == "Chaos") d2B_CBaalNoTele();				// for cbaaling with a non tele team
-			
-			d2B_msgIncPause();	
+		if (!NTTM_CheckAct()) {
+			Script.SendMsg("OverWatch.ntj", "NTTM_CheckAct()");
+			return;
 		}
-		if(d2B_myPauseValue > d2B_cases) {
-			d2B_msgResetPauseEnd();	
-		}
-	}	
-	if(d2B_toggleHelper == "testing") {
-		NTTM_TownMove("waypoint");
-		Delay(2700);
+
+		NTTMGR_TownManager();
 		
-		d2B_canyon();
-		
-		Print(COLOR_2 + "Another delay...");
-		Delay(Random(35000,40000));
-	}
-	Delay(Random(15000,20000));
-	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
-}
-
-// ________________________________________________________
-// main function scripts
-
-//
-//	Act I
-
-	
-function d2B_bloodmoor(a) {							// case: 1
-	d2B_moveWP();
-	d2B_gotoWP(1);
-	d2B_chkAct(1);
-	d2B_townMgr();
-	
-	d2B_townMove("exit");							// exit town
-	NTC_PingDelay(200);
-	NTTM_OutOfAct1();
-	NTM_TeleportTo(me.x+1, me.y+3);					// for keeping merc near
-	Delay(300);
-	
-	d2B_moveToStair(2,8);							// head to front of den as a starting point
-	if(!a) {
-		Delay(750);
-		NTM_TakeStair(8);
-		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 15, -15);	// 774: Corpsefire
-		d2B_teamPro(true,3319,40,true,1,"n w",false);									// 3319: Corpsefire
-		return;
-	}
-	
-	d2B_myTP(true, true, true, true, false); 		// (delay,bo,precast,clr&chests,delay(x,y))
-	d2B_moveToStair(2,8);
-	d2B_myTP(true, false, true, false, false);
-	d2B_takeStairs(8, true);
-
-	d2B_chkAct2(true,1);	// return to Act 1 town
-}
-function d2B_coldplains(a) {						// case: 2 | (true: all of cold plains | false: just bishibosh)
-	d2B_boSafe(1,35,1,false);							// (a: NTTM_CheckAct(a) | b: d2B_gotoWP(b) | c,d: d2B_isTeamInTown(c,d) ) 
-	d2B_commonInitSetup(3);
-	
-	/*d2B_myTP(true, true, true, false, false);
-	d2B_team(false);
-	Delay(Random(4000,6000));
-	d2B_isTeamInTown(1,3);*/
-	
-	if(!a) {										// do bishibosh
-		Delay(750);
-		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 15, -15);	// 734: Bishibosh
-		d2B_teamPro(true,2869,40,true,1,"n w",false);									// 2869: Bishibosh 
-		return;
-	}
-		
-	d2B_moveToStair(3,9);
-	d2B_myTP(true, false, true, false, false);
-	d2B_takeStairs(9, true);
-	
-	d2B_moveToStair(9,13);
-	d2B_myTP(true, false, true, false, false);
-	d2B_takeStairs(13, true);
-	
-	d2B_myTP(true, true, true, false, false);
-	
-	d2B_chkAct2(true,1);	// return to Act 1 town
-}
-function d2B_burialgrounds(a) {						// case: 3
-	d2B_commonInitSetup(3);
-	if(!a) {										// do Blood Raven
-		Delay(750);
-		d2B_movePresetUnitTitle(17,7,8,15);	// move to burial grounds
-		d2B_teamPro(true,3111,40,true,1,"n w",false);
-		return;
-	}
-
-	d2B_myTP(true, true, true, false, false);
-	d2B_team(false);
-	Delay(Random(5000,7000));
-	d2B_isTeamInTown(1,3);
-	
-	d2B_movePresetUnitTitle(17,7,8,15);	// move to burial grounds
-	d2B_team(true);
-	
-	d2B_moveToStair(me.areaid,19);	// enter the mausoleum
-	Delay(Random(4000,5000));
-	d2B_takeStairs(19, true);
-	
-	d2B_moveToStair(me.areaid,17);
-	Delay(Random(4000,5000));
-	d2B_takeStairs(17, false);
-	
-	d2B_moveToStair(me.areaid,18);	// enter the crypt
-	Delay(Random(4000,5000));
-	d2B_takeStairs(18, true);
-
-	d2B_chkAct2(true,1);	// return to Act 1 town
-}
-function d2B_stonyfield(a) {						// case: 4
-	if(!a) d2B_boSafe(1,35,1,false);					// a=1 act1 | b=35 cata 2wp | c=false stay in town
-	d2B_commonInitSetup(4);
-	
-	if(!a) {										// do Rakanishu
-		Delay(750);
-		d2B_movePresetUnitMonster(737, 10, 10);		// 737: Rakanishu
-		d2B_teamPro(true,2872,40,true,1,"n w",false);			// 2872: Rakanishu
-		return;	
-	}
-	d2B_myTP(true, true, true, true, false);
-	d2B_movePresetUnitMonster(737, 10, 10);
-	Delay(Random(6000,8000));
-	d2B_usePortal("Portal",38);			// use portal to enter tristram
-	Delay(Random(2000,4000));
-	d2B_clrLvlOC();
-
-	d2B_chkAct2(true,1);	// return to Act 1 town
-}
-function d2B_undergroundpassage() {					// case: 5
-	d2B_commonInitSetup(4);
-
-	d2B_moveToStair(me.areaid,10);
-	d2B_myTP(true, true, true, false, false);
-	d2B_takeStairs(10, true);
-	
-	d2B_moveToStair(me.areaid,14);
-	Delay(Random(4000,5000));
-	d2B_takeStairs(14, true);
-	
-	d2B_chkAct2(true,1);	// return to Act 1 town
-}
-function d2B_darkwood(a) {							// case: 6
-	d2B_commonInitSetup(5);
-	if(!a) {
-		Delay(750);
-		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 30, 15, -15);		// 30: Treehead Woodfist
-		d2B_teamPro(true,2873,40,true,1,"n w",false);									// 2869: Treehead Woodfist 
-		return;
-	}
-	d2B_myTP(true, true, true, true, false);
-	
-	d2B_chkAct2(true,1);	// return to Act1 town
-}
-function d2B_blackmarsh() {							// case: 7
-	d2B_commonInitSetup(6);
-	d2B_myTP(true, true, true, true, false);
-	
-	d2B_moveToStair(me.areaid,11);	// clear the hole
-	d2B_myTP(true, false, true, false, false);
-	d2B_takeStairs(11, true);
-	
-	d2B_moveToStair(me.areaid,15);	// clear the hole
-	d2B_myTP(true, false, true, false, false);
-	d2B_takeStairs(15, true);
-	
-	d2B_chkAct2(true,1);	// return to Act 1 town
-	
-	d2B_commonInitSetup(6);
-	
-	for(var i = 0 ; i < 6 ; i++) {
-		d2B_moveToStair(me.areaid,20+i);	// go to the forgotten tower and do tower things
-		d2B_myTP(true, false, true, false, false);
-		d2B_takeStairs(20+i, true);
-	}
-	
-	d2B_chkAct2(true,1);	// return to Act 1 town
-}
-function d2B_blackMarsh2() {						// a useful delay for when dolls are found in throne room
-	Delay(Random(3000,5000));
-	d2B_msg("ummm 1");
-	Delay(Random(15000,20000));
-	d2B_commonInitSetup(6);
-	
-	/*d2B_myTP(true, true, true, false, false);
-	d2B_team(false);
-	Delay(4000);*/
-	for(var i = 0 ; i < 6 ; i++) {
-		d2B_moveToStair(me.areaid,20+i);	// go to the forgotten tower and do tower things
-		NTM_TakeStair(20+i);
-		if(i==5) {
-			d2B_countess();
+		if (!NTTM_TownMove("waypoint")) {
+			Common.LogError("NTTM_TownMove()");
+			return false;
 		}
-	}
-	
-	d2B_chkAct2(true,1);	// return to Act 1 town
-	Delay(Random(4000,7000));
-	d2B_msg("ummm 4");
-	Delay(300);
-	d2B_chkAct(4);
-	for(i=0; i<=5; i++) {
-		Delay(Random(15000,20000));
-		if(_msgMe) Say("/msg *" + _myName + " We just finished break #" + i + ".");
-	}
-}
-function d2B_countess() {
-	if(me.y > 11060 && me.y <= 11078){
-		NTM_MoveTo(me.areaid, 12544, 11066);
-	}
-	else{ 
-		NTM_MoveTo(me.areaid, 12570, 11057);
-	}
-	_countess = NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(2875), 5);
-	if(_countess) {
-		if(me.y > 11060 && me.y <= 11078){
-			if(_countess.y <= 11054)
-				NTM_MoveTo(me.areaid, 12537, 11042);
-			if(_countess.y > 11056 && _countess.y <= 11070){
-				if(_countess.x < 12533)
-					NTM_MoveTo(me.areaid, 12518, 11057);
-				else
-					NTM_MoveTo(me.areaid, 12548, 11057);
-			}
-			if(_countess.y > 11070 && _countess.y <= 11085){
-				if(_countess.x < 12533)
-					NTM_MoveTo(me.areaid, 12518, 11083);
-				else
-					NTM_MoveTo(me.areaid, 12548, 11083);
-			}
-			if(_countess.y > 11086)
-				NTM_MoveTo(me.areaid, 12542, 11098);
+
+		if (!NTM_TakeWaypoint(5)) {
+			Common.LogError("NTM_TakeWaypoint()");
+			return false;
 		}
-		else{
-			if(_countess.x <= 12550){
-				NTM_MoveTo(me.areaid, 12562, 11057);
-				NTM_MoveTo(me.areaid, 12548, 11043);
-			}
-			if(_countess.x > 12550 && _countess.x <= 12561){
-				if(_countess.y < 11027)
-					NTM_MoveTo(me.areaid, 12577, 11043);
-				else{
-					NTM_MoveTo(me.areaid, 12565, 11043);
-					NTM_MoveTo(me.areaid, 12577, 11025);
-				}
-			}
-			if(_countess.x > 12561 && _countess.x <= 12579){
-				if(_countess.y < 11027)
-					NTM_MoveTo(me.areaid, 12555, 11043);
-				else{
-					NTM_MoveTo(me.areaid, 12565, 11043);
-					NTM_MoveTo(me.areaid, 12555, 11025);
-				}
-			}
-			if(_countess.x > 12579){
-				NTM_MoveTo(me.areaid, 12578, 11057);
-				NTM_MoveTo(me.areaid, 12582, 11043);
+
+		NTP_DoPrecast(true);	
+
+		_unit = GetPresetUnits(me.areaid, 2);
+
+		for (i = 0; i < _unit.length; i += 1) {
+			if (_unit[i].id == 30) {
+				_treex = _unit[i].roomx*5+_unit[i].x;
+				_treey = _unit[i].roomy*5+_unit[i].y;					
 			}
 		}
-		d2B_team(true);
-		NTA_ClearPosition();
-		NTSI_PickItems();
-		Delay(Random(2000,4000));
-		
-		d2B_team(false);
-		Delay(Random(4000,6000));
-	}	
-	NTTM_CheckAct(4);
-	Delay(Random(4000,6000));
-	Say(".");
-	Delay(Random(8000,10000));
-	Say("ummm 4");
-	Delay(Random(8000,10000));
-	return;
-}
-function d2B_tamohighland() {						// case: 8
-	d2B_commonInitSetup(6);
-	d2B_myTP(true, true, true, true, false);
-	d2B_team(false);
-	
-	d2B_moveToStair(7,12);	// go to the enterance of tamoe highland pit
-	d2B_team(true);
-	NTP_DoPrecast();
-	d2B_clrLvlOC();
-	
-	d2B_moveToStair(7,12);	// go to the enterance of the tamoe highland pit
-	Delay(Random(4000,5000));
-	d2B_takeStairs(12, true);
-	
-	d2B_moveToStair(me.areaid,16);	// go to the 2nd level of the tamoe highland pit
-	Delay(Random(4000,5000));
-	d2B_takeStairs(16, true);
-	
-	d2B_chkAct2(true,1);	// return to Act 1 town
-}
-function d2B_outercloister() {						// case: 9
-	d2B_commonInitSetup(27);
-	d2B_myTP(true, true, true, true, false);
-	
-	d2B_chkAct2(true,1);	// return to Act 1 town
-}
-function d2B_barracks(a) {							// case: 10
-	if(!a) d2B_boSafe(1,35,1,false);
-	d2B_commonInitSetup(27);
-	if(!a) {
-		Delay(750);
-		NTM_MoveToPresetUnit(28, NTC_UNIT_MONSTER, 754, -5, 5);		// 28: the Smith
-		x_tmp = me.x;
-		y_tmp = me.y;
-		d2B_teamPro(true,2889,40,true,1,"n w",x_tmp,y_tmp);			// 2889: the Smith
-		return;	
-	}
-	
-	d2B_myTP(true, true, true, false, false);
-	d2B_team(false);
-	
-	d2B_movePresetUnitMonster(28, 754, -5, 5);	// go to where main monster is in the malus dude
-	d2B_team(true);
-	d2B_clrLvlOC();
-	
-	d2B_chkAct2(true,1);	// return to Act 1 town
-}
-function d2B_jail() {								// case: 11
-	d2B_commonInitSetup(29);
-	d2B_myTP(true, true, true, true, false);
-	
-	d2B_chkAct2(true,1);	// return to Act 1 town
-}
-function d2B_innercloister() {						// case: 12
-	d2B_commonInitSetup(32);
-	d2B_myTP(true, true, true, true, false);
-	d2B_team(false);
-	
-	d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
-	d2B_team(true);
-	d2B_clrLvlOC();					// clear the cathedral
-	
-	d2B_chkAct2(true,1);	// return to Act 1 town
-}
-function d2B_cata() {								// case: 13
-	d2B_commonInitSetup(32);
-	// clear all catacombs...
-	d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
-	d2B_myTP(true, true, false, false, false);
-	d2B_takeStairs(34);
-	d2B_clrLvlOC();
-	
-	for(var i = 35; i <= 37; i++) {
-	
-		d2B_movePresetUnitTitle(me.areaid,18,0);
-		Delay(Random(4000,5000));
-		d2B_takeStairs(i, true);
-	}
-	
-	Delay(Random(2000,3000));
-	NTM_MoveTo(me.areaid, 22594, 9622);
-	Delay(Random(4000,5000));
-	
-	d2B_chkAct2(true,1);	// return to Act 1 town
-}
-function d2B_cata2() {								// case: 13
-	d2B_commonInitSetup(35);						// goto cata 2
-	
-	for(var i = 36 ; i <= 37 ; i++){
-		d2B_movePresetUnitTitle(me.areaid,18,0);
-		Delay(Random(1000,1500));
-		NTM_TakeStair(i);
-		Delay(300);
-	}
-	NTM_MoveTo(me.areaid, 22545, 9517);						// walls  right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547 | 22545, 9517: towards the back where the rogues hang
-	d2B_teamPro(true,3021,40,true,1,"n w", 22545, 9517);	// 3021: Andarial						
-	return;	
-}
-//
-//	Act II
-function d2B_sewers(a) {							// case: 14
-	NTTM_CheckAct(2);					// if not Lut Golein, then go to Lut Golein
-	
-	d2B_msg("ummm 2");					// saying this again as a precaution
-	Delay(Random(30000,35000));
-	
-	if(!a) {
-		d2B_boSafe(4,107,4,false);
-		d2B_commonInitSetup(48);
-		d2B_moveToStair(me.areaid, 49);
-		NTM_TakeStair(49);
-		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 355, 10, -10);	// 355: chest near to Radament
-		d2B_teamPro(true,2879,40,true,2,"n w",false);							// 2879: Radament
-		return;
-	}
-	
-	NTTM_Act2SewerTrapDoor();		// begins at the stairs enterance
-	d2B_myTP(true, true, true, true, false);
-	
-	d2B_moveToStair(me.areaid,48);	// go to the stairs sewers lvl 2
-	d2B_myTP(false, false, false, false, true);
-	d2B_takeStairs(48, true);
-	
-	d2B_moveToStair(me.areaid,49);	// go to the stairs sewers lvl 3
-	d2B_myTP(false, false, false, false, true);
-	d2B_takeStairs(49, true);
 
-	d2B_chkAct2(true,2);				// return to Act 2 town	
-}
-function d2B_rockywaste() {							// case: 15
-	d2B_moveWP();
-	NTTM_OutOfTown2();
-	NTP_DoPrecast(true);
-	d2B_moveToStair(me.areaid, 55);
-	d2B_myTP(true, true, true, true, false);
-	
-	d2B_moveToStair(me.areaid, 55);
-	d2B_myTP(false, false, false, false, true);
-	d2B_takeStairs(55, true);
-	
-	d2B_moveToStair(me.areaid, 59);
-	d2B_myTP(false, false, false, false, true);
-	d2B_takeStairs(59, true);
-	
-	d2B_chkAct2(true,2);
-}
-function d2B_dryhills(a) {							// case: 16
-	d2B_commonInitSetup(42);
-	/*if(!a) {							// has to be fixed. It goes to lvl 57. But, it does not find Creeping
-		for(i=56; i<=57; i++) {
-			NTM_MoveToStair(me.areaid, i);		// halls stair
-			NTM_TakeStair(i);
-		}
-		Delay(750);
-		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 775, 10, -10);	// 775: Creeping Feature
-		d2B_teamPro(true,2883,40,true,2,"n w",false);								// 2883: Creeping Feature 
-		return;
-	}*/
-		
-	d2B_myTP(true, true, true, true, false);
-	
-	d2B_moveToStair(me.areaid, 56);
-	d2B_myTP(false, false, false, false, true);
-	d2B_takeStairs(56, true);
-	
-	/* MissedThemStairs = false;
-	if(!NTM_MoveToStair(me.areaid, 57)){
-		MissedThemStairs = true;
-		Print(COLOR_1 + "Wall Bug Found, Trying To Correct");
-		NTM_MoveTo(me.areaid, me.x+15, me.y+15);
-		Print(COLOR_2 + "Success!");
-		
-		d2B_moveToStair(me.areaid, 57);
-		d2B_myTP(true, false);
-		d2B_takeStairs(57);
-		d2B_clrLvlOC();
-	}
-	if(MissedThemStairs == false && !NTM_TakeStair(57)){
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeStair()");
-	}
-	d2B_myTP(true, false);
-	NTP_DoPrecast();
-	d2B_clrLvlOC();
-	
-	d2B_moveToStair(me.areaid, 60);
-	d2B_myTP(true, false);
-	d2B_takeStairs(60);
-	d2B_clrLvlOC(); */
-	
-	d2B_chkAct2(true,2);
-}
-function d2B_faroasis(a) {							// case: 17
-	d2B_commonInitSetup(43);
-	if(!a) {
-		Delay(750);
-		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 747, 10, -10);	// 747: Beetleburst
-		d2B_teamPro(true,2882,40,true,2,"n w",false);								// 2882: Beetleburst 
-		return;
-	}
-	
-	d2B_myTP(true, true, true, true, false);
-	
-	for(var i = 0 ; i < 3 ; i++){
-			d2B_moveToStair(me.areaid, 62+i);
-			d2B_myTP(false, false, false, false, true);
-			d2B_takeStairs(62+i, true);
-	}
-	
-	d2B_chkAct2(true,2);
-}
-function d2B_lostcity(a) {							// case: 18
-	d2B_commonInitSetup(44);
-	if(!a) {
-		Delay(750);
-		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 751, 10, -10);	// 751: Dark Elder
-		d2B_teamPro(true,2886,40,true,2,"n w",false);								// 2886: dark Elder 
-		return;
-	}
-	d2B_myTP(true, true, true, true, false);
-	
-	d2B_moveToStair(me.areaid, 65);
-	d2B_myTP(false, false, false, false, true);
-	d2B_takeStairs(65, true);
+		NTM_MoveTo(me.areaid, _treex-4, _treey);
+		xx = me.x;
+		yy = me.y;
 
-	d2B_chkAct2(true,2);
-}
-function d2B_clawvipertemple() {					// case: 19
-	d2B_commonInitSetup(44);
-	NTP_DoPrecast(true);
-	d2B_movePresetUnitTitle(45,37,0);
-	
-	d2B_myTP(false, false, false, false, true);
-	d2B_takeStairs(58, true);
-	
-	MissedThemStairs = false;
-	if(!NTM_MoveToStair(me.areaid, 61)){
-		MissedThemStairs = true;
-		Print(COLOR_1 + "Wall Bug Found, Trying To Correct");
-		NTM_MoveTo(me.areaid, me.x+15, me.y+15);
-		Print(COLOR_2 + "Success!");
-		
-		d2B_moveToStair(me.areaid, 61);
-		d2B_myTP(false, false, false, false, true);
-		d2B_takeStairs(61, true);
-	}
-	if(MissedThemStairs == false && !NTM_TakeStair(61)){
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeStair()");
-	}
-	d2B_myTP(false, false, true, true, false);
+		NTA_ClearPosition(30);
 
-	d2B_chkAct2(true,2);
-}
-function d2B_haremtoceller() {						// case: 20
-	NTTM_CheckAct(2);
-	d2B_moveWP();
-	NTTM_TownMove("palace");
-	NTWP_GoToHarem();
-	
-	NTM_KoMoveToStair(50, 51);
-	d2B_myTP(true, true, true, false, false);
-	d2B_team(false);
-	d2B_takeStairs(51, true);
-	
-	for(var i = 0 ; i < 3 ; i++){
-		NTM_KoMoveToStair(me.areaid, 52+i);
-		d2B_takeStairs(52+i);
-		d2B_myTP(true, false, true, true, 5000, 10000);
-		if(me.areaid == 54 && NTConfig_ClearPalaceCellar == 0){
-			d2B_clrLvlOC();
-			NTSI_PickItems();
-		}
-		d2B_team(false);
-	}
+		NTM_MoveTo(me.areaid, xx, yy);
 
-	d2B_chkAct2(true,2);
-}
-function d2B_arcane(a) {							// case: 21
-	d2B_commonInitSetup(74);
-	if(!a) {
-		Delay(750);
-		var _object = GetPresetUnits(me.areaid);
-		for(var i = 0; i < _object.length; i++) {
-			if(_object[i].id == 357) {
-				if(_object[i].x == 11 && _object[i].y == 11) NTM_MoveTo(me.areaid,  25450, 5030);
-				else if(_object[i].x == 26 && _object[i].y == 11) NTM_MoveTo(me.areaid,  25863, 5449);
-				else if(_object[i].x == 11 && _object[i].y == 21) NTM_MoveTo(me.areaid,  25445, 5869);
-				else NTM_MoveTo(me.areaid,  25023, 5449);
-				break;
-			}
-		}
-		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 357, 2, 2);		// 357: the journal stand beside Summoner
-		d2B_team(true);
-		NTA_KillMonster(250);
-		NTA_ClearPosition(30, true);
-		NTSI_PickItems();
-		Delay(Random(2000,4000));
-		//d2B_teamPro(true,2887,40,true,2,"n w",false);							// 2887: Summoner
-		d2B_chkAct2(true,2);
-		return;
-	}
-	d2B_myTP(true, true, true, true, false);
-	
-	d2B_chkAct2(true,2);
-}
-function d2B_canyon(a) {							// case: 22
-	var _taltomb;
-	var _stair = [69, 68, 67, 66, 70, 71, 72];
-	
-	d2B_commonInitSetup(46);
-	
-	if(!a) {
-		_tombs = GetRoom();
-		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_TILE, _tombs.correcttomb-28);
-		_unit = NTC_FindUnit(NTC_UNIT_TILE, _tombs.correcttomb-28, 5);
-		NTM_TakeStair(_unit.subareaid);
-		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 152, -2, 2);
-		NTC_FindUnit(NTC_UNIT_OBJECT, 100, 10);
-		NTM_TakeUnit(NTC_UNIT_OBJECT, 100);
-		d2B_team(true);
-		NTA_KillMonster(211);
-		NTSI_PickItems();
-		Delay(Random(2000,4000));
-		d2B_chkAct2(true,2);
-		return;
-	}
-	
-	d2B_myTP(true, true, true, true, false);
-	d2B_chkAct2(true,2);
-	
-	d2B_commonInitSetup(46);
-	
-	for(var i = 0; i < _stair.length; i++){
-		NTP_DoPrecast();
-		d2B_moveToStair(me.areaid, _stair[i]);
-		d2B_myTP(true, true, true, false, false);
-		d2B_takeStairs(_stair[i], true);
-				
-		if(!NTM_MoveToStair(me.areaid, 46)){
-			Print(COLOR_1 + "Beetle found! Gotta move it or lose it.");
-			Delay(Random(1000,2000));
-			NTM_MoveTo(me.areaid, me.x+15, me.y+15);
-			Delay(500);
-			if(!NTM_MoveToStair(me.areaid, 46)) {
-				NTM_MoveTo(me.areaid, me.x-15, me.y+15);
-				Delay(Random(500,1200));
-				if(!NTM_MoveToStair(me.areaid, 46)) {
-					NTM_MoveTo(me.areaid, me.x-15, me.y-15);
-					Delay(Random(500,1200));
-					if(!NTM_MoveToStair(me.areaid, 46)) {
-						NTM_MoveTo(me.areaid, me.x+15, me.y-15);
-						Delay(Random(500,1200));
-						if(!NTM_MoveToStair(me.areaid, 46)) return;
-					}
-				}
-			}
-			if(!d2B_takeStairs(46)) return;
-		}
-		Print(COLOR_1 + "Gosh darn it. I think it worked.");
-		d2B_takeStairs(46);
-	}
-	
-	d2B_chkAct2(true,2);
-}
-//
-//	Act III
-function d2B_spiderForest() {						// case: 23
-	d2B_moveWP();
-	d2B_gotoWP(75);
-	NTTM_CheckAct(3);				// if not Lut Golein, then go to Lut Golein
-	
-	d2B_commonInitSetup(76);
-	d2B_myTP(true, true, true, true, false);
+		Say(Messages.cainscroll);
 
-	d2B_chkAct2(true,3);
-}
-
-function d2B_greatMarsh() {							// case: 24
-	d2B_commonInitSetup(77);
-	d2B_myTP(true, true, true, true, false);
-
-	d2B_chkAct2(true,3);
-}	
-function d2B_flayerJungle() {						// case: 25
-	d2B_commonInitSetup(78);
-	d2B_myTP(true, true, true, true, false);
-	
-	d2B_moveToStair(me.areaid, 88);		// move to Flayer Dungeon enterance
-	d2B_myTP(true, true, true, false, false);
-	d2B_takeStairs(88, true);
-	
-	for(i=0; i<=1; (i=i+2)) {
-		d2B_moveToStair(me.areaid, 89+i);
-		d2B_myTP(true, false, true, false, false);
-		d2B_takeStairs(89+i, true);
-	}
-	d2B_chkAct2(true,3);
-	d2B_commonInitSetup(78);
-	d2B_myTP(true, true, true, false, false);
-	d2B_team(false);
-	
-	/* deeNote: this needs to be adjusted as d2B_takeStairs(87) does not function
-	for(i=0; i<=1; i++){
-		d2B_moveToStair(me.areaid, 86+i);		// move to Swampy Pit enterance
-		Delay(Random(4000,6000));
-		d2B_takeStairs(86+i);
-		d2B_myTP(true, false, true, true);
-	}
-	d2B_moveToStair(me.areaid, 90);
-	Delay(Random(4000,6000));
-	d2B_takeStairs(90); */
-	
-	d2B_moveToStair(me.areaid, 86);		// move to Swampy Pit enterance
-	Delay(Random(4000,6000));
-	d2B_takeStairs(86);
-	
-	d2B_myTP(true, false, true, true, false);
-	
-	d2B_chkAct2(true,3);
-}	
-function d2B_lowerKurast() {						// case: 26
-	d2B_commonInitSetup(79);
-	d2B_myTP(true, true, true, true, false);
-	
-	d2B_chkAct2(true,3);
-}
-function d2B_Kurast() {								// case: 27
-	d2B_commonInitSetup(80);
-	d2B_myTP(true, true, true, true, false);
-	
-	d2B_moveToStair(me.areaid, 94);
-	d2B_myTP(true, false, true, false, false);
-	d2B_takeStairs(94, true);
-	
-	d2B_chkAct2(true,3);
-	Delay(Random(4000,6000));
-	
-	d2B_commonInitSetup(80);
-	d2B_moveToStair(me.areaid, 95);
-	d2B_myTP(true, true, true, false, false);
-	d2B_takeStairs(95, true);
-	
-	d2B_chkAct2(true,3);
-}
-function d2B_upperKurast() {						// case: 28
-	d2B_commonInitSetup(81);
-	d2B_myTP(true, true, true, true, false);
-	
-	d2B_moveToStair(me.areaid, 97);		// Forgotten Tmeple enterance
-	d2B_myTP(true, false, true, false, false);
-	d2B_takeStairs(97, true);
-	
-	d2B_chkAct2(true,3);
-	Delay(Random(4000,6000));
-	
-	d2B_commonInitSetup(81);
-	d2B_moveToStair(me.areaid, 96);		// Forgotten Reliquary enterance
-	d2B_myTP(true, false, true, false, false);
-	d2B_takeStairs(96, true);
-
-	d2B_chkAct2(true,3);
-}
-function d2B_Travincal() {							// case: 29
-	var _waypoint;
-	var _deltax, _deltay;
-	var _attackpos = [5800, 1554, 5799, 1534, 5799, 1526, 5797, 1514, 5795, 1490, 5787, 1491, 5797, 1514, 5781, 1514];
-
-	d2B_commonInitSetup(83);
-	
-	var WPX = me.x;
-	var WPY = me.y;
-	
-	d2B_myTP(true, true, true, false, false);
-	Delay(Random(4000,5000));
-
-	_waypoint = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(22526), 5);
-	
-	_deltax = _waypoint.x - 5699;
-	_deltay = _waypoint.y - 1584;
-	
-	NTM_MoveTo(me.areaid, 5780+_deltax, 1555+_deltay);
-	
-	for(var i = 0 ; i < _attackpos.length ; i += 2){
-		NTM_MoveTo(me.areaid, _attackpos[i]+_deltax, _attackpos[i+1]+_deltay);
-		NTA_ClearPosition(25, true, 2);
-	}
-	
-	d2B_clrLvlOC();
-	Delay(Random(2000,3000));
-	d2B_team(false);
-	
-	NTM_MoveTo(83, WPX, WPY);
-	
-	d2B_moveToStair(82, 98);		// Ruined Fane enterance
-	d2B_myTP(true, false, true, false, false);
-	Delay(Random(4000,5000));
-	d2B_takeStairs(98, true);
-	
-	d2B_chkAct2(true,3);
-	Delay(Random(4000,6000));
-	
-	d2B_commonInitSetup(83);
-	d2B_moveToStair(82, 99);		// Ruined Fane enterance
-	Delay(Random(4000,5000));
-	d2B_myTP(true, false, true, false, false);
-	d2B_takeStairs(99, true);
-
-	d2B_chkAct2(true,3);
-}
-function d2B_Meph() {								// case: 30
-	d2B_commonInitSetup(101);
-	d2B_myTP(true, true, true, true, false);
-	
-	d2B_moveToStair(me.areaid, 102);
-	d2B_myTP(true, false, true, false, false);
-	d2B_takeStairs(102);
-	
-	var _attackpos = [											// for killing duri council
-		17651, 8066, 17630, 8069, 17625, 8048, 17647, 8040, 	//bottom council members
-		17610, 8124, 17603, 8138, 17623, 8138, 17571, 8121, 	//left-side council member
-		17609, 8022, 17616, 8006, 17592, 8015, 17575, 8012  	// right-side council member
-		];
-	for(var i = 0 ; i < _attackpos.length ; i += 2){
-		NTM_MoveTo(me.areaid, _attackpos[i], _attackpos[i+1]);
-		NTA_ClearPosition();
-		NTSI_PickItems();
-	}
-	
-	NTM_MoveTo(me.areaid, 17564, 8069);							// time for Mpeh
-	NTA_KillMonster(242);
-	d2B_clrLvlOC();
-	Delay(Random(4000,5000));
-
-	d2B_chkAct2(true,3);
-}
-//
-//	Act VI
-function d2B_chaos(a){								// case: 31
-	NTTM_CheckAct(4);					// if not Pandemonium Fortress, then go to Pandemonium Fortress
-	d2B_msg("ummm 4");					// saying this again as a precaution
-	Delay(Random(30000,35000));
-	
-	if(!a) {
-		d2B_commonInitSetup(107);
-		d2B_myTP(true, true, true, false, false);
-		d2B_team(false);									// send the peeps back to town
-		Delay(Random(5000,7000));
-		d2B_isTeamInTown(4,107);
-		
-		var _iCoor = 0;
-		var _CScoords = [7796,5501,7800,5425,7792,5301,7734,5296,7795,5239,7845,5294];
-		
-		do{
-			NTM_MoveTo(108, _CScoords[_iCoor], _CScoords[_iCoor+1]);
-			if(_iCoor == 4) {
-				d2B_openAllSeals();
-				NTM_MoveTo(108, _CScoords[_iCoor], _CScoords[_iCoor+1]);
-			}
-			d2B_team(true);
-			NTA_ClearPosition(40, true);
-			d2B_team(false);
-			Delay(Random(4000,5000));
-			_iCoor += 2;
-		} while (_iCoor < _CScoords.length)
-		
-		return;
-	}
-	
-	d2B_commonInitSetup(48);
-	NTConfig_FastChaos = false;
-	NTConfig_LeechSupport = false;
-	NTConfig_IdInField = false;
-	
-	d2B_commonInitSetup(107);
-	d2B_myTP(true, true, true, false, false);
-	Delay(1000);
-	d2B_team(false);									// send the peeps back to town
-	
-	NTM_MoveTo(108, 7790, 5544);						// tele to just inside the enterance
-	
-	if(!_nonTelePeeps) {
 		NTM_MakeTP();
-		Delay(300);
-		d2B_msg(".");
 
-		NTCS_ClearPosition(30, EntranceSort);
-		Delay(Random(2000.3000));
-		d2B_msg(".");
-		var FrontToStarX = [7792,7794,7791,7777,7813,7769,7782,7802,7819,7768,7770,7791,7819, 7804];
-		var FrontToStarY = [5564,5529,5495,5486,5486,5445,5421,5421,5446,5390,5355,5355,5376, 5340];
-		for (var i = 0; i < FrontToStarX.length; i += 1) {
-			NTM_MoveTo(108, FrontToStarX[i], FrontToStarY[i]);
-			NTCS_ClearPosition(35, EntranceSort);
+		while (!NTC_IsQuesterIn()) {
+			NTC_TPGuard(20);
+			NTM_MoveTo(me.areaid, xx, yy);
 		}
-	}
-	
-	NTM_MoveTo(108, 7794, 5292);						// tele to the centre of chaos
-	
-	if (!NT_OpenSealsInt()) {
-		NTC_SendMsgToScript("NTBotGame.ntj", "NT_OpenSealsInt()");
-	}
-	
-	NTM_MoveTo(108, 7795, 5295);
-	d2B_team(true);
 
-	for (i = 0; i < 80; i += 1) {
-		if (GetUnit(NTC_UNIT_MONSTER, 243)) {
-			break;
+		while (NTC_IsQuesterIn()) {
+			NTC_TPGuard(20);
+			NTM_MoveTo(me.areaid, xx, yy);		
 		}
-		NTCS_DiaSpam();
-	}
-	NTA_KillMonster(243);
-	NTSI_PickItems();
-	Delay(1000);
-	
-	d2B_myTP(true, true, false, false, false);
-	
-	d2B_chkAct2(true,4);
-}
-//
-//	Act V
-function d2B_bloodyfoothills() {
-	d2B_commonInitSetup(111);
-	d2B_myTP(true, true, true, false, false);
-    Delay(Random(2000,3000));
-	d2B_team(false);
-	Delay(1000);
 
-	NTM_MoveTo(110, me.x+79, me.y+16);
-	d2B_team(true);
-	d2B_clrLvlOC();
-	
-	d2B_chkAct2(true,5);
-}	
-function d2B_frigidhighlands() {
-	// check to see if a d2B_clrLvlOC() cal will kill everything
-	
-	d2B_commonInitSetup(111);
-	d2B_myTP(true, true, true, false, false);
-	Delay(Random(2000,3000));
-	d2B_team(false);
-	Delay(Random(5300,6000));
-	
-	//NTM_MoveTo(me.areaid, 3750, 5090);
-	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT,60);		// head to Abaddon enterance
-	Delay(300);
-	d2B_team(true);
-	d2B_clrLvlOC();
-	d2B_team(false);
-	Delay(Random(5300,6000));
-	
-	
-	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT,60);		// head to Abaddon enterance
-	d2B_myTP(true, true, true, false, false);
-	Delay(Random(2000,3000));
-	d2B_team(false);
-	Delay(Random(5300,6000));
-	NTM_TakeUnit(NTC_UNIT_OBJECT,60);
-	Delay(Random(2000,3000));
-	d2B_team(true);
-	d2B_clrLvlOC();
-	
-	d2B_chkAct2(true,5);
-}
-function d2B_makeSkellies() {
-	d2B_commonInitSetup(111);
-	d2B_myTP(true, true, true, false, false);
-    Delay(Random(2000,3000));
-	
-	NTM_MoveTo(111, 3750, 5090); // are where Eldritch is
-	NTA_ClearPosition();
-	NTSI_PickItems();
-	d2B_team(false);
-	
-	if(!NTM_MoveToPresetUnit(110, NTC_UNIT_MONSTER, 776, -5, 5)) {		// go to where shenk is
-			NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
-	}
-	d2B_team(true);
-	NTA_ClearPosition();
-	NTSI_PickItems();
-	
-	d2B_chkAct2(true,5);
-}
-function d2B_worldstonekeep() {
-	prewavespot = [15092, 5040];	// from: D2Etal/scripts/NTRush/rush_configs/Sorceress.ntl 
-	
-	d2B_commonInitSetup(129);
-	Delay(500);
-	/*d2B_myTP(true, true, true, false, false);
-	d2B_team(false);
-	Delay(Random(1500,2000));*/
-	
-	d2B_moveToStair(me.areaid, 130);
-	NTM_TakeStair(130);
-	d2B_moveToStair(me.areaid, 131);
-	NTM_TakeStair(131);
-	
-	NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
-	NTM_MakeTP();
-	
-	if(_dollChk) {
-		if(d2B_dollsoulChk()) {
-		_dollSoul = true;
-		return;
-		}
-		Delay(100);
-		if(d2B_dollsoulChk()) {
-		_dollSoul = true;
-		return;
-		}
-	}
-	_dollSoul = false;
-	NTM_MoveTo(me.areaid, 15094, 5039);				// safe: 15118, 5051 | centre: 15094, 5039 | orig(15112, 5068, 1, true)
-	NTM_MakeTP();
-	d2B_msg(".");
-	NTA_ClearPosition();
-	
-	NT_ClearThroneInt();
-	d2B_msg("yo");
-	//Say("yo");
-	
-	d2B_throneWaves();
-	Delay(300);
-	
-	d2B_myTP(false, true, true, false, false);
-	Delay(4000);
-	d2B_team(false);
-	Delay(Random(4500,6000));
-	
-	d2B_baal();
-	Delay(Random(3000,4000));
-	
-	d2B_chkAct2(true,5);
-}
-// ________________________________________________________
-//  goal functions
-//
-function d2B_Peeps() {								// store name of leader & followers in storePeeps.txt
-											// 
-	var TheTime = MyTime();
-	var Today = new Date().toLocaleFormat("%d %b");
-	
-	var Player = GetPlayerUnit();
-	if(Player){
-		do{
-			if(_peeps.indexOf(Player.name) == -1){
-				_peeps.push(Player.name);	
-			}
-		} while(Player.GetNext())
-	}
-	
-	Delay(750);
-	// send msg to _myName of the stored data
-	
-	_peepsNum = _peeps.length;
-	
-	for(i=1; i < _peeps.length; i++) {
-		if(_msgMe) Say("/msg *" + _myName + " " + i + ". " + _peeps[i]);
-		Delay(Random(5000,7000));
-	}
-	return;
-}
-function d2B_rPeepsInGame() {						// return (true, _teamSize) : _teamSize accounts for all extra peeps minus that boer
-	Print(COLOR_3 + "Checking in on peeps");
-	Delay(1000);
-	if(_msgMe) Say("/msg *" + _myName + " Peep check-in");
-	Delay(300);
-	// for checking if everyone is in game...
-	// if so, do continue
-	// if not, check to see if enough tine has elapsed and if so exit game
-	
-	var allIn = true;
-	var _teamSize = -1;	// -1 due to not wishing to account for the bo barb
-	
-	for(i=1; i < _peeps.length; i++) {
-		if(!NTC_InMyParty(_peeps[i])) {
-			_teamSize = _teamSize - 1;
-			if(_msgMe) Print(COLOR_2 + _peeps[i] + " is not the game.");
-			allIn = false;
-			Delay(Random(3000,5000));
-			if(_msgMe) Say("/msg *" + _myName + " " + _peeps[i] + " missing.");
-		} else _teamSize = _teamSize + 1;
-	}
-	Delay(Random(3000,4000));
-	if(_msgMe) Say("/msg *" + _myName + " Of the " + (_peeps.length - 1) + " extra peeps, there are " + (_teamSize));
-	Delay(300);
-	if(!allIn) return false;
-	return true;
-}
+		NTSI_PickItems();
 
-function d2B_peepsIn() {							//	check if the original number of peeps are still in game
-	var Player = GetPlayerUnit();
-	if(Player){
-		do{
-			if(_peeps.indexOf(Player.name) == -1){
-				_peeps.push(Player.name);
-			}
-		} while(Player.GetNext())
-	}
-	if(_peepsNum != _peeps.length) {				// if a member is missing, then send the crew and the leader to act 1 town
-		d2B_chkAct2(true,1);
-		Delay(Random(6000,10000));
-		Say("ummm 1");								// bring peeps to act 1
-		Delay(Random(15000,20000));
-		if(_msgMe) Say("/msg *" + _myName + " Some peeps are missing. Leaving and creating new game...");
-		Delay(Random(4000,5000));
+		NTM_UsePortal("BluePortal", 1, me.charname);
+
+		NTC_PutSkill(115, NTC_HAND_RIGHT);
+
+		NTTMGR_TownManager();
+
+		if (!NTTM_TownMove("waypoint")) {
+			Common.LogError("NTTM_TownMove()");
+			return false;
+		}
+
+		if (!NTM_TakeWaypoint(4)) {
+			Common.LogError("NTM_TakeWaypoint()");
+			return false;
+		}
+
+		NTP_DoPrecast(false);
+
+		_unit = GetPresetUnits(me.areaid, 2);
+					
+		for (i=0;i < _unit.length; i++) {
+			if (_unit[i].id == 17) {
+				_stoneArray[0] = _unit[i].roomx*5+_unit[i].x;
+				_stoneArray[1] = _unit[i].roomy*5+_unit[i].y;					
+			} else if (_unit[i].id == 18) {
+				_stoneArray[2] = _unit[i].roomx*5+_unit[i].x;
+				_stoneArray[3] = _unit[i].roomy*5+_unit[i].y;					
+			} else if (_unit[i].id == 19) {
+				_stoneArray[4] = _unit[i].roomx*5+_unit[i].x;
+				_stoneArray[5] = _unit[i].roomy*5+_unit[i].y;					
+			} else if (_unit[i].id == 20) {
+				_stoneArray[6] = _unit[i].roomx*5+_unit[i].x;
+				_stoneArray[7] = _unit[i].roomy*5+_unit[i].y;					
+			} else if (_unit[i].id == 21) {
+				_stoneArray[8] = _unit[i].roomx*5+_unit[i].x;
+				_stoneArray[9] = _unit[i].roomy*5+_unit[i].y;					
+			}					
+		}
+
+		NTM_MoveTo(me.areaid, _stoneArray[0], _stoneArray[1]);				
+
+		NTA_ClearPosition();	
+
+		NTSI_PickItems();
+					
+		for (n = 0; n < 10; n += 2) {
+			NTM_MoveTo(me.areaid, _stoneArray[i], _stoneArray[i+1]);
+			NTA_ClearPosition();
+		}
+
+		NTM_MoveTo(me.areaid, _stoneArray[0]-2, _stoneArray[1]-2);
+		xx = me.x; 
+		yy = me.y;
 		
-		NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");	
-	}
-	return;
-}
-
-function d2B_msgIncPause() {
-	Print(COLOR_4 + "Case mode # " + d2B_myPauseValue + " done.");
-	Delay(Random(1500,2500));
-	if(_msgMe) Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue + " done.");
-	Delay(Random(1500,2500));
-	d2B_myPauseValue = d2B_myPauseValue + 1;
-	d2B_myPause = d2B_myPauseValue.toString();
-	d2B_storePause(d2B_myPause);
-	
-	return;
-}
-function d2B_msgResetPauseEnd() {
-	d2B_myPause = "1";
-	d2B_storePause(d2B_myPause);
-	Delay(Random(1500,2500));
-	Print(COLOR_4 + "Starting another run at case # " + d2B_myPause);
-	Delay(Random(1500,2500));
-	if(_msgMe) Say("/msg *" + _myName + " Starting another run at case # " + d2B_myPause);
-	Delay(Random(8500,12500));
-	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
-}
-function d2B_isTeamInTown(a,b) {					// a: act | b: area of where the tp is open in and to go to | b = false then stay put and wait for instructions 
-	var Player = GetPlayerUnit();
-	
-	if(Player){
-		while(Player.GetNext()) {
-			if(me.areaid == Player.areaid) {
-				d2B_msg("At least one peep is not in town.");
-				Delay(Random(2000,3000));
-				Say("..");							// tell peeps to not follow
-				Delay(Random(1000,2000));
-				NTTM_CheckAct(a);					// send leader to town
-				Say(".");							// this may press peeps who are not in town to go to town
-				Delay(Random(5000,6000));
-				Say("..");
-				if(b) {
-					Delay(Random(2000,3000));
-					NTM_UsePortal("BluePortal", b);	// go back to the place where the tp was made
-				}
-				//break;
-				return;
-			}
-		}
-	}
-	d2B_msg("Everyone is in town.");
-	return;
-}
-// ________________________________________________________
-// common functions
-//
-function d2B_load() {
- 	Include("libs/common/NTCommon.ntl");
-	NTC_IncludeLibs();
-	NTC_IncludeConfig("NTBot/char_configs");
-	NT_LoadConfig();
-	NTSI_LoadNIPFiles("NTBot/item_configs");
-	NTA_Initialize();
-  
-  	return;
-}
-function d2B_newGmDlyPeepChk() {
-	Print(COLOR_2 + "Taking an extended break, so as to give the peeps time to enter game...");
-	Delay(Random(35000,40000));
-	d2B_msg(",");
-	Delay(Random(7300,10000));
-		
-	// check to see if peeps have arrived...
-		
-	d2B_Peeps();
-	if(d2B_rPeepsInGame(true)) {
-		Print(COLOR_7 + "All peeps are in the game.");
-		Delay(1000);
-		if(_msgMe) Say("/msg *" + _myName + " All peeps in!");
-	}
-	return;
-}
-function d2B_commonInitSetup(a) {
-	d2B_chkAct();
-	d2B_townMgr();
-	d2B_moveWP();
-	d2B_gotoWP(a);
-	NTP_DoPrecast(true);
-	//NTConfig_SkipRegularMonsters = false;
-	
-	return;
-}
-function InTown(MyChar) {
-	return (me.areaid == 1 || me.areaid == 40 || me.areaid == 75 || me.areaid == 103 || me.areaid == 109);
-}
-function d2B_chkAct() {
-	if(!NTTM_CheckAct()){
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_CheckAct()");
-		return;
-	}
-	return;
-}
-function d2B_chkAct2(a,b) {							// a: true sends team to town | b: act 1 thru 5
-	if(a) {
-		Delay(Random(10000,14000));
-		d2B_team(false);
-		Delay(Random(3000,5000));
-	}
-	if(!NTTM_CheckAct(b)){
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_CheckAct()");
-	}
-	Delay(Random(3000,5000));
-	d2B_moveWP();
-	Delay(Random(3000,5000));
-	return;
-}
-function d2B_townMgr() {
-	if(NTC_InTown(me)) {
-		if(d2B_refill) NTTMGR_TownManager();
-	}
-	return;
-}
-function d2B_townMove(a) {
-	if(!NTTM_TownMove(a)){
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_TownMove()");
-		return;
-	}
-	return;
-}
-function d2B_endCase(a) {
-	NTM_MakeTP();
-	Delay(300);
-	d2B_msg("'");
-	Delay(Random(4000,6000));
-	NTTM_CheckAct(a);
-	return;
-}
-function d2B_moveWP() {
-	if(!NTTM_TownMove("waypoint")){
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_TownMove()");
-		return;
-	}
-	return;
-}
-function d2B_gotoWP(a) {
-	if(!NTM_TakeWaypoint(a)){
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeWaypoint()");
-		return;
-	}
-	return;
-}
-function d2B_movePresetUnitTitle(a,b,c,d) {			// NTM_MoveToPresetUnit(areaid, unittype, classid, offsetx, offsety, clearpath)
-	if(c != 0) {
-		if(!NTM_MoveToPresetUnit(a, NTC_UNIT_TILE, b, c, d)){
-			NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
-			return;
-		}
-	}
-	if(c == 0) {
-		if(!NTM_MoveToPresetUnit(a, NTC_UNIT_TILE, b)){
-			NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
-			return;
-		}
-	}
-	return;
-}
-function d2B_movePresetUnitMonster(a,b,c) {
-	if(!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, a, b, c)){
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
-		return;
-	}
-	return;
-}
-function d2B_usePortal(a,b){
-	if(!NTM_UsePortal(a, b)){
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_UsePortal()");
-		return;
-	}
-	return;
-}
-function d2B_moveToStair(a,b) {
-	if(!NTM_MoveToStair(a, b)) {
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToStair()");
-	}
-	return;
-}
-function d2B_takeStairs(a,b) {						// a: area stairs | b: engage clr lvl & open chests
-	Delay(Random(4000,6000));
-	if(!NTM_TakeStair(a)){
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeStair()");
-	}
-	if(d2B_usingAFollower) {
 		NTM_MakeTP();
-		Delay(300);
-		d2B_msg(".");
-		Delay(Random(5000,7000));
-	}
-	if(b) {
-		NTP_DoPrecast();
-		d2B_clrLvlOC();
-	}
-	return;
-}
-function d2B_clrLevel() {
-	if(!NTA_ClearLevel(true)){						// true: pickit enabled
-		return;
-	}
-	return;
-}
-function d2B_openChests() {
-	if(NTConfig_OpenChestsInArea && NTU_DontOpenAreas()){
-		OpenChestsInArea();
-	}
-	return;
-}
-function d2B_clrLvlOC() {
-	d2B_clrLevel();
-	d2B_openChests();
-	return;
-}
-function d2B_myTP(a,b,c,d,e,f) {					// (a: delay | b: bo true/false | c: precast | d: clr level chests | e,f: delay(random(e,f))) 
-	if(!d2B_usingAFollower) return;
-	if(a) {					
-		d2B_msg(",");						// make sure everyone is at the portal area
-		Delay(Random(5300,6000));
-	}					
-	NTA_ClearPosition(5);
-	Delay(700);
-	Delay(Random(2300,4000));
-	NTM_MakeTP();
-	Delay(300);
-	d2B_msg(".");
-	if(!a) {Delay(Random(8300,11000));}	// enough delay for all to arrive
-	Delay(Random(4000,5000));
-	if(b) {
-		d2B_bo();						// enable barb boer
-		Delay(Random(2000,3000));
-		while(_myBoBarb.areaid == me.areaid) {
-			if(_msgMe) Say("/msg *" + _myName + " Darn. " + _myBoBarb + " has not gone to town.");
-			Delay(Random(5000,6000));
-			d2B_msg("b ..");
-			Delay(1200);
-			d2B_msg("b '");
-			Delay(1200);
+		Say(Messages.cainstones);	
+
+		while (!NTC_IsQuesterIn()) {
+			NTC_TPGuard(25);
+			NTM_MoveTo(me.areaid, xx, yy);
 		}
-	}
-	if(c) NTP_DoPrecast(true);
-	if(d) d2B_clrLvlOC();
-	if(e) Delay(Random(e,f));
-}
-function d2B_team(a) {								// (a: false = send team to town true: bring team)
-	NTM_MakeTP();
-	Delay(200);
-	if(a) d2B_msg(".");	
-	else if(!a) {
-		d2B_msg("'");
-		Delay(Random(3000,4000));
-		return;
-	}
-	Delay(200);
-	return;
-}
-function d2B_teamPro(a,b,c,d,e,f,g,h) {				// (a: d2B_team(a) | b: GetLocaleString(b) | NTA_ClearPosition(c,1)
-													// d,e: d2B_chkAct2(d,e) | f: if(f) d2B_msg(f) 
-													// g,h: original location of where team tp was made)
-	d2B_team(a);
-	NTA_KillMonster(GetLocaleString(b));
-	Delay(300);
-	if(f) d2B_msg(f);								// extra follower instructions: e.g.: "n w"  necro make a bone wall
-	Delay(Random(3000,4000));
-	NTA_ClearPosition(c,1);							// a: distance | 1: enable pick items
-	NTSI_PickItems();
-	Delay(Random(2000,4000));
-	NTA_ClearPosition(c, true);
-	if(g && !InTown()) NTM_MoveTo(me.areaid, g, h);
-	Delay(300);
-	d2B_msg("..");
-	Delay(Random(1700,3000));
-	d2B_chkAct2(d,e);
-	d2B_msg("..");
-	Delay(2300);
-	d2B_msg("'");
-	return;
-}
-function d2B_bo() {									//	for instructing a bo barb
-	d2B_msg("b ,");				// make sure barb is at the portal area
-	Delay(Random(7000,9000));
-	d2B_msg("b .");				// tell barb to come through tp
-	Delay(Random(8000,10000));
-	d2B_msg("b ;");				// instruct barb to precast
-	Delay(Random(10000,13000));
-	d2B_msg("b '");				// send barb back to town
-	Delay(Random(7000,9000));
-	return;
-}
-function d2B_boSafe(a,b,c,d) {						// (a: NTTM_CheckAct(a) | b: d2B_gotoWP(b) | c: d2B_isTeamInTown(1,b) ) 
-	if(!InTown()) { NTTM_CheckAct(a); }
-	d2B_moveWP();
-	d2B_gotoWP(b);
-	d2B_littleJMP();
-	d2B_myTP(true,true,true,false,false);
-	d2B_msg("..");
-	Delay(Random(2000,5000));
-	d2B_team(false);
-	Delay(Random(5000,7000));
-	d2B_isTeamInTown(c,d);
-	return;
-}	
-function d2B_CheckAct(peep) {
-	if (peep.areaid <= 39) { return 1;}					// peep = "me", "leader"
-	else if(peep.areaid >= 40 && peep.areaid <= 74) { return 2; }
-	else if(peep.areaid >= 75 && peep.areaid <= 102) { return 3; }
-	else if(peep.areaid >= 103 && peep.areaid <= 108) { return 4; }
-	else return 5;
-}
-function d2B_checkAct(a,b) {						// (a: which act b: which town wp to go to)
-	if(!NTTM_CheckAct(a)) {
-			NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_CheckAct()");
-			return;
-	}
-	d2B_townMgr();
-	NTTM_TownMove("waypoint");
-	if(b) { NTM_TakeWaypoint(b) };
-	
-	return;
-}
-function d2B_msg(a) {
-	if(d2B_usingAFollower) {
-		Say("/f m " + a);
-		Delay(300);
-		return;
-	}
-	Say(a);
-	Delay(300);
-	return;
-}
-function d2B_littleJMP() {
-	var x_tmp = Random(3,8);
-	x_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
-	var y_tmp = Random(3,8);
-	y_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
-	NTM_MoveTo(me.areaid, me.x+x_tmp, me.y+y_tmp);
-	return;
-}
-// ________________________________________________________
-// ________________________________________________________
-//
-//
-// 	HELPER bot
-//
-// ________________________________________________________
-// ________________________________________________________
-//
 
-function d2H_helper() {
-	d2H_load(); 		// load & initialize the needed files
-	d2H_wait4leader(); 	// check if leader is in game. Exit after Delay if not.
-	d2H_actOnLeader();	// respond to leader commands & actions
+		while (!NTC_IsQuesterOut()) {
+			NTC_TPGuard(25);
+			NTM_MoveTo(me.areaid, xx, yy);
+		}
 
-	Delay(Random(2000,5000));
-	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
-}
+		Say(Messages.caintristup);
 
-// ________________________________________________________
-// common functions
+		NTSI_PickItems();						
 
-function d2H_load() {	
-	Include("NTRush/funcs/RushCommon.ntl");
-	Include("NTRush/funcs/Message.ntl");
-	Common.IncludeFuncs();
-	Include("libs/common/NTCommon.ntl");
-	NTC_IncludeLibs();
-	NTC_IncludeConfig("NTBot/char_configs");
-	NT_LoadConfig();
-    	NTSI_LoadNIPFiles("NTBot/item_configs");
-	NTA_Initialize();
+		while (!NTM_UsePortal("Portal", 38)) {
+			NTC_Delay(500);
+		}
+
+		NTM_MoveTo(me.areaid, 25134, 5143);
+
+		NTA_ClearPosition(30);
+
+		NTM_MoveTo(me.areaid, 25134, 5143);
+		
+		NTM_MakeTP();
+		Say(Messages.cainup);
+		
+		while (!NTC_IsQuesterIn()) {
+			NTC_TPGuard(25);
+			NTM_MoveTo(me.areaid, 25134, 5143);
+		}
+
+		while (!NTC_IsQuesterOut()) {
+			NTC_TPGuard(25);
+			NTM_MoveTo(me.areaid, 25134, 5143);		
+		}
+
+		Say(Messages.cainfreed);
+
+		NTSI_PickItems();	
+
+		NTM_UsePortal("BluePortal", 1, me.charname);
+
+		return true;
+	},
 	
-	NTConfig_DoNotFollowAreas = [0];		// Won't take a WP or TP to these areas
-	NTConfig_DoNotAttackAreas = [0];		// Won't attack in these areas
-	NTConfig_AllowCommands = true;									// Allows leader to issue commands such as 'exit', 'town', 'follow', etc.  'follow' is ON by default.
-	NTConfig_PortalAtLeechersCorpses = false;						// Make a TP at players corpses when they die near you
-		NTConfig_MessageDeadPlayers = false;						// Send a msg to those players when they die
-		NTConfig_DeadPlayerMsg = "My tp for your corpse";			// The actual message to send
-	NTConfig_GreetPlayers = false;									// Greet players who join your party
-		NTConfig_GreetMsg = "Hello, %name%!";						// The message to send
-	NTConfig_HelperHumor 	= false;						// 0.3% chance to say a silly phrase and skip doing the command you issued.
-	NTConfig_Quest_Cain		= true;						// true/false to do quests when using rush commands
-	NTConfig_Quest_WirtsLeg	= true;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Radament	= true;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Izual	= true;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Tome		= true;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Shenk	= true;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Anya		= true;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Ancients	= true;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Baal		= true;						// true/false to do quests when using rush commands
-	NTConfig_TpHarem		= true;						// true/false to tp at harem after duriel
-	NTConfig_KillCouncils	= true;						// true/false to kill all counsel members
-	NTConfig_ClearCS 		= false;						// true/false to clear CS when doing diablo quest
-	NTConfig_CSDodge 		= true;						// dodge in CS
-	
-	Scripts.Command = false; // Overrides all other scripts set here
-	Scripts.WirtsLeg = true;
-	Scripts.Andy = true;
-	Scripts.Radament = true;
-	Scripts.Cube = true;
-	Scripts.Ammy = true;
-	Scripts.Staff = true;
-	Scripts.Summoner = true;
-	Scripts.Duriel = true;
-	Scripts.Khalim = true;
-	Scripts.Tome = true;
-	Scripts.Travincal = true;
-	Scripts.Mephisto = true;
-	Scripts.Izual = true;
-	Scripts.Diablo = true;
-	Scripts.Shenk = true;
-	Scripts.Anya = true;
-	Scripts.Ancients = true;
-	Scripts.Baal = true;
-	
-	return;
-}
-function d2H_wait4leader() {
-	var leaderInGame = false;				// Wait for the leader to join the game
-	for(i = 0; i < NTConfig_PartyMaxTime+1; i++)
-	{
-		if(CheckLeader(NTConfig_Leader))
-		{
-			leaderName = NTConfig_Leader;
-			leaderInGame = true;
+	WirtsLeg: function() {
+		var _wirtbody, _cube, _leg, _portal, _stash, _items, i, _npc, prearea;
+		
+		for (i = 0; i < 10; i++){
+			_leg = NTC_FindUnit(NTC_UNIT_ITEM, 88);
+			if (_leg)
 			break;
 		}
-		else
-		if(CheckLeader(NT_File("logs/" + me.account + ".leaderName.txt", 0)))
-		{
-			leaderName = NT_File("logs/" + me.account + ".leaderName.txt", 0);
-			leaderInGame = true;
-			break;
-		}
-		else
-		if(CheckLeader(NT_File("AILS/Logs/TristLeader.leadername.txt", 0)))
-		{
-			leaderName = NT_File("AILS/Logs/TristLeader.leadername.txt", 0);
-			leaderInGame = true;
-			break;
-		}
-		Delay(1000);
-	}
-	
-	// End script if the leader wasn't found
-	if(!leaderInGame)
-	{
-		if(debug)
-			Say("Leader: " + leaderName + " - not found!");
-		NTC_Delay(500);
-		NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
-	}
-	else
-	{
-		RegisterEvent( EVENT_GAMEMSG, ChatHandler );
-		if(debug)
-			Say("!Leader: " + leaderName);
-		leaderUnit = GetLeaderUnit(leaderName);
-		leaderPlayerUnit = GetLeader(leaderName);
-	}
-	return;
-}
-
-function d2H_actOnLeader() {
-	d2B_townMgr();
-	NTTM_TownMove("portalspot");
-	Delay(250);
-	while(CheckLeader(leaderName)) {
-		Action();
-		NTC_Delay(100);
-	}
-}
-
-
-// ________________________________________________________
-// common functions
-
-function Action() {
-	if(!isBusy && NTC_InMyParty(leaderName)) {
-		if(isFollowingEnabled)	{Follow();}
-	}
-	if(NTC_InTown(me)) {
-		if(NTTMGR_CheckScrolls(1) < 8) {
-			d2B_townMgr();
-		}
-	}
-}
-
-function ChatHandler( msg, type ) {
-	switch( type )	{
-		case 0: // white
-			if(!NTConfig_AllowCommands){return;}
-			_msgsplit = msg.toLowerCase().split(":");
-			if( _msgsplit.length >= 1 && _msgsplit[1] !== undefined )
-			{
-				var _name = _msgsplit[0].substring(3, _msgsplit[0].length - 3);
-				var _commands = _msgsplit[1].substring(1).split(" ");
+		_items = me.GetItems();
+		for (i = 0; i < _items.length;i++){
+			if (_items[i].classid == 88) {
+				Print ("Already Got Leg");
+				_leg = _items[i];
 			}
-			else {return;}
-			
-			if(_name == me.name.toLowerCase()) {return;}
-			
-			if( _commands[0] == me.name.toLowerCase() ) 	// remove char name.  
-				for(var f = 0; f <= _commands.length-1; f++)
-					_commands[f] = _commands[f+1];
-			
-			if(_commands.length > 1) 		// make sure nothing is undefined. grr.
-				for(var i = 0; i <= _commands.length-1; i++)
-					if(!_commands[i])
-						_commands[i] = "";
-			
-			while(_commands.length < 5) {_commands.push("");}
-			
-			if(_commands[0] == "p" && _name == leaderName)
-			{
-				isPaused = !isPaused;
-				if(isPaused) {Say("~Paused chat commands");}
-				else {Say("~Unpaused chat commands");}
-			}
-			
-			if( !isBusy && !isPaused && _name == leaderName.toLowerCase())
-				CommandHandler( _commands[0], _commands[1], _commands[2], _commands[3], _commands[4] );
-			break;
-		case 1: // red
-			break;
-		case 2: // green
-			if(!NTConfig_AllowCommands) { return;}
-			if(msg.indexOf("From ") > -1 && msg.indexOf(" (*") > -1)
-			{
-				_msgsplit = msg.toLowerCase().split(" (*");
-				if( _msgsplit.length == 2 && _msgsplit[1] !== undefined )
-				{         
-					var _name = _msgsplit[0].split(" ")[1];
-					var _commands = _msgsplit[1].split("):")[1].substring(1).split(" ");
-				}
-				else {return;}
-			}
-			else
-			if(msg.indexOf(" whispers: ") > -1)
-			{
-				_msgsplit = msg.toLowerCase().split(" whispers:");
-				if( _msgsplit.length == 2 && _msgsplit[1] !== undefined )
-				{
-					var _name = _msgsplit[0];
-					var _commands = _msgsplit[1].substring(1).split(" ");
-				}
-				else {return;}
-			}
-			else
-			{
-				if(msg.indexOf("has joined your party to fight the forces of evil") > -1)
-				{
-					if(NTConfig_GreetPlayers)
-					{
-						_split = msg.split("has joined");
-						_name = _split[0];
-						var saystring;
-						if(NTConfig_GreetMsg.indexOf("%name%") !== -1)
-						{
-							saystring = NTConfig_GreetMsg.replace("%name%", _name);
-							Whisper(_name, saystring);
-						}
-						else {Whisper(_name, NTConfig_GreetMsg);}
-					}
-				}
+		}
+		if (!_leg){
+			if(!NTTM_TownMove("waypoint")){
+				NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_TownMove()");
 				return;
 			}
-			
-			if(_name == me.name.toLowerCase()){return;}
-			
-			if( _commands[0] == me.name.toLowerCase() ) 	// remove char name.  
-				for(var f = 0; f <= _commands.length-1; f++)
-					_commands[f] = _commands[f+1];
-			
-			if(_commands.length > 1) 		// make sure nothing is undefined. grr.
-				for(var i = 0; i <= _commands.length-1; i++)
-					if(!_commands[i])
-						_commands[i] = "";
-			
-			while(_commands.length < 5) {_commands.push("");}
-			
-			if(_commands[0] == "p" && _name == leaderName)
-			{
-				isPaused = !isPaused;
-				if(isPaused) {Say("~Paused chat commands");}
-				else {Say("~Unpaused chat commands");}
-			}
-			
-			if( !isBusy && !isPaused && _name == leaderName.toLowerCase())
-				CommandHandler( _commands[0], _commands[1], _commands[2], _commands[3], _commands[4] );
-			break;
-		case 3: // blue
-			break;
-		case 4: // brown
-			/*
-			if(NTConfig_GreetPlayers)
-			{
-				if(msg.indexOf("joined our world. Diablo") != -1)
-				{
-					_split = msg.split("(");
-					_name = _split[0];
-					var saystring;
-					if(NTConfig_GreetMsg.indexOf("%name%") != -1)
-					{
-						saystring = NTConfig_GreetMsg.replace("%name%", _name);
-						Whisper(_name, saystring);
-					}
-					else {Whisper(_name, NTConfig_GreetMsg);}
-				}
-			}
-			*/
-			if(NTConfig_PortalAtLeechersCorpses)
-			{
-				if(msg.indexOf(" was slain by ") != -1)
-				{
-					_split = msg.split(" was slain by ");
-					_name = _split[0].substring(3, _split[0].length - 3);
-					TPAtPlayersBody(_split[0], _split[1]);
-				}
-			}
-			break;
-		default:
-			break;
-	}
-}
-
-function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
-	switch( msg1 )
-	{
-	case "dbg": // keep right above goto command without a break
-		if(debug)
-			Say("Debug:  Leader Coordinates: X: " + leaderPlayerUnit.x + " " + "Y: " + leaderPlayerUnit.y);
-		if(debug)
-			Say("Debug:  Leader Area ID: " + leaderPlayerUnit.areaid);
-		msg2 = leaderPlayerUnit.areaid;
-		msg3 = leaderPlayerUnit.x;
-		msg4 = leaderPlayerUnit.y;
-	case "goto":
-		if(msg2 == 'trist')
-		{
-			if(!NTTM_CheckAct(1))
-			{
-				NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_CheckAct()");
+			if(!NTM_TakeWaypoint(4)){
+				NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeWaypoint()");
 				return;
 			}
-			d2B_townMgr();
-			NTTM_TownMove("waypoint");
-			NTM_TakeWaypoint(4);
-			if(!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 10, 10, false))
-			{
-				NTM_MakeTP();
-				Say("Failed to move to unit");
-				//Delay(7500);
-				//NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
+			NTP_DoPrecast();
+			if(!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 10, 10)){
+				NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
 				return;
 			}
-			NTA_ClearPosition( 20 );
-			NTM_MakeTP();
-		}
-		else
-		if(me.areaid === parseInt(msg2))
-		{
-			if(parseInt(msg3) >= 0 && parseInt(msg4) >= 0)
-			{
-				Say("Moving to: " + msg3 + ", " + msg4);
-				if(!NTM_MoveTo(parseInt(msg2), parseInt(msg3), parseInt(msg4)))
-				{
-					Say("!Failed to move");
-				}
+			if(!NTM_UsePortal("Portal", 38)){
+				NTC_SendMsgToScript("NTBotGame.ntj", "NTM_UsePortal()");
+				return;
 			}
-		}
-		break;
-	case "exit":
-		NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
-		break;
-	case "range":
-		if(msg2 == "")
-			followRange = 5;
-		if(msg2 >= 3 && msg2 <= 30)
-			followRange = msg2;
-		else
-			Say("~Valid range is 3-30.  Default is 5.");
-		Say("~Follow range set to: " + followRange);
-		break;
-	case "come":
-		if(!isBusy && NTC_InTown(me))
-		{
-			NTTM_TownMove("portalspot");
-			TakeLeaderTP();
-		}
-		break;
-	case "my":
-		if(msg2 == "tp" && !isBusy && NTC_InTown(me))
-		{
-			NTTM_TownMove("portalspot");
-			Delay(250);
-			TakeLeaderTP();
-		}
-		break;
-	case "go":
-		if(!isBusy && !NTC_InTown(me))
-			if(!TakeLeaderTP())
-				Town();
-		break;
-	case ".":				// follow
-		if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
-		TakeLeaderTP();
-		isFollowingEnabled = true;
-		Print(COLOR_4 + "Follow on");
-		break;
-	case "..":				// unfollow
-		if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
-		isFollowingEnabled = false;
-		Print(COLOR_4 + "Follow off");
-		break;
-	case ",":				// while in town, got to portal area
-		if(!NTC_InTown(me)) break;
-		if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
-		isFollowingEnabled = false;
-		NTTM_TownMove("portalspot");
-		Delay(250);
-		Print(COLOR_4 + "Ready at town portal");
-		break;
-	case "j":
-		d2B_littleJMP();
-		break;
-	case ";":
-	case "buff":
-		if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
-		if(!isBusy && !NTC_InTown(me))
-		{
-			NTP_DoPrecast( true );
-			//Chant( msg2 );
-		}
-		break;
-	case "ummm":							// send peeps to act 1 town and by the portal area
-		if(msg2) {							// 1,2,3,4,5 <--- acts
-			isFollowingEnabled = false;
-			Delay(Random(1000,10000));
-			NTTM_CheckAct(Number(msg2));
-			Delay(Random(4000,6000));
-			d2B_townMove("portalspot");
-		}
-		break;
-	case "b":											// barbarian calls
-		if(me.name != _myBoBarb) break;
-		switch(msg2) {									// for bo town barb only
-			case ".":
-				TakeLeaderTP();
-				isFollowingEnabled = true;
-				Print(COLOR_4 + "Follow on");
-				break;
-			case "..":
-				isFollowingEnabled = false;
-				Print(COLOR_4 + "Follow off");
-				break;
-			case ",":									// while in town, got to portal area	
-				if(!NTC_InTown(me)) break;
-				isFollowingEnabled = false;
-				NTTM_TownMove("portalspot");
-				Delay(250);
-				Print(COLOR_4 + "Ready at town portal");
-				break;
-			case ";":
-				if(!isBusy && !NTC_InTown(me)) {
-					NTP_DoPrecast( true );
-					//Chant( msg2 );
-				}
-				break;
-			case "'":
-				if(InTown()) {
-					isFollowingEnabled = false;
-					break;
-				}
-				isFollowingEnabled = false;
-				Print(COLOR_4 + "Follow off");
-				Delay(700);
-				if(!TakeLeaderTP())
-					Town();
-				Delay(Random(1000,2000));
-				d2B_townMove("portalspot");
-				break;
-		}
-		break;
-	case "c":											// sorceress calls
-		if(me.name != _myChantress) break;
-		switch(msg2) {									// for bo town barb only
-			case ".":
-				TakeLeaderTP();
-				isFollowingEnabled = true;
-				Print(COLOR_4 + "Follow on");
-				break;
-			case "..":
-				isFollowingEnabled = false;
-				Print(COLOR_4 + "Follow off");
-				break;
-			case ",":									// while in town, got to portal area	
-				if(!NTC_InTown(me)) break;
-				isFollowingEnabled = false;
-				NTTM_TownMove("portalspot");
-				Delay(250);
-				Print(COLOR_4 + "Ready at town portal");
-				break;
-			case ";":
-				if(!isBusy && !NTC_InTown(me)) {
-					NTP_DoPrecast( true );
-					//Chant( msg2 );
-				}
-				break;
-			case "'":
-				if(InTown()) {
-					isFollowingEnabled = false;
-					break;
-				}
-				isFollowingEnabled = false;
-				Print(COLOR_4 + "Follow off");
-				Delay(700);
-				if(!TakeLeaderTP())
-					Town();
-				Delay(Random(1000,2000));
-				d2B_townMove("portalspot");
-				break;
-			case "refill":
-				if(!NTC_InTown(me)) break;
-				refillChanter();
-				break;
-		}
-		break;
-	case "c2":
-		Chant2();
-		break;
-	case "n":													// for necromancer calls	
-		if(me.classid != NTC_CHAR_CLASS_NECROMANCER) break;
-		if(!NTC_GetSkillLevel(78)) break;						// necromancer calls 78: bone wall
-		switch(msg2) {
-			case "w":
-				if(!InTown()) {
-					for(i=0;i<2;i++) {
-						var x_tmp = Random(5,10);
-						x_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
-						var y_tmp = Random(5,20);
-						y_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
-						NTC_CastSkill(78, NTC_HAND_RIGHT, me.x+x_tmp, me.y+y_tmp);
-						Delay(Random(1000,1200));
+			NTM_MoveTo(me.areaid, 25047, 5178);
+			if(NTA_ClearPosition(10)){
+				if(NTConfig_IdInField){
+					if (!NTT_CheckSpace(NTConfig_FreeSpaceXY[0], NTConfig_FreeSpaceXY[1])) {
+						NT_FieldID();
 					}
 				}
-				break;
-		}
-		break;
-	case "help":
-		if(!isBusy)
-			DisplayHelp( msg2 );		// Display help menu.
-		break;
-	case "clear":
-		if(!isBusy)
-			CommandClear( msg2 );		// Clear function.
-		break;
-	case "tp":
-		if(!isBusy)
-			TP(msg2);					// TP functions.
-		break;
-	case "q":
-		if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
-		if(!isBusy)
-			Quest( msg2 );				// Quest functions.
-		break;
-	case "rush":
-		if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
-		if(!isBusy)
-			Rush( msg2 );				// Rush functions.
-		break;
-	case "chant":
-		if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
-		if(!isBusy)
-			Chant( msg2 );				// Chant functions.
-		break;
-	case "'":
-		if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
-		if(InTown()) {
-			isFollowingEnabled = false;
-			break;
-		}
-		isFollowingEnabled = false;
-		Print(COLOR_4 + "Follow off");
-		Delay(700);
-		if(!TakeLeaderTP())
-			Town();
-		Delay(Random(1000,2000));
-		d2B_townMove("portalspot");
-		break;
-	case "gold":
-		if(!isBusy)
-			GiveGold(msg2);
-		break;
-	default:						// Say this when you receive an invalid command.
-		//Say("!Invalid command: " + msg1 + " " + msg2 + " " + msg3 + "." );
-		return 0;
-	}
-	return 1;
-}
-
-function DisplayHelp(msg) { // Eventually add multiple menus via 'help commandname'. 
-
-	isBusy = 1;
-	switch(msg)
-	{
-		case "":
-			Say("With multiple followers, you can speak to them individually by saying their name first.  Example: '" + me.name + " follow' would make me follow!");
-			Say("'follow'                       toggle following");
-			Say("'tp'                             make tp");
-			Say("'tp areaname'            tp at waypoint");
-			Say("'range 3-30'               set following range");
-			Say("'bo'                             prebuffs");
-			Say("'rush'                          starts rush");
-			Say("'rush 1-5'                   specific acts");
-			Say("'quest questname'    specific quests");
-			Say("'chant'                       enchants players");
-			Say("'come' or 'go'             portal commands");
-			Say("'gold 1-50000'           drops gold");
-			Say("'clear'                        clears my position");
-			break;
-		case "tp":
-			Say("Type 'tp waypointname' and I will make a tp at that waypoint.  For the Nith waypoint, you must say 'nit' instead.");
-			Say("Example: tp stony");
-			break;
-		default:
-			Say("'" + msg + "' does not have a help menu yet, or is an invalid command.");
-			break;
-	}
-	NTC_Delay(500);
-	isBusy = 0;
-	return;
-}
-
-function Invalid(){Say("!Invalid Command");}
-function NI(){Say("Function not implemented. (yet)");}
-function Busy(){Say("I'm busy!");}
-
-function Follow( target ) {
-	var _distance = -1;
-	var leaderPlayerUnitintown, _meintown;
-	
-	if(!leaderUnit) // Make sure we have the leaders unit.
-	{
-		leaderUnit = GetLeaderUnit(leaderName);
-	}
-	
-	if(leaderPlayerUnit.areaid <= 0) // Don't do anything if we don't know the area yet.
-	{
-		return;
-	}
-	
-	// Get the distance between our character and the leader
-	if(leaderUnit)
-	{
-		_distance = GetDistance(me, leaderUnit);
-	}
-	else
-	{
-		_distance = -1;
-	}
-	
-	if(CheckAct(me) !== CheckAct(leaderPlayerUnit) && NTC_InTown(me) && NTC_InTown(leaderPlayerUnit))
-	{
-		NTM_TakeWaypoint(GetPlayerActWaypointID(leaderPlayerUnit));
-	}
-	
-	// If we get a valid distance, and we're inside the follow range, we don't need to do anything except attack.
-	if(_distance <= followRange && _distance !== -1 && me.areaid == leaderPlayerUnit.areaid && !NTC_InTown(me))
-	{
-		if(isAttackEnabled)
-		{
-			var _atk = true;
-			if(NTConfig_DoNotAttackAreas.length >= 1)
-			{
-				for(var i = 0; i < NTConfig_DoNotAttackAreas.length; i++)
-				{
-					if(NTConfig_DoNotAttackAreas[i] === me.areaid)
-					{
-						_atk = false;
+				NTSI_PickItems();
+				if(NTConfig_IdInField){
+					if (!NTT_CheckSpace(NTConfig_FreeSpaceXY[0], NTConfig_FreeSpaceXY[1])) {
+						NT_FieldID();
+					}
+				}
+			}
+			_wirtbody = NTC_FindUnit(NTC_UNIT_OBJECT, 268);
+			if(!_wirtbody){
+				NTC_SendMsgToScript("NTBotGame.ntj", "Wirt's body not found.");
+				return;
+			}
+			if(NTM_MoveTo(_wirtbody.areaid, _wirtbody.x+3, _wirtbody.y)){
+				if(NTC_OpenChest(_wirtbody)){
+					NTC_PingDelay(500);
+					for (i = 0; i < 10; i++){
+						_leg = NTC_FindUnit(NTC_UNIT_ITEM, 88);
+						if (_leg)
 						break;
 					}
-				}
-			}
-			if(_atk) 
-			{
-				hAttack();
-				return;
-			}
-		}
-		return;
-	}
-	
-	if(!NTC_InTown(me) && NTC_InTown(leaderPlayerUnit))
-	{
-		if(!TakeLeaderTP())
-		{
-			if(!NTM_TakeWaypoint(leaderPlayerUnit.areaid))
-			{
-				Town("");
-			}
-		}
-	}
-	
-	// If we get a valid distance, and we're outside the follow range, but still inside the range for GetDistance() to work,  attempt to get closer!
-	if(_distance >= followRange && _distance !== -1 && me.areaid == leaderPlayerUnit.areaid)
-	{
-		if(!NTC_InTown(me))
-		{
-			if(leaderUnit)
-			{
-				if(me.areaid === 131)
-				{
-					if(me.x !== 15092 && me.y !== 5040 && me.y <= 5070)
-					{
-						NTM_MoveTo(me.areaid, 15091, 5039);
+					if(!NTT_CheckSpace(_leg.xsize, _leg.ysize)){
+						_prearea = me.areaid
+						if(NTTM_CheckAct()){
+							NTTMGR_TownManager(true);
+							NTTM_TownMove("portalspot")
+							NTM_UsePortal("BluePortal", _prearea)
+						}
 					}
-					else
-					{
-						NTM_GetCloserInt(leaderUnit);
-					}
-					hAttack();
-					Delay(1000);
-				}
-				else
-				{
-					NTM_GetCloserInt(leaderUnit);
-				}
-			}
-			else
-			{
-				d2B_follow();
-				//NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
-			}
-		}
-		else
-		{
-			switch(me.areaid)
-			{
-				case 1:
-					NTM_GetCloserInt(leaderUnit);
-					break;
-				case 40:
-					NTM_GetCloserInt(leaderUnit);
-					break;
-				case 75:
-					NTM_GetCloserInt(leaderUnit);
-					break;
-				case 103:
-					// no!
-					break;
-				case 109:
-					// no!
-					break;
-			}
-		}
-		return;
-	}
-	
-	// If we get an INVALID distance (too far away for GetDistance()), but we're in the same area, attempt to move to the leader
-	if(_distance === -1 && me.areaid === leaderPlayerUnit.areaid && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit))
-	{
-		d2B_follow();
-		//NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
-		return;
-	}
-	
-	// If we are in different acts and helper is outside, go to town
-	if(_distance === -1 && CheckAct(me) !== CheckAct(leaderPlayerUnit) && !NTC_InTown(me))
-	{
-		Town();
-		return;
-	}
-	
-	// If the leader is not in town, but we are
-	if(!NTC_InTown(leaderPlayerUnit) && NTC_InTown(me))
-	{
-		// Get the distance between our character and the leader
-		if(leaderUnit)
-		{
-			_distance = GetDistance(me, leaderUnit);
-		}
-		else
-		{
-			_distance = -1;
-		}
-		
-		// If we get a valid distance, and we're outside the follow range, attempt to get closer!
-		// This covers walking out of acts
-		if(_distance >= followRange && _distance !== -1)
-		{
-			if(leaderUnit)
-			{
-				d2B_follow();
-				//NTM_GetCloserInt(leaderUnit);
-			}
-			else
-			{
-				NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
-			}
-			return;
-		}
-		
-		// If leader took a WP to a different act, we want to try that wp, or just go to that act
-		if(CheckAct(leaderPlayerUnit) !== CheckAct(me))
-		{
-			if(NTConfig_DoNotFollowAreas.length >= 1)
-			{
-				for(var i = 0; i < NTConfig_DoNotFollowAreas.length; i++)
-				{
-					if(NTConfig_DoNotFollowAreas[i] === leaderPlayerUnit.areaid)
-					{
-						NTTM_TownMove("waypoint");
-						Delay(200);
-						NTM_TakeWaypoint(GetPlayerActWaypointID(leaderPlayerUnit));
-						Delay(200);
-						NTTM_TownMove("portalspot");
-						return;
-					}
-				}
-			}
-			var _mta = (AreaHasWaypoint(leaderPlayerUnit.areaid) ? leaderPlayerUnit.areaid : GetPlayerActWaypointID(leaderPlayerUnit));
-			NTTM_TownMove("waypoint");
-			Delay(200);
-			NTM_TakeWaypoint(_mta);
-			return;
-		}
-		
-		// Return if leader is in a no-follow-zone 
-		for(var i = 0; i < NTConfig_DoNotFollowAreas.length; i++)
-		{
-			if(NTConfig_DoNotFollowAreas[i] === leaderPlayerUnit.areaid)
-			{
-				return;
-			}
-		}
-		
-		// Try to take any available portals
-		if(NTC_InTown(me))
-		{
-			NTTM_TownMove("portalspot");
-			Delay(250);
-		}
-		
-		if(TakeLeaderTP(leaderPlayerUnit.areaid))
-		{
-			Delay(250);
-			return;
-		}
-		else
-		if(AreaHasWaypoint(leaderPlayerUnit.areaid))
-		{
-			for(var i = 0; i < NTConfig_DoNotFollowAreas.length; i++)
-			{
-				if(NTConfig_DoNotFollowAreas[i] === leaderPlayerUnit.areaid)
-				{
-					return;
-				}
-			}
-			
-			NTM_TakeWaypoint(leaderPlayerUnit.areaid);
-		}
-		return;
-	}
-	
-	// If we are in town, but the leader is not
-	if(NTC_InTown(leaderPlayerUnit) && !NTC_InTown(me))
-	{
-		// Get the distance between our character and the leader
-		if(leaderUnit)
-		{
-			_distance = GetDistance(me, leaderUnit);
-		}
-		else
-		{
-			_distance = -1;
-		}
-		
-		// If we get a valid distance, and we're outside the follow range, attempt to get closer!
-		// This covers walking back in/out of acts and in/out of new areas
-		if(_distance >= followRange && _distance !== -1)
-		{
-			if(leaderUnit)
-			{
-				d2B_follow();
-				//NTM_GetCloserInt(leaderUnit);
-			}
-			else
-			{
-				NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
-			}
-			return;
-		}
-		
-		// If leader took a WP to a different act, we want to try that wp, otherwise we simply get back to town
-		if(_distance === -1 && CheckAct(leaderPlayerUnit) !== CheckAct(me))
-		{
-			if(AreaHasWaypoint(leaderPlayerUnit.areaid))
-			{
-				if(!NTM_TakeWaypoint(leaderPlayerUnit.areaid))
-				{
-					if(!Town(""))
-					{
-						Whisper(leaderPlayerUnit.name, "I seem to be stuck!");
-					}
-				}
-			}
-			return;
-		}
-		
-		// If leader went back to town
-		// Try to take any available portals
-		if(_distance === -1 && CheckAct(leaderPlayerUnit) == CheckAct(me) && me.areaid !== leaderPlayerUnit.areaid)
-		{
-			if(!TakeLeaderTP())
-			{
-				// Try to take waypoints next
-				if(AreaHasWaypoint(leaderPlayerUnit.areaid))
-				{
-					if(!NTM_TakeWaypoint(leaderPlayerUnit.areaid))
-					{
-						if(!NTC_InTown(me))
-						{
-							// Last ditch effort, just go back to town
-							if(!Town(""))
-							{
-								Whisper(leaderPlayerUnit.name, "I seem to be stuck!");
+					for (i = 0; i < 20; i++){
+						if ((i % 5) == 0){
+							if (_leg.mode == 3 || _leg.mode == 5){
+								if (NTC_ClearCursor())
+								NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _leg);
 							}
 						}
+						NTC_PingDelay(100);
+						if (_leg.mode != 3 && _leg.mode != 5){
+							Print(COLOR_4 + "Got Leg");
+							NTC_PingDelay(200);
+							break;
+						}
 					}
 				}
 			}
-			//return;
-		}
-		return;
-	}
-	
-	// If we are both outside but in different areas
-	if(me.areaid !== leaderPlayerUnit.areaid && !NTC_InTown(leaderPlayerUnit) && !NTC_InTown(me))
-	{
-		// Get the distance between our character and the leader
-		if(leaderUnit)
-		{
-			_distance = GetDistance(me, leaderUnit);
-		}
-		else
-		{
-			_distance = -1;
-		}
-		
-		// If we get a valid distance, and we're outside the follow range, attempt to get closer!
-		// This covers walking to new area id's
-		if(_distance >= followRange && _distance !== -1 && me.areaid === leaderPlayerUnit.areaid)
-		{
-			if(leaderUnit)
-			{
-				d2B_follow();
-				//NTM_GetCloserInt(leaderUnit);
-			}
-			else
-			{
-				NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
-			}
-			return;
-		}
-		
-		// Check to see if we entered a doorway or stairs
-		var _unit = GetPresetUnits(me.areaid, NTC_UNIT_TILE);
-		if (_unit)
-		{
-			for (var i = 0; i < _unit.length; i += 1)
-			{
-				if (_unit[i].subareaid == leaderPlayerUnit.areaid)
-				{
-					NTM_TakeStair(leaderPlayerUnit.areaid); // take stairs
-					return;
-				}
-			}
-		}
-		
-		// This covers outside-to-outside waypoint changes
-		if(AreaHasWaypoint(leaderPlayerUnit.areaid))
-		{
-			if(NTM_TakeWaypoint(leaderPlayerUnit.areaid))
-			{
+			if(!_leg){
+				NTC_SendMsgToScript("NTBotGame.ntj", "Sigh... No leg.");
 				return;
 			}
+			NTM_MakeTP(1);
 		}
-		
-		// Check for special doors
-		// Leaving Arcane Sanctuary
-		if(me.areaid == 74 && leaderPlayerUnit.areaid == 54)
-		{
-			if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 298))
-			{
-				Town("");
-			}
-			return;
-		}
-		
-		// Entering Arcane Sanctuary
-		if(me.areaid == 54 && leaderPlayerUnit.areaid == 74)
-		{
-			if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 298))
-			{
-				Town("");
-			}
-			return;
-		}
-		
-		// Entering Duriel's Chamber
-		if(me.areaid >= 66 && me.areaid <= 72 && leaderPlayerUnit.areaid == 73)
-		{
-			if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 100))
-			{
-				Town("");
-			}
-			return;
-		}
-		
-		// Entering Tristram
-		if(me.areaid == 4 && leaderPlayerUnit.areaid == 38)
-		{
-			if(!NTM_UsePortal("Portal", 38))
-			{
-				Town("");
-			}
-			return;
-		}
-		
-		// Exiting Tristram
-		if(me.areaid == 38 && leaderPlayerUnit.areaid == 4)
-		{
-			if(!NTM_UsePortal("Portal", 4))
-			{
-				Town("");
-			}
-			return;
-		}
-		
-		// Entering Baal's Chamber
-		if(me.areaid == 131 && leaderPlayerUnit.areaid == 132)
-		{
-			if(NTConfig_FollowtoWorldStone)
-			{
-				if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 563))
-				{
-					Town("");
-				}
-				return;
-			}
-		}
-		
-		Town("");
-		return;
-	}
-	
-	// If we are both outside and in the same area
-	if(me.areaid === leaderPlayerUnit.areaid && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit))
-	{
-		// Get the distance between our character and the leader
-		if(leaderUnit)
-		{
-			_distance = GetDistance(me, leaderUnit);
-		}
-		else
-		{
-			_distance = -1;
-		}
-		
-		// If we get a valid distance, and we're outside the follow range, attempt to get closer!
-		// This covers general moving
-		if(_distance >= followRange && _distance !== -1)
-		{
-			if(leaderUnit)
-			{
-				d2B_follow();
-				//NTM_GetCloserInt(leaderUnit);
-			}
-			else
-			{
-				NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
-			}
-			return;
-		}
-		else if(_distance === -1 && leaderPlayerUnit.areaid >= 1 && me.areaid >= 1)
-		{
-			NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
-			return;
-		}
-	}
-}
-function d2B_follow() {
-	isFollowingEnabled = false;
-	Print(COLOR_4 + "Follow off");
-	Delay(700);
-	if(!TakeLeaderTP())
-		Town();
-	Delay(Random(1000,2000));
-	d2B_townMove("portalspot");
-	isFollowingEnabled = true;
-	return;
-}
-function TPAtPlayersBody(playerName, enemysName) {
-	var _playerUnit = aGetPlayerUnit(playerName);
-	var _playerUnit2 = GetLeader(playerName);
-	var _playerDistance;
-	if(_playerUnit)
-		_playerDistance = GetDistance(me, _playerUnit);
-	else
-		_playerDistance = -1;
-	var _playerArea = _playerUnit2.areaid;
-	var _myArea = me.areaid;
-	
-	if(_playerDistance > 0 && _myArea == _playerArea)
-	{
-		if(_playerUnit)
-			NTM_GetCloserInt(_playerUnit);
-		else
-			NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
-		TP("");
-		if(NTConfig_MessageDeadPlayers)
-		{
-			Whisper(playerName, NTConfig_DeadPlayerMsg);
-		}
-	}	
-}
-
-function Guard() { 									// Done
-
-	if(!NTC_InTown(me))
-	{
-		NTA_ClearPosition(15);		// deeEdit orig: 15
-	}
-	return;
-}
-
-function hAttack() {
-	if(!NTC_InTown(me))
-	{
-		if(NTA_CheckForCloseMonsters(flwrAtk_Range))	// deeEdits orig: 30
-		{
-			NTA_ClearPosition(flwrAtk_Range);			// deeEdits orig: 30
-			Delay(300);									// deeEdits orig: 1000
-			return;
-		}
-		return;
-	}
-	Delay(300);											// deeEdits orig: 1000
-}
-
-function isATown(id) {
-
-	var _ret = false;
-	switch(id)
-	{
-		case 1: _ret = true; break;
-		case 40: _ret = true; break;
-		case 75: _ret = true; break;
-		case 103: _ret = true; break;
-		case 109: _ret = true; break;
-	}
-	return _ret;
-}
-
-function TakeLeaderTP(toArea) { 					// Done
-
-	isBusy = 1;
-	while(me.areaid == 0)
-		NTC_Delay(100);
-	var _portal = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3226), 15);
-	var _prearea = me.areaid;
-	var _ret = false;
-	if(_portal)
-	{
-		do 
-		{
-			if(NTC_CheckOwner(_portal, leaderPlayerUnit.name))
-			{
-				if(GetDistance(me, _portal) !== -1 && !NTC_InTown(me))
-				{
-					NTM_MoveTo(me.areaid, _portal.x, _portal.y);
-					Delay(100);
-				}
-				if(GetDistance(me, _portal) <= 15)
-				{
-					var p0 = _portal.subareaid;
-					var p1 = p0 - 768;
-					var p2 = p0 - 256;
-					var leaderArea = leaderPlayerUnit.areaid;
-					if(leaderArea === p0 || leaderArea === p1 || leaderArea === p2 || isATown(p0))
-					{
-						if(debug)
-							Say("!Found Portal");
-						if(NTC_InTown(me) && NTC_GetSkillLevel(43))
-						{
-							NTC_CastSkill(43, NTC_HAND_RIGHT, _portal);
-						}
-						else
-						{
-							NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
-						}
-						Delay(750);
-						if(!NTC_InTown(me))
-						{
-							NTP_DoPrecast( true );
-						}
-						Delay(250);
-						break;
-					}
-				}
-			}
-			if(me.areaid !== _prearea)
-			{
-				_ret = true;
-				break;
-			}
-		}while(_portal.GetNext());
-		
-		Delay(250);
-		
-		if(NTC_InTown(me))
-		{
-			if(NTTMGR_CheckScrolls(1) < 4)
-			{
-				Whisper(leaderPlayerUnit.name, "Buying scrolls");
-				d2B_townMgr();
-			}
-		}
-		
-		if(_prearea !== me.areaid)
-			_ret = true;
-		else
-			_ret = false;
-	}
-	else
-	{
-		_ret = false;
-	}
-	isBusy = 0;
-	return _ret;
-}		
-
-function GiveGold( amount ) { 						// Done
-
-	isBusy = 1;
-	_gold = me.GetStat(14);
-	if(amount != "")
-	{
-		if( parseInt(amount) <= 50000 && parseInt(amount) >= 1 )
-		{
-			if(parseInt(amount) <= _gold)
-			{
-				Gold(0, parseInt(amount))
-			}
-			else
-			{
-				Say("Sorry, I am out of gold!");
-			}
-			NTC_Delay(1000);
-		}
-		else
-		{
-			Say("Invalid amount.  Valid range is 1-10000.");
-		}
-	}
-	else
-	{
-		Say("Invalid amount.  Valid range is 1-10000.");
-	}
-	isBusy = 0;
-}
-
-function Quest( msg ) { 							// Done (needs testing)
-
-	if(!NTC_InTown(me))
-		Town();
-	switch(msg)
-	{
-		case "":
-			break;
-		case "cain":
-			Extras.Cain();
-			break;
-		case "leg":
-			Extras.WirtsLeg();
-			break;
-		case "andy":
-		case "andariel":
-			Quests.Andy();
-			break;
-		case "radament":
-		case "rada":
-			Extras.Radament();
-			break;
-		case "cube":
-			Quests.Cube();
-			break;
-		case "staff":
-			Quests.Staff();
-			break;
-		case "ammy":
-			Quests.Ammy();
-			break;
-		case "summoner":
-			Quests.Summoner();
-			break;
-		case "duriel":
-			Quests.Duriel();
-			break;
-		case "khalim":
-			Extras.Khalim();
-			break;
-		case "tome":
-			Extras.Tome();
-			break;
-		case "travincal":
-		case "trav":
-			Quests.Travincal();
-			break;
-		case "mephisto":
-		case "meph":
-			Quests.Mephisto();
-			break;
-		case "izual":
-		case "izzy":
-			Extras.Izual();
-			break;
-		case "diablo":
-			Quests.Diablo();
-			break;
-		case "shenk":
-			Extras.Shenk();
-			break;
-		case "anya":
-			Extras.Anya();
-			break;
-		case "ancients":
-			Quests.Ancients();
-			break;
-		case "baal":
-			Quests.Baal();
-			break;
-		case "imbue":
-			Imbue();
-			break;
-		default:
-			break;
-	}
-}
-
-function Town() { 									// Done
-
-	if(!NTC_InTown(me))
-	{
-		isBusy = 1;
-		// Try to take our own tp or the leader's tp
-		var _portal = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3226), 10);
-		var _prearea = me.areaid;
-		if(_portal)
-		{
-			do 
-			{
-				if(NTC_CheckOwner(_portal, me.charname) || NTC_CheckOwner(_portal, leaderName))
-				{
-					if(GetDistance(me, _portal) < 15)
-					{
-						NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
-						Delay(1500);
-					}
-				}
-				
-				while(me.areaid === 0)
-					NTC_Delay(100);
-				
-				if(me.areaid !== _prearea)
-				{
-					d2B_townMgr();
-					break;
-				}
-					
-			}while(_portal.GetNext());
-			Delay(500);
-		}
-		
-		if(me.areaid == _prearea) // If we failed, we need to make our own tp and try again
-		{
-			TP("");
-			Delay(500);
-			_portal = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3226), 10);
-			var _prearea = me.areaid;
-			
-			if(_portal)
-			{
-				do 
-				{
-					if(NTC_CheckOwner(_portal, me.charname)) 
-						if(GetDistance(me, _portal) < 10)
-							NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
-					
-					if(me.areaid !== _prearea)
-					{
-						d2B_townMgr();
-						break;
-					}
-					
-					while(me.areaid == 0)
-						NTC_Delay(100);
-					
-				}while(_portal.GetNext());
-				Delay(500);
-			}
-		}
-		
-		if(me.areaid !== _prearea)
-		{	
-			isBusy = 0;
-			return true;
-		}
-		else
-		{
-			isBusy = 0;
-			return false;
-		}
-	}
-	else
-	{
-		isBusy = 1;
-		d2B_townMgr();
-		isBusy = 0;
 		return true;
-	}
-}
-
-function Chant2() { 								// for chantress helper
-	if(me.name != _myChantress) return;
+	},
 	
-	if(!NTC_InTown(me) && NTC_GetSkillLevel(52))
-	{
-		// Enchant player
-		var _player = NTC_FindUnit(NTC_UNIT_PLAYER);
-		//var _merc = NTC_FindUnit(NTC_UNIT_MERC);
-		if(!_player)
-			return;
-		do
-		{
-			if(_player.name !== me.name && GetDistance(me, _player) <= 20 && NTC_InMyParty(_player.name))
-			{	
-				NTC_Delay(250);
-				NTC_CastSkill(52, NTC_HAND_RIGHT, _player);
-			}
-			
-			// Enchant merc
-			var _merc = NTC_FindUnit(NTC_UNIT_MERC);
-			if (_merc)
-			{
-				do
-				{
-					if(NTC_CheckOwner(_merc, _player.name) && GetDistance(me, _merc) < 20 && _merc.hp > 0 && _player.name !== me.name)
-					{
-						NTC_Delay(250);
-						NTC_CastSkill(52, NTC_HAND_RIGHT, _merc);
-					}
-				} while (_merc.GetNext());
-			}
-		} while( _player.GetNext() )
-	}
-	else
-	{
-		_tmp = Random(0,1);
-		if(_tmp) Say("No");
-		else if(!_temp) Say("way");
-		Delay(300);
-	}
-}
-function refillChanter() {							// for sending chantress to act 4 and refilling their
-	if(me.name != _myChantress) return;
-	NTTM_CheckAct(4);								// send chantress to act 4 and refill
-	NTTMGR_TownManager();
-	return;
-}	
-function Chant( msg ) { 							// Done
+	Radament: function() {
+		var _rad, _chest, _chestx, _chesty, _radtp;
 
-	if(msg == "on")
-	{
-		Say("!Auto enchant turned on!");
-		Say("Following and attacking disabled!");
-		isAutoEnchantEnabled = true;
-		return;
-	}
-	
-	if(msg == "off")
-	{
-		Say("!Auto enchant turned off!");
-		isAutoEnchantEnabled = false;
-		return;
-	}
-	
-	isBusy = 1;
-	if(!NTC_InTown(me) && NTC_GetSkillLevel(52))
-	{
-		// Enchant player
-		var _player = NTC_FindUnit(NTC_UNIT_PLAYER);
-		//var _merc = NTC_FindUnit(NTC_UNIT_MERC);
-		if(!_player)
-			return;
-		do
-		{
-			if(_player.name !== me.name && GetDistance(me, _player) <= 20 && NTC_InMyParty(_player.name))
-			{	
-				NTC_Delay(750);
-				NTC_CastSkill(52, NTC_HAND_RIGHT, _player);
-			}
-			
-			// Enchant merc
-			var _merc = NTC_FindUnit(NTC_UNIT_MERC);
-			if (_merc)
-			{
-				do
-				{
-					if(NTC_CheckOwner(_merc, _player.name) && GetDistance(me, _merc) < 20 && _merc.hp > 0 && _player.name !== me.name)
-					{
-						NTC_Delay(750);
-						NTC_CastSkill(52, NTC_HAND_RIGHT, _merc);
-					}
-				} while (_merc.GetNext());
-			}
-		} while( _player.GetNext() )
-	}
-	else
-	{
-		tmp = Random(0,1);
-		if(_tmp) Say("No");
-		else if(!_temp) Say("way");
-		Delay(300);
-	}
-	isBusy = 0;
-}	
-
-function TP(msg) { 									// Done
-
-	isBusy = 1;
-	switch(msg)
-	{
-		case "":
-			if(!NTC_InTown(me))
-			{
-				if(!NTM_MakeTP())
-				{
-					d2B_msg("Trying to make a TP...");
-					Delay(Random(1000,1200));
-					d2B_littleJMP();
-					Town();	
-				}
-				break;
-			}
-			if(NTC_InTown(me))
-			{
-				Say("I'm in town! Say 'help tp' for more information.");
-			}
-			isBusy = 0;
-			break;
-			
-		default:
-			var wpID = WaypointNameToID(msg);
-			if(wpID == -1)
-			{
-				Invalid();
-				isBusy = 0;
-				return;
-			}
-			
-			if(!NTC_InTown(me))
-			{
-				if(wpID != -1)
-				{
-					Town();
-					if(NTTMGR_CheckScrolls(1) <= 4)
-					{
-						Say("Buying scrolls first!");
-						d2B_townMgr();
-					}
-					NTTM_TownMove("waypoint")
-					NTM_TakeWaypoint(wpID);
-					if(!NTM_MakeTP())
-					{
-						d2B_msg("Trying to make a TP...");
-						Delay(Random(1000,1200));
-						d2B_littleJMP();
-						Town();
-					}
-					break;
-				}
-			}
-			else
-			{
-				if(wpID != -1)
-				{
-					if(NTTMGR_CheckScrolls(1) <= 4)
-					{
-						Say("Buying scrolls first!");
-						d2B_townMgr();
-					}
-					NTTM_TownMove("waypoint")
-					NTM_TakeWaypoint(wpID);
-					if(!NTM_MakeTP())
-					{
-						d2B_msg("Trying to make a TP...");
-						Delay(Random(1000,1200));
-						d2B_littleJMP();
-						Town();
-					}
-				}
-			}
-			break;
-	}
-	isBusy = 0;
-}
-
-function CommandClear(msg) { 						// Done
-
-	isBusy = 1;
-	if(!NTC_InTown(me))
-	{
-		switch(msg)
-		{
-			case "":
-				NTA_ClearPosition( 30 )
-				break;
-			case "level":
-					NTA_ClearLevel();
-				break;
-			default:
-				if(msg >= 5 && msg <= 40)
-					NTA_ClearPosition(msg);
-				break;
-		}
-	}
-	else
-	{
-		Say("I'm in town!");
-	}
-	isBusy = 0;
-}
-
-function Rush( msg ) { 								// Done (needs testing) 
-	isBusy = 1;
-	isFollowingEnabled = false;
-	isAutoEnchantEnabled = false;
-	switch(msg)
-	{
-		case "":
-			Rush1();
-			Rush2();
-			Rush3();
-			Rush4();
-			Rush5();
-			break;
-		case "1":
-			Say("Starting act 1");
-			Rush1();
-			break;
-		case "2":
-			Say("Starting act 2");
-			Rush2();
-			break;
-		case "3":
-			Say("Starting act 3");
-			Rush3();
-			break;
-		case "4":
-			Say("Starting act 4");
-			Rush4();
-			break;
-		case "5":
-			Say("Starting act 5");
-			Rush5();
-			break;
-		default:
-			Invalid();
-	}
-	isBusy = 0;
-}
-
-function Rush1() {
-	if(NTConfig_Quest_Cain)
-		Extras.Cain();
-	Quests.Andy();
-}
-
-function Rush2() {
-	if(NTConfig_Quest_Radament)
-		Extras.Radament();
-	if(me.diff == 0)
-		Quests.Cube();
-	Quests.Ammy();
-	Quests.Staff();
-	Quests.Summoner();
-	Quests.Duriel();
-}
-
-function Rush3() {
-	if(NTConfig_Quest_Tome)
-		Extras.Tome();
-	Quests.Travincal();
-	Quests.Mephisto();
-}
-
-function Rush4() {
-	if(NTConfig_Quest_Izual)
-		Extras.Izual();
-	Quests.Diablo();
-}
-
-function Rush5() {
-	if(NTConfig_Quest_Shenk)
-		Extras.Shenk();
-	if(NTConfig_Quest_Anya)
-		Extras.Anya();
-	if(NTConfig_Quest_Ancients)
-		Quests.Ancients();
-	if(NTConfig_Quest_Baal)
-		Quests.Baal();
-}
-
-function Imbue() {
-	if(!NTTM_CheckAct(1))
-	{
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_CheckAct()");
-		return;
-	}
-
-	d2B_townMgr();
-
-	if(!NTTM_TownMove("waypoint"))
-	{
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_TownMove()");
-		return;
-	}
-
-	if(!NTM_TakeWaypoint(27))
-	{
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeWaypoint()");
-		return;
-	}   
-
-	NTP_DoPrecast(true);
-
-	if(!NTM_MoveToPresetUnit(28, NTC_UNIT_OBJECT, 108, 5, 5, false))
-	{
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
-		return;
-	}
-	NTM_MakeTP();
-	NTC_Delay(500);
-
-	// if(!NTA_KillMonster(GetLocaleString(2889)))
-	// { 
-		// NTC_SendMsgToScript("NTBotGame.ntj", "NTA_KillMonster()"); 
-		// return; 
-	// }
-	NTA_ClearPosition(10);
-	Town();
-}
-
-// ******************************************************************************
-// Internal functions
-// ******************************************************************************
-
-function WaypointNameToID(name) { // for Nith, you have to say 'nit' instead of 'hal'.  Conflicts with 'hal'ls of the dead.
-
-	var partial = name.substring(0, 3);
-	var returnID = -1;
-	
-	// Area name to area ID
-	switch(partial)
-	{
-		// Act 1
-		case "col": // cold plains
-			returnID = 3;
-			break;
-		case "sto": // stony field
-			returnID = 4;
-			break;
-		case "dar": // dark wood
-			returnID = 5;
-			break;
-		case "bla": // black marsh
-			returnID = 6;
-			break;
-		case "out": // outer cloister
-			returnID = 27;
-			break;
-		case "jai": // jail level 1
-			returnID = 29;
-			break;
-		case "inn": // inner cloister
-			returnID = 32;
-			break;
-		case "cat": // catacombs level 2
-			returnID = 35;
-			break;
-			
-		// Act 2
-		case "sew": // sewers level 2
-			returnID = 48;
-			break;
-		case "hal": // halls of the dead level 2
-			returnID = 57;
-			break;
-		case "far": // far oasis
-			returnID = 43;
-			break;
-		case "los": // lost city
-			returnID = 44;
-			break;
-		case "pal": // palace
-			returnID = 52;
-			break;
-		case "arc": // arcane
-			returnID = 74;
-			break;
-		case "can": // canyon
-			returnID = 46;
-			break;
-			
-		// Act 3
-		case "spi": // spider forest
-			returnID = 76;
-			break;
-		case "gre": // great marsh
-			returnID = 77;
-			break;
-		case "fla": // flayer jungle
-			returnID = 78;
-			break;
-		case "low": // lower kurast
-			returnID = 79;
-			break;
-		case "kur": // kurast bazar
-			returnID = 80;
-			break;
-		case "upp": // upper kurast
-			returnID = 81;
-			break;
-		case "tra": // travincal
-			returnID = 83;
-			break;
-		case "dur": // durance of hate level 2
-			returnID = 101;
-			break;
-			
-		// Act 4
-		case "cit": // city of the damned
-			returnID = 106;
-			break;
-		case "riv": // river of flame
-			returnID = 107;
-			break;
-			
-		// Act 5
-		case "fri": // fridgid highlands
-			returnID = 111;
-			break;
-		case "arr": // arreat summit
-			returnID = 112;
-			break;
-		case "cry": // crystalline passage
-			returnID = 113;
-			break;
-		case "gla": // glacial trail
-			returnID = 115;
-			break;
-		case "fro": // frozen tundra
-			returnID = 117;
-			break;
-		case "nit": // nith
-			returnID = 123;
-			break;
-		case "anc": // ancients
-			returnID = 118;
-			break;
-		case "wor": // worldstone
-			returnID = 129;
-			break;
-		default:
-			returnID = -1;
-	}
-	return returnID;
-}
-
-function AreaHasWaypoint(area) {
-	var _ret = false;
-	switch(area)
-	{
-											// ACT_1
-		case 3: _ret = true; break; 		// LEVEL_COLD_PLAINS
-		case 4: _ret = true; break;			// LEVEL_STONY_FIELD
-		case 5: _ret = true; break;			// LEVEL_DARK_WOOD
-		case 6: _ret = true; break;			// LEVEL_BLACK_MARSH
-		case 27: _ret = true; break;		// LEVEL_OUTER_CLOISTER
-		case 29: _ret = true; break;		// LEVEL_JAIL_LEVEL_1
-		case 32: _ret = true; break;		// LEVEL_INNER_CLOISTER
-		case 35: _ret = true; break;		// LEVEL_CATACOMBS_LEVEL_2
-		
-											// ACT_2
-		case 40: _ret = true; break;		// LEVEL_LUT_GHOLEIN
-		case 42: _ret = true; break;		// LEVEL_DRY_HILLS
-		case 43: _ret = true; break;		// LEVEL_FAR_OASIS
-		case 44: _ret = true; break;		// LEVEL_LOST_CITY
-		case 46: _ret = true; break;		// LEVEL_CANYON_OF_THE_MAGI
-		case 48: _ret = true; break;		// LEVEL_SEWERS_LEVEL_2
-		case 52: _ret = true; break;		// LEVEL_PALACE_CELLAR_LEVEL_1
-		case 57: _ret = true; break;		// LEVEL_HALLS_OF_THE_DEAD_LEVEL_2
-		case 74: _ret = true; break;		// LEVEL_ARCANE_SANCTUARY
-		
-											// ACT_3
-		case 76: _ret = true; break;		// LEVEL_SPIDER_FOREST
-		case 77: _ret = true; break;		// LEVEL_GREAT_MARSH
-		case 78: _ret = true; break;		// LEVEL_FLAYER_JUNGLE
-		case 79: _ret = true; break;		// LEVEL_LOWER_KURASH
-		case 80: _ret = true; break;		// LEVEL_KURASH_BAZAAR
-		case 81: _ret = true; break;		// LEVEL_UPPER_KURAST
-		case 83: _ret = true; break;		// LEVEL_TRAVINCAL
-		case 101: _ret = true; break;		// LEVEL_DURANCE_OF_HATE_LEVEL_2
-
-											// ACT_4
-		case 103: _ret = true; break;		// LEVEL_PANDEMONIUM_FORTRESS
-		case 106: _ret = true; break;		// LEVEL_CITY_OF_THE_DAMNED
-		case 107: _ret = true; break;		// LEVEL_RIVER_OF_FLAME
-		
-											// ACT_5
-		case 109: _ret = true; break;		// LEVEL_HARROGATH
-		case 111: _ret = true; break;		// LEVEL_FRIGID_HIGHLANDS
-		case 112: _ret = true; break;		// LEVEL_ARREAT_PLATEAU
-		case 113: _ret = true; break;		// LEVEL_CRYSTALLINE_PASSAGE
-		case 115: _ret = true; break;		// LEVEL_GLACIAL_TRAIL
-		case 117: _ret = true; break;		// LEVEL_FROZEN_TUNDRA
-		case 118: _ret = true; break;		// LEVEL_GLACIAL_CAVES_LEVEL_1
-		case 123: _ret = true; break;		// LEVEL_HALLS_OF_DEATHS_CALLING
-		case 129: _ret = true; break;		// LEVEL_THE_WORLDSTONE_KEEP_LEVEL_2
-		
-		default: _ret = false; break;		// All other areas have no waypoints
-	}
-	return _ret;
-}
-
-// from koltons script
-function GetLeader(name) {
-	_party = GetPlayerUnit();
-	
-	if (_party) {
-		do {
-			if (_party.name === name) {
-				return _party;
-			}
-		} while (_party.GetNext());
-	}
-	
-	return false;
-}
-
-// from koltons script
-function GetLeaderUnit(name) {
-	var _unit = NTC_FindUnit(NTC_UNIT_PLAYER);
-	
-	if (_unit) {
-		do {
-			if (_unit.name === name) {
-				return _unit;
-			}
-		} while (_unit.GetNext());
-	}
-	return false;
-}
-
-function aGetPlayerUnit(name) {
-	var _unit = NTC_FindUnit(NTC_UNIT_PLAYER);
-	
-	if (_unit) {
-		do {
-			if (_unit.name === name) {
-				return _unit;
-			}
-		} while (_unit.GetNext());
-	}
-	return false;
-}
-
-// from koltons script
-function CheckAct(leader) {
-	if (leader.areaid <= 39) {
-		return 1;
-	} else if(leader.areaid >= 40 && leader.areaid <= 74) {
-		return 2;
-	} else if(leader.areaid >= 75 && leader.areaid <= 102) {
-		return 3;
-	} else if(leader.areaid >= 103 && leader.areaid <= 108) {
-		return 4;
-	}
-	else return 5;
-}
-
-function GetPlayerActWaypointID(leader) {
-	if (leader.areaid <= 39) {
-		return 1;
-	} else if(leader.areaid >= 40 && leader.areaid <= 74) {
-		return 40;
-	} else if(leader.areaid >= 75 && leader.areaid <= 102) {
-		return 75;
-	} else if(leader.areaid >= 103 && leader.areaid <= 108) {
-		return 103;
-	}
-	else return 109;
-}
-
-function CheckLeader(name) {	
-	_player = GetPlayerUnit();
-	if(_player)
-	{
-		do
-		{
-			if( _player.name != name )
-				continue;
-			if( _player.name == name)
-				return true;
-		} while( _player.GetNext() )
-	}
-	return false;
-}
-
-function NTH_GetDistance(sx, sy, ex, ey) {
-	// Laziness
-}
-
-function Whisper(name, msg) {
-	// Sends a in-game whisper via @charname msg
-	// This does NOT get you IP bans or realms downs
-	// :)
-	Say("@" + name + " " + msg);
-}
-
-function LogActionPl0x(message) {
-	// Debugging stuff
-	var time = new Date();
-	var hour   = time.getHours();
-	var minute = time.getMinutes();
-	var second = time.getSeconds();
-	var millisecond = time.getMilliseconds();
-	var DoN = "AM";
-	if (hour > 11) { DoN = "PM"; }
-	if (hour > 12) { hour = hour - 12; }
-	if (hour == 0) { hour = 12; }
-	if (hour < 10) { hour = "0" + hour; }
-	if (minute < 10) { minute = "0" + minute; }
-	if (second < 10) { second = "0" + second; }
-	if (String(millisecond).length == 2) { millisecond = millisecond + "0"; }
-	if (String(millisecond).length == 1) { millisecond = millisecond + "00"; }
-	var timeString = "[" + hour + ':' + minute + ':' + second + ":" + millisecond + " " + DoN + "]";
-	
-	var file = FileOpen("logs/NTHelperDebug.txt", 2);
-	if(!file)
-		file = FileOpen("logs/NTHelperDebug.txt", 1);
-	
-	file.WriteLine(timeString + ": " + message);
-	file.Close();
-}
-
-// ____________________________________________________________
-//
-//	Write/Read functions...
-//
-
-function d2B_storePause(a_d2B_myPauseValue) {
-	NT_File("logs/messagecomands/"+me.name+"-pause.txt", 1, a_d2B_myPauseValue + "/"); // for leader to print game/pw to txt
-	return;
-}
-function d2B_retrievePause() { 				
-	// to retrieve where bot last paused at: (me.name)-pause.txt
-	//
-	// d2B_line 	= store the complete bot pause date string from the text file
-	// d2B_pause 	= temporary var for opening, verifying, and reading, text file
-	// d2B_myPause	= store solely the needed bot paused string from the text file 
-	
-	var d2B_line;
-	var d2B_pause = FileOpen("logs/messagecomands/"+me.name+"-pause.txt", 0); // open file in read only
-	if(!d2B_pause){
-		var d2B_pause = FileOpen("logs/messagecomands/"+me.name+"-pause.txt", 1); // No file? Create it
-	}
-	if(d2B_pause){ 
-		d2B_line = d2B_pause.ReadLine(); 	//retrieve line & set the pause var to it so we can check it against the game we may want to join
-		d2B_myPause = d2B_line.substring(0, d2B_line.indexOf('/')); //extracting game name from beginning of line to the "/"
-		//gamepassword = grabLine.substring(grabLine.indexOf('/') + 1, grabLine.length); //Parse after symbol till end of line.	
-		d2B_pause.Close();	
-	}
-	return d2B_myPause;
-}
-// modes 0 = read only, 1 = overwrite the file, 2 = add to file
-function NT_File(path, mode, msg, Delay) { //big thanks to all the koreans out there
-    var _msg  = "";
-    var _line = "";
-    var _fileHandle;
-    var _isFileCheck = false;
-
-    if (arguments.length < 3) { msg   = ""; }
-    if (arguments.length < 4) { Delay = (mode > 0) ? 5 : 2; }
-
-    while (Delay--) {
-        if (mode == 2 && !_isFileCheck) {
-            _fileHandle = FileOpen(path, 0);
-            if (!_fileHandle)
-                _fileHandle = FileOpen(path, 1);
-
-            if (_fileHandle)
-                _fileHandle.Close();
-
-            _isFileCheck = true;
-        }
-
-        _fileHandle = FileOpen(path, mode);
-        if (_fileHandle)
-            break;
-
-        if (Delay)
-            Delay(200);
-    }
-
-    if (_fileHandle) {
-        if (mode == 0) {
-            while (!_fileHandle.eof) {
-                _line = _fileHandle.ReadLine();
-                if (_line || !_fileHandle.eof)
-                    _msg += _line + msg;
-            }
-        }
-        else if (msg)
-            _fileHandle.WriteLine(msg);
-
-        _fileHandle.Close();
-    }
-
-    return _msg;
-}
-function MyTime() {
-	var NW = new Date();
-	var HR = NW.getHours();
-	var MM = NW.getMinutes();
-	var SS = NW.getSeconds();
-	var DT;
-
-	if (HR < 12){ DT = "AM"; }
-	if (HR > 11){ DT = "PM"; }
-	if (HR > 12){ HR = HR - 12; }
-	if (HR == 0){ HR = 12; }
-	if (HR < 10){ HR = "0" + HR; }
-	if (MM < 10){ MM = "0" + MM; }
-	if (SS < 10){ SS = "0" + SS; }
-
-	TheTime = HR + ":" + MM + ":" + SS + " " + DT;
-	return TheTime;
-}
-function classid(i) {
-	switch(i){
-		case 0:	return "Amazon";
-		case 1: return "Sorceress";
-		case 2: return "Necromancer";
-		case 3: return "Paladin";
-		case 4: return "Barbarian";
-		case 5: return "Druid";
-		case 6: return "Assassin";
-	} return;
-}
-
-//
-// act iv functions
-//
-function d2B_openAllSeals() {
-	var _unit;
-	
-	// Vizier seals
-	//
-	NT_OpenSealInt(395);
-	NT_OpenSealInt(396);
-	d2B_sealThingy(1);
-	
-	// Seis seal
-	//
-	NT_OpenSealInt(394);
-	_unit = GetPresetUnits(108, NTC_UNIT_OBJECT, 394);
-	if (_unit[0].roomx * 5 + _unit[0].x == 7773) {
-		NTM_MoveTo(108, 7797, 5201);
-	} else {
-		NTM_MoveTo(108, 7798, 5186);
-	}
-	d2B_sealThingy(2);
-	
-	// Venom seals
-	//
-	NT_OpenSealInt(392);
-	_unit = GetPresetUnits(108, NTC_UNIT_OBJECT, 392);
-	if (_unit[0].roomx * 5 + _unit[0].x == 7893) {
-		Delay(300);
-	} else {
-		NTM_MoveTo(108, 7933, 5299);
-	}
-	d2B_sealThingy(3);
-	NT_OpenSealInt(393);
-	NTM_MoveTo(108, 7792, 5301); // back to the centre
-	d2B_team(true);
-	// Diablo
-	//
-	for (i = 0; i < 80; i += 1) {
-		if (GetUnit(NTC_UNIT_MONSTER, 243)) {
-			break;
-		}
-		NTCS_DiaSpam();
-	}
-	NTA_KillMonster(243);
-	NTSI_PickItems();
-	Delay(1000);
-	
-	d2B_myTP(true, true, false, false, false);
-	
-	d2B_chkAct2(true,4);
-	return;
-}
-function d2B_sealThingy(a) {
-	d2B_team(true);
-	NTA_ClearPosition(40, true);
-	
-	switch(a) {
-		case 1: if(!NTA_KillMonster(GetLocaleString(2851))) Delay(300);	// 2851: Vizier
-			break;
-		case 2: if(!NTA_KillMonster(GetLocaleString(2852))) Delay(300);	// 2582: Lord De Seis
-			break;
-		case 3: if(!NTA_KillMonster(GetLocaleString(2853))) Delay(300);	// 2853: Infector of Souls
-			break;
-	}
-	
-	d2B_team(false);
-}
-function NT_OpenSealsInt() {
-	var _unit;
-	var _result;
-
-	_unit = GetPresetUnits(108, NTC_UNIT_OBJECT, 396);
-
-	if (!_unit) {
-		return false;
-	}
-	if (_unit[0].roomy * 5 + _unit[0].y == 5275) {
-		_result = NT_OpenVizierSealInt(1);
-	} else {
-		_result = NT_OpenVizierSealInt(2);
-	}
-	_unit = GetPresetUnits(108, NTC_UNIT_OBJECT, 394);
-	if (_unit[0].roomx * 5 + _unit[0].x == 7773) {
-		_result = NT_OpenDeSeisSealInt(1);
-	} else {
-		_result = NT_OpenDeSeisSealInt(2);
-	}
-	if (!_result) {
-		return false;
-	}
-	if(!_nonTelePeeps) NTCS_ClearPosition(40, SealSortB);
-	
-	_unit = GetPresetUnits(108, NTC_UNIT_OBJECT, 392);
-	if (!_unit) {
-		return false;
-	}
-	if (_unit[0].roomx * 5 + _unit[0].x == 7893) {
-		_result = NT_OpenVenomSealInt(1);
-	} else {
-		_result = NT_OpenVenomSealInt(2);
-	}
-	NTP_DoPrecast(true);
-	return _result;
-}
-
-function NT_OpenVizierSealInt(type) {
-	var i;
-
-	if (type === 1) {
-		var vx = [7767,7756,7744,7747,7750,7741,7729,7720,7720,7721,7719,7712,7700,7687,7676, 7666];
-		var vy = [5292,5284,5275,5290,5303,5310,5314,5312,5301,5288,5273,5292,5294,5294,5292, 5307];
-	} else {
-		var vx = [7768,7755,7741,7733,7723,7714,7707,7680,7666, 7655];
-		var vy = [5289,5295,5282,5291,5300,5282,5315,5310,5311, 5282];
-	}
-	if(!_nonTelePeeps) {
-		for (i = 0; i < vx.length; i += 1) {
-			NTM_MoveTo(108, vx[i], vy[i]);
-			NTCS_ClearPosition(30, SealSort);
-		}
-	}
-	
-	if(_nonTelePeeps) NTM_MoveTo(108, vx[0], vy[0]);
-		
-	
-	if (!NT_OpenSealInt(395) || !NT_OpenSealInt(396)) {
-		return false;
-	}
-	if (type == 1) {
-		NTM_MoveTo(108, 7691, 5292);
-	} else {
-		NTM_MoveTo(108, 7695, 5316);
-	}
-	
-	if(!_nonTelePeeps) {
-		NTCS_Preattack(GetLocaleString(2851));
-		NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 306 : null);
-		
-		NTA_KillMonster(GetLocaleString(2851)); // Grand Vizier of Chaos
-		NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 306 : null);
-	}
-	
-	if(_nonTelePeeps) {
-		d2B_team(true);
-		NTCS_ClearPosition(30);
-		NTSI_PickItems();
-		Delay(Random(2000,4000));
-		d2B_team(false);
-		Delay(Random(2000,3000));
-		d2B_isTeamInTown(4,108);
-	}
-	if(NTConfig_IdInField){
-		NT_FieldID();
-	} return true;
-}
-
-function NT_OpenDeSeisSealInt(type) {
-	var i, n;
-
-	if (type === 1) {
-		var sx = [7791,7783,7800,7809,7785,7773,7773,7776,7794,7811,7817,7815,7798]; // Shape of "2"
-		var sy = [5265,5256,5247,5232,5230,5222,5212,5194,5194,5193,5177,5157,5155];
-	} else {
-		var sx = [7786,7801,7786,7787,7810,7811,7810,7790,7774,7773,7794]; // shape of an "S" or "5"
-		var sy = [5263,5249,5245,5227,5233,5215,5198,5194,5181,5156,5154];
-	}
-	if(!_nonTelePeeps) {
-		for (var i = 0; i < sx.length; i += 1) {
-			NTM_MoveTo(108, sx[i], sy[i]);
-			NTCS_ClearPosition(30, type === 1 ? SealSort : SealSortB);
-		}
-	}
-	
-	if(_nonTelePeeps) NTM_MoveTo(108, sx[0], sy[0]);
-	
-	if (!NT_OpenSealInt(394)) {
-		return false;
-	}
-	if (type == 1) {
-		NTM_MoveTo(108, 7797, 5201);
-		for (i = 0; i < 3; i += 1) {
-			NTM_TeleportTo(7794, 5227);
-		}
-	} else {
-		NTM_MoveTo(108, 7798, 5186);
-	}
-
-	if(!_nonTelePeeps) {
-		NTCS_Preattack(GetLocaleString(2852));
-		NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 310 : null);
-		
-		NTA_KillMonster(GetLocaleString(2852)); // Lord De Seis
-		NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 310 : null);
-	}
-	
-	if(_nonTelePeeps) {
-		d2B_team(true);
-		NTCS_ClearPosition(30);
-		NTSI_PickItems();
-		Delay(Random(2000,4000));
-		d2B_team(false);
-		Delay(Random(2000,4000));
-		d2B_isTeamInTown(4,108);
-	}
-
-	if(NTConfig_IdInField){
-		NT_FieldID();
-	} 
-	return NTM_MoveTo(108, 7800, 5255);
-}
-
-function NT_OpenVenomSealInt(type) {
-	if (type === 1) {
-		var IX = [7825,7827,7834,7845,7855,7852,7875,7896,7917]; // shape of a "t"
-		var IY = [5293,5276,5291,5315,5301,5278,5293,5295,5291];
-	} else {
-		var IX = [7822,7826,7832,7850,7868,7877,7891,7907,7927,7932]; // looks like a hook
-		var IY = [5297,5278,5307,5278,5297,5276,5276,5276,5279,5298];
-	}
-	if(!_nonTelePeeps) {
-		for (var i = 0; i < IX.length; i += 1) {
-			NTM_MoveTo(108, IX[i], IY[i]);
-			NTCS_ClearPosition(30, type === 1 ? SealSort : SealSortB);
-		}
-	}
-	
-	NTM_MoveTo(108, IX[0], IY[0]);
-	
-	if (!NT_OpenSealInt(392)) {
-		return false;
-	}
-	if (type === 1) {
-		type = 1; // temp
-	} else {
-		NTM_MoveTo(108, 7933, 5299);
-	}
-
-	if(!_nonTelePeeps) {
-		NTCS_Preattack(GetLocaleString(2853));
-		NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 362 : null);
-		
-		NTA_KillMonster(GetLocaleString(2853)); // Infector of Souls
-		NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 362 : null);
-	}
-	
-	if(_nonTelePeeps) {
-		d2B_team(true);
-		NTCS_ClearPosition(30);
-		NTSI_PickItems();
-		Delay(Random(2000,4000));
-	}
-	
-	d2B_myTP(false, true, true, false, 2000, 4000);
-	
-	if(_nonTelePeeps) {
-		d2B_team(false);
-		Delay(Random(2000,4000));
-		d2B_isTeamInTown(4,108);
-	}
-	
-	NT_OpenSealInt(393);
-
-	if(NTConfig_IdInField){
-		NT_FieldID();
-	}
-	return true;
-}
-function NT_OpenSealInt(classid) {
-	var warn;
-	switch (classid) {
-	case 396:
-	case 394:
-	case 392:
-		warn = true;
-		break;
-	default:
-		warn = false;
-		break;
-	}
-	var i, seal;
-	for (i = 0; i < 5; i += 1) {
-		NTM_MoveToPresetUnit(108, 2, classid, classid === 394 ? 5 : 2, classid === 394 ? 5 : 0);
-		seal = NTC_FindUnit(NTC_UNIT_OBJECT, classid);
-		if (!seal) {
-			return false;
-		}
-		if (seal.mode) { // for pubbies
-			/*if (warn) {
-				PubSay(NTConfig_CS_SealBasher);
-			}*/
+		if (!Scripts.Radament) {
 			return true;
 		}
-		warn = false;
-		NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, seal);
-		NTC_Delay(classid === 394 ? 1000 : 500);
 
-		if (!seal.mode) {
-			if (classid === 394 && CheckCollision(seal.x + 15, seal.y)) { // de seis optimization
-				NTM_MoveTo(108, seal.x + 15, seal.y);
+		SetStatusText(Rev + "      Running Radament");
+
+		NTTMGR_TownManager();
+
+		if (!NTTM_TownMove("waypoint")) {
+			Common.LogError("NTTM_TownMove()");
+			return false;
+		}
+
+		if (!NTM_TakeWaypoint(48)) {
+			Common.LogError("NTM_TakeWaypoint()");
+			return false;
+		}
+
+		NTP_DoPrecast(true);
+
+		if (!NTM_MoveToStair(me.areaid, 49)) {
+			Common.LogError("NTM_MoveToStair()");
+			return false;
+		}
+
+		if (!NTM_TakeStair(49)) {
+			Common.LogError("NTM_TakeStair()");
+			return false;
+		}
+
+		_chest = GetPresetUnits(me.areaid, NTC_UNIT_OBJECT, 355);
+		_chestx = _chest[0].roomx*5 + _chest[0].x;
+		_chesty = _chest[0].roomy*5 + _chest[0].y;
+					
+		if (_chestx %2 != 0) {
+			if (_chesty %2 != 0) {
+				_radtp = [_chestx - 4, _chesty + 46]; // top right
 			} else {
-				NTM_MoveTo(108, seal.x - 5, seal.y - 5);
-			}
-			NTC_Delay(500);
-		} else {
-			return true;
-		}
-	} return false;
-}
-function NTA_MonsterStats(unit) {
-	this.name = unit.name;
-	this.x = unit.x;
-	this.y = unit.y;
-	this.gid = unit.gid;
-	this.classid = unit.classid;
-	this.spectype = unit.spectype;
-}
-
-function DistanceSort(unitA, unitB) {
-	if (GetDistance(me.x, me.y, unitA.x, unitA.y) < GetDistance(me.x, me.y, unitB.x, unitB.y)) {
-		return -1;
-	}
-	return 1;
-}
-
-function EntranceSort(unitA, unitB) {
-	if (GetDistance(unitA.x, unitA.y, 7790, 5544) < GetDistance(unitB.x, unitB.y, 7790, 5544)) {
-		return -1;
-	}
-	return 1;
-}
-
-function SealSort(unitA, unitB) {
-	if (GetDistance(unitA.x, unitA.y, 7784, 5310) < GetDistance(unitB.x, unitB.y, 7784, 5310)) {
-		return -1;
-	}
-	return 1;
-}
-
-function SealSortB(unitA, unitB) {
-	if (GetDistance(unitA.x, unitA.y, 7800, 5255) < GetDistance(unitB.x, unitB.y, 7800, 5255)) {
-		return -1;
-	}
-	return 1;
-}
-
-function NTCS_Preattack(name) {
-	var i, n, target, pos, positions;
-
-	target = NTC_FindUnit(1, name, 10);
-
-	switch (me.classid) {
-		case NTC_CHAR_CLASS_AMAZON:
-			break;
-		case NTC_CHAR_CLASS_SORCERESS:
-			break;
-		case NTC_CHAR_CLASS_NECROMANCER:
-			break;
-		case NTC_CHAR_CLASS_PALADIN:
-			if (!target) {
-				return;
-			}
-			positions = [[6, 11], [0, 8], [8, -1], [-9, 2], [0, -11], [8, -8]];
-			for (i = 0; i < positions.length; i += 1) {
-				if (CheckCollision(me.areaid, target.x + positions[i][0], target.y + positions[i][1], 1)) { // check if we can move there
-					NTM_MoveTo(108, target.x + positions[i][0], target.y + positions[i][1]);
-					NTC_PutSkill(NTConfig_AttackSkill[2], NTC_HAND_RIGHT);
-					for (n = 0; n < 8; n += 1) {
-						NTC_CastSkill(NTConfig_AttackSkill[1], 2);
-						target = NTC_FindUnit(1, name, 10);
-						if(target){break;}
-					}
-					break;
-				}
-			}
-			break;
-		case NTC_CHAR_CLASS_BARBARIAN:
-			if (!target || NTConfig_AttackSkill[0] < 0) {
-				return;
-			}
-			pos = me.GetOptimalAttackPos(target.areaid, target.x, target.y, 20, 4);
-			if (pos) {
-				NTM_MoveTo(108, pos[0], pos[1]);
-			}
-			for (i = 0; i < 2; i += 1) {
-				NTC_CastSkill(130, NTC_HAND_RIGHT);
-				NTC_Delay(150);
-			}
-			break;
-		case NTC_CHAR_CLASS_DRUID:
-			break;
-		case NTC_CHAR_CLASS_ASSASSIN:
-			break;
-	}
-}
-function OpenStashes(range) {
-	var i, unit,
-		objects = [GetLocaleString(3274)],
-		orgx = me.x,
-		orgy = me.y;
-
-	for (i = 0; i < objects.length; i += 1) {
-		unit = NTC_FindUnit(NTC_UNIT_OBJECT, objects[i]);
-		if (unit) {
-			do {
-				if (GetDistance(orgx, orgy, unit.x, unit.y) <= range) {
-					if (NTC_OpenChest(unit)) {
-						NTSI_PickItems();
-					}
-				}
-			} while (unit.GetNext());
-		}
-	}
-}
-function NTT_CheckPotionSafe() {
-	var i, items, hpCheck, mpCheck;
-	items = me.GetItems();
-	if (NTConfig_BeltColType.indexOf("hp") > -1) {
-		for (i = 0; i < items.length; i += 1) {
-			if (!hpCheck && items[i].mode === 2 && items[i].code.indexOf("hp") > -1) {
-				hpCheck = true;
+			_radtp = [_chestx + 5, _chesty - 42]; // bottom left
 			}
 		}
-	} else {
-		hpCheck = true;
-	}
-	if (NTConfig_BeltColType.indexOf("mp") > -1) {
-		for (i = 0; i < items.length; i += 1) {
-			if (!mpCheck && items[i].mode === 2 && items[i].code.indexOf("mp") > -1) {
-				mpCheck = true;
+
+		if (_chestx %2 == 0) {
+			if (_chesty %2 != 0) {
+				_radtp = [_chestx - 45, _chesty + 10]; // bottom right
+			} else {
+				_radtp = [_chestx + 45, _chesty]; // top left
 			}
 		}
-	} else {
-		mpCheck = true;
-	}
-	return !(hpCheck && mpCheck);
-}
 
-function NTA_Dodge(target, distance) {
-	var i, j, coordx, coordy, monster, count,
-		maxcount = 999,
-		coords = [],
-		goodCoords = [],
-		monList = [],
-		angles = [45, 90, 135, 180, 225, 270, 305, 360];
-	for (i = 0; i < angles.length; i += 1) {
-		coordx = Math.round((Math.cos(angles[i] * Math.PI / 180)) * distance + target.x);
-		coordy = Math.round((Math.sin(angles[i] * Math.PI / 180)) * distance + target.y);
-		if (CheckCollision(me.areaid, coordx, coordy, 1)) {
-			coords.push([coordx, coordy]);
+		NTM_MoveTo(me.areaid, _radtp[0], _radtp[1]);
+
+		NTM_MakeTP();
+
+		Say(Messages.radamentup);
+
+		while (!NTC_IsQuesterIn()) {				
+			NTC_TPGuard(15);
 		}
-	}
-	if (coords.length === 0) { // no valid positions - don't move
+
+		if (!NTA_KillMonster(229)) {
+			Common.LogError("NTA_KillMonster()");
+			return false;
+		}
+
+		_rad = [me.x, me.y];
+
+		Say(Messages.radamentdown);
+
+		NTA_ClearPosition(30);
+
+		NTSI_PickItems();
+
+		NTM_MoveTo(me.areaid, _rad[0], _rad[1]);
+
+		NTM_MakeTP();
+
+		NTM_UsePortal("BluePortal", 40, me.charname);
+		
 		return true;
-	}
-	coords.sort(NTA_SortRooms);
-	monster = GetUnit(1);
-	if (monster) {
-		do {
-			if (monster.hp > 0) {
-				monList.push(new NTA_MonsterStats(target));
-			}
-		} while (monster.GetNext());
-	}
-	for (i = 0; i < coords.length; i += 1) {
-		count = 0;
-		for (j = 0; j < monList.length; j += 1) {
-			if (monList[j].hp > 0 && GetDistance(monList[j].x, monList[j].y, coords[i][0], coords[i][1]) < 10) {
-				count += 1;
-			}
-		}
-		if (count < maxcount) {
-			goodCoords = [coords[i][0], coords[i][1]];
-			maxcount = count;
-			if (count === 0) {
-				break;
-			}
-		}
-	}
-	if (goodCoords.length > 0) { // just in case goodCoords is empty (shouldn't happen)
-		if (Math.abs(me.x - goodCoords[0]) < 3 && Math.abs(me.y - goodCoords[1]) < 3) { // close enough
+	},
+	Khalim: function() {
+		if (!Scripts.Tome) {
 			return true;
 		}
-		Say("!Dodge " + target.name);
-		NTM_MoveTo(me.areaid, goodCoords[0], goodCoords[1]);
-	}
-	return true;
-}
+		NTTMGR_TownManager();
+		
+		if (!NTTM_TownMove("waypoint")) {
+			Common.LogError("NTTM_TownMove()");
+			return false;
+		}
+		if (!NTM_TakeWaypoint(76)) {
+			Common.LogError("NTM_TakeWaypoint()");
+			return false;
+		}
+		
+		_spiderCavern = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(811));
+		if(!_spiderCavern){
+31			NTC_SendMsgToScript("NTBotGame.ntj", "NTC_FindUnit()");
+32			return;
+33		}
+		NTM_MoveTo(me.areaid, _spiderCavern.x, _spiderCavern.y);
+		NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
+		
+		return;
+	},
+	Tome: function() {
+		if (!Scripts.Tome) {
+			return true;
+		}
 
-function NTCS_ClearPosition(range, sortFunc, spectype, classid) {
-	var i, orgx, orgy, monList, ignoreList, target, result,
-		gidAttack = [],
-		dodgeIDs = [310, 362],
-		attackcount = 0;
-	if (NTConfig_AttackSkill[1] < 0 || NTConfig_AttackSkill[3] < 0) {
-		return false;
-	}
-	switch (arguments.length) {
-	case 0:
-		range = 20;
-	case 1:
-		sortFunc = DistanceSort;
-	case 2:
-		spectype = false;
-	case 3:
-		classid = false;
-		break;
-	}
-	orgx = me.x;
-	orgy = me.y;
-	ignoreList = [];
-	MainLoop : while (attackcount < 300) {
-		monList = [];
-		target = NTC_FindUnit(NTC_UNIT_MONSTER);
-		if (target) {
-			do {
-				if (target.IsAttackable()) {
-					if ((me.classid === 1 || me.classid === 2 || me.classid === 6) && NTConfig_Dodge && GetDistance(me, target) < 7 && dodgeIDs.indexOf(target.classid) > -1) {
-						NTA_Dodge(target, 15);
-						continue MainLoop;
-					}
-					if (ignoreList.indexOf(target.gid) < 0 && GetDistance(orgx, orgy, target.x, target.y) <= range) {
-						if (NTA_IsValidMonster(target)) {
-							monList.push(new NTA_MonsterStats(target));
-						} else {
-							ignoreList.push(target.gid);
-						}
-					}
-				}
-			} while (target.GetNext());
+		SetStatusText(Rev + "      Running Tome");
+
+		NTTMGR_TownManager();
+
+		if (!NTTM_TownMove("waypoint")) {
+			Common.LogError("NTTM_TownMove()");
+			return false;
 		}
-		if (monList.length === 0) {
-			break;
+
+		if (!NTM_TakeWaypoint(80)) {
+			Common.LogError("NTM_TakeWaypoint()");
+			return false;
 		}
-		monList.sort(sortFunc);
-		target = NTC_FindUnit(NTC_UNIT_MONSTER, monList[0].gid);
-		if (target && target.IsAttackable() && OutOfBounds(target)) {
-			result = NTA_Attack(target, attackcount % 30 === 0);
-			switch (result) {
-			case 1:
-				monList.shift();
-				ignoreList.push(target.gid);
-				break;
-			case 2:
-			case 3:
-				if(!gidAttack[target.gid]) {
-					gidAttack[target.gid] = 0;
+
+		NTP_DoPrecast(true);
+		NTM_MoveToStair(me.areaid, 94);
+		NTM_TakeStair(94);
+		NTC_Delay(500);
+
+		if (!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 193)) {
+			Common.LogError("NTM_MoveToPresetUnit()");
+			return false;
+		}
+
+		NTA_ClearPosition(30);
+
+		NTSI_PickItems();
+
+		if (!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 193)) {
+			Common.LogError("NTM_MoveToPresetUnit()");
+			return false;
+		}	
+
+		NTM_MakeTP();
+
+		Say(Messages.tomeup);
+
+		while (!NTC_IsQuesterIn()) {
+			NTC_TPGuard(25);
+		}
+
+		NTM_UsePortal("BluePortal", 75, me.charname);
+
+		return true;
+	},
+
+	MoveSafeIzzy: function(areaid, x, y, retry, clearpath) {
+		var i, n, _teleport, _path, _izzy,
+			_retry = 0;
+
+		if (x == me.x && y == me.y) {
+			return true;
+		}
+
+		if (retry === undefined) {
+			retry = 3;
+		}
+
+		if (clearpath === undefined) {
+			clearpath = false;
+		}
+
+		if (NTC_InTown() || NTC_GetSkillLevel(54) < 1) {
+			_teleport = false;
+		} else {
+			_teleport = true;
+		}
+
+		_path = GetPath(areaid, me.x, me.y, x, y, _teleport);
+
+		if (!_path) {
+			return false;
+		}
+
+		for (i = 0 ; i < _path.length ; i++) {
+			for (n = 0 ; n < 2 ; n++) {
+				if (_teleport) {
+					if (NTM_TeleportTo(_path[i][0]+Random(-n, n), _path[i][1]+Random(-n, n))) {
+						break;
+					}
+				} else {
+					if (NTM_WalkTo(_path[i][0], _path[i][1])) {
+						break;
+					}
 				}
-				gidAttack[target.gid] += 1;
-				if (gidAttack[target.gid] > NTConfig_LowMaxAttacks) {
-					monList.shift();
-					ignoreList.push(target.gid);
+			}
+
+			_izzy = GetPresetUnits(105, NTC_UNIT_MONSTER, 256);
+			if (GetDistance(me.x, me.y, _izzy[0].roomx*5+_izzy[0].x, _izzy[0].roomy*5+_izzy[0].y) <= 60) {
+				return true;
+			}
+
+			if (n < 2) {
+				if (clearpath) {
+					if (!NTA_ClearPosition(20, true, 2)) {
+						Common.LogError("NTA_ClearPosition()");
+						return false;
+					}
+
+					NTP_DoPrecast(false);
+
+					NTM_MoveTo(me.areaid, _path[i][0], _path[i][1], 1);
 				}
-				attackcount += 1;
-				if (target.mode === 0 || target.mode === 12) {
-					NTSI_FastPick();
+			} else if (_retry < retry) {
+				_path = GetPath(areaid, me.x, me.y, x, y, _teleport);
+
+				if (!_path) {
+					return false;
 				}
-				break;
-			default:
+
+				i = -1;
+				_retry++;
+			} else {
 				return false;
 			}
-		} else {
-			monList.shift();
-			ignoreList.push(target.gid);
 		}
-	}
-	switch (me.classid) {
-		case NTC_CHAR_CLASS_PALADIN:
-			if (attackcount > 2 && (parseInt(me.hp * 100/ me.hpmax) < NTConfig_UseRedemptionHP || parseInt(me.mp * 100 / me.mpmax) < NTConfig_UseRedemptionMP)) {
-				if (NTC_PutSkill(124, NTC_HAND_RIGHT)) {
-					NTC_PingDelay(1000);
-				}
-			}
-			break;
-		case NTC_CHAR_CLASS_NECROMANCER:
-			if (typeof(NTA_SkeletonArmy) === 'function') { // old summon code
-				NTA_SkeletonArmy(NTConfig_SkeletonArmy);
-				NTA_MageArmy(NTConfig_MageArmy);
-				NTA_ReviveArmy(NTConfig_ReviveArmy);
-			} else {
-				NTA_RaiseArmy(); // new summon code
-			}
-			break;
-		case NTC_CHAR_CLASS_SORCERESS:
-			if (me.GetState(30) === 0) {
-				NTC_CastSkill(58, NTC_HAND_RIGHT);
-			}
-			break;
-		case NTC_CHAR_CLASS_BARBARIAN:
-			if (attackcount > 0) {
-				if (typeof(MWL_FindItem) === 'function') { // in case of using muddy's item find (like myself)
-					MWL_FindItem(20);
-				} else if (NTConfig_UseFindItem && !NTA_CheckForCloseMonsters(10)) {
-					NTA_FindItem(NTConfig_FindItemRange);
-				}
-			}
-			break;
-	}
-	if (attackcount > 0) {
-		NTSI_PickItems();
-	}
-	if (NTConfig_OpenChest) {
-		OpenStashes(range);
-	}
-	if (NTT_CheckMerc() && me.areaid == 108) {
-		NTTMGR_VisitTown();
-	}
-	if (NTT_CheckPotionSafe()) {
-		NTTMGR_VisitTown();
-	}
-	if (NTConfig_IdInField) {
-		if (!NTT_CheckSpace(NTConfig_FreeSpaceXY[0], NTConfig_FreeSpaceXY[1])) {
-			NT_FieldID();
-		}
-	} return true;
-}
+		return true;
+	},
 
-function NTA_SortRooms(a, b) {
-	if (GetDistance(me.x, me.y, a[0], a[1]) < GetDistance(me.x, me.y, b[0], b[1])) {
-		return -1;
-	}
-	return 1;
-}
+	Izual: function() {
+		var _izzy;
 
-function NTCS_DiaSpam(){
-	if(me.classid == NTC_CHAR_CLASS_AMAZON && NTConfig_DiaSpam > 0){
-			return NTC_CastSkill(NTConfig_DiaSpam, 0, 7792, 5291);
-	}
-	else if(me.classid == NTC_CHAR_CLASS_SORCERESS && NTConfig_DiaSpam > 0){
-			return NTC_CastSkill(NTConfig_DiaSpam, 0, 7792, 5291);
-	}
-	else if(me.classid == NTC_CHAR_CLASS_NECROMANCER && NTConfig_DiaSpam > 0){
-			return NTC_CastSkill(NTConfig_DiaSpam, 0, 7792, 5291);
-	}
-	else if(me.classid == NTC_CHAR_CLASS_PALADIN){
-		if(NTConfig_AttackSkill[3] == 112){
-			NTC_PutSkill(NTConfig_AttackSkill[3], NTC_HAND_LEFT);
-			NTC_PutSkill(NTConfig_AttackSkill[4], NTC_HAND_RIGHT);
-			return NTC_CastSkill(NTConfig_AttackSkill[3], 2, 7792, 5291);
+		if (!Scripts.Izual) {
+			return true;
 		}
-	}
-	else if(me.classid == NTC_CHAR_CLASS_BARBARIAN  && NTConfig_DiaSpam > 0){
-				return NTC_CastSkill(NTConfig_DiaSpam, 0, 7792, 5291);
-	}
-	else if(me.classid == NTC_CHAR_CLASS_DRUID){
-		if(NTConfig_AttackSkill[3] == 245)
-			return NTC_CastSkill(NTConfig_AttackSkill[3], 2, 7792, 5291);
-	}
-	else if(me.classid == NTC_CHAR_CLASS_ASSASSIN){
-		var _attackPos = [7780, 5288, 7792, 5281, 7803, 5289, 7799, 5302, 7785, 5301];
-		if(NTConfig_UseTraps && !_trapsPreCasted){
-			for(var i=0;i<5;i++) {
-				if(i == 0 || i == 2 || i == 3) // Added delays to prevent trap miscast
-					NTC_Delay(25);
-				if(NTConfig_ActBossTrapSet[i] > 0)
-					NTC_CastSkill(NTConfig_ActBossTrapSet[i], NTC_HAND_RIGHT, _attackPos[i*2],_attackPos[(i*2)+1]);
-			}
-			_trapsPreCasted = true;
-		}
-		if(NTConfig_AttackSkill[3] == 256) {
-			if(me.GetSkillStatus(NTConfig_AttackSkill[3]) != 8) {
-				return NTC_CastSkill(NTConfig_AttackSkill[3], 2, 7792, 5291);
-			}
-		}
-	}
-	Delay(250);
-}
 
-function OutOfBounds(Monst){
-	
-	if(Monst.x < 7787 && Monst.y > 5501)
-		return false;
-	if(Monst.x > 7901 && Monst.y > 5501)
-		return false;				
-	if(Monst.x < 7767 && Monst.y > 5321)
-		return false;
-	if(Monst.x >7821 && Monst.y > 5321)
-		return false;
-	if(Monst.x < 7816 && Monst.x > 7772 && Monst.y > 5452 && Monst.y < 5477)
-		return false;
-	//if(Monst.x < 7792 && Monst.x > 7772 && Monst.y > 5451 && Monst.y < 5432)// location changes ? fix
-		//return false;	
+		SetStatusText(Rev + "      Running Izual");
+
+		NTTMGR_TownManager();
+
+		if (!NTTM_TownMove("waypoint")) {
+			Common.LogError("NTTM_TownMove()");
+			return false;
+		}
+
+		if (!NTM_TakeWaypoint(106)) {
+			Common.LogError("NTM_TakeWaypoint()");
+			return false;
+		}
+
+		NTP_DoPrecast(true);
+
+		_izzy = GetPresetUnits(105, NTC_UNIT_MONSTER, 256);
+
+		this.MoveSafeIzzy(me.areaid, _izzy[0].roomx*5+_izzy[0].x, _izzy[0].roomy*5+_izzy[0].y);
+
+		var xx = me.x;
+		var yy = me.y;
 		
-	//if(Monst.x < 7816 && Monst.x > 7791 && Monst.y < 5412 && Monst.y > 5387)// location changes ? fix
-		//return false;
-			
-	if(Monst.x < 7816 && Monst.x > 7772 && Monst.y < 5387 && Monst.y > 5366)
-		return false;
-				
-	if(Monst.x <7767 && Monst.y < 5267)
-		return false;
-	if(Monst.x >7822 && Monst.y < 5267)
-		return false;
-	if(Monst.y < 5147)
-		return false;
-	return true;
-}
-//
-// act v functions
-//
-function NT_ClearThroneInt(){
-	var _attackpos = [15112, 5068, 15075, 5065, 15114, 5045, 15114, 5012, 15095, 5024, 15078, 5013, 15092, 5040];
-	for(var i = 0 ; i < _attackpos.length ; i += 2){
-		NTM_MoveTo(me.areaid, _attackpos[i], _attackpos[i+1]);
-		NTA_ClearPosition(25, true, 2);
-	}
-	return;
-}
-function d2B_throneWaves() {
-	d2B_msg(".");
-	Delay(100);
-	while(1){
-		NTC_Delay(100);
-		NTM_MoveTo(me.areaid, prewavespot[0], prewavespot[1]);
-		if(me.GetState(2))
-			NTC_PutSkill(109, NTC_HAND_RIGHT);
-		for(i = 0 ; i < 6 ; i++){
-			_wave = NT_ThroneCheckInt();
-			if(_wave > 0)
-				break;
-			NTC_Delay(500);
+		NTA_ClearPosition(10);
+		NTM_MoveTo(me.areaid, xx, yy);
+
+		NTM_MakeTP();
+
+		Say(Messages.izzyup);
+
+		while (!NTC_IsQuesterIn()) {
+			NTC_TPGuard(10);
+			NTM_MoveTo(me.areaid, xx, yy);
 		}
-		_starttick = GetTickCount();
-		while(_wave == 0){
-			if(!NT_ThronePreAttackInt())
-				NTC_Delay(200);
-			if(GetTickCount()-_starttick > 17000){
-				NT_ClearThroneInt();
-				_starttick = GetTickCount();
+
+		NTA_ClearPosition(20);
+
+		NTM_MoveTo(105, _izzy[0].roomx*5+_izzy[0].x, _izzy[0].roomy*5+_izzy[0].y, 0, true);
+
+		if (!NTA_KillMonster(256)) {
+			Common.LogError("NTA_KillMonster()");
+			return false;
+		}
+
+		NTSI_PickItems();
+
+		Say(Messages.izzydown);
+
+		NTM_MoveTo(me.areaid, xx, yy);
+
+		NTM_UsePortal("BluePortal", 103, me.charname);
+
+		return true;
+	},
+	
+	Hephasto: function() {
+		if (!NTTM_CheckAct()) {
+			Script.SendMsg("OverWatch.ntj", "NTTM_CheckAct()");
+			return;
+		}
+
+		NTTMGR_TownManager();
+
+		if (!NTTM_TownMove("waypoint")) {
+			Common.LogError("NTTM_TownMove()");
+			return false;
+		}
+
+		if (!NTM_TakeWaypoint(107)) {
+			Common.LogError("NTM_TakeWaypoint()");
+			return false;
+		}
+
+		NTP_DoPrecast(true);
+
+		if (!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 376)) {
+			Common.LogError("NTM_MoveToPresetUnit()");
+			return false;
+		}
+
+		if (!NTA_KillMonster(409)) {
+			Common.LogError("NTA_KillMonster()");
+			return false;
+		}
+
+		if (!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 376)) {
+			Common.LogError("NTM_MoveToPresetUnit()");
+			return false;
+		}
+
+		NTA_ClearPosition(40);
+
+		if (!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 376, +3, -3)) {
+			Common.LogError("NTM_MoveToPresetUnit()");
+			return false;
+		}
+
+		Say(Messages.forgeup);
+
+		NTM_MakeTP();
+
+		while (!NTC_IsQuesterIn()) {
+			NTC_TPGuard(20);
+		}
+
+		while (NTC_IsQuesterIn()) {
+			Delay(1000);
+		}
+
+		NTM_UsePortal("BluePortal", 103, me.charname);
+
+		return true;
+	},
+
+	Shenk: function() {
+		if (!Scripts.Shenk) {
+			return true;
+		}
+
+		SetStatusText(Rev + "      Running Shenk");
+
+		NTTMGR_TownManager();
+
+		if (!NTTM_TownMove("waypoint")) {
+			Common.LogError("NTTM_TownMove()");
+			return false;
+		}
+
+		if (!NTM_TakeWaypoint(111)) {
+			Common.LogError("NTM_TakeWaypoint()");
+			return false;
+		}
+
+		NTP_DoPrecast(true);	
+
+		if (!NTM_MoveTo(110, 3855, 5125)) {
+			Common.LogError("NTM_MoveTo()");
+			return false;
+		}
+
+		if (NTA_ClearPosition(20)) {
+			NTM_MoveTo(110, 3855, 5125);
+		}
+
+		NTM_MakeTP();
+
+		Say(Messages.shenkup);
+
+		while (!NTC_IsQuesterIn()) {
+			NTC_TPGuard(20);
+		}
+
+		if (!NTA_KillMonster(GetLocaleString(22435))) {
+			Common.LogError("NTA_KillMonster()");
+			return false;
+		}
+
+		Say(Messages.shenkdown);
+
+		if (!NTM_MoveTo(110, 3865, 5125)) {
+			Common.LogError("NTM_MoveTo()");
+			return false;
+		}
+
+		NTM_UsePortal("BluePortal", 109, me.charname);
+
+		return true;
+	},
+
+	GetAnya: function() {
+		_Anya = NTC_FindUnit(NTC_UNIT_OBJECT, 558);
+
+		if (_Anya) {
+			return true;	
+		}
+		return false;
+	},
+
+	Anya: function() {
+		var _Anya;
+
+		if (!Scripts.Anya) {
+			return true;
+		}
+
+		SetStatusText(Rev + "      Running Anya");
+
+		NTTMGR_TownManager();
+
+		if (!NTTM_TownMove("waypoint")) {
+			Common.LogError("NTTM_TownMove()");
+			return false;
+		}
+
+		if (!NTM_TakeWaypoint(113)) {
+			Common.LogError("NTM_TakeWaypoint()");
+			return false;
+		}
+
+		NTP_DoPrecast(true);	
+
+		if (!NTM_MoveToStair(me.areaid, 114)) {
+			Common.LogError("NTM_MoveToStair()");
+			return false;
+		}
+
+		if (!NTM_TakeStair(114)) {
+			Common.LogError("NTM_TakeStair()");
+			return false;
+		}
+
+		if (!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 460, -8, -8)) {
+			Common.LogError("NTM_MoveToPresetUnit()");
+			return false;
+		}
+
+		if (!NTA_KillMonster(GetLocaleString(22504))) {
+			Common.LogError("NTA_KillMonster()");
+			return false;
+		}
+
+		NTA_ClearPosition(30);
+
+		NTSI_PickItems();		
+
+		if (NTM_MoveToPresetUnit(me.areaid, 558)) {
+			Common.LogError("NTM_MoveToPresetUnit()");
+			return false;
+		}
+
+		NTA_ClearPosition(25);
+
+		NTSI_PickItems();
+
+		_Anya = NTC_FindUnit(NTC_UNIT_OBJECT, 558);
+
+		if (_Anya) {	
+			if (NTM_MoveTo(_Anya.areaid, _Anya.x+3, _Anya.y)) {
+				NTA_ClearPosition(25);
+				NTSI_PickItems();
 			}
-			_wave = NT_ThroneCheckInt();
+
+			NTC_OpenChest(_Anya);
+			me.Cancel(0);
+			NTC_Delay(100);
+			me.Cancel(0);
 		}
-		switch(_wave){
+
+		NTM_MakeTP();
+
+		Say(Messages.anyaup);
+
+		while (this.GetAnya()) {
+			NTC_TPGuard(25);
+		}
+
+		Say(Messages.anyadown);
+
+		NTM_UsePortal("BluePortal", 109, me.charname);
+		
+		return true;
+	},
+	
+	TPCheck: function() {
+		var townid,
+			_currentwp = me.areaid;
+
+		if(NTTMGR_CheckScrolls(1) > 4) {
+			return;
+		}
+
+		switch(me.act) {
 			case 1:
-				if(NTConfig_PreWaveTele){
-					NTM_TeleportTo(me.x+1, me.y+3);
-                }
-				NTA_ClearPosition(40, true, 2);
-				NTP_DoPrecast(true);
+				townid = 1;
+			break;
+			case 2:
+				townid = 40;
+			break;
+			case 3:
+				townid = 75;
+			break;
+			case 4:
+				townid = 103;
+			break;
+			case 5:
+				townid = 109;
+			break;
+		}
+
+		NTM_TakeWaypoint(townid);
+		NTTMGR_TownManager();
+
+		NTTM_TownMove("waypoint");
+		return;
+	},
+
+	Waypoints: function() {
+		var i, _start, _wppos,
+			_wps = [3, 4, 5, 6, 27, 29, 32, 35, 48, 42, 57, 43, 44, 52, 74, 46, 76, 77, 78, 79, 80, 81, 83, 101, 106, 107, 111, 112, 113, 115, 123, 117, 118, 129];
+
+		if(!NTTM_CheckAct(1)) {
+			Common.LogError("NTTM_CheckAct()");
+			return false;
+		}
+
+		switch(me.act) {
+			case 1:
+				_start = 0;
 				break;
 			case 2:
-				if(NTConfig_PreWaveTele){
-					NTM_TeleportTo(me.x+1, me.y+3);
-                }
-				if(NTConfig_HolyBoltBaal){
-					if (me.classid == NTC_CHAR_CLASS_PALADIN && NTConfig_AttackSkill[5] == 101)
-						achmel();
-				}
-				NTA_ClearPosition(40, true, 2);
-				if(NTConfig_Wave2PSNCheck && me.GetState(2) != -1){
-					NTTMGR_VisitTown();
-				}
-				//d2B_msg("yo");
-				Say("yo");
-				Delay(700);
+				_start = 8;
 				break;
 			case 3:
-			    d2B_msg(".");
-			    Delay(100);
-				if(NTConfig_PreWaveTele){
-					NTM_TeleportTo(me.x+1, me.y+3);
-                }
-				NTA_ClearPosition(40, true, 2);
-				if(NTConfig_Wave3Move > 0){
-					NT_CheckHydraInt();
-				}
-				else {
-					//d2B_msg("yo");
-					Say("yo");
-					NTC_Delay(3000);
-				}
+				_start = 16;
 				break;
 			case 4:
-			   d2B_msg(".");
-			   Delay(100);
-				if(NTConfig_PreWaveTele){
-					NTM_TeleportTo(me.x+1, me.y+3);
-                }
-				NTA_ClearPosition(40, true, 2);
+				_start = 24;
 				break;
 			case 5:
-				if(NTConfig_PreWaveTele){
-					NTM_TeleportTo(me.x+1, me.y+3);
-                }
-				NTA_ClearPosition(40, true, 2);
-				break;
-			default:
-				if(NTConfig_PreWaveTele){
-					NTM_TeleportTo(me.x+1, me.y+3);
-                }
-				NTA_ClearPosition(40, true, 2);
+				_start = 26;
 				break;
 		}
-		if(_wave != 0) // Need to force a one time cast/wave Assassin only
-			_trapsPreCasted = false;
-		if(_wave == 5)
-			break;
-	}
-	return;
-}	
-function d2B_baal() {
-	var _portal;
-	NTM_MoveTo(me.areaid, 15092, 5010);
-	NTP_DoPrecast(true);
-	
-	for(var i = 0; i < 60; i++) {
-		Delay(500);
-		if(!NTC_FindUnit(NTC_UNIT_MONSTER, 543)) {
-			break;
-		}
-		if(i >= 58) {
-			d2B_msg("looks like baal is bugged");
-		}
-	}
-	_portal = NTC_FindUnit(NTC_UNIT_OBJECT, 563, 1);
-	if(!_portal){
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTC_FindUnit()");
-		return;
-	}
-	if(!NTM_UsePortal("Portal", 132, null, _portal)){
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_UsePortal()");
-		return;
-	}
-	NTM_MoveTo(me.areaid, 15138, 5916);
-    d2B_team(true);
-	
-	if(!d2B_killBaal(544)){
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTA_KillMonster()");
-		return;
-	}
-	NTSI_PickItems();
-	Delay(Random(2000,4000));
-	
-	return;
-}
-function NT_ClearThroneInt(){
-	var _attackpos = [15112, 5068, 15075, 5065, 15114, 5045, 15114, 5012, 15095, 5024, 15078, 5013, 15092, 5040];
-	for(var i = 0 ; i < _attackpos.length ; i += 2){
-		NTM_MoveTo(me.areaid, _attackpos[i], _attackpos[i+1]);
-		NTA_ClearPosition(25, true, 2);
-	}
-}
 
-function NT_ThroneCheckInt(){
-	var _monster;
-	if(!NTC_FindUnit(NTC_UNIT_MONSTER, 543))
-		return 5;
-	_monster = NTC_FindUnit(NTC_UNIT_MONSTER);
-	if(_monster){
-		do{
-			if(NTA_IsValidMonster(_monster)){
-				if(_monster.classid == 23 || _monster.classid == 62)
-					return 1;
-				if(_monster.classid == 105 || _monster.classid == 381)
-					return 2;
-				if(_monster.classid == 557)
-					return 3;
-				if(_monster.classid == 558)
-					return 4;
-				if(_monster.classid == 571)
-					return 5;
-			}
-		} while(_monster.GetNext());
-	}
-	return 0;
-}
+		NTTMGR_TownManager();
+		NTTM_TownMove("waypoint");
 
-function NT_ThronePreAttackInt(){
-	if(me.classid == NTC_CHAR_CLASS_SORCERESS){
-		if(NTConfig_PreWaveSpam > 0){
-			if(poscount == 1){
-				poscount = 2;
-				return NTC_CastSkill(NTConfig_PreWaveSpam, 0, KBLSpamPos[0], KBLSpamPos[1]);
-			}
-			else if(poscount == 2){
-				poscount = 3;
-				return NTC_CastSkill(NTConfig_PreWaveSpam, 0, KBLSpamPos[2], KBLSpamPos[3]);
-			}
-			else{
-				poscount = 1;
-				return NTC_CastSkill(NTConfig_PreWaveSpam, 0, KBLSpamPos[4], KBLSpamPos[5]);
-			}
-		}
-	}
-	else if(me.classid == NTC_CHAR_CLASS_DRUID){
-		if(NTConfig_AttackSkill[3] == 245){
-			if(!DruidPreAtt[2]){
-				return NTC_CastSkill(NTConfig_AttackSkill[3], 2, DruidPreAtt[0], DruidPreAtt[1]);
-			}
-			else{
-				if(poscount == 1){
-					poscount = 2;
-					return NTC_CastSkill(NTConfig_AttackSkill[3], 2, DruidPreAtt[0], DruidPreAtt[1]);
-				}
-				else if(poscount == 2){
-					poscount = 3;
-					return NTC_CastSkill(NTConfig_AttackSkill[3], 2, (DruidPreAtt[0]+3), DruidPreAtt[1]);
-				}
-				else{
-					poscount = 1;
-					return NTC_CastSkill(NTConfig_AttackSkill[3], 2, (DruidPreAtt[0]+5), DruidPreAtt[1]);
+		for(i = _start; i < _wps.length; i += 1) {
+			if(NTM_TakeWaypoint(_wps[i])) {
+				NTM_MoveTo(me.areaid, me.x - 6, me.y - 6);
+				if(NTM_MakeTP()) {					
+					_wppos = [me.x, me.y];
+
+					Say(Messages.waypoint + GetArea().name);
+
+					if(!me.GetState(51)) {
+						NTP_DoPrecast(true);
+					}
+
+					while(!NTC_IsQuesterIn()) {
+						NTC_TPGuard(30);
+						NTM_MoveTo(me.areaid, _wppos[0], _wppos[1]);
+					}
+
+					while(!NTC_IsQuesterOut(me.areaid)) {
+						NTC_Delay(500);
+					}
+
+					this.TPCheck();								//deeEdits:  original: TPCheck();
 				}
 			}
 		}
-	}
-	else if(me.classid == NTC_CHAR_CLASS_NECROMANCER){
-		if(NTConfig_PreWaveSpam > 0)
-			return NTC_CastSkill(NTConfig_PreWaveSpam, _NTA_SkillHand[NTConfig_PreWaveSpam], NecroPreAtt[0], NecroPreAtt[1]);
-	}
-	else if(me.classid == NTC_CHAR_CLASS_PALADIN){
-		if(NTConfig_AttackSkill[3] == 112){
-			NTC_PutSkill(NTConfig_AttackSkill[3], NTC_HAND_LEFT);
-			NTC_PutSkill(NTConfig_AttackSkill[4], NTC_HAND_RIGHT);
-			return NTC_CastSkill(NTConfig_AttackSkill[3], 2, 15092, 5028);
-		}
-	}
-	else if(me.classid == NTC_CHAR_CLASS_ASSASSIN){
-		var _attackPos = [15088,5023,15087,5032,15098,5022,15101,5034,15094,5029];
-		if(NTConfig_UseTraps && !_trapsPreCasted){
-			for(var i=0;i<5;i++) {
-				if(i == 0 || i == 2 || i == 3) // Added delays to prevent trap miscast
-					NTC_Delay(25);
-				if(NTConfig_TrapSet[i] > 0)
-					NTC_CastSkill(NTConfig_TrapSet[i], NTC_HAND_RIGHT, _attackPos[i*2],_attackPos[(i*2)+1]);
-			}
-			_trapsPreCasted = true;
-		}
-		if(NTConfig_AttackSkill[3] == 256)
-			if(me.GetSkillStatus(NTConfig_AttackSkill[3]) != 8)
-				return NTC_CastSkill(NTConfig_AttackSkill[3], 2, 15093, 5030);
-	}
-	return false;
-}
-
-function NT_CheckHydraInt(){
-	var _hydra1, _hydra2, _hydra3;
-	_hydra1 = NTC_FindUnit(NTC_UNIT_MONSTER, 351);
-	_hydra2 = NTC_FindUnit(NTC_UNIT_MONSTER, 352);
-	_hydra3 = NTC_FindUnit(NTC_UNIT_MONSTER, 353);
-	if((_hydra1 && _hydra1.GetStat(172) != 2 && _hydra1.GetState(105))
-	  || (_hydra2 && _hydra2.GetStat(172) != 2 && _hydra2.GetState(105))
-	  || (_hydra3 && _hydra3.GetStat(172) != 2 && _hydra3.GetState(105))){
-		if(NTConfig_Wave3Move == 1)
-			NTM_MoveTo(me.areaid, 15112, 5004); // right side
-		else if(NTConfig_Wave3Move == 2)
-			NTM_MoveTo(me.areaid, 15073, 5002); // left side
-		if(me.GetState(2))
-			NTC_PutSkill(109, NTC_HAND_RIGHT);
-		NTC_PingDelay(3000);
-	}
-}
-
-function achmel(){
-	var x = 0;
-	var _holdTargetHp = 0;
-	var _achmel = NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(21852));
-	while (_achmel && _achmel.hp > 0){
-		_holdTargetHp = _achmel.hp;
-		if (NTConfig_AttackSkill[6] > -1){ NTC_PutSkill(NTConfig_AttackSkill[6], NTC_HAND_RIGHT);}
-		for(var i = 0; i < 5 ; i++){
-			NTC_CastSkill(NTConfig_AttackSkill[5], NTC_HAND_LEFT, _achmel);
-		}
-		if(_holdTargetHp <= _achmel.hp && NTConfig_WalkAround) {
-			x++;
-			if(x % 2 == 0)
-				NTM_WalkTo(me.x+10, me.y);
-			else
-				NTM_WalkTo(me.x-10, me.y);
-		}
-	}
-	var _company = NTC_FindUnit(NTC_UNIT_MONSTER, 105);
-	do{
-		while (_company != null && _company.hp >0 && !_company.GetState(53) && !_company.GetState(96)){
-			_holdTargetHp = _company.hp;
-			for(var i = 0; i < 5 ; i++){
-				NTC_CastSkill(NTConfig_AttackSkill[5], NTC_HAND_LEFT, _company);
-			}
-			if(_holdTargetHp <= _company.hp && NTConfig_WalkAround) {
-				x++;
-				if(x % 2 == 0)
-					NTM_WalkTo(me.x+10, me.y);
-				else
-					NTM_WalkTo(me.x-10, me.y);
-			}
-		}
-	} while (_company && _company.GetNext());
-}
-function d2B_dollsoulChk() {
-	// GetLocaleString(2903) = undead stygian doll | GetLocaleString(2904) = undead soul killer
-	if(NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(2904)) || NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(2903))) {
-		if(!NTM_UsePortal("BluePortal", 109, me.charname)) {
-			NTM_MakeTP();
-			Delay(100);
-			NTTMGR_VisitTown();
-		}
-		Delay(300);
-		Print(COLOR_4 + "Oops... Souls & dolls!");
-		Delay(Random(4000,5000));
-		if(_msgMe) Say("/msg *" + _myName + " Oops... Souls & dolls!");
-		Delay(300);
-		NTTM_CheckAct(5);
-		Delay(Random(3000,5000));
-		if(_msgMe) Say("/msg *" + _myName + " Taking a 33s brk due to dolls.");
-		Delay(Random(30000,35000));
 		return true;
 	}
-	return false;
-}
-function d2B_killBaal(classid) {
-	var _target;
-
-	if (NTConfig_AttackSkill[1] < 0) { return false; }
-
-	_target = NTC_FindUnit(NTC_UNIT_MONSTER, classid, 5);
-
-	if (!_target) { return false; }
-
-	if (_target.IsAttackable()) {
-		var _attackcount = 0;
-		while (_attackcount < 300 && NTA_IsValidMonster(_target)) {
-			if (NTA_Attack(_target, (_attackcount % 30) == 0) < 2) {
-				break;
-			}
-			if(_attackcount == 0) {
-				if(NTTMGR_CheckCurse(NTConfig_CheckSelfSafe, NTConfig_CheckMercSafe, true)) {
-					NTTMGR_VisitTown();
-				} else if( NTTMGR_CheckSafe(NTConfig_CheckSelfSafe, NTConfig_CheckMercSafe, true)){
-					NTTMGR_VisitTown();
-				}
-			}
-			if((_attackcount % 5) == 0) {
-				if(NTTMGR_CheckCurse(NTConfig_CheckSelfSafe, NTConfig_CheckMercSafe, true)) {
-					NTTMGR_VisitTown();
-				} else if( NTTMGR_CheckSafe(NTConfig_CheckSelfSafe, NTConfig_CheckMercSafe, true)){
-					NTTMGR_VisitTown();
-				}
-			}
-			NTM_MoveTo(me.areaid, _target.x, _target.y)
-			_attackcount++;
-			_sorcattack++;
-		}
-	}
-	return (_target.hp <= 0 || _target.mode == 0 || _target.mode == 12);
-}
-//
-// character functions
-//
-function d2B_commonVars() {
-	
-	NTConfig_Announcer = false;
-	
-	// Leech, Leech Fighter & Team Botting Settings
-	// _____________________________________________
-
-	NTConfig_Leader = "";							// Leaders name
-	NTConfig_PartyOnlyLeader = false;				// Party only with leader (NTConfig_Leader)? (If true, NTConfig_PublicMode MUST be set false in the general config section below).
-	NTConfig_PartyMaxTime = 40;						// Time in seconds the leecher has to party with leader before exiting game
-	NTConfig_LeechBo = false; 						// Set false to disable BO & BC cast by leecher.
-	NTConfig_LeechExitDelay = Random(2000,8000);	// Delay before leecher exits game after leader in milliseconds.  Use this to stagger leechers exit times to avoid crashes.
-
-
-	// NTWPGrabber Instructions
-	//
-	// 	NTWPGrabber can be started (pause / unpause) in any area & will start from this point going forward.
-	//	Uncomment (remove the preceeding "//") to enable quests. (The quest module will not run unless at least one is uncommented).
-	// 		* If the quest is already done, this will be detected & skipped. (Disable those you cannot handle...)
-	//	It's HIGHLY recommended to disable all normal pickits while running the quest module.
-	// 		* Quest nip is required while running the quest module.
-	// 		* Make sure you have space in your stash (& a clear cube) for the quest items
-	// __________________________________________________________________________________________
-
-
-	//NTConfig_Script.push("NTWPGrabber.ntj");
-
-		NTConfig_DoQuests =
-		[
-		//"Den Of Evil",
-		//"The Search For Cain",
-		//"Radament's Lair",
-		//"Horadric cube",
-		//"Lam Esen's Tome",
-		//"Golden Bird",  								// After Esen's Tome will clear the Ruined Temple in attempt for the Bird. (Doesn't always drop.)
-		//"Golden Bird Travincal", 						// Will attempt to drop the Bird from Council. (Doesn't always drop.)
-		//"Fallen Angel",
-		//"Siege on Harrogath",
-		//"Prison Of Ice",
-		//"Rite Of Passage",
-		];
-
-	//NTConfig_NIPFilePath.push("Quest.nip"); 			// Uncomment this to pick quest items.
-
-	//NTConfig_Script.push("WpGiver.ntj");				// Gives waypoints to another character via in-game chat commands.
-	//NTConfig_Script.push("mulelogger.ntj");			// Blank Script, loads Libs, CharConfig & Nips & enters delay loop.
-	//NTConfig_Script.push("TLNipCheck.ntj");  			// Checks for errors in pickit files. (Alternatively, you can also use NumPad "+" while ingame.)
-	//NTConfig_Script.push("TLInventory.ntj"); 			// Logs items to text file. (Alternatively, you can use NumPad "5" while ingame.)
-		NTConfig_TLInventory_SkipEquipped   = true;     // Skip logging what you have equipped (useful for logging mules).
-
-	NTConfig_HostileHandler = false;					// true to use the new hostile handler
-		RunFromHostiles = false;						// true to leave game when hostiled
-		KillHostiler = false;							// true to kill the hostile player
-		TauntHostile = false;							// true to taunt the hostiler, false if not
-
-	me.maxgametime = 0; 								// Maximum game length in seconds (0 is infinite).
-	NTConfig_MinIngameTime = 0;							// Amount of minutes to remain ingame. Ensures game length. Setting is in minutes
-	NTConfig_StartDelay = 0;							// Delay time in milliseconds to wait at start.
-	NTConfig_AreaDelay = 500;							// Delay time in milliseconds to wait on each area change.
-	NTConfig_SnagDelay = 500;							// Delay time in milliseconds (added to ping delay) to wait before each pickit call.
-
-	//------------------------------------------------------------------------------
-	// Chicken settings
-	//------------------------------------------------------------------------------
-	NTConfig_SkipHealLife = 90;							// If you are over this percentage of life, you won't go to a healer.
-	NTConfig_SkipHealMana = 70;							// If you are over this percentage of mana, you won't go to a healer.
-
-	NTConfig_LifeThresh = 85;							// Drink a health potion if under this percent of life.
-	NTConfig_LifeRejuvThresh = 45;						// Drink a rejuvenation potion if under this percent of life. (Will not use health potions under this %)
-	NTConfig_ManaThresh = 30;							// Drink a mana potion if under this percent of mana.
-	NTConfig_ManaRejuvThresh = 0;						// Drink a rejuvenation potion if under this percent of mana. (Will not use mana potions under this %)
-
-	NTConfig_EtalLifeChicken = 0;						// This is your Etal chicken life percent. If you go below this life total, exit D2.
-	NTConfig_EtalManaChicken = 0;						// This is your Etal chicken mana percent. If you go below this mana total, exit D2.
-	NTConfig_ChickenStyle = -1;							// What kind of chicken? 0 to CloseD2 - 1 to Exit game (Closing D2 is safer)
-	
-	NTConfig_TPChicken = 0; 							// Under this % of health will attempt to tp to town and heal. (Set 0 to disable.)
-	NTConfig_MercTPChicken = 0;						  	// Under this % of Merc health will attempt to tp to town and heal. (Set to 0 to disable.)
-
-	NTConfig_MercLifeThresh = 50;						// Give merc a health potion if under this percent of life.
-	NTConfig_MercRejuvThresh = 30;						// Give merc a rejuvenation potion if under this percent of life. (Will not use health potions under this %)
-	NTConfig_MercChicken = 0;							// This is your mercs chicken life percent. If he goes below this, exit game. (Set 0 to disable.)
-
-	//------------------------------------------------------------------------------
-	// Inventory settings
-	//------------------------------------------------------------------------------
-	NTConfig_FreeSpaceBeforeBoss = 2;					// If # of free columns is less than this, will town before killing bosses.
-	NTConfig_FreeSpace = 4;								// Number of free columns. If bot has less than this amount after id'ing, it will go to stash.
-
-	// These numbers correspond to your inventory. Set 0 to keep whatever is there, 1 to have the bot manage the slot.
-	NTConfig_Columns[0] = [1,1,1,1,0,0,0,0,0,0];
-	NTConfig_Columns[1] = [1,1,1,1,0,0,0,0,0,0];
-	NTConfig_Columns[2] = [1,1,1,1,0,0,0,0,0,0];
-	NTConfig_Columns[3] = [1,1,1,1,0,0,0,0,0,0];
-
-	NTConfig_MinGoldToStash = 100000;					// Maximum gold amount carried before going to stash
-
-	//----------------------------------------------------------------------------------------------
-	// Belt Settings
-	// 	 	Type of potion used in each belt column
-	// 		Available types : "hp" = health | "mp" = mana | "rv" = rejuv. Can use other potion types too.
-	// 		Keep equal types at adjacent columns. First HP then MP and then HP again is a bad choice.
-	// 		Keep HP and MP at the beginning of the belt (in case you want to use rejuv and other types).
-	// 		Rejuvenations MUST, I REPEAT MUST be at the end of the belt (last x columns).
-	// 		To use rejuvenations only, put "rv" in all columns.
-	//----------------------------------------------------------------------------------------------
-	NTConfig_BeltColType[0] = "hp";
-	NTConfig_BeltColType[1] = "hp";
-	NTConfig_BeltColType[2] = "mp";
-	NTConfig_BeltColType[3] = "rv";
-
-	NTConfig_NIPFilePath.push("d/dWow.nip");
-	NTConfig_SnagRange = 40;
-
-	return;
-}
-//
-// switchies for switching
-//
-function d2B_switchMain() {
-	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 1");
-			Delay(Random(12000,16000));
-			d2B_bloodmoor(true);				// blood moore thingy
-			break;
-		case 2: d2B_coldplains(true);			// cold plains thingy | true: for clearing all of the cold plains
-			break;
-		case 3: d2B_burialgrounds();		// burial grounds thingy
-			break;
-		case 4: d2B_stonyfield();			// stony field thiny
-			break;
-		case 5: d2B_undergroundpassage();	// underground passage thingy
-			break;
-		case 6: d2B_darkwood();				// dark wood thingy
-			break;
-		case 7: d2B_blackmarsh();			// black marsh thingy
-			break;
-		case 8: d2B_tamohighland();			// tamoe highland thingy
-			break;
-		case 9: d2B_outercloister();		// outer cloister thingy
-			break;
-		case 10: //d2B_barracks();			// barracks thingy deeNotes: needs to be fixed
-			Delay(Random(8000,12000));
-			break;
-		case 11: d2B_jail();				// jail thingy
-			break;
-		case 12: d2B_innercloister();		// inner cloister thingy
-			break;
-		case 13: d2B_cata();				// catacombs thingy
-			break;
-		case 14: d2B_msg("ummm 2");
-			Delay(Random(12000,16000));
-			d2B_sewers();					// sewers thingy
-			break;
-		case 15: d2B_rockywaste();			// rocky waste thingy
-			break;
-		case 16: d2B_dryhills();			// dry hills thingy
-			break;
-		case 17: d2B_faroasis();			// far oasis thingy
-			break;
-		case 18: d2B_lostcity();			// lost city thingy
-			break;
-		case 19: d2B_clawvipertemple();		// claw viper temple thingy
-			break;
-		case 20: d2B_haremtoceller();		// harem to celler thingy
-			break;
-		case 21: d2B_arcane();				// arcane thingy
-			break;
-		case 22: d2B_canyon();				// canyon thingy
-			break;
-		case 23: d2B_msg("ummm 3");
-			Delay(Random(12000,16000));
-			d2B_spiderForest();				// canyon thingy
-			break;
-		case 24: d2B_greatMarsh();				// canyon thingy
-			break;
-		case 25: d2B_flayerJungle();				// canyon thingy
-			break;
-		case 26: d2B_lowerKurast();				// canyon thingy
-			break;
-		case 27: d2B_Kurast();				// canyon thingy
-			break;
-		case 28: d2B_upperKurast();				// canyon thingy
-			break;
-		case 29: d2B_Travincal();				// canyon thingy
-			break;
-		case 30: d2B_Meph();				// canyon thingy
-			break;
-		case 31: d2B_msg("ummm 4");
-			Delay(Random(12000,16000));
-			d2B_chaos();				// chaos thingy
-			break;
-	}
-}
-function d2B_switchGrinding() {
-	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 1");
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(1);
-			Delay(Random(20000,25000));
-			d2B_blackmarsh();					// black marsh thingy
-			break;
-		case 2: d2B_msg("ummm 4");
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(4);
-			Delay(Random(20000,25000));
-			d2B_chaos();						// chaos thingy
-			break;
-		case 3: d2B_msg("ummm 5");
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(5);
-			Delay(Random(20000,25000));
-			d2B_bloodyfoothills();				// bloody foothills thingy
-			break;
-		case 4: d2B_msg("ummm 5");	
-			NTConfig_SkipRegularMonsters = false; 
-			d2B_chkAct(5);
-			d2B_frigidhighlands();				// figid highland thingy
-			break;
-		case 5: d2B_msg("ummm 5"); 
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(5);
-			d2B_worldstonekeep();				// world stone keep thingy
-			break;
-	}
-}
-function d2B_switchChaosThrone() {
-	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 4");
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(4);
-			Delay(Random(20000,25000));
-			d2B_chaos();						// chaos thingy
-			break;
-	case 2: d2B_msg("ummm 5"); 
-			Delay(Random(10000,12000));
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(5);			
-			d2B_worldstonekeep();				// world stone keep thingy
-			if(_dollSoul) {
-				d2B_msg("Dolls and/or souls, so going to do countess as a filler...");
-				Delay(300);
-				d2B_blackMarsh2();
-				_soulDoll = false;
-			}
-			Delay(Random(8000,14000));
-			d2B_msg("ummm 4");
-			Delay(Random(10000,12000));
-			NTTM_CheckAct(4);
-			Delay(Random(10000,12000));
-			break;
-	}
-}
-function d2B_switchcBaalCountess() {
-	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 4");
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(4);
-			Delay(Random(20000,25000));
-			d2B_chaos();						// chaos thingy
-			break;
-	case 2: d2B_msg("ummm 5"); 
-			Delay(Random(10000,12000));
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(5);			
-			d2B_worldstonekeep();				// world stone keep thingy
-			if(_dollSoul) {
-				d2B_msg("Dolls and/or souls, so going to do a delay...");
-				Delay(Random(80000,100000));
-				_soulDoll = false;
-			}
-			Delay(Random(8000,14000));
-			d2B_msg("ummm 4");
-			Delay(Random(10000,12000));
-			NTTM_CheckAct(4);
-			Delay(Random(10000,12000));
-			break;
-	case 3: d2B_msg("ummm 1"); 
-			Delay(Random(10000,12000));
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(1);
-			d2B_blackMarsh2();
-			Delay(Random(8000,14000));
-			d2B_msg("ummm 4");
-			Delay(Random(10000,12000));
-			NTTM_CheckAct(4);
-			Delay(Random(10000,12000));
-			break;
-	}
-}
-function d2B_switchThrone() {
-	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 5"); 
-			Delay(Random(10000,12000));
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(5);			
-			d2B_worldstonekeep();				// world stone keep thingy
-			if(_dollSoul) {
-				d2B_msg("Dolls and/or souls, so going to do chaos...");
-				Delay(Random(7000,9000));
-				if(_msgMe) Say("/msg *" + _myName + " Dolls and/or souls, so going to do chaos...");
-				Delay(3300);
-				d2B_msg("ummmm 4");
-				NTConfig_SkipRegularMonsters = false;
-				d2B_chkAct(4);
-				Delay(Random(15000,24000));
-				d2B_chaos();						// chaos thingy
-				d2B_msg("ummmm 5");
-				Delay(Random(25000,34000));
-				d2B_chkAct(5);
-			}
-			_soulDoll = false;
-			Delay(Random(10000,12000));
-			break;
-	}
-}
-function d2B_switchnecroBaal() {
-	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 5");
-			Delay(Random(15000,20000));
-			d2B_chkAct(5);
-			d2B_makeSkellies();
-			Delay(Random(4000,5000));
-			d2B_chkAct(5);
-			d2B_worldstonekeep();				// world stone keep thingy
-			if(_dollSoul) {
-				d2B_msg("Dolls and/or souls, so going to take a break...");
-				Delay(Random(7000,9000));
-				if(_msgMe) Say("/msg *" + _myName + " Dolls and/or souls, so going to take a break...");
-				Delay(Random(25000,34000));
-				d2B_chkAct(5);
-			}
-			_soulDoll = false;
-			Delay(Random(10000,12000));
-			break;
-	}
-}
-
-function d2B_switchNecroRuns() {
-	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 1");
-			Delay(Random(15000,20000));
-			d2B_chkAct(1);
-			d2B_coldplains(false);				// false: for Bishibosh
-			Delay(Random(8000,14000));
-			break;
-		case 2: d2B_chkAct(1);
-			d2B_bloodmoor(false);				// false: for Corpsefire
-			Delay(Random(8000,14000));
-			break;
-		case 3: d2B_chkAct(1);					
-			d2B_burialgrounds(false);			// false: for Blood Raven		
-			Delay(Random(8000,14000));
-			break;
-		case 4: d2B_chkAct(1);					
-			d2B_stonyfield(false);				// false: for Blood Raven		
-			Delay(Random(8000,14000));
-			break;
-		case 5: d2B_chkAct(1);
-			d2B_darkwood(false);				// false: for Treehead Woodfist
-			Delay(Random(8000,14000));
-			break;
-		case 6: d2B_chkAct(1);
-			d2B_barracks(false);				// false: for the Smith
-			Delay(Random(8000,14000));
-			break;
-		case 7: d2B_chkAct(1);
-			d2B_cata2(false);					// false: for Andariel
-			Delay(Random(8000,14000));
-			break;
-		case 8: d2B_chkAct(2);
-			d2B_sewers(false);					// false: for Radament
-			Delay(Random(8000,14000));
-			break;
-		case 9: d2B_chkAct(2);
-			d2B_faroasis(false);				// false: for Creeping Feature
-			Delay(Random(8000,14000));
-			break;
-		case 10: d2B_chkAct(2);
-			d2B_lostcity(false);				// false: for Dark Elder
-			Delay(Random(8000,14000));
-			break;
-		case 11: d2B_chkAct(2);
-			d2B_arcane(false);					// false: for Summoner
-			Delay(Random(8000,14000));
-			break;
-		case 12: d2B_chkAct(2);
-			d2B_canyon(false);					// false: for Duriel
-			Delay(Random(8000,14000));
-			break;
-		case 13: d2B_msg("ummm 4");
-			Delay(Random(25000,30000));
-			d2B_chkAct(4);
-			d2B_chaos(false);					// false: for using non tele team
-			Delay(Random(8000,14000));
-			d2B_msg("ummm 4");
-			Delay(Random(25000,30000));
-			d2B_chkAct(4);
-			Delay(Random(15000,18000));
-			break;
-	}
-}
-function d2B_switchChaos() {
-	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 4");
-			Delay(Random(25000,30000));
-			d2B_chkAct(4);
-			d2B_chaos(false);					// false: for using non tele team
-			break;
-		case 2: d2B_msg("ummm 1");
-			Delay(Random(25000,30000));
-			d2B_chkAct(1);
-			d2B_cata2();
-			Delay(Random(8000,14000));
-			d2B_msg("ummm 4");
-			Delay(Random(25000,30000));
-			d2B_chkAct(4);
-			Delay(Random(15000,18000));
-			break;
-	}
-}
-function d2B_CBaalNoTele() {
-	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 4");
-			Delay(Random(25000,30000));
-			d2B_chkAct(4);
-			d2B_chaos(false);					// false: for using non tele team
-			break;
-		case 2: d2B_msg("ummm 5");
-			Delay(Random(15000,20000));
-			d2B_chkAct(5);
-			d2B_makeSkellies();
-			Delay(Random(4000,5000));
-			d2B_chkAct(5);
-			d2B_worldstonekeep();				// world stone keep thingy
-			if(_dollSoul) {
-				d2B_msg("Dolls and/or souls, so going to take a break...");
-				Delay(Random(7000,9000));
-				if(_msgMe) Say("/msg *" + _myName + " Dolls and/or souls, so going to take a break...");
-				Delay(Random(25000,34000));
-				d2B_chkAct(5);
-			}
-			_soulDoll = false;
-			Delay(Random(10000,12000));
-			d2B_msg("ummm 4");
-			Delay(Random(25000,30000));
-			d2B_chkAct(4);
-			break;
-	}
-}
+};
