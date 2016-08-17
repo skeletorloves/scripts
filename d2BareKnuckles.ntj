@@ -22,12 +22,13 @@ var _dollChk = true;
 var _dollSoul = false;
 
 var d2B_cases = 2;
-var d2B_toggleHelper = "Chaos";			// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
+var d2B_toggleHelper = "CBaalNoTele";	// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
 										// leveling2: Chaos, Throne, & Countess
 										// necroBaal / necroCBaal: chaos and/or baal with non tele necro peeps
 										// NecroRuns: for a sorc leader to run tightly with necro crew
 										// Chaos: for chaos only
+										// CBaalNoTele: for cbaaling with a non tele team
 
 var _nonTelePeeps = true;				// if followers can tele
 
@@ -98,6 +99,7 @@ function NTMain() {
 			if(d2B_toggleHelper == "necroBaal") d2B_switchnecroBaal();		// for chaos & baal leveling w/ non teleing necros
 			if(d2B_toggleHelper == "NecroRuns") d2B_switchNecroRuns();		// for a sorc leader to run tightly with necro crew
 			if(d2B_toggleHelper == "Chaos") d2B_switchChaos();				// for a sorc leader to run tightly with necro crew
+			if(d2B_toggleHelper == "Chaos") d2B_CBaalNoTele();				// for cbaaling with a non tele team
 			
 			d2B_msgIncPause();	
 		}
@@ -917,8 +919,6 @@ function d2B_chaos(a){								// case: 31
 	d2B_msg("ummm 4");					// saying this again as a precaution
 	Delay(Random(30000,35000));
 	
-	
-	
 	if(!a) {
 		d2B_commonInitSetup(107);
 		d2B_myTP(true, true, true, false, false);
@@ -942,8 +942,6 @@ function d2B_chaos(a){								// case: 31
 			_iCoor += 2;
 		} while (_iCoor < _CScoords.length)
 		
-		d2B_myTP(true, true, true, false, false);
-		d2B_chkAct2(true,4);
 		return;
 	}
 	
@@ -1048,12 +1046,12 @@ function d2B_makeSkellies() {
 	d2B_myTP(true, true, true, false, false);
     Delay(Random(2000,3000));
 	
-	NTM_MoveTo(me.areaid, 3750, 5090); // are where Eldritch is
+	NTM_MoveTo(111, 3750, 5090); // are where Eldritch is
 	NTA_ClearPosition();
 	NTSI_PickItems();
 	d2B_team(false);
 	
-	if(!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 776, -5, 5)) {		// go to where shenk is
+	if(!NTM_MoveToPresetUnit(110, NTC_UNIT_MONSTER, 776, -5, 5)) {		// go to where shenk is
 			NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
 	}
 	d2B_team(true);
@@ -1097,8 +1095,8 @@ function d2B_worldstonekeep() {
 	NTA_ClearPosition();
 	
 	NT_ClearThroneInt();
-	//d2B_msg("yo");
-	Say("yo");
+	d2B_msg("yo");
+	//Say("yo");
 	
 	d2B_throneWaves();
 	Delay(300);
@@ -1594,6 +1592,7 @@ function d2H_load() {
 	Scripts.Staff = true;
 	Scripts.Summoner = true;
 	Scripts.Duriel = true;
+	Scripts.Khalim = true;
 	Scripts.Tome = true;
 	Scripts.Travincal = true;
 	Scripts.Mephisto = true;
@@ -2799,6 +2798,9 @@ function Quest( msg ) { 							// Done (needs testing)
 		case "duriel":
 			Quests.Duriel();
 			break;
+		case "khalim":
+			Extras.Khalim();
+			break;
 		case "tome":
 			Extras.Tome();
 			break;
@@ -2833,7 +2835,7 @@ function Quest( msg ) { 							// Done (needs testing)
 			Imbue();
 			break;
 		default:
-			Invalid();
+			break;
 	}
 }
 
@@ -4704,6 +4706,125 @@ function d2B_killBaal(classid) {
 	return (_target.hp <= 0 || _target.mode == 0 || _target.mode == 12);
 }
 //
+// character functions
+//
+function d2B_commonVars() {
+	
+	NTConfig_Announcer = false;
+	
+	// Leech, Leech Fighter & Team Botting Settings
+	// _____________________________________________
+
+	NTConfig_Leader = "";							// Leaders name
+	NTConfig_PartyOnlyLeader = false;				// Party only with leader (NTConfig_Leader)? (If true, NTConfig_PublicMode MUST be set false in the general config section below).
+	NTConfig_PartyMaxTime = 40;						// Time in seconds the leecher has to party with leader before exiting game
+	NTConfig_LeechBo = false; 						// Set false to disable BO & BC cast by leecher.
+	NTConfig_LeechExitDelay = Random(2000,8000);	// Delay before leecher exits game after leader in milliseconds.  Use this to stagger leechers exit times to avoid crashes.
+
+
+	// NTWPGrabber Instructions
+	//
+	// 	NTWPGrabber can be started (pause / unpause) in any area & will start from this point going forward.
+	//	Uncomment (remove the preceeding "//") to enable quests. (The quest module will not run unless at least one is uncommented).
+	// 		* If the quest is already done, this will be detected & skipped. (Disable those you cannot handle...)
+	//	It's HIGHLY recommended to disable all normal pickits while running the quest module.
+	// 		* Quest nip is required while running the quest module.
+	// 		* Make sure you have space in your stash (& a clear cube) for the quest items
+	// __________________________________________________________________________________________
+
+
+	//NTConfig_Script.push("NTWPGrabber.ntj");
+
+		NTConfig_DoQuests =
+		[
+		//"Den Of Evil",
+		//"The Search For Cain",
+		//"Radament's Lair",
+		//"Horadric cube",
+		//"Lam Esen's Tome",
+		//"Golden Bird",  								// After Esen's Tome will clear the Ruined Temple in attempt for the Bird. (Doesn't always drop.)
+		//"Golden Bird Travincal", 						// Will attempt to drop the Bird from Council. (Doesn't always drop.)
+		//"Fallen Angel",
+		//"Siege on Harrogath",
+		//"Prison Of Ice",
+		//"Rite Of Passage",
+		];
+
+	//NTConfig_NIPFilePath.push("Quest.nip"); 			// Uncomment this to pick quest items.
+
+	//NTConfig_Script.push("WpGiver.ntj");				// Gives waypoints to another character via in-game chat commands.
+	//NTConfig_Script.push("mulelogger.ntj");			// Blank Script, loads Libs, CharConfig & Nips & enters delay loop.
+	//NTConfig_Script.push("TLNipCheck.ntj");  			// Checks for errors in pickit files. (Alternatively, you can also use NumPad "+" while ingame.)
+	//NTConfig_Script.push("TLInventory.ntj"); 			// Logs items to text file. (Alternatively, you can use NumPad "5" while ingame.)
+		NTConfig_TLInventory_SkipEquipped   = true;     // Skip logging what you have equipped (useful for logging mules).
+
+	NTConfig_HostileHandler = false;					// true to use the new hostile handler
+		RunFromHostiles = false;						// true to leave game when hostiled
+		KillHostiler = false;							// true to kill the hostile player
+		TauntHostile = false;							// true to taunt the hostiler, false if not
+
+	me.maxgametime = 0; 								// Maximum game length in seconds (0 is infinite).
+	NTConfig_MinIngameTime = 0;							// Amount of minutes to remain ingame. Ensures game length. Setting is in minutes
+	NTConfig_StartDelay = 0;							// Delay time in milliseconds to wait at start.
+	NTConfig_AreaDelay = 500;							// Delay time in milliseconds to wait on each area change.
+	NTConfig_SnagDelay = 500;							// Delay time in milliseconds (added to ping delay) to wait before each pickit call.
+
+	//------------------------------------------------------------------------------
+	// Chicken settings
+	//------------------------------------------------------------------------------
+	NTConfig_SkipHealLife = 90;							// If you are over this percentage of life, you won't go to a healer.
+	NTConfig_SkipHealMana = 70;							// If you are over this percentage of mana, you won't go to a healer.
+
+	NTConfig_LifeThresh = 85;							// Drink a health potion if under this percent of life.
+	NTConfig_LifeRejuvThresh = 45;						// Drink a rejuvenation potion if under this percent of life. (Will not use health potions under this %)
+	NTConfig_ManaThresh = 30;							// Drink a mana potion if under this percent of mana.
+	NTConfig_ManaRejuvThresh = 0;						// Drink a rejuvenation potion if under this percent of mana. (Will not use mana potions under this %)
+
+	NTConfig_EtalLifeChicken = 0;						// This is your Etal chicken life percent. If you go below this life total, exit D2.
+	NTConfig_EtalManaChicken = 0;						// This is your Etal chicken mana percent. If you go below this mana total, exit D2.
+	NTConfig_ChickenStyle = -1;							// What kind of chicken? 0 to CloseD2 - 1 to Exit game (Closing D2 is safer)
+	
+	NTConfig_TPChicken = 0; 							// Under this % of health will attempt to tp to town and heal. (Set 0 to disable.)
+	NTConfig_MercTPChicken = 0;						  	// Under this % of Merc health will attempt to tp to town and heal. (Set to 0 to disable.)
+
+	NTConfig_MercLifeThresh = 50;						// Give merc a health potion if under this percent of life.
+	NTConfig_MercRejuvThresh = 30;						// Give merc a rejuvenation potion if under this percent of life. (Will not use health potions under this %)
+	NTConfig_MercChicken = 0;							// This is your mercs chicken life percent. If he goes below this, exit game. (Set 0 to disable.)
+
+	//------------------------------------------------------------------------------
+	// Inventory settings
+	//------------------------------------------------------------------------------
+	NTConfig_FreeSpaceBeforeBoss = 2;					// If # of free columns is less than this, will town before killing bosses.
+	NTConfig_FreeSpace = 4;								// Number of free columns. If bot has less than this amount after id'ing, it will go to stash.
+
+	// These numbers correspond to your inventory. Set 0 to keep whatever is there, 1 to have the bot manage the slot.
+	NTConfig_Columns[0] = [1,1,1,1,0,0,0,0,0,0];
+	NTConfig_Columns[1] = [1,1,1,1,0,0,0,0,0,0];
+	NTConfig_Columns[2] = [1,1,1,1,0,0,0,0,0,0];
+	NTConfig_Columns[3] = [1,1,1,1,0,0,0,0,0,0];
+
+	NTConfig_MinGoldToStash = 100000;					// Maximum gold amount carried before going to stash
+
+	//----------------------------------------------------------------------------------------------
+	// Belt Settings
+	// 	 	Type of potion used in each belt column
+	// 		Available types : "hp" = health | "mp" = mana | "rv" = rejuv. Can use other potion types too.
+	// 		Keep equal types at adjacent columns. First HP then MP and then HP again is a bad choice.
+	// 		Keep HP and MP at the beginning of the belt (in case you want to use rejuv and other types).
+	// 		Rejuvenations MUST, I REPEAT MUST be at the end of the belt (last x columns).
+	// 		To use rejuvenations only, put "rv" in all columns.
+	//----------------------------------------------------------------------------------------------
+	NTConfig_BeltColType[0] = "hp";
+	NTConfig_BeltColType[1] = "hp";
+	NTConfig_BeltColType[2] = "mp";
+	NTConfig_BeltColType[3] = "rv";
+
+	NTConfig_NIPFilePath.push("d/dWow.nip");
+	NTConfig_SnagRange = 40;
+
+	return;
+}
+//
 // switchies for switching
 //
 function d2B_switchMain() {
@@ -5005,6 +5126,35 @@ function d2B_switchChaos() {
 			Delay(Random(25000,30000));
 			d2B_chkAct(4);
 			Delay(Random(15000,18000));
+			break;
+	}
+}
+function d2B_CBaalNoTele() {
+	switch(d2B_myPauseValue) {
+		case 1: d2B_msg("ummm 4");
+			Delay(Random(25000,30000));
+			d2B_chkAct(4);
+			d2B_chaos(false);					// false: for using non tele team
+			break;
+		case 2: d2B_msg("ummm 5");
+			Delay(Random(15000,20000));
+			d2B_chkAct(5);
+			d2B_makeSkellies();
+			Delay(Random(4000,5000));
+			d2B_chkAct(5);
+			d2B_worldstonekeep();				// world stone keep thingy
+			if(_dollSoul) {
+				d2B_msg("Dolls and/or souls, so going to take a break...");
+				Delay(Random(7000,9000));
+				if(_msgMe) Say("/msg *" + _myName + " Dolls and/or souls, so going to take a break...");
+				Delay(Random(25000,34000));
+				d2B_chkAct(5);
+			}
+			_soulDoll = false;
+			Delay(Random(10000,12000));
+			d2B_msg("ummm 4");
+			Delay(Random(25000,30000));
+			d2B_chkAct(4);
 			break;
 	}
 }
