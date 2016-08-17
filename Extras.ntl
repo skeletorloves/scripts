@@ -350,15 +350,26 @@ var Extras =  {
 			return false;
 		}
 		
-		_spiderCavern = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(811));
-		if(!_spiderCavern){
-31			NTC_SendMsgToScript("NTBotGame.ntj", "NTC_FindUnit()");
-32			return;
-33		}
-		NTM_MoveTo(me.areaid, _spiderCavern.x, _spiderCavern.y);
-		NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
+		if (!NTM_MoveToStair(me.areaid, 85)) {
+			Common.LogError("NTM_MoveToStair()");
+			return false;
+		}
+
+		if (!NTM_TakeStair(85)) {
+			Common.LogError("NTM_TakeStair()");
+			return false;
+		}
+		var _chest;
+		_chest = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3260));	// 455: special chest 3260: chest
+		NTM_MoveTo(_chest.areaid, _chest.x+1, _chest.y);
+		NTA_ClearPosition(20);
 		
-		return;
+		NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _chest);
+		
+		NTM_MakeTP();
+		NTM_UsePortal("BluePortal", 75, me.charname);
+		
+		return true;
 	},
 	Tome: function() {
 		if (!Scripts.Tome) {
