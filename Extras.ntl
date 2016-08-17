@@ -336,10 +336,12 @@ var Extras =  {
 		return true;
 	},
 	Khalim: function() {
-		if (!Scripts.Tome) {
+		if (!Scripts.Khalim) {
 			return true;
 		}
 		NTTMGR_TownManager();
+		
+		// eye
 		
 		if (!NTTM_TownMove("waypoint")) {
 			Common.LogError("NTTM_TownMove()");
@@ -360,14 +362,96 @@ var Extras =  {
 			return false;
 		}
 		var _chest;
-		_chest = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3260));	// 455: special chest 3260: chest
-		NTM_MoveTo(_chest.areaid, _chest.x+1, _chest.y);
+		_chest = GetPresetUnits(me.areaid, NTC_UNIT_OBJECT, GetLocaleString(3260));	// 455: special chest 3260: chest
+		//Say("/f m x = " + (_chest[0].roomx*5 + _chest[0].x) + " | y = " + ( _chest[0].roomy*5 + _chest[0].y));
+		
+		_chestx = _chest[0].roomx*5 + _chest[0].x;
+		_chesty = _chest[0].roomy*5 + _chest[0].y;
+		NTM_MoveTo(me.areaid, _chestx, _chesty);
 		NTA_ClearPosition(20);
 		
-		NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _chest);
+		//NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _chest);
 		
 		NTM_MakeTP();
 		NTM_UsePortal("BluePortal", 75, me.charname);
+		
+		Delay(Random(15000,20000));
+		
+		// brain
+		
+		if (!NTTM_TownMove("waypoint")) {
+			Common.LogError("NTTM_TownMove()");
+			return false;
+		}
+		if (!NTM_TakeWaypoint(78)) {
+			Common.LogError("NTM_TakeWaypoint()");
+			return false;
+		}
+		
+		for(i=88, i<=91, i++) {
+			if(i != 90) {
+				if (!NTM_MoveToStair(me.areaid, i)) {
+					Common.LogError("NTM_MoveToStair()");
+					return false;
+				}
+				if (!NTM_TakeStair(i)) {
+					Common.LogError("NTM_TakeStair()");
+					return false;
+				}
+			}
+		}
+		var _chest;
+		_chest = GetPresetUnits(me.areaid, NTC_UNIT_OBJECT, GetLocaleString(3260));	// 455: special chest 3260: chest
+		//Say("/f m x = " + (_chest[0].roomx*5 + _chest[0].x) + " | y = " + ( _chest[0].roomy*5 + _chest[0].y));
+		
+		_chestx = _chest[0].roomx*5 + _chest[0].x;
+		_chesty = _chest[0].roomy*5 + _chest[0].y;
+		NTM_MoveTo(me.areaid, _chestx, _chesty);
+		NTA_ClearPosition(20);
+		
+		//NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _chest);
+		
+		NTM_MakeTP();
+		NTM_UsePortal("BluePortal", 75, me.charname);
+		
+		Delay(Random(15000,20000));
+		
+		// heart
+		
+		if (!NTTM_TownMove("waypoint")) {
+			Common.LogError("NTTM_TownMove()");
+			return false;
+		}
+		if (!NTM_TakeWaypoint(80)) {
+			Common.LogError("NTM_TakeWaypoint()");
+			return false;
+		}
+		
+		for(i=92, i<=93, i++) {
+			if (!NTM_MoveToStair(me.areaid, i)) {
+				Common.LogError("NTM_MoveToStair()");
+				return false;
+			}
+			if (!NTM_TakeStair(i)) {
+				Common.LogError("NTM_TakeStair()");
+				return false;
+			}
+		}
+		var _chest;
+		_chest = GetPresetUnits(me.areaid, NTC_UNIT_OBJECT, GetLocaleString(3260));	// 455: special chest 3260: chest
+		//Say("/f m x = " + (_chest[0].roomx*5 + _chest[0].x) + " | y = " + ( _chest[0].roomy*5 + _chest[0].y));
+		
+		_chestx = _chest[0].roomx*5 + _chest[0].x;
+		_chesty = _chest[0].roomy*5 + _chest[0].y;
+		NTM_MoveTo(me.areaid, _chestx, _chesty);
+		NTA_ClearPosition(20);
+		
+		//NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _chest);
+		
+		NTM_MakeTP();
+		NTM_UsePortal("BluePortal", 75, me.charname);
+		
+		Delay(Random(15000,20000));
 		
 		return true;
 	},
