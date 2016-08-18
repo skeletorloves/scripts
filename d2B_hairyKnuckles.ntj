@@ -1,14 +1,150 @@
 // d2B_hairyKnuckles.ntj
 
 
+
+
+// 				LeaderStarter.ntj globals...
+//
+	
+	var characterdiff        =  "99";
+	var maxNumberOfPlayersss = "8";
+
+	var joinChatAfterGame			= true;			 		// true: join chat after leaving a game
+	var joinRandomChannel			= false;			 	// true: join a random channel, otherwise it will use the channel below..
+	var joinChannelInChat			= "op cookies r us";	// Channel you want your bot to join
+
+	var WhisperFList = false;									// Whisper your friends when you enter a game or not
+
+	var chatMessageOnJoin		= "";		// msg to say Login command for channel bot will only be sent once
+	var chatMessageAfterGame1	= "";		// msg #1 to say after each game on Channel
+	var chatMessageAfterGame2	= "";		// msg # #2 to say after each game on Channel
+	var chatMessageAfterGame3	= "";		// msg # #3 to say after each game on Channel
+	var chatMessageAfterGame4	= "";		// msg # #4 to say after each game on Channel
+	var chatMessageAfterGame5	= "";		// msg # #5 to say after each game on Channel
+
+	var saygamename 		= false;		// true: enables game message settings
+	var nextgamemessage		= "";			// This will come befor your next game name eg "New game is"
+	var saypassword 		= false;		// msg game pw
+	var saytime 			= false;		// msg how much time till creation
+	var timemessage 		= "";			// msg comes after pw & befor the time eg. "in about" xx seconds say time MUST be true for this to be used
+
+	var gameMinLength		= 360000;	// time in milliseconds, minimum game length, 180 seconds default (1 game/3 minutes)
+
+	// All of the delays for actions from bot start until in-game
+	// ===========================================================
+
+	var unableToConnectRetry		= 15;		// time in minutes to retry connecting on connection fail (real value is +/- 1 min)
+	var realmDownRetry				= 900;		// time in minutes to retry connecting on a realm down (default is 300 minutes)
+	var disconnectedRetry			= 5;		// time in minutes to retry on a disconnection (usually ip ban related)
+	var cdkeyInUseRetry				= 5;		// time in minutes to retry on a cdkey in use error message (set to 0 to stop)
+	var connectingToBnetTimeout		= 20000;	// time in milliseconds to wait for a login to time out and click cancel and retry
+	var characterScreenTimeout		= 10000;	// time in milliseconds to wait for character screen to appear
+	var pleaseWaitTimeout			= 10000;	// time in milliseconds to wait for a please wait popup
+	var createGameThreshold			= 30000;	// time in milliseconds to wait between making games
+	var createGameThresholdRandom	= 5000;		// time in milliseconds to randomly add +/- to the game create time
+	var createGameTimeout			= 44000;	// time in milliseconds to register a failed to create game
+	var waitInLineTimeout			= 60000;	// time in milliseconds to wait in lines for a create game (60 second default)
+	var characterSelectDelay		= 7000;		// time in milliseconds to wait before selecting a character on the char screen
+	var loginDelay					= 5000;		// time in milliseconds to wait before submitting login information
+	var clickDelay					= 500;		// wait X milliseconds before next action after a click event
+	var textDelay					= 500;		// wait X milliseconds before next action after inserting text into a textbox
+	var clickDelayRandom			= 500;		// random amount of time to add to a click
+	var textDelayRandom				= 500;		// random amount of time to add to a text set
+	var gameDoesNotExistDelayMin	= 600000;	// how long to wait when a Game Does Not Exist occurs - minimum - default 10 minutes
+	var gameDoesNotExistDelayMax	= 900000;	// how long to wait when a Game Does Not Exist occurs - maximum - default 15 minutes
+	var gameDoesNotExistTimeout		= 30000;	// how long to wait for the dialog to disappear (default 30 seconds, don't change this)
+	var waitBeforeEnterChatMin		= 1000;		// min how long to wait before entering chat
+	var waitBeforeEnterChatMax		= 2000;		// max how long to wait before entering chat
+	var waitInChatBeforeActionsMin	= 2000;		// min how long to wait before joining channel
+	var waitInChatBeforeActionsMax	= 3000;		// max how long to wait before joining channel
+	var waitBeforeNextLineChatMin	= 500;		// Minimum ammount of time to add after each text line	
+	var waitBeforeNextLineChatMax	= 1500;		// Maximum ammount of time to add after each text line
+	var ftjDelay = 180;							// time to idle before trying if leader failed to join.  In seconds.
+
+	// DONT EDIT ANYTHING BELOW THIS
+
+	// =============================================================================
+	// Debug : set to true if you are experiencing problems with your JoinBot
+	// it will log in your OOG the lobby chat actions
+	// =============================================================================
+	var Debug = false;
+
+	// D2NT Manager Command
+	const D2NT_MGR_LOADING = 1;
+	const D2NT_MGR_READY = 2;
+	const D2NT_MGR_LOGIN = 3;
+	const D2NT_MGR_CREATE_GAME = 4;
+	const D2NT_MGR_INGAME = 5;
+	const D2NT_MGR_RESTART = 6;
+	const D2NT_MGR_CHICKEN = 7;
+	const D2NT_MGR_PRINT_STATUS = 8;
+	const D2NT_MGR_PRINT_LOG = 9;
+	var alreadyLoggedIn = false; // will only send the login command once leave as unless you want to login everytime you join a channel
+	var lastGameMade = GetTickCount();
+	var lastGameStatus = 0;
+	var nextGameMake = 0;
+	var inGameAt = 0;
+	var chatActionsDone = false;
+	var lastGameFailed = false;
+	var tempDelay = Random(waitBeforeNextLineChatMin, waitBeforeNextLineChatMax);
+	var gameInfo = "";
+	var bugignor = true;
+	var ftjcount = 0;
+	// Include("libs/controlInfo.ntl");
+	// Include("libs/common/NTColorConverter.ntl");
+	//	Include("libs/common/NTLogger.ntl");
+
+	controlInfo();
+	NTColorConverter();
+	//d2B_NTLoggerVar();
+
+	var controlData = new controlInfo();
+
+//
+//					NTLogger.ntl globals...
+//
+	NTConfig_LoggingEnabled = false;
+	var NTConfig_TwelveHourClock = false;
+	var NTConfig_maxLogSize = 10000000;
+	var NTConfig_Log_Level = 0;
+	var NTConfig_Item_Level = 1;
+
+	Include("libs/common/NTCommon.ntl");
+	var _NTLG_LogList = new Array();
+
+	// Logger Message Types
+	const NTLG_TYPE_LOG = 0;
+	const NTLG_TYPE_ITEM = 1;
+
+	// Message Levels
+	const NTLG_LEVEL_DEBUG = 0;
+	const NTLG_LEVEL_INFO = 1;
+	const NTLG_LEVEL_WARN = 2;
+	const NTLG_LEVEL_ERROR = 3;
+	const NTLG_LEVEL_ITEM_WHITE = 0;
+	const NTLG_LEVEL_ITEM_MAGIC = 1;
+	const NTLG_LEVEL_ITEM_RARE = 2;
+	const NTLG_LEVEL_ITEM_CRAFT = 3;
+	const NTLG_LEVEL_ITEM_UNIQUE = 4;
+
+	// Delimeter - log msgs are of the format: scriptname, ticks, type, level, msg separated by NTLG_DELIM
+	const NTLG_DELIM = "%"
+	const NTLG_DELIM_REPLACE = "percent"
+
+	// Log Queue size to never exceed
+	const NTLG_LOGLIMIT = 1000;
+
+	// Internal send to script buffer size
+	const maxbufferlength = 63;
+
+
 // _____________________________________________________________________________________________________________________________
 //
 // LeaderStarter.ntj.
 //
 
 function NTMain() {
-	d2B_ldrstarterVars();		// deeEdits: for enabling the variables
-	
+
 	Delay(1000);
 
 	var _ingame = false;
@@ -602,110 +738,6 @@ function DebugInOOG(logString) {
 // added sending game name and pw to txt file for leecher text file joining 9-25-11     				 
 // added a while loop and manager print if a bad cd key is used or bad account or password stair 9-25-11 
 // added txt file joining and added game count over 99 mod 12-1-12										
-
-// 
-
-function d2B_ldrstarterVars() {
-	
-	// LeaderStarter.ntj globals...
-	//
-	
-	var characterdiff        =  "99";
-	var maxNumberOfPlayersss = "8";
-
-	var joinChatAfterGame			= true;			 		// true: join chat after leaving a game
-	var joinRandomChannel			= false;			 	// true: join a random channel, otherwise it will use the channel below..
-	var joinChannelInChat			= "op cookies r us";	// Channel you want your bot to join
-
-	var WhisperFList = false;									// Whisper your friends when you enter a game or not
-
-	var chatMessageOnJoin		= "";		// msg to say Login command for channel bot will only be sent once
-	var chatMessageAfterGame1	= "";		// msg #1 to say after each game on Channel
-	var chatMessageAfterGame2	= "";		// msg # #2 to say after each game on Channel
-	var chatMessageAfterGame3	= "";		// msg # #3 to say after each game on Channel
-	var chatMessageAfterGame4	= "";		// msg # #4 to say after each game on Channel
-	var chatMessageAfterGame5	= "";		// msg # #5 to say after each game on Channel
-
-	var saygamename 		= false;		// true: enables game message settings
-	var nextgamemessage		= "";			// This will come befor your next game name eg "New game is"
-	var saypassword 		= false;		// msg game pw
-	var saytime 			= false;		// msg how much time till creation
-	var timemessage 		= "";			// msg comes after pw & befor the time eg. "in about" xx seconds say time MUST be true for this to be used
-
-	var gameMinLength		= 360000;	// time in milliseconds, minimum game length, 180 seconds default (1 game/3 minutes)
-
-	// All of the delays for actions from bot start until in-game
-	// ===========================================================
-
-	var unableToConnectRetry		= 15;		// time in minutes to retry connecting on connection fail (real value is +/- 1 min)
-	var realmDownRetry				= 900;		// time in minutes to retry connecting on a realm down (default is 300 minutes)
-	var disconnectedRetry			= 5;		// time in minutes to retry on a disconnection (usually ip ban related)
-	var cdkeyInUseRetry				= 5;		// time in minutes to retry on a cdkey in use error message (set to 0 to stop)
-	var connectingToBnetTimeout		= 20000;	// time in milliseconds to wait for a login to time out and click cancel and retry
-	var characterScreenTimeout		= 10000;	// time in milliseconds to wait for character screen to appear
-	var pleaseWaitTimeout			= 10000;	// time in milliseconds to wait for a please wait popup
-	var createGameThreshold			= 10000;	// time in milliseconds to wait between making games
-	var createGameThresholdRandom	= 1000;		// time in milliseconds to randomly add +/- to the game create time
-	var createGameTimeout			= 44000;	// time in milliseconds to register a failed to create game
-	var waitInLineTimeout			= 60000;	// time in milliseconds to wait in lines for a create game (60 second default)
-	var characterSelectDelay		= 1000;		// time in milliseconds to wait before selecting a character on the char screen
-	var loginDelay					= 1000;		// time in milliseconds to wait before submitting login information
-	var clickDelay					= 500;		// wait X milliseconds before next action after a click event
-	var textDelay					= 500;		// wait X milliseconds before next action after inserting text into a textbox
-	var clickDelayRandom			= 500;		// random amount of time to add to a click
-	var textDelayRandom				= 500;		// random amount of time to add to a text set
-	var gameDoesNotExistDelayMin	= 600000;	// how long to wait when a Game Does Not Exist occurs - minimum - default 10 minutes
-	var gameDoesNotExistDelayMax	= 900000;	// how long to wait when a Game Does Not Exist occurs - maximum - default 15 minutes
-	var gameDoesNotExistTimeout		= 30000;	// how long to wait for the dialog to disappear (default 30 seconds, don't change this)
-	var waitBeforeEnterChatMin		= 1000;		// min how long to wait before entering chat
-	var waitBeforeEnterChatMax		= 2000;		// max how long to wait before entering chat
-	var waitInChatBeforeActionsMin	= 2000;		// min how long to wait before joining channel
-	var waitInChatBeforeActionsMax	= 3000;		// max how long to wait before joining channel
-	var waitBeforeNextLineChatMin	= 500;		// Minimum ammount of time to add after each text line	
-	var waitBeforeNextLineChatMax	= 1500;		// Maximum ammount of time to add after each text line
-	var ftjDelay = 180;							// time to idle before trying if leader failed to join.  In seconds.
-
-	// DONT EDIT ANYTHING BELOW THIS
-
-	// =============================================================================
-	// Debug : set to true if you are experiencing problems with your JoinBot
-	// it will log in your OOG the lobby chat actions
-	// =============================================================================
-	var Debug = false;
-
-	// D2NT Manager Command
-	const D2NT_MGR_LOADING = 1;
-	const D2NT_MGR_READY = 2;
-	const D2NT_MGR_LOGIN = 3;
-	const D2NT_MGR_CREATE_GAME = 4;
-	const D2NT_MGR_INGAME = 5;
-	const D2NT_MGR_RESTART = 6;
-	const D2NT_MGR_CHICKEN = 7;
-	const D2NT_MGR_PRINT_STATUS = 8;
-	const D2NT_MGR_PRINT_LOG = 9;
-	var alreadyLoggedIn = false; // will only send the login command once leave as unless you want to login everytime you join a channel
-	var lastGameMade = GetTickCount();
-	var lastGameStatus = 0;
-	var nextGameMake = 0;
-	var inGameAt = 0;
-	var chatActionsDone = false;
-	var lastGameFailed = false;
-	var tempDelay = Random(waitBeforeNextLineChatMin, waitBeforeNextLineChatMax);
-	var gameInfo = "";
-	var bugignor = true;
-	var ftjcount = 0;
-	// Include("libs/controlInfo.ntl");
-	//Include("libs/common/NTColorConverter.ntl");
-	//Include("libs/common/NTLogger.ntl");
-	
-	controlInfo();
-	NTColorConverter();
-	d2B_NTLoggerVar();
-	
-	var controlData = new controlInfo();
-
-	return;
-}
 
 //
 //	controlInfo.ntl
