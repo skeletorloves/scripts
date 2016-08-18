@@ -29,7 +29,7 @@ function NTMain() {
 			{
 				RunGC(); // run garbage collector between each game
 
-				if(NTMain_NTBotGame())		// deeEdits: replaced Load("NTBot/NTBotGame.ntj") with 
+				if(Load("NTBot/NTBotGame.ntj"))		// deeEdits: replaced Load("NTBot/NTBotGame.ntj") with 
 				{
 					_ingame = true;
 					NT_File("logs/messagecomands/"+me.charname+"-nextgame.txt", 1, me.gamename + "/" + me.gamepassword); // for leader to print game/pw to txt	 	
@@ -1595,7 +1595,7 @@ function d2B_NTLoggerVar() {
 //	NTBotGame.ntj
 //
 
-function D2NTStatus(where, time, message) { return SendCopyData('D2NT Manager', null, where << 16 | time, message); }
+/*function D2NTStatus(where, time, message) { return SendCopyData('D2NT Manager', null, where << 16 | time, message); }
 
 function NTMain_NTBotGame() {
 	if (!Load("NTBot/tools/NTLogHandler.ntj")) {
@@ -1749,9 +1749,9 @@ function NTMain_NTBotGame() {
 			}
 
 			if(leaderParty && !NTC_InMyParty(NTConfig_Leader) && !NTC_InMyParty(NTLeader_LoggedFromFile)){
-				/*if(!LastScript) {
-					NTE_ComputeStats(false);
-				}*/
+				//if(!LastScript) {
+				//	NTE_ComputeStats(false);
+				//}
 				Delay(350);
 				_Checkscript = GetScript();
 				if(_Checkscript){
@@ -2115,7 +2115,7 @@ function NT_LogDclone() {
 }
 
 
-
+*/
 //
 // NTExpl.ntl
 //
