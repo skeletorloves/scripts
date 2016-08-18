@@ -339,14 +339,14 @@ var Extras =  {
 		NTTMGR_TownManager();
 		
 		// eye
+		
 		NTTM_TownMove("waypoint");
 		NTM_TakeWaypoint(76);
 		
 		NTM_MoveToStair(me.areaid, 85);
 		NTM_TakeStair(85);
 		
-		var _chest;
-		_chest = GetPresetUnits(me.areaid, NTC_UNIT_OBJECT, GetLocaleString(3260));	// 455: special chest 3260: chest
+		var _chest = GetPresetUnits(me.areaid, NTC_UNIT_OBJECT, GetLocaleString(3260));	// 455: special chest 3260: chest
 		//Say("/f m x = " + (_chest[0].roomx*5 + _chest[0].x) + " | y = " + ( _chest[0].roomy*5 + _chest[0].y));
 		
 		_chestx = _chest[0].roomx*5 + _chest[0].x;
@@ -357,11 +357,12 @@ var Extras =  {
 		
 		NTM_MakeTP();
 		NTM_UsePortal("BluePortal", 75, me.charname);
-		
+	
 		return;
-	},
+	},	
 	K2: function() {	
 		// brain
+		
 		NTTM_TownMove("waypoint");
 		NTM_TakeWaypoint(78);
 		
@@ -381,8 +382,8 @@ var Extras =  {
 		NTM_UsePortal("BluePortal", 75, me.charname);
 		
 		return;
-	}	
-	K3: function() {	
+	},
+	K3: function() {
 		// heart
 		NTTM_TownMove("waypoint");
 		NTM_TakeWaypoint(80);
@@ -425,9 +426,12 @@ var Extras =  {
 			} while(_chest.GetNext());
 		}
 		
+		NTA_ClearPosition(20);
+		NTM_MoveTo(me.areaid, _chest.x, _chest.y);
+		
 		NTM_MakeTP();
-		NTM_UsePortal("BluePortal", 75, me.charname);*/
-
+		NTM_UsePortal("BluePortal", 75, me.charname);
+		
 		return;
 	},
 	Tome: function() {
