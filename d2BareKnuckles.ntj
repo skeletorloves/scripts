@@ -21,8 +21,8 @@
 var _dollChk = true;
 var _dollSoul = false;
 
-var d2B_cases = 2;
-var d2B_toggleHelper = "CBaalNoTele";	// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
+var d2B_cases = 12;
+var d2B_toggleHelper = "NecroRuns";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
 										// leveling2: Chaos, Throne, & Countess
 										// necroBaal / necroCBaal: chaos and/or baal with non tele necro peeps
@@ -485,7 +485,7 @@ function d2B_sewers(a) {							// case: 14
 	Delay(Random(30000,35000));
 	
 	if(!a) {
-		d2B_boSafe(4,107,4,false);
+		d2B_boSafe(2,74,2,false);
 		d2B_commonInitSetup(48);
 		d2B_moveToStair(me.areaid, 49);
 		NTM_TakeStair(49);
@@ -1584,6 +1584,7 @@ function d2H_load() {
 	NTConfig_CSDodge 		= true;						// dodge in CS
 	
 	Scripts.Command = false; // Overrides all other scripts set here
+	Scripts.Cain = true;
 	Scripts.WirtsLeg = true;
 	Scripts.Andy = true;
 	Scripts.Radament = true;
@@ -1592,7 +1593,9 @@ function d2H_load() {
 	Scripts.Staff = true;
 	Scripts.Summoner = true;
 	Scripts.Duriel = true;
-	Scripts.Khalim = true;
+	Scripts.K1 = true;
+	Scripts.K2 = true;
+	Scripts.K3 = true;
 	Scripts.Tome = true;
 	Scripts.Travincal = true;
 	Scripts.Mephisto = true;
@@ -2798,8 +2801,14 @@ function Quest( msg ) { 							// Done (needs testing)
 		case "duriel":
 			Quests.Duriel();
 			break;
-		case "khalim":
-			Extras.Khalim();
+		case "k1":
+			Extras.K1();			// khalim's eye
+			break;
+		case "k2":
+			Extras.K2();			// khalim's brain
+			break;
+		case "k2":
+			Extras.K2();			// khalim's heart
 			break;
 		case "tome":
 			Extras.Tome();
