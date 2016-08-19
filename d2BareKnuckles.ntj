@@ -21,11 +21,11 @@
 var _dollChk = true;
 var _dollSoul = false;
 
-var d2B_cases = 12;
-var d2B_toggleHelper = "NecroRuns";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
+var d2B_cases = 2;
+var d2B_toggleHelper = "NecroCBaal";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
 										// leveling2: Chaos, Throne, & Countess
-										// necroBaal / necroCBaal: chaos and/or baal with non tele necro peeps
+										// NecroCBaal / necroCBaal: chaos and/or baal with non tele necro peeps
 										// NecroRuns: for a sorc leader to run tightly with necro crew
 										// Chaos: for chaos only
 										// CBaalNoTele: for cbaaling with a non tele team
@@ -96,7 +96,7 @@ function NTMain() {
 			if(d2B_toggleHelper == "leveling") d2B_switchChaosThrone();		// for a Chaos and Throne room leveling
 			if(d2B_toggleHelper == "leveling2") d2B_switchcBaalCountess();	// for a Chaos, Throne, & Countess leveling
 			if(d2B_toggleHelper == "throne") d2B_switchThrone();			// for Throne room leveling
-			if(d2B_toggleHelper == "necroBaal") d2B_switchnecroBaal();		// for chaos & baal leveling w/ non teleing necros
+			if(d2B_toggleHelper == "NecroCBaal") d2B_switchNecroCBaal();		// for chaos & baal leveling w/ non teleing necros
 			if(d2B_toggleHelper == "NecroRuns") d2B_switchNecroRuns();		// for a sorc leader to run tightly with necro crew
 			if(d2B_toggleHelper == "Chaos") d2B_switchChaos();				// for a sorc leader to run tightly with necro crew
 			if(d2B_toggleHelper == "Chaos") d2B_CBaalNoTele();				// for cbaaling with a non tele team
@@ -5033,21 +5033,30 @@ function d2B_switchThrone() {
 			break;
 	}
 }
-function d2B_switchnecroBaal() {
+function d2B_switchNecroCBaal() {
 	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 5");
+		case 1: d2B_msg("ummm 4");
+			Delay(Random(25000,30000));
+			d2B_chkAct(4);
+			d2B_chaos(false);					// false: for using non tele team
+			Delay(Random(8000,14000));
+			d2B_msg("ummm 4");
+			Delay(Random(25000,30000));
+			d2B_chkAct(4);
+			break;
+		case 2: d2B_msg("ummm 5");
 			Delay(Random(15000,20000));
 			d2B_chkAct(5);
-			d2B_makeSkellies();
-			Delay(Random(4000,5000));
-			d2B_chkAct(5);
+			//d2B_makeSkellies();
+			//Delay(Random(4000,5000));
+			//d2B_chkAct(5);
 			d2B_worldstonekeep();				// world stone keep thingy
 			if(_dollSoul) {
-				d2B_msg("Dolls and/or souls, so going to take a break...");
-				Delay(Random(7000,9000));
-				if(_msgMe) Say("/msg *" + _myName + " Dolls and/or souls, so going to take a break...");
-				Delay(Random(25000,34000));
-				d2B_chkAct(5);
+				d2B_msg("Dolls and/or souls, so going to do countess as a filler...");
+				Delay(4000);
+				d2B_msg("ummm 1");
+				Delaly(Random(5000,10000));
+				d2B_blackMarsh2();
 			}
 			_soulDoll = false;
 			Delay(Random(10000,12000));
