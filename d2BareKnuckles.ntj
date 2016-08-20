@@ -21,7 +21,7 @@
 var _dollChk = true;
 var _dollSoul = false;
 
-var d2B_cases = 2;
+var d2B_cases = 1;
 var d2B_toggleHelper = "CBaalLow";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
 										// leveling2: Chaos, Throne, & Countess
@@ -32,7 +32,7 @@ var d2B_toggleHelper = "CBaalLow";		// helper: for engaging helper | testing: fo
 										// CBaalLow: for leveling a team of low lvls
 
 var _lowLvlPeeps = true;				// leveling really low level peeps
-var _nonTelePeeps = true;				// if followers can tele
+var _nonTelePeeps = false;				// if followers can tele
 
 var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_myTP()
 var d2B_refill = true;					// enable/disable NTTMGR_TownManager();
@@ -103,7 +103,7 @@ function NTMain() {
 			if(d2B_toggleHelper == "NecroRuns") d2B_switchNecroRuns();		// for a sorc leader to run tightly with necro crew
 			if(d2B_toggleHelper == "Chaos") d2B_switchChaos();				// for a sorc leader to run tightly with necro crew
 			if(d2B_toggleHelper == "Chaos") d2B_CBaalNoTele();				// for cbaaling with a non tele team
-			if(d2B_toggleHelper == "CBaalLow") d2B_CBaalLowL();				// for cbaaling low levels
+			if(d2B_toggleHelper == "CBaalLow") d2B_CBaalLow();				// for cbaaling low levels
 			
 			d2B_msgIncPause();	
 		}
@@ -1532,6 +1532,12 @@ function d2B_littleJMP() {
 	var y_tmp = Random(3,8);
 	y_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
 	NTM_MoveTo(me.areaid, me.x+x_tmp, me.y+y_tmp);
+	return;
+}
+function d2B_safeTeam(a,b,c,d) {
+	NTM_MoveTo(a,b,c);
+	NTCS_ClearPosition(d);
+	d2B_team(true);
 	return;
 }
 // ________________________________________________________
@@ -3795,6 +3801,7 @@ function NT_OpenVizierSealInt(type) {
 	var i;
 
 	if (type === 1) {
+		if(_lowLvlPeeps) d2B_safeTeam(108,7648,5269,30);
 		var vx = [7767,7756,7744,7747,7750,7741,7729,7720,7720,7721,7719,7712,7700,7687,7676, 7666];
 		var vy = [5292,5284,5275,5290,5303,5310,5314,5312,5301,5288,5273,5292,5294,5294,5292, 5307];
 	} else {
@@ -3812,6 +3819,7 @@ function NT_OpenVizierSealInt(type) {
 		
 	
 	if (!NT_OpenSealInt(395) || !NT_OpenSealInt(396)) {
+		d2B_team(false);
 		return false;
 	}
 	if (type == 1) {
@@ -3837,6 +3845,7 @@ function NT_OpenVizierSealInt(type) {
 		Delay(Random(2000,3000));
 		d2B_isTeamInTown(4,108);
 	}
+	if(_lowLvlPeeps) d2B_team(false);
 	if(NTConfig_IdInField){
 		NT_FieldID();
 	} return true;
@@ -5073,6 +5082,8 @@ function d2B_switchNecroCBaal() {
 			}
 			_soulDoll = false;
 			Delay(Random(10000,12000));
+			d2B_msg("ummm 4");
+			Delay(Random(25000,30000));
 			break;
 	}
 }
@@ -5190,7 +5201,8 @@ function d2B_CBaalNoTele() {
 	}
 }
 function d2B_CBaalLow() {
-	case 1: d2B_msg("ummm 4");
+	switch(d2B_myPauseValue) {
+		case 1: d2B_msg("ummm 4");
 			Delay(Random(25000,30000));
 			d2B_chkAct(4);
 			d2B_chaos("low");					// false: for using non tele team
