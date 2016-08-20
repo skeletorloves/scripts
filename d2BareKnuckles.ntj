@@ -3979,7 +3979,7 @@ function NT_OpenVenomSealInt(type) {
 		Delay(Random(2000,4000));
 	}
 	
-	if(_lowLvlPeeps) d2B_myTP(false, true, true, false, 2000, 4000);
+	if(!_lowLvlPeeps) d2B_myTP(false, true, true, false, 2000, 4000);
 	
 	if(_nonTelePeeps) {
 		d2B_team(false);
