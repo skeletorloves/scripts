@@ -22,18 +22,20 @@ var _dollChk = true;
 var _dollSoul = false;
 
 var d2B_cases = 2;
-var d2B_toggleHelper = "NecroCBaal";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
+var d2B_toggleHelper = "CBaalLow";		// helper: for engaging helper | testing: for testing | grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
 										// leveling2: Chaos, Throne, & Countess
 										// NecroCBaal / necroCBaal: chaos and/or baal with non tele necro peeps
 										// NecroRuns: for a sorc leader to run tightly with necro crew
 										// Chaos: for chaos only
 										// CBaalNoTele: for cbaaling with a non tele team
+										// CBaalLow: for leveling a team of low lvls
 
+var _lowLvlPeeps = true;				// leveling really low level peeps
 var _nonTelePeeps = true;				// if followers can tele
 
 var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_myTP()
-var d2B_refill = true;					// enable/disable NTTM_TownManager()
+var d2B_refill = true;					// enable/disable NTTMGR_TownManager();
 	
 var _msgMe = false;							// for enabling whispering to _myName 
 var _myName = "";							// peep to msg of what's a-happenin'
@@ -77,6 +79,7 @@ function NTMain() {
 	
 	d2B_myPauseValue = Number(d2B_retrievePause());		// retrieve & convert to numerical value the pause value
 	
+	NTTMGR_TownManager();
 	NTTM_TownMove("waypoint");
 	Delay(700);
 	
@@ -100,6 +103,7 @@ function NTMain() {
 			if(d2B_toggleHelper == "NecroRuns") d2B_switchNecroRuns();		// for a sorc leader to run tightly with necro crew
 			if(d2B_toggleHelper == "Chaos") d2B_switchChaos();				// for a sorc leader to run tightly with necro crew
 			if(d2B_toggleHelper == "Chaos") d2B_CBaalNoTele();				// for cbaaling with a non tele team
+			if(d2B_toggleHelper == "CBaalLow") d2B_CBaalLowL();				// for cbaaling low levels
 			
 			d2B_msgIncPause();	
 		}
@@ -919,7 +923,7 @@ function d2B_chaos(a){								// case: 31
 	d2B_msg("ummm 4");					// saying this again as a precaution
 	Delay(Random(30000,35000));
 	
-	if(!a) {
+	if(!a) {							// a: false is for running with non tele peeps
 		d2B_commonInitSetup(107);
 		d2B_myTP(true, true, true, false, false);
 		d2B_team(false);									// send the peeps back to town
@@ -945,7 +949,6 @@ function d2B_chaos(a){								// case: 31
 		return;
 	}
 	
-	d2B_commonInitSetup(48);
 	NTConfig_FastChaos = false;
 	NTConfig_LeechSupport = false;
 	NTConfig_IdInField = false;
@@ -953,29 +956,32 @@ function d2B_chaos(a){								// case: 31
 	d2B_commonInitSetup(107);
 	d2B_myTP(true, true, true, false, false);
 	Delay(1000);
-	d2B_team(false);									// send the peeps back to town
+	d2B_team(false);					// send the peeps back to town
 	
-	NTM_MoveTo(108, 7790, 5544);						// tele to just inside the enterance
+	if(a != "low") {					// if not leveling low peeps
 	
-	if(!_nonTelePeeps) {
-		NTM_MakeTP();
-		Delay(300);
-		d2B_msg(".");
+		NTM_MoveTo(108, 7790, 5544);						// tele to just inside the enterance
+		
+		if(!_nonTelePeeps) {
+			NTM_MakeTP();
+			Delay(300);
+			d2B_msg(".");
 
-		NTCS_ClearPosition(30, EntranceSort);
-		Delay(Random(2000.3000));
-		d2B_msg(".");
-		var FrontToStarX = [7792,7794,7791,7777,7813,7769,7782,7802,7819,7768,7770,7791,7819, 7804];
-		var FrontToStarY = [5564,5529,5495,5486,5486,5445,5421,5421,5446,5390,5355,5355,5376, 5340];
-		for (var i = 0; i < FrontToStarX.length; i += 1) {
-			NTM_MoveTo(108, FrontToStarX[i], FrontToStarY[i]);
-			NTCS_ClearPosition(35, EntranceSort);
+			NTCS_ClearPosition(30, EntranceSort);
+			Delay(Random(2000.3000));
+			d2B_msg(".");
+			var FrontToStarX = [7792,7794,7791,7777,7813,7769,7782,7802,7819,7768,7770,7791,7819, 7804];
+			var FrontToStarY = [5564,5529,5495,5486,5486,5445,5421,5421,5446,5390,5355,5355,5376, 5340];
+			for (var i = 0; i < FrontToStarX.length; i += 1) {
+				NTM_MoveTo(108, FrontToStarX[i], FrontToStarY[i]);
+				NTCS_ClearPosition(35, EntranceSort);
+			}
 		}
 	}
 	
 	NTM_MoveTo(108, 7794, 5292);						// tele to the centre of chaos
 	
-	if (!NT_OpenSealsInt()) {
+	if (!NT_OpenSealsInt(a)) {							// a: "low" for leveling low peeps
 		NTC_SendMsgToScript("NTBotGame.ntj", "NT_OpenSealsInt()");
 	}
 	
@@ -996,6 +1002,7 @@ function d2B_chaos(a){								// case: 31
 	
 	d2B_chkAct2(true,4);
 }
+
 //
 //	Act V
 function d2B_bloodyfoothills() {
@@ -1898,8 +1905,10 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 	case ".":				// follow
 		if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
 		TakeLeaderTP();
-		isFollowingEnabled = true;
-		Print(COLOR_4 + "Follow on");
+		if(!_lowLvlPeeps) {
+			isFollowingEnabled = true;
+			Print(COLOR_4 + "Follow on");
+		}
 		break;
 	case "..":				// unfollow
 		if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
@@ -3738,7 +3747,7 @@ function d2B_sealThingy(a) {
 	
 	d2B_team(false);
 }
-function NT_OpenSealsInt() {
+function NT_OpenSealsInt(a) {
 	var _unit;
 	var _result;
 
@@ -3748,14 +3757,18 @@ function NT_OpenSealsInt() {
 		return false;
 	}
 	if (_unit[0].roomy * 5 + _unit[0].y == 5275) {
+		d2B_msg("Vizier is 1");
 		_result = NT_OpenVizierSealInt(1);
 	} else {
+		d2B_msg("Vizier is 2");
 		_result = NT_OpenVizierSealInt(2);
 	}
 	_unit = GetPresetUnits(108, NTC_UNIT_OBJECT, 394);
 	if (_unit[0].roomx * 5 + _unit[0].x == 7773) {
+		d2B_msg("Seis is 1");
 		_result = NT_OpenDeSeisSealInt(1);
 	} else {
+		d2B_msg("Seis is 2");
 		_result = NT_OpenDeSeisSealInt(2);
 	}
 	if (!_result) {
@@ -3768,8 +3781,10 @@ function NT_OpenSealsInt() {
 		return false;
 	}
 	if (_unit[0].roomx * 5 + _unit[0].x == 7893) {
+		d2B_msg("Venom is 1");
 		_result = NT_OpenVenomSealInt(1);
 	} else {
+		d2B_msg("Venom is 2");
 		_result = NT_OpenVenomSealInt(2);
 	}
 	NTP_DoPrecast(true);
@@ -5040,8 +5055,6 @@ function d2B_switchNecroCBaal() {
 			d2B_chkAct(4);
 			d2B_chaos(false);					// false: for using non tele team
 			Delay(Random(8000,14000));
-			d2B_msg("ummm 4");
-			Delay(Random(25000,30000));
 			d2B_chkAct(4);
 			break;
 		case 2: d2B_msg("ummm 5");
@@ -5055,7 +5068,7 @@ function d2B_switchNecroCBaal() {
 				d2B_msg("Dolls and/or souls, so going to do countess as a filler...");
 				Delay(4000);
 				d2B_msg("ummm 1");
-				Delaly(Random(5000,10000));
+				Delay(Random(5000,10000));
 				d2B_blackMarsh2();
 			}
 			_soulDoll = false;
@@ -5170,6 +5183,18 @@ function d2B_CBaalNoTele() {
 			}
 			_soulDoll = false;
 			Delay(Random(10000,12000));
+			d2B_msg("ummm 4");
+			Delay(Random(25000,30000));
+			d2B_chkAct(4);
+			break;
+	}
+}
+function d2B_CBaalLow() {
+	case 1: d2B_msg("ummm 4");
+			Delay(Random(25000,30000));
+			d2B_chkAct(4);
+			d2B_chaos("low");					// false: for using non tele team
+			Delay(Random(20000,22000));
 			d2B_msg("ummm 4");
 			Delay(Random(25000,30000));
 			d2B_chkAct(4);
