@@ -986,7 +986,7 @@ function d2B_chaos(a){								// case: 31
 	}
 	
 	NTM_MoveTo(108, 7795, 5295);
-	d2B_team(true);
+	if(!_lowLvlPeeps) d2B_team(true);
 
 	for (i = 0; i < 80; i += 1) {
 		if (GetUnit(NTC_UNIT_MONSTER, 243)) {
@@ -998,6 +998,12 @@ function d2B_chaos(a){								// case: 31
 	NTSI_PickItems();
 	Delay(1000);
 	
+	if(_lowLvlPeeps) {
+		d2B_msg("'");
+		Delay(2000);
+		Town();
+		Return;
+	}
 	d2B_myTP(true, true, false, false, false);
 	
 	d2B_chkAct2(true,4);
@@ -1538,6 +1544,8 @@ function d2B_safeTeam(a,b,c,d) {
 	NTM_MoveTo(a,b,c);
 	NTCS_ClearPosition(d);
 	d2B_team(true);
+	Delay(Random(500,1500));
+	NTCS_ClearPosition(d);
 	return;
 }
 // ________________________________________________________
@@ -1908,7 +1916,13 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			if(!TakeLeaderTP())
 				Town();
 		break;
-	case ".":				// follow
+	case "...":				//	hide
+		if(!_lowLvlPeeps) break;
+		if(NTC_InTown(me)) TakeLeaderTP();
+		Delay(Random(1000,1200));
+		NTM_MoveTo(108,7763,5267);
+		break;
+	case ".":				//	follow
 		if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
 		TakeLeaderTP();
 		if(!_lowLvlPeeps) {
@@ -2727,7 +2741,7 @@ function TakeLeaderTP(toArea) { 					// Done
 		
 		Delay(250);
 		
-		if(NTC_InTown(me))
+		if(NTC_InTown(me) && d2B_refill)
 		{
 			if(NTTMGR_CheckScrolls(1) < 4)
 			{
@@ -3059,13 +3073,17 @@ function TP(msg) { 									// Done
 		case "":
 			if(!NTC_InTown(me))
 			{
-				if(!NTM_MakeTP())
+				var _iTmp = 0;
+				do
 				{
-					d2B_msg("Trying to make a TP...");
+					if(_iTmp > 5) break;
+					d2B_msg("Trying to make a TP and then little jumpin' ...");
 					Delay(Random(1000,1200));
 					d2B_littleJMP();
-					Town();	
-				}
+					Town();
+					Delay(Random(1500,2000));
+					_iTmp++
+				} while(!NTM_MakeTP())
 				break;
 			}
 			if(NTC_InTown(me))
@@ -3089,20 +3107,25 @@ function TP(msg) { 									// Done
 				if(wpID != -1)
 				{
 					Town();
-					if(NTTMGR_CheckScrolls(1) <= 4)
+					if((NTTMGR_CheckScrolls(1) <= 4) && d2B_refill)
 					{
 						Say("Buying scrolls first!");
 						d2B_townMgr();
 					}
 					NTTM_TownMove("waypoint")
 					NTM_TakeWaypoint(wpID);
-					if(!NTM_MakeTP())
+					
+					var _iTmp = 0;
+					do
 					{
-						d2B_msg("Trying to make a TP...");
+						if(_iTmp > 5) break;
+						d2B_msg("Trying to make a TP and then little jumpin' ...");
 						Delay(Random(1000,1200));
 						d2B_littleJMP();
 						Town();
-					}
+						Delay(Random(1500,2000));
+						_iTmp++
+					} while(!NTM_MakeTP())
 					break;
 				}
 			}
@@ -3117,13 +3140,17 @@ function TP(msg) { 									// Done
 					}
 					NTTM_TownMove("waypoint")
 					NTM_TakeWaypoint(wpID);
-					if(!NTM_MakeTP())
+					var _iTmp = 0;
+					do
 					{
-						d2B_msg("Trying to make a TP...");
+						if(_iTmp > 5) break;
+						d2B_msg("Trying to make a TP and then little jumpin' ...");
 						Delay(Random(1000,1200));
 						d2B_littleJMP();
 						Town();
-					}
+						Delay(Random(1500,2000));
+						_iTmp++
+					} while(!NTM_MakeTP())
 				}
 			}
 			break;
@@ -3801,12 +3828,13 @@ function NT_OpenVizierSealInt(type) {
 	var i;
 
 	if (type === 1) {
-		if(_lowLvlPeeps) d2B_safeTeam(108,7648,5269,30);
-		var vx = [7767,7756,7744,7747,7750,7741,7729,7720,7720,7721,7719,7712,7700,7687,7676, 7666];
-		var vy = [5292,5284,5275,5290,5303,5310,5314,5312,5301,5288,5273,5292,5294,5294,5292, 5307];
+		if(_lowLvlPeeps) d2B_safeTeam(108,7647,5269,30);
+		var vx = [7668,7675,7662,  7666,7676,7687,7700,7712,7719,7721,7720,7720,7729,7741];
+		var vy = [5278,5299,5314,  5307,5292,5294,5294,5292,5273,5288,5301,5312,5314,5310];
 	} else {
-		var vx = [7768,7755,7741,7733,7723,7714,7707,7680,7666, 7655];
-		var vy = [5289,5295,5282,5291,5300,5282,5315,5310,5311, 5282];
+		if(_lowLvlPeeps) d2B_safeTeam(108,7647,5269,30);
+		var vx = [7654,7660,  7655,7666,7680,7707,7714,7723,7733];
+		var vy = [5393,5311,  5282,5311,5310,5315,5282,5300,5291];
 	}
 	if(!_nonTelePeeps) {
 		for (i = 0; i < vx.length; i += 1) {
@@ -3845,7 +3873,7 @@ function NT_OpenVizierSealInt(type) {
 		Delay(Random(2000,3000));
 		d2B_isTeamInTown(4,108);
 	}
-	if(_lowLvlPeeps) d2B_team(false);
+	if(_lowLvlPeeps) d2B_msg("'");
 	if(NTConfig_IdInField){
 		NT_FieldID();
 	} return true;
@@ -3855,11 +3883,13 @@ function NT_OpenDeSeisSealInt(type) {
 	var i, n;
 
 	if (type === 1) {
-		var sx = [7791,7783,7800,7809,7785,7773,7773,7776,7794,7811,7817,7815,7798]; // Shape of "2"
-		var sy = [5265,5256,5247,5232,5230,5222,5212,5194,5194,5193,5177,5157,5155];
+		if(_lowLvlPeeps) d2B_safeTeam(108,7767,5147,30);
+		var sx = [7801, 7798,7815,7817,7811,7794,7776,7773,77773,7785,7809,7800]; 
+		var sy = [5155, 5155,5157,5177,5193,5194,5194,5212,5222,5230,5232,5247]; 
 	} else {
-		var sx = [7786,7801,7786,7787,7810,7811,7810,7790,7774,7773,7794]; // shape of an "S" or "5"
-		var sy = [5263,5249,5245,5227,5233,5215,5198,5194,5181,5156,5154];
+		if(_lowLvlPeeps) d2B_safeTeam(108,7819,5148,30);
+		var sx = [7992,7775,  7794,7773,7774,7790,7810,7811,7810,7787,7786];
+		var sy = [5154,5177,  5154,5156,5181,5194,5198,5215,5233,5227,5245];
 	}
 	if(!_nonTelePeeps) {
 		for (var i = 0; i < sx.length; i += 1) {
@@ -3899,7 +3929,7 @@ function NT_OpenDeSeisSealInt(type) {
 		Delay(Random(2000,4000));
 		d2B_isTeamInTown(4,108);
 	}
-
+	if(_lowLvlPeeps) d2B_msg("'");
 	if(NTConfig_IdInField){
 		NT_FieldID();
 	} 
@@ -3908,11 +3938,13 @@ function NT_OpenDeSeisSealInt(type) {
 
 function NT_OpenVenomSealInt(type) {
 	if (type === 1) {
-		var IX = [7825,7827,7834,7845,7855,7852,7875,7896,7917]; // shape of a "t"
-		var IY = [5293,5276,5291,5315,5301,5278,5293,5295,5291];
+		if(_lowLvlPeeps) d2B_safeTeam(108,7861,5319,30);
+		var IX = [7845,7844,  7825,7827,7834,7845,7855,7852,7875,7896,7917]; // shape of a "t"
+		var IY = [5300,5278,  5293,5276,5291,5315,5301,5278,5293,5295,5291];
 	} else {
-		var IX = [7822,7826,7832,7850,7868,7877,7891,7907,7927,7932]; // looks like a hook
-		var IY = [5297,5278,5307,5278,5297,5276,5276,5276,5279,5298];
+		if(_lowLvlPeeps) d2B_safeTeam(108,7937,5321,30);
+		var IX = [7935,7926,7899,  7923,7927,7907,7894,7877,7868]; // looks like a hook
+		var IY = [5301,5275,5275,  5298,8279,5276,5276,5276,5297];
 	}
 	if(!_nonTelePeeps) {
 		for (var i = 0; i < IX.length; i += 1) {
@@ -3947,16 +3979,27 @@ function NT_OpenVenomSealInt(type) {
 		Delay(Random(2000,4000));
 	}
 	
-	d2B_myTP(false, true, true, false, 2000, 4000);
+	if(_lowLvlPeeps) d2B_myTP(false, true, true, false, 2000, 4000);
 	
 	if(_nonTelePeeps) {
 		d2B_team(false);
 		Delay(Random(2000,4000));
 		d2B_isTeamInTown(4,108);
 	}
-	
+	if(_lowLvlPeeps) d2B_msg("'");
+	Delay(300);
 	NT_OpenSealInt(393);
-
+	Delay(300);
+	if(_lowLvlPeeps) {
+		NTM_MoveTo(108, 7763,5268,5);
+		NTM_MakeTP();
+		Delay(300);
+		NTM_MoveTo(108, 7795, 5295);
+		Delay(300);
+		d2B_msg("...");
+		Delay(Random(1000,2000));
+		d2B_msg("...");
+	}	
 	if(NTConfig_IdInField){
 		NT_FieldID();
 	}
