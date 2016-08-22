@@ -2253,8 +2253,8 @@ function Follow( target ) {
 			}
 			else
 			{
-				d2B_follow();
-				//NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
+				if(me.classid == NTC_CHAR_CLASS_SORCERESS) NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
+				if(me.classid != NTC_CHAR_CLASS_SORCERESS) d2B_follow();
 			}
 		}
 		else
@@ -2284,8 +2284,8 @@ function Follow( target ) {
 	// If we get an INVALID distance (too far away for GetDistance()), but we're in the same area, attempt to move to the leader
 	if(_distance === -1 && me.areaid === leaderPlayerUnit.areaid && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit))
 	{
-		d2B_follow();
-		//NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
+		if(me.classid == NTC_CHAR_CLASS_SORCERESS) NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
+		if(me.classid != NTC_CHAR_CLASS_SORCERESS) d2B_follow();
 		return;
 	}
 	
@@ -2315,8 +2315,8 @@ function Follow( target ) {
 		{
 			if(leaderUnit)
 			{
-				d2B_follow();
-				//NTM_GetCloserInt(leaderUnit);
+				if(me.classid == NTC_CHAR_CLASS_SORCERESS) NTM_GetCloserInt(leaderUnit);
+				if(me.classid != NTC_CHAR_CLASS_SORCERESS) d2B_follow();
 			}
 			else
 			{
@@ -2406,8 +2406,8 @@ function Follow( target ) {
 		{
 			if(leaderUnit)
 			{
-				d2B_follow();
-				//NTM_GetCloserInt(leaderUnit);
+				if(me.classid == NTC_CHAR_CLASS_SORCERESS) NTM_GetCloserInt(leaderUnit);
+				if(me.classid != NTC_CHAR_CLASS_SORCERESS) d2B_follow();
 			}
 			else
 			{
@@ -2478,9 +2478,8 @@ function Follow( target ) {
 		{
 			if(leaderUnit)
 			{
-				d2B_follow();
-				//NTM_GetCloserInt(leaderUnit);
-			}
+				if(me.classid == NTC_CHAR_CLASS_SORCERESS) NTM_GetCloserInt(leaderUnit);
+				if(me.classid != NTC_CHAR_CLASS_SORCERESS) d2B_follow();			}
 			else
 			{
 				NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
@@ -2598,8 +2597,8 @@ function Follow( target ) {
 		{
 			if(leaderUnit)
 			{
-				d2B_follow();
-				//NTM_GetCloserInt(leaderUnit);
+				if(me.classid == NTC_CHAR_CLASS_SORCERESS) NTM_GetCloserInt(leaderUnit);
+				if(me.classid != NTC_CHAR_CLASS_SORCERESS) d2B_follow();
 			}
 			else
 			{
@@ -4914,9 +4913,9 @@ function d2B_switchMain() {
 			break;
 		case 2: d2B_coldplains(true);			// cold plains thingy | true: for clearing all of the cold plains
 			break;
-		case 3: d2B_burialgrounds();		// burial grounds thingy
+		case 3: d2B_burialgrounds(true);		// burial grounds thingy
 			break;
-		case 4: d2B_stonyfield();			// stony field thiny
+		case 4: d2B_stonyfield(true);			// stony field thiny
 			break;
 		case 5: d2B_undergroundpassage();	// underground passage thingy
 			break;
