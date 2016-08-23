@@ -40,7 +40,7 @@ var d2B_toggleHelper = "NecroRuns";		// helper: for engaging helper | testing: f
 	
 var _msgMe = false;							// for enabling whispering to _myName 
 var _myName = "";							// peep to msg of what's a-happenin'
-var _myBoBarb = "";							// bo barb name
+var _myBoBarb = false;						// bo barb name
 var _myChantress = "";						// my chantress
 
 
@@ -1482,6 +1482,11 @@ function d2B_teamPro(a,b,c,d,e,f,g,h) {				// (a: d2B_team(a) | b: GetLocaleStri
 	return;
 }
 function d2B_bo() {									//	for instructing a bo barb
+	if(!_myBoBarb) {								// if there is no official boer, then let team barb bo
+		delay(Random(4000,6000));
+		d2B_msg(";");
+		return;
+	}
 	d2B_msg("b ,");				// make sure barb is at the portal area
 	Delay(Random(7000,9000));
 	d2B_msg("b .");				// tell barb to come through tp
@@ -5617,7 +5622,7 @@ function d2B_switchNecroRuns() {
 			Delay(Random(8000,14000));
 			break;
 		case 12: d2B_chkAct(2);
-			d2B_canyon(_nonTelePeeps;					// true: for Duriel
+			d2B_canyon(_nonTelePeeps);					// true: for Duriel
 			Delay(Random(8000,14000));
 			break;
 		case 13: d2B_msg("ummm 4");
