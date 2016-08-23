@@ -5171,7 +5171,7 @@ function d2B_switchNecroRuns() {
 			Delay(Random(8000,14000));
 			break;
 		case 12: d2B_chkAct(2);
-			d2B_canyon(_nonTelePeeps;					// true: for Duriel
+			d2B_canyon(_nonTelePeeps);					// true: for Duriel
 			Delay(Random(8000,14000));
 			break;
 		case 13: d2B_msg("ummm 4");
