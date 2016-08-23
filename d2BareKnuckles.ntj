@@ -5244,7 +5244,7 @@ function d2B_killBaal(classid) {
 					NTTMGR_VisitTown();
 				}
 			}
-			NTM_MoveTo(me.areaid, _target.x, _target.y)
+			NTM_MoveTo(me.areaid, _target.x, _target.y);
 			_attackcount++;
 			_sorcattack++;
 		}
