@@ -1546,7 +1546,7 @@ function d2B_littleJMP() {
 	x_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
 	var y_tmp = Random(3,8);
 	y_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
-	NTM_MoveTo(me.areaid, me.x+x_tmp, me.y+y_tmp);
+	if(!NTM_MoveTo(me.areaid, me.x+x_tmp, me.y+y_tmp)) return;
 	return;
 }
 function d2B_safeTeam(a,b,c,d) {
@@ -3100,12 +3100,11 @@ function TP(msg) { 									// Done
 					d2B_msg("Trying to make a TP and then little jumpin' ...");
 					Delay(Random(1000,1200));
 					d2B_littleJMP();
-					if(!TakeLeaderTP()) {
-						Town();
-						break;
-					}
+					NTM_MakeTP();
+					Delay(200);
+					if(!Town() break;
 					Delay(Random(1500,2000));
-					_iTmp++
+					_iTmp++;
 				} while(!NTM_MakeTP())
 				break;
 			}
@@ -3145,12 +3144,9 @@ function TP(msg) { 									// Done
 						d2B_msg("Trying to make a TP and then little jumpin' ...");
 						Delay(Random(1000,1200));
 						d2B_littleJMP();
-						if(!TakeLeaderTP()) {
-							Town();
-							break;
-						}
+						if(!Town() break;
 						Delay(Random(1500,2000));
-						_iTmp++
+						_iTmp++;
 					} while(!NTM_MakeTP())
 					break;
 				}
@@ -3173,12 +3169,9 @@ function TP(msg) { 									// Done
 						d2B_msg("Trying to make a TP and then little jumpin' ...");
 						Delay(Random(1000,1200));
 						d2B_littleJMP();
-						if(!TakeLeaderTP()) {
-							Town();
-							break;
-						}
+						if(!Town() break;
 						Delay(Random(1500,2000));
-						_iTmp++
+						_iTmp++;
 					} while(!NTM_MakeTP())
 				}
 			}
