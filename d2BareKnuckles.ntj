@@ -931,11 +931,11 @@ function d2B_chaos(a){								// case: 31
 		d2B_isTeamInTown(4,107);
 		
 		var _iCoor = 0;
-		var _CScoords = [7796,5501,7800,5425,7792,5301,7734,5296,7795,5239,7845,5294];
+		var _CScoords = [7796,5501,7772,5425,7819,5413,7783,5352,7792,5301,7734,5296,7795,5239,7845,5294];
 		
 		do{
 			NTM_MoveTo(108, _CScoords[_iCoor], _CScoords[_iCoor+1]);
-			if(_iCoor == 4) {
+			if(_iCoor == 8) {
 				d2B_openAllSeals();
 				NTM_MoveTo(108, _CScoords[_iCoor], _CScoords[_iCoor+1]);
 			}
@@ -1472,13 +1472,15 @@ function d2B_teamPro(a,b,c,d,e,f,g,h) {				// (a: d2B_team(a) | b: GetLocaleStri
 	Delay(Random(2000,4000));
 	NTA_ClearPosition(c, true);
 	if(g && !InTown()) NTM_MoveTo(me.areaid, g, h);
-	Delay(300);
+	Delay(Random(4000,6000));						// deeEdit: chk this as it was (300)
 	d2B_msg("..");
 	Delay(Random(1700,3000));
 	d2B_chkAct2(d,e);
 	d2B_msg("..");
 	Delay(2300);
 	d2B_msg("'");
+	Delay(Random(4000,6000));
+	d2B_msg(",");
 	return;
 }
 function d2B_bo() {									//	for instructing a bo barb
@@ -2179,6 +2181,7 @@ function Follow( target ) {
 	{
 		return;
 	}
+	if(NTC_InTown(me) && (leaderPlayerUnit.areaid == me.areaid)) return;	// if leader and I are in the same town, then do not follow the leader in that town
 	
 	// Get the distance between our character and the leader
 	if(leaderUnit)
@@ -2214,6 +2217,13 @@ function Follow( target ) {
 			}
 			if(_atk) 
 			{
+				if(leaderUnit) {								// deeEdits: add this distance check to keep peeps near
+					_distance = GetDistance(me, leaderUnit);
+					if(_distance > followRange) {
+						NTM_GetCloserInt(leaderUnit);
+						return;
+					}
+				}												//
 				hAttack();
 				return;
 			}
@@ -2268,13 +2278,13 @@ function Follow( target ) {
 			switch(me.areaid)
 			{
 				case 1:
-					NTM_GetCloserInt(leaderUnit);
+					//NTM_GetCloserInt(leaderUnit);
 					break;
 				case 40:
-					NTM_GetCloserInt(leaderUnit);
+					//NTM_GetCloserInt(leaderUnit);
 					break;
 				case 75:
-					NTM_GetCloserInt(leaderUnit);
+					//NTM_GetCloserInt(leaderUnit);
 					break;
 				case 103:
 					// no!
@@ -3790,14 +3800,26 @@ function d2B_sealThingy(a) {
 	
 	switch(a) {
 		case 1: if(!NTA_KillMonster(GetLocaleString(2851))) Delay(300);	// 2851: Vizier
+			d2B_bWall();
 			break;
 		case 2: if(!NTA_KillMonster(GetLocaleString(2852))) Delay(300);	// 2582: Lord De Seis
+			d2B_bWall();
 			break;
 		case 3: if(!NTA_KillMonster(GetLocaleString(2853))) Delay(300);	// 2853: Infector of Souls
+			d2B_bWall();
 			break;
 	}
 	
 	d2B_team(false);
+}
+function d2B_bWall() {
+	_xTmp = me.x;
+	_yTmp = me.y;
+	d2B_msg("n w");
+	Delay(Random(2000,3000));
+	NTA_ClearPosition(30,1);
+	NTM_MoveTo(me.areaid, _xTmp, _yTmp);
+	return;
 }
 function NT_OpenSealsInt(a) {
 	var _unit;
@@ -4926,74 +4948,75 @@ function d2B_switchMain() {
 	switch(d2B_myPauseValue) {
 		case 1: d2B_msg("ummm 1");
 			Delay(Random(12000,16000));
-			d2B_bloodmoor(true);				// blood moore thingy
+			d2B_bloodmoor(_nonTelePeeps);				// blood moore thingy
 			break;
-		case 2: d2B_coldplains(true);			// cold plains thingy | true: for clearing all of the cold plains
+		case 2: d2B_coldplains(_nonTelePeeps);			// cold plains thingy | true: for clearing all of the cold plains
 			break;
-		case 3: d2B_burialgrounds(true);		// burial grounds thingy
+		case 3: d2B_burialgrounds(_nonTelePeeps);		// burial grounds thingy
 			break;
-		case 4: d2B_stonyfield(true);			// stony field thiny
+		case 4: d2B_stonyfield(_nonTelePeeps);			// stony field thiny
 			break;
-		case 5: d2B_undergroundpassage();	// underground passage thingy
+		case 5: d2B_undergroundpassage();				// underground passage thingy
 			break;
-		case 6: d2B_darkwood();				// dark wood thingy
+		case 6: d2B_darkwood(_nonTelePeeps);			// dark wood thingy
 			break;
-		case 7: d2B_blackmarsh();			// black marsh thingy
+		case 7: d2B_blackmarsh();						// black marsh thingy
 			break;
-		case 8: d2B_tamohighland();			// tamoe highland thingy
+		case 8: d2B_tamohighland();						// tamoe highland thingy
 			break;
-		case 9: d2B_outercloister();		// outer cloister thingy
+		case 9: d2B_outercloister();					// outer cloister thingy
 			break;
-		case 10: //d2B_barracks();			// barracks thingy deeNotes: needs to be fixed
+		case 10: d2B_barracks(_nonTelePeeps);			// barracks thingy deeNotes: needs to be fixed
 			Delay(Random(8000,12000));
 			break;
-		case 11: d2B_jail();				// jail thingy
+		case 11: d2B_jail();							// jail thingy
 			break;
-		case 12: d2B_innercloister();		// inner cloister thingy
+		case 12: d2B_innercloister();					// inner cloister thingy
 			break;
-		case 13: d2B_cata();				// catacombs thingy
+		case 13: d2B_cata();							// catacombs thingy
+			//d2B_cata2(_nonTelePeeps);
 			break;
 		case 14: d2B_msg("ummm 2");
 			Delay(Random(12000,16000));
-			d2B_sewers();					// sewers thingy
+			d2B_sewers(_nonTelePeeps);					// sewers thingy
 			break;
-		case 15: d2B_rockywaste();			// rocky waste thingy
+		case 15: d2B_rockywaste();						// rocky waste thingy
 			break;
-		case 16: d2B_dryhills();			// dry hills thingy
+		case 16: d2B_dryhills();						// dry hills thingy
 			break;
-		case 17: d2B_faroasis();			// far oasis thingy
+		case 17: d2B_faroasis(_nonTelePeeps);			// far oasis thingy
 			break;
-		case 18: d2B_lostcity();			// lost city thingy
+		case 18: d2B_lostcity(_nonTelePeeps);			// lost city thingy
 			break;
-		case 19: d2B_clawvipertemple();		// claw viper temple thingy
+		case 19: d2B_clawvipertemple();					// claw viper temple thingy
 			break;
-		case 20: d2B_haremtoceller();		// harem to celler thingy
+		case 20: d2B_haremtoceller();					// harem to celler thingy
 			break;
-		case 21: d2B_arcane();				// arcane thingy
+		case 21: d2B_arcane(_nonTelePeeps);				// arcane thingy
 			break;
-		case 22: d2B_canyon();				// canyon thingy
+		case 22: d2B_canyon(_nonTelePeeps);				// canyon thingy
 			break;
 		case 23: d2B_msg("ummm 3");
 			Delay(Random(12000,16000));
-			d2B_spiderForest();				// canyon thingy
+			d2B_spiderForest();							// canyon thingy
 			break;
-		case 24: d2B_greatMarsh();				// canyon thingy
+		case 24: d2B_greatMarsh();						// canyon thingy
 			break;
-		case 25: d2B_flayerJungle();				// canyon thingy
+		case 25: d2B_flayerJungle();					// canyon thingy
 			break;
-		case 26: d2B_lowerKurast();				// canyon thingy
+		case 26: d2B_lowerKurast();						// canyon thingy
 			break;
-		case 27: d2B_Kurast();				// canyon thingy
+		case 27: d2B_Kurast();							// canyon thingy
 			break;
-		case 28: d2B_upperKurast();				// canyon thingy
+		case 28: d2B_upperKurast();						// canyon thingy
 			break;
-		case 29: d2B_Travincal();				// canyon thingy
+		case 29: d2B_Travincal();						// canyon thingy
 			break;
-		case 30: d2B_Meph();				// canyon thingy
+		case 30: d2B_Meph();							// canyon thingy
 			break;
 		case 31: d2B_msg("ummm 4");
 			Delay(Random(12000,16000));
-			d2B_chaos();				// chaos thingy
+			d2B_chaos(_nonTelePeeps);					// chaos thingy
 			break;
 	}
 }
