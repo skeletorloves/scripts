@@ -102,7 +102,7 @@ function NTMain() {
 			if(d2B_toggleHelper == "throne") d2B_switchThrone();			// for Throne room leveling
 			if(d2B_toggleHelper == "NecroRuns") d2B_switchNecroRuns();		// for a sorc leader to run tightly with necro crew
 			if(d2B_toggleHelper == "Chaos") d2B_switchChaos();				// for a sorc leader to run tightly with necro crew
-			if(d2B_toggleHelper == "Chaos") d2B_CBaalNoTele();				// for cbaaling with a non tele team
+			if(d2B_toggleHelper == "CBaalNoTele") d2B_CBaalNoTele();		// for cbaaling with a non tele team
 			if(d2B_toggleHelper == "CBaalLow") d2B_CBaalLow();				// for cbaaling low levels
 			
 			d2B_msgIncPause();	
