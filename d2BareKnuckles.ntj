@@ -938,7 +938,7 @@ function d2B_chaos(a){								// case: 31
 		do{
 			NTM_MoveTo(108, _CScoords[_iCoor], _CScoords[_iCoor+1]);
 			if(!_test) d2B_team(true);
-			NTA_ClearPosition(40, true);
+			NTA_ClearPosition(30, true);
 			NTM_MoveTo(108, _CScoords[_iCoor], _CScoords[_iCoor+1]);
 			if(!_test) {
 				d2B_bWall();
@@ -3813,7 +3813,7 @@ function d2B_bWall() {
 	_xTmp = me.x;
 	_yTmp = me.y;
 	d2B_msg("n w");
-	Delay(Random(2000,3000));
+	Delay(Random(4000,7000));
 	NTA_ClearPosition(30,1);
 	NTM_MoveTo(me.areaid, _xTmp, _yTmp);
 	return;
