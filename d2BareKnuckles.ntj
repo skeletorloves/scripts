@@ -5235,9 +5235,6 @@ function d2B_CBaalNoTele() {
 		case 2: d2B_msg("ummm 5");
 			Delay(Random(15000,20000));
 			d2B_chkAct(5);
-			d2B_makeSkellies();
-			Delay(Random(4000,5000));
-			d2B_chkAct(5);
 			d2B_worldstonekeep();				// world stone keep thingy
 			if(_dollSoul) {
 				d2B_msg("Dolls and/or souls, so going to do countess as a filler...");
