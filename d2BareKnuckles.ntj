@@ -923,7 +923,7 @@ function d2B_chaos(a){								// case: 31
 	d2B_msg("ummm 4");					// saying this again as a precaution
 	if(!_test) Delay(Random(30000,35000));
 	
-	if(!a) {							// a: false is for running with non tele peeps
+	if(a) {								// a: true is for running with non tele peeps
 		d2B_commonInitSetup(107);
 		if(!_test) {
 			d2B_myTP(true, true, true, false, false);
