@@ -1,5 +1,5 @@
 //	d2BareKnuckles.ntj
-	var _test = true;
+	var _test = false;
 
 //	__________________________________
 //		a collection of function calls
@@ -5230,7 +5230,7 @@ function d2B_CBaalNoTele() {
 		case 1: d2B_msg("ummm 4");
 			Delay(Random(25000,30000));
 			d2B_chkAct(4);
-			d2B_chaos(false);					// false: for using non tele team
+			d2B_chaos(_nonTelePeeps);					// false: for using non tele team
 			break;
 		case 2: d2B_msg("ummm 5");
 			Delay(Random(15000,20000));
