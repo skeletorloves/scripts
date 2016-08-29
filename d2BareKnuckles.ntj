@@ -105,14 +105,10 @@ function NTMain() {
 			if(d2B_toggleHelper == "Chaos") d2B_switchMainRuns(true, false, false);				// for a Chaos only
 			if(d2B_toggleHelper == "Baal") d2B_switchMainRuns(false, true, false);				// for a throne only
 			if(d2B_toggleHelper == "BCountess") d2B_switchMainRuns(false, true, true);			// for a throne and countess
-			
-			
-			
-			if(d2B_toggleHelper == "cBaal") d2B_switchMainRuns(d2B_toggleHelper, false);		// for a Chaos and Throne room leveling
+			if(d2B_toggleHelper == "Countess") d2B_switchMainRuns(false, false, true);			// for a throne and countess
 			
 			if(d2B_toggleHelper == "grinding") d2B_switchGrinding();		// for a select list of action cases
 			if(d2B_toggleHelper == "NecroRuns") d2B_switchNecroRuns();		// for a sorc leader to run tightly with necro crew
-			if(d2B_toggleHelper == "Chaos") d2B_switchChaos();				// for a sorc leader to run tightly with necro crew
 			if(d2B_toggleHelper == "CBaalNoTele") d2B_CBaalNoTele();		// for cbaaling with a non tele team
 			if(d2B_toggleHelper == "CBaalLow") d2B_CBaalLow();				// for cbaaling low levels
 			
@@ -5107,6 +5103,7 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 				break;
 		}
 	}
+	if(!baal && !countess) Delay(Random(25000,30000));
 }
 
 function d2B_switchGrinding() {
