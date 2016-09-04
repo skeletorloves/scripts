@@ -31,7 +31,7 @@ var d2B_refill = true;					// enable/disable NTTMGR_TownManager();
 
 var d2B_cases = 3;
 var d2B_toggleHelper = "cBCountess";	// helper: for engaging helper | testing: for testing 
-										// cBCountess: Chaos, Baal, and Countess
+										// cBCountess: Chaos, Baal, CBall, and Countess
 										
 										// grinding: for specific zone functions
 										// leveling: Chaos & Throne | throne
@@ -100,12 +100,13 @@ function NTMain() {
 			
 			// d2B_switchMainRuns(chaos, baal, countess)
 			
-			if(d2B_toggleHelper == false) d2B_switchMainRuns(false, false, false);				// for a list of action cases which are reasonably complete
-			if(d2B_toggleHelper == "cBCountess") d2B_switchMainRuns(true, true, true);			// for a Chaos, Throne, & Countess leveling
-			if(d2B_toggleHelper == "Chaos") d2B_switchMainRuns(true, false, false);				// for a Chaos only
-			if(d2B_toggleHelper == "Baal") d2B_switchMainRuns(false, true, false);				// for a throne only
-			if(d2B_toggleHelper == "BCountess") d2B_switchMainRuns(false, true, true);			// for a throne and countess
-			if(d2B_toggleHelper == "Countess") d2B_switchMainRuns(false, false, true);			// for a throne and countess
+			if(d2B_toggleHelper == false) d2B_switchMainRuns(false, false, false);				// (31) for a list of action cases which are reasonably complete
+			if(d2B_toggleHelper == "cBCountess") d2B_switchMainRuns(true, true, true);			// (3) for a Chaos, Throne, & Countess leveling
+			if(d2B_toggleHelper == "Chaos") d2B_switchMainRuns(true, false, false);				// (3) for a Chaos only
+			if(d2B_toggleHelper == "CBaal") d2B_switchMainRuns(true, true, false);				// (3) for a chaos and throne
+			if(d2B_toggleHelper == "Baal") d2B_switchMainRuns(false, true, false);				// (3) for a throne only
+			if(d2B_toggleHelper == "BCountess") d2B_switchMainRuns(false, true, true);			// (3) for a throne and countess
+			if(d2B_toggleHelper == "Countess") d2B_switchMainRuns(false, false, true);			// (3) for a throne and countess
 			
 			if(d2B_toggleHelper == "grinding") d2B_switchGrinding();		// for a select list of action cases
 			if(d2B_toggleHelper == "NecroRuns") d2B_switchNecroRuns();		// for a sorc leader to run tightly with necro crew
@@ -1089,9 +1090,11 @@ function d2B_worldstonekeep() {
 	
 	d2B_commonInitSetup(129);
 	Delay(500);
-	/*d2B_myTP(true, true, true, false, false);
+	d2B_myTP(true, true, true, false, false);
 	d2B_team(false);
-	Delay(Random(1500,2000));*/
+	d2B_isTeamInTown(5,129);
+	
+	Delay(Random(1500,2000));
 	
 	d2B_moveToStair(me.areaid, 130);
 	NTM_TakeStair(130);
@@ -5091,10 +5094,19 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 						Delay(Random(125000,130000));
 					}
 				}
-				_soulDoll = false;
+				if(countess && _dollSoul) _dollSoul = false;
 				Delay(Random(10000,12000));
+				if(!countess && !chaos) {		// adds long break if _dollSoul == true, there was no countess run, and no chaos
+					d2B_msg("Dolls and/or sousls, so going on a long break...");
+					Delay(Random(225000,230000));
+				}
 				break;
 			case 3: if(!countess) break;
+				if(_dollSoul) {
+					_dollSoul == false;
+					Delay(Random(125000,130000));
+					break;
+				}
 				d2B_msg("ummm 1");
 				Delay(Random(25000,30000));
 				d2B_blackMarsh2();
@@ -5161,7 +5173,7 @@ function d2B_switchChaosThrone() {
 				Delay(Random(25000,30000));
 				d2B_blackMarsh2();
 			}
-			_soulDoll = false;
+			_dollSoul = false;
 			Delay(Random(10000,12000));
 			d2B_msg("ummm 4");
 			Delay(Random(25000,30000));
@@ -5184,7 +5196,7 @@ function d2B_switchcBaalCountess() {
 			if(_dollSoul) {
 				d2B_msg("Dolls and/or souls, so going to do a delay...");
 				Delay(Random(80000,100000));
-				_soulDoll = false;
+				_dollSoul = false;
 			}
 			Delay(Random(8000,14000));
 			d2B_msg("ummm 4");
@@ -5226,7 +5238,7 @@ function d2B_switchThrone() {
 				Delay(Random(25000,34000));
 				d2B_chkAct(5);
 			}
-			_soulDoll = false;
+			_dollSoul = false;
 			Delay(Random(10000,12000));
 			break;
 	}
@@ -5337,7 +5349,7 @@ function d2B_CBaalNoTele() {
 				Delay(Random(25000,30000));
 				d2B_blackMarsh2();
 			}
-			_soulDoll = false;
+			_dollSoul = false;
 			Delay(Random(10000,12000));
 			d2B_msg("ummm 4");
 			Delay(Random(25000,30000));
