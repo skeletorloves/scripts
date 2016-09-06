@@ -23,6 +23,7 @@ var _dollSoul = false;					// global var for if there are dolls
 
 var _lowLvlPeeps = false;				// leveling really low level peeps | if enabled, will not engage d2B_team() function calls
 var _nonTelePeeps = true;				// if followers cannot tele
+var _boneWall = false;					// enables or disables msging for bonewall
 
 var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_myTP()
 var d2B_refill = true;					// enable/disable NTTMGR_TownManager();
@@ -66,7 +67,7 @@ var leaderUnit;
 var leaderPlayerUnit;
 var followRange = 3;
 var attackRange = 3;
-var flwrAtk_Range = 15;				// used within the hAttack() function
+var flwrAtk_Range = 20;				// used within the hAttack() function
 
 var d2B_myPause = "";				// a temp place for where retrieved bot pause string is stored
 var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Number(myPause)
@@ -1574,7 +1575,13 @@ function d2B_safeTeam(a,b,c,d) {
 	return;
 }
 function d2B_usePortal() {
-	var _portal = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocalString(3226), 15);
+	var _portal;
+	if(!NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3226), 15)) {
+		Town();
+		isFollowingEnabled = false;
+		return;
+	}
+	_portal = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3226), 15);
 	NTM_MoveTo(me.areaid, _portal.x, _portal.y);
 	NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
 	Delay(Random(1000,2000));
@@ -2725,12 +2732,12 @@ function hAttack() {
 		if(NTA_CheckForCloseMonsters(flwrAtk_Range))	// deeEdits orig: 30
 		{
 			NTA_ClearPosition(flwrAtk_Range);			// deeEdits orig: 30
-			Delay(300);									// deeEdits orig: 1000
+			Delay(600);									// deeEdits orig: 1000
 			return;
 		}
 		return;
 	}
-	Delay(300);											// deeEdits orig: 1000
+	Delay(600);											// deeEdits orig: 1000
 }
 
 function isATown(id) {
@@ -3858,8 +3865,10 @@ function d2B_sealThingy(a) {
 function d2B_bWall() {
 	_xTmp = me.x;
 	_yTmp = me.y;
-	d2B_msg("n w");
-	Delay(Random(4000,7000));
+	if(_boneWall) {
+		d2B_msg("n w");
+		Delay(Random(4000,7000));
+	}
 	NTA_ClearPosition(30,1);
 	NTM_MoveTo(me.areaid, _xTmp, _yTmp);
 	return;
@@ -5110,11 +5119,12 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 				d2B_msg("ummm 1");
 				Delay(Random(25000,30000));
 				d2B_blackMarsh2();
-				d2B_msg("ummm 4");
-				Delay(Random(25000,30000));
 				break;
 		}
 	}
+	if(chaos) d2B_msg("ummm 4");
+	else if(!chaos) d2B_msg("ummm 5");
+	Delay(Random(25000,30000));
 	if(!baal && !countess) Delay(Random(25000,30000));
 }
 
