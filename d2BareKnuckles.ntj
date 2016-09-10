@@ -928,11 +928,12 @@ function d2B_Meph() {								// case: 30
 //
 //	Act VI
 function d2B_chaos(a){								// case: 31
-	NTTM_CheckAct(4);					// if not Pandemonium Fortress, then go to Pandemonium Fortress
-	d2B_msg("ummm 4");					// saying this again as a precaution
+	
+	NTTM_CheckAct(4);							// if not Pandemonium Fortress, then go to Pandemonium Fortress
+	d2B_msg("ummm 4");							// saying this again as a precaution
 	if(!_test) Delay(Random(30000,35000));
 	
-	if(a) {								// a: true is for running with non tele peeps
+	if(a) {										// a: true is for running with non tele peeps
 		d2B_commonInitSetup(107);
 		if(!_test) {
 			d2B_myTP(true, true, true, false, false);
@@ -942,7 +943,7 @@ function d2B_chaos(a){								// case: 31
 		d2B_isTeamInTown(4,107);
 		
 		var _iCoor = 0;
-		var _CScoords = [7796,5501,7772,5425,7801,5353, 7782,5234,7852,5296, 7736,5302];
+		var _CScoords = [7796,5501, 7801,5356, 7842,5308, 7716,5309];	// myOrig: [7796,5501,7772,5425,7801,5353, 7782,5234,7852,5296, 7736,5302] 
 		
 		do{
 			NTM_MoveTo(108, _CScoords[_iCoor], _CScoords[_iCoor+1]);
@@ -952,7 +953,10 @@ function d2B_chaos(a){								// case: 31
 			if(!_test) {
 				d2B_bWall();
 				d2B_team(false);
-				Delay(Random(4000,6000));
+				Delay(Random(5000,6000));
+				d2B_msg("'");
+				NTA_ClearPosition(5, true);
+				Delay(Random(3000,4000));
 				d2B_isTeamInTown(4,108)
 			}
 			Delay(Random(4000,5000));
@@ -3144,7 +3148,7 @@ function TP(msg) { 									// Done
 				var _iTmp = 0;
 				do
 				{
-					if(_iTmp > 5) break;
+					if(_iTmp > 10) break;
 					d2B_msg("Movin' a bit and then attempting to make TP to town...");
 					Delay(Random(1000,1200));
 					d2B_littleJMP();
@@ -3152,8 +3156,11 @@ function TP(msg) { 									// Done
 					Delay(200);
 					
 					d2B_usePortal();
-		
-					if(!NTC_InTown(me) && !Town()) break;
+					if(NTC_InTown(me)) {
+						Delay(Random(2000,3000));
+						TakeLeaderTP();
+					}
+					//if(!NTC_InTown(me) && !Town()) break;
 					Delay(Random(1500,2000));
 					_iTmp++;
 				} while(!NTM_MakeTP())
@@ -3191,14 +3198,18 @@ function TP(msg) { 									// Done
 					var _iTmp = 0;
 					do
 					{
-						if(_iTmp > 5) break;
+						if(_iTmp > 10) break;
 						d2B_msg("Movin' a bit and then attempting to make TP to town...");
 						Delay(Random(1000,1200));
 						d2B_littleJMP();
 						
 						d2B_usePortal();
+						if(NTC_InTown(me)) {
+							Delay(Random(2000,3000));
+							TakeLeaderTP();
+						}
 		
-						if(!NTC_InTown(me) && !Town()) break;
+						//if(!NTC_InTown(me) && !Town()) break;
 						Delay(Random(1500,2000));
 						_iTmp++;
 					} while(!NTM_MakeTP())
@@ -3219,14 +3230,18 @@ function TP(msg) { 									// Done
 					var _iTmp = 0;
 					do
 					{
-						if(_iTmp > 5) break;
+						if(_iTmp > 10) break;
 						d2B_msg("Movin' a bit and then attempting to make TP to town...");
 						Delay(Random(1000,1200));
 						d2B_littleJMP();
 						
 						d2B_usePortal();
+						if(NTC_InTown(me)) {
+							Delay(Random(2000,3000));
+							TakeLeaderTP();
+						}
 		
-						if(!NTC_InTown(me) && !Town()) break;
+						//if(!NTC_InTown(me) && !Town()) break;
 						Delay(Random(1500,2000));
 						_iTmp++;
 					} while(!NTM_MakeTP())
@@ -5079,6 +5094,7 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 				d2B_msg("ummm 4");
 				NTConfig_SkipRegularMonsters = false;
 				d2B_chkAct(4);
+				d2B_townMgr();
 				Delay(Random(20000,25000));
 				if(!_nonTelePeeps) d2B_chaos(true);						// chaos thingy
 				else if(_nonTelePeeps) d2B_chaos(false);
@@ -5087,6 +5103,7 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 				d2B_msg("ummm 5"); 
 				Delay(Random(15000,20000));
 				d2B_chkAct(5);
+				d2B_townMgr();
 				d2B_worldstonekeep();				// world stone keep thingy
 				if(_dollSoul) {
 					if(countess) { 					// add countess if _dollSoul
@@ -5126,6 +5143,7 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 	else if(!chaos) d2B_msg("ummm 5");
 	Delay(Random(25000,30000));
 	if(!baal && !countess) Delay(Random(25000,30000));
+	d2B_townMgr();
 }
 
 function d2B_switchGrinding() {
