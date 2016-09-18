@@ -1266,10 +1266,8 @@ function d2B_isTeamInTown(a,b) {					// a: act | b: area of where the tp is open
 	Delay(Random(2000,4000));
 	d2B_msg("'");
 	if(InTown(me) && b) {
-		if(me.areaid == 103) {
+		if(me.areaid == 103 || me.areaid == 108) {
 			d2B_msg("'r");					// send team to river
-			Delay(Random(10000,14000));
-			d2B_msg(".");					// call them back
 			Delay(Random(10000,14000));
 		}
 		Delay(Random(2000,3000));
