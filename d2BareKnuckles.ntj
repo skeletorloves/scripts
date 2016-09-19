@@ -3165,7 +3165,7 @@ function TP(msg) { 									// Done
 				{
 					if(_iTmp > 5) break;
 					d2B_msg("Movin' a bit and then attempting to make TP to town...");
-					Delay(Random(2000,4000));
+					Delay(Random(1200,3000));
 					d2B_littleJMP();
 					NTM_MakeTP();
 					Delay(200);
@@ -3212,7 +3212,7 @@ function TP(msg) { 									// Done
 					{
 						if(_iTmp > 5) break;
 						d2B_msg("Movin' a bit and then attempting to make TP to town...");
-						Delay(Random(2000,4000));
+						Delay(Random(1200,3000));
 						d2B_littleJMP();
 						
 						d2B_usePortal();
@@ -3240,7 +3240,7 @@ function TP(msg) { 									// Done
 					{
 						if(_iTmp > 5) break;
 						d2B_msg("Movin' a bit and then attempting to make TP to town...");
-						Delay(Random(2000,4000));
+						Delay(Random(1200,3000));
 						d2B_littleJMP();
 						
 						d2B_usePortal();
