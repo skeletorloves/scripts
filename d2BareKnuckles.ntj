@@ -1253,8 +1253,6 @@ function d2B_isTeamInTown(a,b) {					// a: act | b: area of where the tp is open
 					d2B_msg(".");							// this may press peeps who are not in town to go to town
 					Delay(Random(7000,8000));
 					d2B_msg("..");
-					d2B_teamTmp2River()
-					
 					//break;
 					return;
 				}
@@ -1266,10 +1264,10 @@ function d2B_isTeamInTown(a,b) {					// a: act | b: area of where the tp is open
 	Delay(Random(2000,4000));
 	d2B_msg("'");
 	if(InTown(me) && b) {
-		if(me.areaid == 103 || me.areaid == 108) {
+		/*if(me.areaid == 103 || me.areaid == 108) {
 			d2B_msg("'r");					// send team to river
-			Delay(Random(10000,14000));
-		}
+			Delay(Random(20000,24000));
+		}*/
 		Delay(Random(2000,3000));
 		NTM_UsePortal("BluePortal", b);	// go back to the place where the tp was made
 	}
@@ -2171,13 +2169,16 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 	case "'r":							// sends team to river wp temporarily
 		//if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
 		if(!InTown(me)) {
-			break;
+			if(!TakeLeaderTP())
+				Town();
 		}
 		Delay(Random(1000,2000));
 		d2B_townMove("portalspot");
 		NTM_TakeWaypoint(107);
 		Delay(Random(3000,4000));
 		NTM_TakeWaypoint(103);
+		isFollowingEnabled = false;
+		d2B_townMove("portalspot");
 		break;
 	case "gold":
 		if(!isBusy)
