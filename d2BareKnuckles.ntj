@@ -951,7 +951,11 @@ function d2B_chaos(a){								// case: 31
 				d2B_msg("'");
 				NTA_ClearPosition(5, true);
 				Delay(Random(3000,4000));
-				d2B_isTeamInTown(4,108)
+				d2B_isTeamInTown(4,108);
+				if(!InTown()) NTM_UsePortal("BluePortal", 103);
+				Delay(300);
+				d2B_msg("'r");		// reset team by sending them to the river wp
+				if(InTown()) NTM_UsePortal("BluePortal", 107);
 			}
 			Delay(Random(4000,5000));
 			_iCoor += 2;
@@ -1340,6 +1344,7 @@ function d2B_townMgr() {
 	return;
 }
 function d2B_townMove(a) {
+	if(!InTown()) return;
 	if(!NTTM_TownMove(a)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTTM_TownMove()");
 		return;
