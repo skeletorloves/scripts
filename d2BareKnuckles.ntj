@@ -89,7 +89,7 @@ function NTMain() {
 	Delay(700);
 	
 	if(d2B_toggleHelper == "helper") {d2H_helper();}		// for enabling a follower
-	if(d2B_toggleHelper != "helper") d2B_newGmDlyPeepChk();
+	if(d2B_toggleHelper != "helper" && !_test) d2B_newGmDlyPeepChk();
 	
 	if(d2B_toggleHelper != "testing") {
 		
@@ -1253,24 +1253,21 @@ function d2B_isTeamInTown(a,b) {					// a: act | b: area of where the tp is open
 					d2B_msg(".");							// this may press peeps who are not in town to go to town
 					Delay(Random(7000,8000));
 					d2B_msg("..");
+					Delay(300);
 					//break;
+					if(b) NTM_UsePortal("BluePortal", b);	// go back to the place where the tp was made
 					return;
 				}
 			}
 		}
 	}
-	NTTM_CheckAct(a);						// send leader to town
 	d2B_msg("Everyone is in town.");
 	Delay(Random(2000,4000));
 	d2B_msg("'");
-	if(InTown(me) && b) {
-		/*if(me.areaid == 103 || me.areaid == 108) {
-			d2B_msg("'r");					// send team to river
-			Delay(Random(20000,24000));
-		}*/
-		Delay(Random(2000,3000));
-		NTM_UsePortal("BluePortal", b);	// go back to the place where the tp was made
-	}
+	Delay(300);
+	if(!InTown()) return;
+		
+	NTM_UsePortal("BluePortal", b);	// go back to the place where the tp was made
 	return;
 }	
 // ________________________________________________________
@@ -1584,7 +1581,12 @@ function d2B_safeTeam(a,b,c,d) {
 	return;
 }
 function d2B_usePortal() {
-	var _portal = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocalString(3226), 15);
+	var _portal;
+	var _portalname;
+	
+	_portalname = GetLocalString(3226);
+	portal = NTC_FindUnit(NTC_UNIT_OBJECT, _portalname);
+	
 	NTM_MoveTo(me.areaid, _portal.x, _portal.y);
 	NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
 	Delay(Random(1000,2000));
@@ -3163,7 +3165,7 @@ function TP(msg) { 									// Done
 				{
 					if(_iTmp > 5) break;
 					d2B_msg("Movin' a bit and then attempting to make TP to town...");
-					Delay(Random(1000,1200));
+					Delay(Random(2000,4000));
 					d2B_littleJMP();
 					NTM_MakeTP();
 					Delay(200);
@@ -3210,7 +3212,7 @@ function TP(msg) { 									// Done
 					{
 						if(_iTmp > 5) break;
 						d2B_msg("Movin' a bit and then attempting to make TP to town...");
-						Delay(Random(1000,1200));
+						Delay(Random(2000,4000));
 						d2B_littleJMP();
 						
 						d2B_usePortal();
@@ -3238,7 +3240,7 @@ function TP(msg) { 									// Done
 					{
 						if(_iTmp > 5) break;
 						d2B_msg("Movin' a bit and then attempting to make TP to town...");
-						Delay(Random(1000,1200));
+						Delay(Random(2000,4000));
 						d2B_littleJMP();
 						
 						d2B_usePortal();
