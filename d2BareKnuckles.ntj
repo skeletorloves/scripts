@@ -1597,7 +1597,7 @@ function d2B_usePortal() {
 	var _portalname;
 	
 	_portalname = GetLocaleString(3226);
-	portal = NTC_FindUnit(NTC_UNIT_OBJECT, _portalname);
+	_portal = NTC_FindUnit(NTC_UNIT_OBJECT, _portalname);
 	
 	NTM_MoveTo(me.areaid, _portal.x, _portal.y);
 	NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
