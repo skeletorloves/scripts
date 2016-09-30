@@ -177,7 +177,8 @@ function d2B_bloodmoor(a) {							// case: 1
 		return;
 	}
 	
-	d2B_takeMyTP(true, true, true, true, false); 		// (delay,bo,precast,clr&chests,delay(x,y))
+	if(d2B_usingAFollower) d2B_takeMyTP(true, true, true, true, false); 		// (delay,bo,precast,clr&chests,delay(x,y))
+	else if(!d2B_usingAFollower) d2B_takeMyTP(false, false, true, true, false);
 	d2B_moveToStair(2,8);
 	d2B_takeMyTP(true, false, true, false, false);
 	d2B_takeStairs(8, true);
@@ -202,13 +203,15 @@ function d2B_coldplains(a) {						// case: 2 | (false: all of cold plains | true
 	}
 		
 	d2B_moveToStair(3,9);
-	d2B_takeMyTP(true, false, true, true, false);
+	if(d2B_usingAFollower) d2B_takeMyTP(true, false, true, true, false); 
+	else if(!d2B_usingAFollower) d2B_takeMyTP(false, false, true, true, false);
+
 	
 	d2B_moveToStair(3,9);
 	d2B_takeStairs(9, true);
 	
 	d2B_moveToStair(9,13);
-	d2B_takeMyTP(true, false, true, false, false);
+	if(d2B_usingAFollower) d2B_takeMyTP(true, false, true, false, false); 
 	
 	d2B_moveToStair(9,13);
 	d2B_takeStairs(13, true);
@@ -293,20 +296,22 @@ function d2B_darkwood(a) {							// case: 6
 		d2B_teamPro(true,2873,40,true,1,"n w",false);									// 2869: Treehead Woodfist 
 		return;
 	}
-	d2B_takeMyTP(true, true, true, true, false);
+	if(d2B_usingAFollower) d2B_takeMyTP(true, true, true, true, false);
+	if(!d2B_usingAFollower) d2B_takeMyTP(false, false, true, true, false);
 	
 	d2B_team(true,1);	// return to Act1 town
 }
 function d2B_blackmarsh() {							// case: 7
 	d2B_commonInitSetup(6);
-	d2B_takeMyTP(true, true, true, true, false);
+	if(d2B_usingAFollower) d2B_takeMyTP(true, true, true, true, false);
+	if(!d2B_usingAFollower) d2B_takeMyTP(false, false, true, true, false);
 	
 	d2B_moveToStair(me.areaid,11);	// clear the hole
-	d2B_takeMyTP(true, false, true, false, false);
+	if(d2B_usingAFollower) d2B_takeMyTP(true, false, true, false, false);
 	d2B_takeStairs(11, true);
 	
 	d2B_moveToStair(me.areaid,15);	// clear the hole
-	d2B_takeMyTP(true, false, true, false, false);
+	if(d2B_usingAFollower) d2B_takeMyTP(true, false, true, false, false);
 	d2B_takeStairs(15, true);
 	
 	d2B_team(true,1);	// return to Act 1 town
@@ -315,7 +320,7 @@ function d2B_blackmarsh() {							// case: 7
 	
 	for(var i = 0 ; i < 6 ; i++) {
 		d2B_moveToStair(me.areaid,20+i);	// go to the forgotten tower and do tower things
-		d2B_takeMyTP(true, false, true, false, false);
+		if(d2B_usingAFollower) d2B_takeMyTP(true, false, true, false, false);
 		d2B_takeStairs(20+i, true);
 	}
 	
@@ -327,8 +332,11 @@ function d2B_blackMarsh2() {						// a useful delay for when dolls are found in 
 	Delay(Random(15000,20000));
 	d2B_commonInitSetup(6);
 	
-	d2B_takeMyTP(true, true, true, false, false);
-	d2B_team(false, false);
+	if(d2B_usingAFollower) {
+		d2B_takeMyTP(true, true, true, false, false);
+		d2B_team(false, false);
+	}
+	
 	Delay(4000);
 	for(var i = 0 ; i < 6 ; i++) {
 		d2B_moveToStair(me.areaid,20+i);	// go to the forgotten tower and do tower things
@@ -395,14 +403,14 @@ function d2B_countess() {
 				NTM_MoveTo(me.areaid, 12582, 11043);
 			}
 		}
-		d2B_team(true, false);
+		if(d2B_usingAFollower) d2B_team(true, false);
 		NTA_ClearPosition();
 		NTSI_PickItems();
 		Delay(Random(2000,4000));
 		
-		d2B_team(false, false);
+		if(d2B_usingAFollower) d2B_team(false, false);
 		Delay(Random(4000,6000));
-		d2B_isTeamInTown(1,false);
+		if(d2B_usingAFollower) d2B_isTeamInTown(1,false);
 	}	
 	d2B_chkAct(4);
 	Delay(Random(4000,6000));
@@ -1505,7 +1513,8 @@ function d2B_moveToStair(a,b) {
 	return;
 }
 function d2B_takeStairs(a,b) {						// a: area stairs | b: engage clr lvl & open chests
-	Delay(Random(4000,6000));
+	if(d2B_usingAFollower) Delay(Random(4000,6000));
+	else if(!d2B_usingAFollower) Delay(Random(500,750));
 	if(!NTM_TakeStair(a)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeStair()");
 	}
