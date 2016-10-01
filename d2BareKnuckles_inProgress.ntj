@@ -159,8 +159,7 @@ function d2B_SoloAct1() {							// Act 1 complete
 	
 	//	blood moor
 	//
-		d2B_moveWP();
-		d2B_gotoWP(3);
+		d2B_commonInitSetup(3);
 		d2B_moveToStair(2,8);						// head to front of den as a starting point
 	
 		NTP_DoPrecast(true);
@@ -242,6 +241,103 @@ function d2B_SoloAct1() {							// Act 1 complete
 		d2B_clrLvlOC();
 		
 		d2B_chkAct();
+		
+	//	black marsh
+	//
+		d2B_commonInitSetup(6);
+		NTP_DoPrecast(true);
+		d2B_clrLvlOC();
+		
+		d2B_moveToStair(me.areaid,11);	// clear the hole
+		d2B_takeStairs(11, true);
+		
+		d2B_moveToStair(me.areaid,15);	// clear the hole
+		d2B_takeStairs(15, true);
+		
+		d2B_chkAct();
+		
+		d2B_commonInitSetup(6);
+		
+		for(var i = 0 ; i < 6 ; i++) {
+			d2B_moveToStair(me.areaid,20+i);	// go to the forgotten tower and do tower things
+			d2B_takeStairs(20+i, true);
+		}
+		
+		d2B_chkAct();
+	
+	//	tamoe highland
+	//
+		d2B_commonInitSetup(6);
+		
+		d2B_moveToStair(7,12);	// go to the enterance of tamoe highland pit
+		NTP_DoPrecast();
+		d2B_clrLvlOC();
+		
+		d2B_moveToStair(7,12);	// go to the enterance of the tamoe highland pit
+		d2B_takeStairs(12, true);
+		
+		d2B_moveToStair(me.areaid,16);	// go to the 2nd level of the tamoe highland pit
+		d2B_takeStairs(16, true);
+		
+		d2B_chkAct();
+	
+	// outer cloister
+	//
+		d2B_commonInitSetup(27);
+		NTP_DoPrecast();
+		d2B_clrLvlOC();
+		
+		d2B_chkAct();
+	
+	// outer barracks
+	//
+		d2B_commonInitSetup(27);
+		NTP_DoPrecast();
+		d2B_clrLvlOC();
+		
+		d2B_movePresetUnitMonster(28, 754, -5, 5);	// go to where main monster is in the malus dude
+		d2B_clrLvlOC();
+		
+		d2B_chkAct();
+	
+	// jail
+	//
+		d2B_commonInitSetup(29);
+		NTP_DoPrecast();
+		d2B_clrLvlOC();
+		
+		d2B_chkAct();
+	
+	// inner cloister
+	//
+		d2B_commonInitSetup(32);
+		NTP_DoPrecast();
+		d2B_clrLvlOC();
+		
+		d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
+		d2B_clrLvlOC();
+		d2B_chkAct();
+	
+	//	cata
+	//
+		d2B_commonInitSetup(32);
+		// clear all catacombs...
+		d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
+		d2B_takeStairs(34);
+		NTP_DoPrecast();
+		d2B_clrLvlOC();
+		
+		for(var i = 35; i <= 37; i++) {
+		
+			d2B_movePresetUnitTitle(me.areaid,18,0);
+			Delay(Random(400,500));
+			d2B_takeStairs(i, true);
+		}
+		
+		Delay(Random(400,500));
+		NTM_MoveTo(me.areaid, 22594, 9622);
+		
+		d2B_chkAct()
 }
 
 
