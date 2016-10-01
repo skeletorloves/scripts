@@ -3,7 +3,7 @@
 	var myLeader = ""				// for the d2B_retrievePause() thingy...
 	
 	var _test = false;				// for testing chaos w/o using followere
-	var _testNoPeepChk = false;		// for testing chaos w/ bypassing peep checker
+	var _testNoPeepChk = true;		// for testing chaos w/ bypassing peep checker
 	var _quiet = true;				// msg free silence
 	var _msgMe = false;				// for enabling whispering to _myName
 	
@@ -12,9 +12,9 @@
 	var _boneWall = false;					// enable or disable msging for a bonewall
 
 	var _lowLvlPeeps = false;				// leveling really low level peeps | if enabled, will not engage d2B_team() function calls
-	var _nonTelePeeps = true;				// if followers cannot tele
+	var _nonTelePeeps = false;				// if followers cannot tele
 
-	var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_takeMyTP()
+	var d2B_usingAFollower = false; 			// using a follower therefore make townportals d2B_takeMyTP()
 	var d2B_refill = true;					// enable/disable NTTMGR_TownManager();
 	
 	var _myName = "";							// peep to msg of what's a-happenin'
@@ -47,8 +47,8 @@
 //
 //
 
-var d2B_cases = 3;
-var d2B_toggleHelper = "Chaos";	// helper: for engaging helper | testing: for testing 
+var d2B_cases = 1;
+var d2B_toggleHelper = "solo";	// helper: for engaging helper | testing: for testing 
 								// solo : for running one continous run
 								
 								// cBCountess: Chaos, Baal, and Countess
@@ -162,8 +162,7 @@ function d2B_SoloAct1() {							// Act 1 complete
 		d2B_commonInitSetup(3);
 		d2B_moveToStair(2,8);						// head to front of den as a starting point
 	
-		NTP_DoPrecast(true);
-		d2B_clrLvlOC();
+		d2B_preCastClrLvlOC();
 		
 		d2B_moveToStair(2,8);
 		d2B_takeStairs(8, true);
@@ -174,8 +173,7 @@ function d2B_SoloAct1() {							// Act 1 complete
 	//
 		d2B_commonInitSetup(3);
 	
-		NTP_DoPrecast(true);
-		d2B_clrLvlOC();
+		d2B_preCastClrLvlOC();
 		
 		d2B_moveToStair(3,9);
 		d2B_takeStairs(9, true);
@@ -190,8 +188,7 @@ function d2B_SoloAct1() {							// Act 1 complete
 		d2B_commonInitSetup(3);
 		
 		d2B_movePresetUnitTitle(17,7,8,15);			// move to burial grounds
-		NTP_DoPrecast(true);
-		d2B_clrLvlOC();
+		d2B_preCastClrLvlOC();
 		
 		d2B_moveToStair(me.areaid,19);				// enter the mausoleum
 		Delay(Random(4000,5000));
@@ -210,14 +207,13 @@ function d2B_SoloAct1() {							// Act 1 complete
 	// stony field
 	//
 		d2B_commonInitSetup(4);
-		NTP_DoPrecast(true);
-		d2B_clrLvlOC();
+		d2B_preCastClrLvlOC();
 		
 		d2B_movePresetUnitMonster(737, 10, 10);
 		Delay(Random(6000,8000));
 		d2B_usePortal("Portal",38);					// use portal to enter tristram
 		Delay(Random(2000,4000));
-		d2B_clrLvlOC();
+		d2B_preCastClrLvlOC();
 
 		d2B_chkAct();
 	
@@ -237,16 +233,14 @@ function d2B_SoloAct1() {							// Act 1 complete
 	// dark wood
 	//
 		d2B_commonInitSetup(5);
-		NTP_DoPrecast(true);
-		d2B_clrLvlOC();
+		d2B_preCastClrLvlOC();
 		
 		d2B_chkAct();
 		
 	//	black marsh
 	//
 		d2B_commonInitSetup(6);
-		NTP_DoPrecast(true);
-		d2B_clrLvlOC();
+		d2B_preCastClrLvlOC();
 		
 		d2B_moveToStair(me.areaid,11);	// clear the hole
 		d2B_takeStairs(11, true);
@@ -270,8 +264,7 @@ function d2B_SoloAct1() {							// Act 1 complete
 		d2B_commonInitSetup(6);
 		
 		d2B_moveToStair(7,12);	// go to the enterance of tamoe highland pit
-		NTP_DoPrecast();
-		d2B_clrLvlOC();
+		d2B_preCastClrLvlOC();
 		
 		d2B_moveToStair(7,12);	// go to the enterance of the tamoe highland pit
 		d2B_takeStairs(12, true);
@@ -284,38 +277,35 @@ function d2B_SoloAct1() {							// Act 1 complete
 	// outer cloister
 	//
 		d2B_commonInitSetup(27);
-		NTP_DoPrecast();
-		d2B_clrLvlOC();
+		d2B_preCastClrLvlOC();
 		
 		d2B_chkAct();
 	
 	// outer barracks
 	//
 		d2B_commonInitSetup(27);
-		NTP_DoPrecast();
-		d2B_clrLvlOC();
+		d2B_preCastClrLvlOC();
 		
 		d2B_movePresetUnitMonster(28, 754, -5, 5);	// go to where main monster is in the malus dude
-		d2B_clrLvlOC();
+		d2B_preCastClrLvlOC();
 		
 		d2B_chkAct();
 	
 	// jail
 	//
 		d2B_commonInitSetup(29);
-		NTP_DoPrecast();
-		d2B_clrLvlOC();
+		d2B_preCastClrLvlOC();
 		
 		d2B_chkAct();
 	
 	// inner cloister
 	//
 		d2B_commonInitSetup(32);
-		NTP_DoPrecast();
-		d2B_clrLvlOC();
+		d2B_preCastClrLvlOC();
 		
 		d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
-		d2B_clrLvlOC();
+		d2B_preCastClrLvlOC();
+		
 		d2B_chkAct();
 	
 	//	cata
@@ -324,8 +314,8 @@ function d2B_SoloAct1() {							// Act 1 complete
 		// clear all catacombs...
 		d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
 		d2B_takeStairs(34);
-		NTP_DoPrecast();
-		d2B_clrLvlOC();
+		
+		d2B_preCastClrLvlOC();
 		
 		for(var i = 35; i <= 37; i++) {
 		
@@ -1876,6 +1866,11 @@ function d2B_openChests() {
 function d2B_clrLvlOC() {
 	d2B_clrLevel();
 	d2B_openChests();
+	return;
+}
+function d2B_preCastClrLvlOC() {
+	NTP_DoPrecast(true);
+	d2B_clrLvlOC();
 	return;
 }
 function d2B_takeMyTP(delayTF, bo, precast, clrlvlopenchests, rA, rB) {			// (Delay(Random(rA, rB)))
