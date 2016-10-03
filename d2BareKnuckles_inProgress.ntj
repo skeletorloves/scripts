@@ -3622,7 +3622,7 @@ function TakeLeaderTPFromTown(toArea) { 					// Done
 					var leaderArea = leaderPlayerUnit.areaid;
 					if(leaderArea === p0 || leaderArea === p1 || leaderArea === p2 || isATown(p0))
 					{
-						if(NTC_InTown(me) NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
+						if(NTC_InTown(me)) NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
 						Delay(750);
 						if(!NTC_InTown(me)) NTP_DoPrecast( true );
 						Delay(250);
