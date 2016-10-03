@@ -2102,7 +2102,8 @@ function FollowSorc(target) {
 	
 	if(!NTC_InTown(me) && NTC_InTown(leaderPlayerUnit)) {
 		if(!TakeLeaderTP()) {
-			if(!NTM_TakeWaypoint(leaderPlayerUnit.areaid)) Town("");
+			if(!Town("")) {
+				if(!NTM_TakeWaypoint(leaderPlayerUnit.areaid)) Town("");
 		}
 	}
 	
@@ -2141,7 +2142,7 @@ function FollowSorc(target) {
 				d2B_littleJMP();
 				do{
 					Delay(250);
-				} while(!TakeLeaderTP(leaderPlayerUnit.areaid);
+				} while(!TakeLeaderTP(leaderPlayerUnit.areaid) || NTC_InTown(leaderPlayerUnit));
 			}		
 			return;
 		}
@@ -2171,7 +2172,7 @@ function FollowSorc(target) {
 				if(CheckAct(leaderPlayerUnit) !== CheckAct(me)) {
 					do{
 						Delay(250);
-					} while(!TakeLeaderTP(leaderPlayerUnit.areaid);
+					} while(!TakeLeaderTP(leaderPlayerUnit.areaid));
 					/*var _mta = (AreaHasWaypoint(leaderPlayerUnit.areaid) ? leaderPlayerUnit.areaid : GetPlayerActWaypointID(leaderPlayerUnit));
 					NTTM_TownMove("waypoint");
 					Delay(200);
@@ -2184,6 +2185,15 @@ function FollowSorc(target) {
 				if(NTC_InTown(me)) {
 					NTTM_TownMove("portalspot");
 					d2B_littleJMP();
+					do{
+						Delay(250);
+					} while(!TakeLeaderTP(leaderPlayerUnit.areaid) || NTC_InTown(leaderPlayerUnit));
+					return;
+				}		
+			/*
+				if(NTC_InTown(me)) {
+					NTTM_TownMove("portalspot");
+					d2B_littleJMP();
 					Delay(250);
 				}
 			
@@ -2192,8 +2202,8 @@ function FollowSorc(target) {
 					return;
 				}
 				//else if(AreaHasWaypoint(leaderPlayerUnit.areaid)) NTM_TakeWaypoint(leaderPlayerUnit.areaid);
-				
-				return;
+			*/	
+			return;
 		}
 	
 	// If we are in town, but the leader is not
@@ -2213,7 +2223,7 @@ function FollowSorc(target) {
 					else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
 					return;
 				}
-			/*
+		/*	
 			// If leader took a WP to a different act, we want to try that wp, otherwise we simply get back to town
 			//
 				if(_distance === -1 && CheckAct(leaderPlayerUnit) !== CheckAct(me)) {
@@ -2327,9 +2337,13 @@ function FollowSorc(target) {
 				}
 			
 			Town("");
-			if(NTC_InTown(me) {
+			if(!NTC_InTown(leaderPlayerUnit) && !NTC_InTown(me)) {
 				NTTM_TownMove("portalspot");
 				d2B_littleJMP();
+				do{
+					Delay(250);
+				} while(!TakeLeaderTP(leaderPlayerUnit.areaid) || NTC_InTown(leaderPlayerUnit));
+				return;
 			}
 			return;
 		}
@@ -2356,10 +2370,14 @@ function FollowSorc(target) {
 					return;
 				}
 		}
-	if(NTC_InTown(me) {
-		NTTM_TownMove("portalspot");
-		d2B_littleJMP();
-	}
+		if(NTC_InTown(me)) {
+			NTTM_TownMove("portalspot");
+			d2B_littleJMP();
+			do{
+				Delay(250);
+			} while(!TakeLeaderTP(leaderPlayerUnit.areaid) || NTC_InTown(leaderPlayerUnit));
+			return;
+		}
 }
 // ________________________________________________________
 // ________________________________________________________
