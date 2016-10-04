@@ -2074,23 +2074,36 @@ function FollowSorc(target) {
 	if(!leaderUnit) leaderUnit = GetLeaderUnit(leaderName); 					// Make sure we have the leaders unit.
 	if(leaderPlayerUnit.areaid <= 0) return;									// Don't do anything if we don't know the area yet.
 	if(NTC_InTown(me) && (leaderPlayerUnit.areaid == me.areaid)) return;		// if leader and I are in the same town, then do not follow the leader in that town
-	if((leaderPlayerUnit.areaid != me.areaid) && !NTC_InTown(me)) {			// if leader and I are not in the same area and I am not in town, then go to town
+	if((leaderPlayerUnit.areaid != me.areaid) && !NTC_InTown(me)) {				// if leader and I are not in the same area and I am not in town, then go to town
 		Town("");
 		return;
 	}
-	// Get the distance between our character and the leader
-	//	
-		if(leaderUnit) _distance = GetDistance(me, leaderUnit);	
-		else _distance = -1;
 	
-		if(CheckAct(me) !== CheckAct(leaderPlayerUnit) && NTC_InTown(me) && NTC_InTown(leaderPlayerUnit)) {
-			NTM_TakeWaypoint(GetPlayerActWaypointID(leaderPlayerUnit));
-		}
+	// ____________________________________________________
+	
+	if(!leaderUnit) leaderUnit = GetLeaderUnit(leaderName); 	// Make sure we have the leaders unit.
+	if(leaderPlayerUnit.areaid <= 0) return; 					// Don't do anything if we don't know the area yet.
+	
+	if(NTC_InTown(me) && (leaderPlayerUnit.areaid == me.areaid)) return;	// if leader and I are in the same town, then do not follow the leader in that town
+	
+	// Get the distance between our character and the leader
+	if(leaderUnit) _distance = GetDistance(me, leaderUnit);
+	else _distance = -1; 
+	
+	if(CheckAct(me) !== CheckAct(leaderPlayerUnit) && NTC_InTown(me) && NTC_InTown(leaderPlayerUnit)) NTM_TakeWaypoint(GetPlayerActWaypointID(leaderPlayerUnit));
 	
 	// If we get a valid distance, and we're inside the follow range, we don't need to do anything except attack.
-	//
-		if(_distance <= followRange && _distance !== -1 && me.areaid == leaderPlayerUnit.areaid && !NTC_InTown(me)) {
+	if(_distance <= followRange && _distance !== -1 && me.areaid == leaderPlayerUnit.areaid && !NTC_InTown(me)) {
+		if(isAttackEnabled) {
 			var _atk = true;
+			if(NTConfig_DoNotAttackAreas.length >= 1) {
+				for(var i = 0; i < NTConfig_DoNotAttackAreas.length; i++) {
+					if(NTConfig_DoNotAttackAreas[i] === me.areaid) {
+						_atk = false;
+						break;
+					}
+				}
+			}
 			if(_atk) {
 				if(leaderUnit) {								// deeEdits: add this distance check to keep peeps near
 					_distance = GetDistance(me, leaderUnit);
@@ -2102,243 +2115,267 @@ function FollowSorc(target) {
 				hAttack();
 				return;
 			}
-			return;
 		}
+		return;
+	}
 	
 	if(!NTC_InTown(me) && NTC_InTown(leaderPlayerUnit)) {
 		if(!TakeLeaderTP()) {
-			if(!Town("")) {
-				if(!NTM_TakeWaypoint(leaderPlayerUnit.areaid)) return;	
-			}
+			if(!NTM_TakeWaypoint(leaderPlayerUnit.areaid)) Town("");
 		}
 	}
 	
 	// If we get a valid distance, and we're outside the follow range, but still inside the range for GetDistance() to work,  attempt to get closer!
-	//
-		if(_distance >= followRange && _distance !== -1 && me.areaid == leaderPlayerUnit.areaid) {
-			if(!NTC_InTown(me)) {
-				if(leaderUnit) {
-					if(me.areaid === 131) {
-						if(me.x !== 15092 && me.y !== 5040 && me.y <= 5070) NTM_MoveTo(me.areaid, 15091, 5039);
-						else d2B_GetCloserInt(leaderUnit);
-						
-						hAttack();
-						Delay(1000);
-					}
+	if(_distance >= followRange && _distance !== -1 && me.areaid == leaderPlayerUnit.areaid) {
+		if(!NTC_InTown(me)) {
+			if(leaderUnit) {
+				if(me.areaid === 131) {
+					if(me.x !== 15092 && me.y !== 5040 && me.y <= 5070) NTM_MoveTo(me.areaid, 15091, 5039);
 					else d2B_GetCloserInt(leaderUnit);
+					hAttack();
+					Delay(1000);
 				}
-				else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
+				else d2B_GetCloserInt(leaderUnit); 
 			}
-			return;
+			else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
 		}
+		else {
+			switch(me.areaid) {
+				case 1:
+					//NTM_GetCloserInt(leaderUnit);
+					break;
+				case 40:
+					//NTM_GetCloserInt(leaderUnit);
+					break;
+				case 75:
+					//NTM_GetCloserInt(leaderUnit);
+					break;
+				case 103:
+					// no!
+					break;
+				case 109:
+					// no!
+					break;
+			}
+		}
+		return;
+	}
 	
-		if(NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) TakeLeaderTPFromTown(leaderPlayerUnit.areaid); 
-	/*	
 	// If we get an INVALID distance (too far away for GetDistance()), but we're in the same area, attempt to move to the leader
-	//
-		if(_distance === -1 && me.areaid === leaderPlayerUnit.areaid && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {
-			NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
-			return;
-		}
+	if(_distance === -1 && me.areaid === leaderPlayerUnit.areaid && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {
+		NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
+		return;
+	}
 	
 	// If we are in different acts and helper is outside, go to town
-	//
-		if(_distance === -1 && CheckAct(me) !== CheckAct(leaderPlayerUnit) && !NTC_InTown(me)) {
-			Town();
-			if(NTC_InTown(me)) {
-				NTTM_TownMove("portalspot");
-				d2B_littleJMP();
-				do{
-					Delay(250);
-					if(NTC_InTown(leaderPlayerUnit)) return;
-				} while(!TakeLeaderTPFromTown(leaderPlayerUnit.areaid));
-			}		
-			return;
-		}
+	if(_distance === -1 && CheckAct(me) !== CheckAct(leaderPlayerUnit) && !NTC_InTown(me)) {
+		Town();
+		return;
+	}
 	
 	// If the leader is not in town, but we are
-	//
-		if(!NTC_InTown(leaderPlayerUnit) && NTC_InTown(me)) {
-			NTTM_TownMove("portalspot");
-			d2B_littleJMP();
-			
-			// Get the distance between our character and the leader
-			//
-				if(leaderUnit) _distance = GetDistance(me, leaderUnit);
-				else _distance = -1;
-			
-			// If we get a valid distance, and we're outside the follow range, attempt to get closer!
-			// This covers walking out of acts
-			//
-				if(_distance >= followRange && _distance !== -1) {
-					if(leaderUnit) d2B_GetCloserInt(leaderUnit);
-					else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
-					return;
-				}
-			
-			// If leader took a WP to a different act, we want to try that wp, or just go to that act
-			//
-				if(CheckAct(leaderPlayerUnit) !== CheckAct(me)) {
-					var _mta = (AreaHasWaypoint(leaderPlayerUnit.areaid) ? leaderPlayerUnit.areaid : GetPlayerActWaypointID(leaderPlayerUnit));
-					NTTM_TownMove("waypoint");
-					Delay(200);
-					NTM_TakeWaypoint(_mta);
-					return;
-				}
-
-			// Try to take any available portals
-			//
-				if(NTC_InTown(me)) NTTM_TownMove("portalspot");
-				Delay(250);
-				if(TakeLeaderTP(leaderPlayerUnit.areaid)) return;
+	if(!NTC_InTown(leaderPlayerUnit) && NTC_InTown(me)) {
+		
+		// Get the distance between our character and the leader
+		if(leaderUnit) _distance = GetDistance(me, leaderUnit); 
+		else _distance = -1;
+		
+		// If we get a valid distance, and we're outside the follow range, attempt to get closer!
+		// This covers walking out of acts
+		if(_distance >= followRange && _distance !== -1) {
+			if(leaderUnit) d2B_GetCloserInt(leaderUnit);
+			else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
 			return;
 		}
-	
-	// If we are in town, but the leader is not
-	//
-		if(NTC_InTown(leaderPlayerUnit) && !NTC_InTown(me)) {
-			
-			// Get the distance between our character and the leader
-			//
-				if(leaderUnit) _distance = GetDistance(me, leaderUnit);
-				else _distance = -1;
-			
-			// If we get a valid distance, and we're outside the follow range, attempt to get closer!
-			// This covers walking back in/out of acts and in/out of new areas
-			//
-				if(_distance >= followRange && _distance !== -1) {
-					if(leaderUnit) d2B_GetCloserInt(leaderUnit);
-					else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
-					return;
-				}
-			return;
-		}
-	
-	// If we are both outside but in different areas
-	//
-		if(me.areaid !== leaderPlayerUnit.areaid && !NTC_InTown(leaderPlayerUnit) && !NTC_InTown(me)) {
-			
-			// Get the distance between our character and the leader
-			//
-				if(leaderUnit) _distance = GetDistance(me, leaderUnit); 
-				else _distance = -1; 
-			
-			// If we get a valid distance, and we're outside the follow range, attempt to get closer!
-			// This covers walking to new area id's
-			//
-				if(_distance >= followRange && _distance !== -1 && me.areaid === leaderPlayerUnit.areaid) {
-					if(leaderUnit) d2B_GetCloserInt(leaderUnit);
-					else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y); 
-					return;
-				}
-			
-			// Check to see if we entered a doorway or stairs
-			//
-				var _unit = GetPresetUnits(me.areaid, NTC_UNIT_TILE);
-				if (_unit) {
-					for (var i = 0; i < _unit.length; i += 1) {
-						if (_unit[i].subareaid == leaderPlayerUnit.areaid) {
-							NTM_TakeStair(leaderPlayerUnit.areaid); 			// take stairs
-							return;
-						}
-					}
-				}
-			
-			// This covers outside-to-outside waypoint changes
-			//
-				if(AreaHasWaypoint(leaderPlayerUnit.areaid)) {
-					if(NTM_TakeWaypoint(leaderPlayerUnit.areaid)) return;
-				}
-			
-			// Check for special doors
-			// Leaving Arcane Sanctuary
-				if(me.areaid == 74 && leaderPlayerUnit.areaid == 54) {
-					if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 298)) Town("");
-					return;
-				}
-			
-			// Entering Arcane Sanctuary
-			//
-				if(me.areaid == 54 && leaderPlayerUnit.areaid == 74) {
-					if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 298)) Town("");
-					return;
-				}
-			
-			// Entering Duriel's Chamber
-			//
-				if(me.areaid >= 66 && me.areaid <= 72 && leaderPlayerUnit.areaid == 73) {
-					if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 100)) Town("");
-					return;
-				}
-			
-			// Entering Tristram
-			//
-				if(me.areaid == 4 && leaderPlayerUnit.areaid == 38) {
-					if(!NTM_UsePortal("Portal", 38)) Town("");
-					return;
-				}
-			
-			// Exiting Tristram
-			//
-				if(me.areaid == 38 && leaderPlayerUnit.areaid == 4) {
-					if(!NTM_UsePortal("Portal", 4)) Town(""); 
-					return;
-				}
-			
-			// Entering Baal's Chamber
-			//
-				if(me.areaid == 131 && leaderPlayerUnit.areaid == 132) {	// deeEdits:
-					if(NTConfig_FollowtoWorldStone) {
-						if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 563)) Town("");
+		
+		// If leader took a WP to a different act, we want to try that wp, or just go to that act
+		if(CheckAct(leaderPlayerUnit) !== CheckAct(me)) {
+			if(NTConfig_DoNotFollowAreas.length >= 1) {
+				for(var i = 0; i < NTConfig_DoNotFollowAreas.length; i++) {
+					if(NTConfig_DoNotFollowAreas[i] === leaderPlayerUnit.areaid) {
+						NTTM_TownMove("waypoint");
+						Delay(200);
+						NTM_TakeWaypoint(GetPlayerActWaypointID(leaderPlayerUnit));
+						Delay(200);
+						NTTM_TownMove("portalspot");
+						d2B_littleJMP();
 						return;
 					}
 				}
-			
-			Town("");
-			if(!NTC_InTown(leaderPlayerUnit) && !NTC_InTown(me)) {
-				Town("");
-				NTTM_TownMove("portalspot");
-				d2B_littleJMP();
-				do{
-					Delay(250);
-					if(NTC_InTown(leaderPlayerUnit)) return;
-				} while(!TakeLeaderTPFromTown(leaderPlayerUnit.areaid));
-				return;
 			}
+			var _mta = (AreaHasWaypoint(leaderPlayerUnit.areaid) ? leaderPlayerUnit.areaid : GetPlayerActWaypointID(leaderPlayerUnit));
+			NTTM_TownMove("waypoint");
+			Delay(200);
+			NTM_TakeWaypoint(_mta);
 			return;
 		}
-	
-	// If we are both outside and in the same area
-	//
-		if(me.areaid === leaderPlayerUnit.areaid && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {
-			
-			// Get the distance between our character and the leader
-			//
-				if(leaderUnit) _distance = GetDistance(me, leaderUnit);
-				else _distance = -1;
-			
-			// If we get a valid distance, and we're outside the follow range, attempt to get closer!
-			// This covers general moving
-			//
-				if(_distance >= followRange && _distance !== -1) {
-					if(leaderUnit) d2B_GetCloserInt(leaderUnit);
-					else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
-					return;
-				}
-				else if(_distance === -1 && leaderPlayerUnit.areaid >= 1 && me.areaid >= 1) {
-					NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
-					return;
-				}
+		
+		// Return if leader is in a no-follow-zone 
+		for(var i = 0; i < NTConfig_DoNotFollowAreas.length; i++) {
+			if(NTConfig_DoNotFollowAreas[i] === leaderPlayerUnit.areaid) return;
 		}
+		
+		// Try to take any available portals
 		if(NTC_InTown(me)) {
 			NTTM_TownMove("portalspot");
 			d2B_littleJMP();
-			do{
-				Delay(250);
-				if(NTC_InTown(leaderPlayerUnit)) return;
-			} while(!TakeLeaderTPFromTown(leaderPlayerUnit.areaid));
+			Delay(250);
+		}
+		
+		if(TakeLeaderTP(leaderPlayerUnit.areaid)) {
+			Delay(250);
 			return;
-		}*/
+		}
+		else
+		if(AreaHasWaypoint(leaderPlayerUnit.areaid)) {
+			for(var i = 0; i < NTConfig_DoNotFollowAreas.length; i++) {
+				if(NTConfig_DoNotFollowAreas[i] === leaderPlayerUnit.areaid) return;
+			}
+			
+			NTM_TakeWaypoint(leaderPlayerUnit.areaid);
+		}
+		return;
+	}
+	
+	// If we are in town, but the leader is not
+	if(NTC_InTown(leaderPlayerUnit) && !NTC_InTown(me)) {
+		
+		// Get the distance between our character and the leader
+		if(leaderUnit) _distance = GetDistance(me, leaderUnit);
+		else _distance = -1;
+		
+		// If we get a valid distance, and we're outside the follow range, attempt to get closer!
+		// This covers walking back in/out of acts and in/out of new areas
+		if(_distance >= followRange && _distance !== -1) {
+			if(leaderUnit) d2B_GetCloserInt(leaderUnit);
+			else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
+			return;
+		}
+		
+		// If leader took a WP to a different act, we want to try that wp, otherwise we simply get back to town
+		if(_distance === -1 && CheckAct(leaderPlayerUnit) !== CheckAct(me)) {
+			if(AreaHasWaypoint(leaderPlayerUnit.areaid)) {
+				if(!NTM_TakeWaypoint(leaderPlayerUnit.areaid)) {
+					if(!Town("")) Whisper(leaderPlayerUnit.name, "I seem to be stuck!");}
+				}
+			}
+			return;
+		}
+		
+		// If leader went back to town
+		// Try to take any available portals
+		if(_distance === -1 && CheckAct(leaderPlayerUnit) == CheckAct(me) && me.areaid !== leaderPlayerUnit.areaid) {
+			if(!TakeLeaderTP()) {
+				// Try to take waypoints next
+				if(AreaHasWaypoint(leaderPlayerUnit.areaid)) {
+					if(!NTM_TakeWaypoint(leaderPlayerUnit.areaid)) {
+						if(!NTC_InTown(me)) {
+							// Last ditch effort, just go back to town
+							if(!Town("")) Whisper(leaderPlayerUnit.name, "I seem to be stuck!");
+						}
+					}
+				}
+			}
+			//return;
+		}
+		return;
+	}
+	
+	// If we are both outside but in different areas
+	if(me.areaid !== leaderPlayerUnit.areaid && !NTC_InTown(leaderPlayerUnit) && !NTC_InTown(me)) {
+	
+		// Get the distance between our character and the leader
+		if(leaderUnit) _distance = GetDistance(me, leaderUnit);
+		else _distance = -1;
+		
+		// If we get a valid distance, and we're outside the follow range, attempt to get closer!
+		// This covers walking to new area id's
+		if(_distance >= followRange && _distance !== -1 && me.areaid === leaderPlayerUnit.areaid) {
+			if(leaderUnit) d2B_GetCloserInt(leaderUnit);
+			else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
+			return;
+		}
+		
+		// Check to see if we entered a doorway or stairs
+		var _unit = GetPresetUnits(me.areaid, NTC_UNIT_TILE);
+		if (_unit) {
+			for (var i = 0; i < _unit.length; i += 1) {
+				if (_unit[i].subareaid == leaderPlayerUnit.areaid) {
+					NTM_TakeStair(leaderPlayerUnit.areaid); // take stairs
+					return;
+				}
+			}
+		}
+		
+		// This covers outside-to-outside waypoint changes
+		if(AreaHasWaypoint(leaderPlayerUnit.areaid)) {
+			if(NTM_TakeWaypoint(leaderPlayerUnit.areaid)) return;
+		}
+		
+		// Check for special doors
+		// Leaving Arcane Sanctuary
+		if(me.areaid == 74 && leaderPlayerUnit.areaid == 54) {
+			if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 298)) {
+				Town("");
+			return;
+		}
+		
+		// Entering Arcane Sanctuary
+		if(me.areaid == 54 && leaderPlayerUnit.areaid == 74) {
+			if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 298)) Town("");
+			return;
+		}
+		
+		// Entering Duriel's Chamber
+		if(me.areaid >= 66 && me.areaid <= 72 && leaderPlayerUnit.areaid == 73) {
+			if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 100)) Town("");
+			return;
+		}
+		
+		// Entering Tristram
+		if(me.areaid == 4 && leaderPlayerUnit.areaid == 38) {
+			if(!NTM_UsePortal("Portal", 38)) Town(""); 
+			return;
+		}
+		
+		// Exiting Tristram
+		if(me.areaid == 38 && leaderPlayerUnit.areaid == 4) {
+			if(!NTM_UsePortal("Portal", 4)) Town("");}
+			return;
+		}
+		
+		// Entering Baal's Chamber
+		if(me.areaid == 131 && leaderPlayerUnit.areaid == 132) {
+			if(NTConfig_FollowtoWorldStone) {
+				if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 563)) Town("");
+				return;
+			}
+		}
+		
+		Town("");
+		return;
+	}
+	
+	// If we are both outside and in the same area
+	if(me.areaid === leaderPlayerUnit.areaid && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {
+		
+		// Get the distance between our character and the leader
+		if(leaderUnit) _distance = GetDistance(me, leaderUnit); 
+		else _distance = -1; 
+		
+		// If we get a valid distance, and we're outside the follow range, attempt to get closer!
+		// This covers general moving
+		if(_distance >= followRange && _distance !== -1)
+		{
+			if(leaderUnit) d2B_GetCloserInt(leaderUnit); 
+			else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y); 
+			return;
+		}
+		else if(_distance === -1 && leaderPlayerUnit.areaid >= 1 && me.areaid >= 1) {
+			NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
+			return;
+		}
+	}
 }
 // ________________________________________________________
 // ________________________________________________________
@@ -3502,7 +3539,8 @@ function hAttack() {
 	Delay(300);											// deeEdits orig: 1000
 }
 function d2B_GetCloserInt(unit) {
-	if(GetDistance(me, unit) > 2) return NTM_MoveTo(unit.areaid, unit.x, unit.y);
+	_distance2 = GetDistance(me, unit);
+	if(_distance2 > 2 && _distance2 !== -1) return NTM_MoveTo(unit.areaid, unit.x, unit.y);
 	return true;
 }
 function isATown(id) {
@@ -3600,35 +3638,30 @@ function TakeLeaderTPFromTown(toArea) { 					// Done
 	var _portal = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3226), 15);
 	var _prearea = me.areaid;
 	var _ret = false;
-	if(_portal)
-	{
-		do 
-		{
-			if(NTC_CheckOwner(_portal, leaderPlayerUnit.name))
-			{
-				if(GetDistance(me, _portal) !== -1 && !NTC_InTown(me))
-				{
+	if(_portal) {
+		do {
+			if(NTC_CheckOwner(_portal, leaderPlayerUnit.name)) {
+				if(GetDistance(me, _portal) !== -1 && !NTC_InTown(me)) {
 					NTM_MoveTo(me.areaid, _portal.x, _portal.y);
 					Delay(100);
 				}
-				if(GetDistance(me, _portal) <= 15)
-				{
+				if(GetDistance(me, _portal) <= 25) {		// deeEdits: orig = 15
 					var p0 = _portal.subareaid;
 					var p1 = p0 - 768;
 					var p2 = p0 - 256;
 					var leaderArea = leaderPlayerUnit.areaid;
-					if(leaderArea === p0 || leaderArea === p1 || leaderArea === p2 || isATown(p0))
-					{
-						if(NTC_InTown(me)) NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
-						Delay(750);
-						if(!NTC_InTown(me)) NTP_DoPrecast( true );
-						Delay(250);
+					if(leaderArea === p0 || leaderArea === p1 || leaderArea === p2 || isATown(p0)) {
+						if(NTC_CheckOwner(_portal, leaderPlayerUnit.name)){								// deeEdits: double check if it is the leader's tp
+							if(NTC_InTown(me)) NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
+							Delay(750);
+							if(!NTC_InTown(me)) NTP_DoPrecast( true );
+							Delay(250);
+						}
 						break;
 					}
 				}
 			}
-			if(me.areaid !== _prearea)
-			{
+			if(me.areaid !== _prearea) {
 				_ret = true;
 				break;
 			}
@@ -6268,3 +6301,266 @@ function d2B_CBaalLow() {
 			break;
 	}
 }
+/*
+// Get the distance between our character and the leader
+	//	
+		if(leaderUnit) _distance = GetDistance(me, leaderUnit);	
+		else _distance = -1;
+	
+		if(CheckAct(me) !== CheckAct(leaderPlayerUnit) && NTC_InTown(me) && NTC_InTown(leaderPlayerUnit)) {
+			NTM_TakeWaypoint(GetPlayerActWaypointID(leaderPlayerUnit));
+		}
+	
+	// If we get a valid distance, and we're inside the follow range, we don't need to do anything except attack.
+	//
+		if(_distance <= followRange && _distance !== -1 && me.areaid == leaderPlayerUnit.areaid && !NTC_InTown(me)) {
+			var _atk = true;
+			if(_atk) {
+				if(leaderUnit) {								// deeEdits: add this distance check to keep peeps near
+					_distance = GetDistance(me, leaderUnit);
+					if(_distance > followRange) {
+						d2B_GetCloserInt(leaderUnit);
+						return;
+					}
+				}												//
+				hAttack();
+				return;
+			}
+			return;
+		}
+	
+	if(!NTC_InTown(me) && NTC_InTown(leaderPlayerUnit)) {
+		if(!TakeLeaderTP()) {
+			if(!Town("")) {
+				if(!NTM_TakeWaypoint(leaderPlayerUnit.areaid)) return;	
+			}
+		}
+	}
+	
+	// If we get a valid distance, and we're outside the follow range, but still inside the range for GetDistance() to work,  attempt to get closer!
+	//
+		if(_distance >= followRange && _distance !== -1 && me.areaid == leaderPlayerUnit.areaid) {
+			if(!NTC_InTown(me)) {
+				if(leaderUnit) {
+					if(me.areaid === 131) {
+						if(me.x !== 15092 && me.y !== 5040 && me.y <= 5070) NTM_MoveTo(me.areaid, 15091, 5039);
+						else d2B_GetCloserInt(leaderUnit);
+						
+						hAttack();
+						Delay(1000);
+					}
+					else d2B_GetCloserInt(leaderUnit);
+				}
+				else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
+			}
+			return;
+		}
+	
+		//if(NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) TakeLeaderTPFromTown(leaderPlayerUnit.areaid); 
+		
+	// If we get an INVALID distance (too far away for GetDistance()), but we're in the same area, attempt to move to the leader
+	//
+		if(_distance === -1 && me.areaid === leaderPlayerUnit.areaid && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {
+			NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
+			return;
+		}
+	
+	// If we are in different acts and helper is outside, go to town
+	//
+		if(_distance === -1 && CheckAct(me) !== CheckAct(leaderPlayerUnit) && !NTC_InTown(me)) {
+			Town();
+			if(NTC_InTown(me)) {
+				NTTM_TownMove("portalspot");
+				d2B_littleJMP();
+				do{
+					Delay(250);
+					if(NTC_InTown(leaderPlayerUnit)) return;
+				} while(!TakeLeaderTPFromTown(leaderPlayerUnit.areaid));
+			}		
+			return;
+		}
+	
+	// If the leader is not in town, but we are
+	//
+		if(!NTC_InTown(leaderPlayerUnit) && NTC_InTown(me)) {
+			NTTM_TownMove("portalspot");
+			d2B_littleJMP();
+			
+			// Get the distance between our character and the leader
+			//
+				if(leaderUnit) _distance = GetDistance(me, leaderUnit);
+				else _distance = -1;
+			
+			// If we get a valid distance, and we're outside the follow range, attempt to get closer!
+			// This covers walking out of acts
+			//
+				if(_distance >= followRange && _distance !== -1) {
+					if(leaderUnit) d2B_GetCloserInt(leaderUnit);
+					else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
+					return;
+				}
+			
+			// If leader took a WP to a different act, we want to try that wp, or just go to that act
+			//
+				if(CheckAct(leaderPlayerUnit) !== CheckAct(me)) {
+					var _mta = (AreaHasWaypoint(leaderPlayerUnit.areaid) ? leaderPlayerUnit.areaid : GetPlayerActWaypointID(leaderPlayerUnit));
+					NTTM_TownMove("waypoint");
+					Delay(200);
+					NTM_TakeWaypoint(_mta);
+					return;
+				}
+
+			// Try to take any available portals
+			//
+				if(NTC_InTown(me)) NTTM_TownMove("portalspot");
+				Delay(250);
+				if(TakeLeaderTP(leaderPlayerUnit.areaid)) return;
+			return;
+		}
+	
+	// If we are in town, but the leader is not
+	//
+		if(NTC_InTown(leaderPlayerUnit) && !NTC_InTown(me)) {
+			
+			// Get the distance between our character and the leader
+			//
+				if(leaderUnit) _distance = GetDistance(me, leaderUnit);
+				else _distance = -1;
+			
+			// If we get a valid distance, and we're outside the follow range, attempt to get closer!
+			// This covers walking back in/out of acts and in/out of new areas
+			//
+				if(_distance >= followRange && _distance !== -1) {
+					if(leaderUnit) d2B_GetCloserInt(leaderUnit);
+					else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
+					return;
+				}
+			return;
+		}
+	
+	// If we are both outside but in different areas
+	//
+		if(me.areaid !== leaderPlayerUnit.areaid && !NTC_InTown(leaderPlayerUnit) && !NTC_InTown(me)) {
+			
+			// Get the distance between our character and the leader
+			//
+				if(leaderUnit) _distance = GetDistance(me, leaderUnit); 
+				else _distance = -1; 
+			
+			// If we get a valid distance, and we're outside the follow range, attempt to get closer!
+			// This covers walking to new area id's
+			//
+				if(_distance >= followRange && _distance !== -1 && me.areaid === leaderPlayerUnit.areaid) {
+					if(leaderUnit) d2B_GetCloserInt(leaderUnit);
+					else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y); 
+					return;
+				}
+			
+			// Check to see if we entered a doorway or stairs
+			//
+				var _unit = GetPresetUnits(me.areaid, NTC_UNIT_TILE);
+				if (_unit) {
+					for (var i = 0; i < _unit.length; i += 1) {
+						if (_unit[i].subareaid == leaderPlayerUnit.areaid) {
+							NTM_TakeStair(leaderPlayerUnit.areaid); 			// take stairs
+							return;
+						}
+					}
+				}
+			
+			// This covers outside-to-outside waypoint changes
+			//
+				if(AreaHasWaypoint(leaderPlayerUnit.areaid)) {
+					if(NTM_TakeWaypoint(leaderPlayerUnit.areaid)) return;
+				}
+			
+			// Check for special doors
+			// Leaving Arcane Sanctuary
+				if(me.areaid == 74 && leaderPlayerUnit.areaid == 54) {
+					if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 298)) Town("");
+					return;
+				}
+			
+			// Entering Arcane Sanctuary
+			//
+				if(me.areaid == 54 && leaderPlayerUnit.areaid == 74) {
+					if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 298)) Town("");
+					return;
+				}
+			
+			// Entering Duriel's Chamber
+			//
+				if(me.areaid >= 66 && me.areaid <= 72 && leaderPlayerUnit.areaid == 73) {
+					if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 100)) Town("");
+					return;
+				}
+			
+			// Entering Tristram
+			//
+				if(me.areaid == 4 && leaderPlayerUnit.areaid == 38) {
+					if(!NTM_UsePortal("Portal", 38)) Town("");
+					return;
+				}
+			
+			// Exiting Tristram
+			//
+				if(me.areaid == 38 && leaderPlayerUnit.areaid == 4) {
+					if(!NTM_UsePortal("Portal", 4)) Town(""); 
+					return;
+				}
+			
+			// Entering Baal's Chamber
+			//
+				if(me.areaid == 131 && leaderPlayerUnit.areaid == 132) {	// deeEdits:
+					if(NTConfig_FollowtoWorldStone) {
+						if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 563)) Town("");
+						return;
+					}
+				}
+			
+			Town("");
+			if(!NTC_InTown(leaderPlayerUnit) && !NTC_InTown(me)) {
+				Town("");
+				NTTM_TownMove("portalspot");
+				d2B_littleJMP();
+				do{
+					Delay(250);
+					if(NTC_InTown(leaderPlayerUnit)) return;
+				} while(!TakeLeaderTPFromTown(leaderPlayerUnit.areaid));
+				return;
+			}
+			return;
+		}
+	
+	// If we are both outside and in the same area
+	//
+		if(me.areaid === leaderPlayerUnit.areaid && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {
+			
+			// Get the distance between our character and the leader
+			//
+				if(leaderUnit) _distance = GetDistance(me, leaderUnit);
+				else _distance = -1;
+			
+			// If we get a valid distance, and we're outside the follow range, attempt to get closer!
+			// This covers general moving
+			//
+				if(_distance >= followRange && _distance !== -1) {
+					if(leaderUnit) d2B_GetCloserInt(leaderUnit);
+					else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
+					return;
+				}
+				else if(_distance === -1 && leaderPlayerUnit.areaid >= 1 && me.areaid >= 1) {
+					NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
+					return;
+				}
+		}
+		if(NTC_InTown(me)) {
+			NTTM_TownMove("portalspot");
+			d2B_littleJMP();
+			do{
+				Delay(250);
+				if(NTC_InTown(leaderPlayerUnit)) return;
+			} while(!TakeLeaderTPFromTown(leaderPlayerUnit.areaid));
+			return;
+		}
+*/
