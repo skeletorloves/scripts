@@ -76,14 +76,14 @@ var debug = false;
 var pathRushBots = "NTRush/rushbots/";						// . .. follow, unfollow
 var isBusy = false;											// ;	precast, buff
 var isPaused = false;										// '	town & unfollow
-var isFollowingEnabled = false;								// ,	in town move to portal area
+var isFollowingEnabled = true;								// ,	in town move to portal area
 var isAttackEnabled = true;
 var isAutoEnchantEnabled = false;
 var leaderUnit;
 var leaderPlayerUnit;
-var followRange = 3;
-var attackRange = 3;
-var flwrAtk_Range = 15;				// used within the hAttack() function
+var followRange = 5;
+var attackRange = 15;
+var flwrAtk_Range = 30;				// used within the hAttack() function
 
 var d2B_myPause = "";				// a temp place for where retrieved bot pause string is stored
 var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Number(myPause)
@@ -1996,7 +1996,7 @@ function d2B_msg(a) {
 }
 function d2B_littleJMP() {
 	if(me.areaid != 109) {
-		var x_tmp = Random(3,8);
+		var x_tmp = Random(2,4);
 		x_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
 		var y_tmp = Random(3,8);
 		y_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
@@ -2052,26 +2052,32 @@ function d2H_actOnLeaderSorc() {
 		ActionSorc();
 		NTC_Delay(100);
 	}
+	return;
 }
 function ActionSorc() {
-	if(!isBusy && NTC_InMyParty(leaderName)) {
+	if(NTC_InMyParty(leaderName)) {
 		if(isFollowingEnabled)	{FollowSorc();}
 	}
 	if(NTC_InTown(me)) {
-		if(NTTMGR_CheckScrolls(1) < 8) {
-			d2B_townMgr();
-		}
+		if(NTTMGR_CheckScrolls(1) < 8) d2B_townMgr();
 	}
 }
 function FollowSorc(target) {
+	if(NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {
+		NTTM_TownMove("portalspot");
+		Delay(250);
+	}
+	
 	var _distance = -1;
 	var leaderPlayerUnitintown, _meintown;
 	
 	if(!leaderUnit) leaderUnit = GetLeaderUnit(leaderName); 					// Make sure we have the leaders unit.
 	if(leaderPlayerUnit.areaid <= 0) return;									// Don't do anything if we don't know the area yet.
 	if(NTC_InTown(me) && (leaderPlayerUnit.areaid == me.areaid)) return;		// if leader and I are in the same town, then do not follow the leader in that town
-	if((leaderPlayerUnit.areaid !== me.areaid) && !NTC_InTown(me)) Town("");	// if leader and I are not in the same area and I am not in town, then go to town
-	
+	if((leaderPlayerUnit.areaid != me.areaid) && !NTC_InTown(me)) {			// if leader and I are not in the same area and I am not in town, then go to town
+		Town("");
+		return;
+	}
 	// Get the distance between our character and the leader
 	//	
 		if(leaderUnit) _distance = GetDistance(me, leaderUnit);	
@@ -2084,26 +2090,26 @@ function FollowSorc(target) {
 	// If we get a valid distance, and we're inside the follow range, we don't need to do anything except attack.
 	//
 		if(_distance <= followRange && _distance !== -1 && me.areaid == leaderPlayerUnit.areaid && !NTC_InTown(me)) {
-			if(isAttackEnabled) {
-				var _atk = true;
-				if(_atk) {
-					if(leaderUnit) {								// deeEdits: add this distance check to keep peeps near
-						_distance = GetDistance(me, leaderUnit);
-						if(_distance > followRange) {
-							NTM_GetCloserInt(leaderUnit);
-							return;
-						}
-					}												//
-					hAttack();
-					return;
-				}
+			var _atk = true;
+			if(_atk) {
+				if(leaderUnit) {								// deeEdits: add this distance check to keep peeps near
+					_distance = GetDistance(me, leaderUnit);
+					if(_distance > followRange) {
+						d2B_GetCloserInt(leaderUnit);
+						return;
+					}
+				}												//
+				hAttack();
+				return;
 			}
 			return;
 		}
 	
 	if(!NTC_InTown(me) && NTC_InTown(leaderPlayerUnit)) {
 		if(!TakeLeaderTP()) {
-			if(!Town("")) if(!NTM_TakeWaypoint(leaderPlayerUnit.areaid)) Town("");
+			if(!Town("")) {
+				if(!NTM_TakeWaypoint(leaderPlayerUnit.areaid)) return;	
+			}
 		}
 	}
 	
@@ -2114,18 +2120,20 @@ function FollowSorc(target) {
 				if(leaderUnit) {
 					if(me.areaid === 131) {
 						if(me.x !== 15092 && me.y !== 5040 && me.y <= 5070) NTM_MoveTo(me.areaid, 15091, 5039);
-						else NTM_GetCloserInt(leaderUnit);
+						else d2B_GetCloserInt(leaderUnit);
 						
 						hAttack();
 						Delay(1000);
 					}
-					else NTM_GetCloserInt(leaderUnit);
+					else d2B_GetCloserInt(leaderUnit);
 				}
 				else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
 			}
 			return;
 		}
 	
+		if(NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) TakeLeaderTPFromTown(leaderPlayerUnit.areaid); 
+	/*	
 	// If we get an INVALID distance (too far away for GetDistance()), but we're in the same area, attempt to move to the leader
 	//
 		if(_distance === -1 && me.areaid === leaderPlayerUnit.areaid && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {
@@ -2163,7 +2171,7 @@ function FollowSorc(target) {
 			// This covers walking out of acts
 			//
 				if(_distance >= followRange && _distance !== -1) {
-					if(leaderUnit) NTM_GetCloserInt(leaderUnit);
+					if(leaderUnit) d2B_GetCloserInt(leaderUnit);
 					else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
 					return;
 				}
@@ -2180,15 +2188,9 @@ function FollowSorc(target) {
 
 			// Try to take any available portals
 			//
-				if(NTC_InTown(me)) {
-					NTTM_TownMove("portalspot");
-					d2B_littleJMP();
-					do{
-						Delay(250);
-						if(NTC_InTown(leaderPlayerUnit)) return;
-					} while(!TakeLeaderTPFromTown(leaderPlayerUnit.areaid));
-					return;
-				}		
+				if(NTC_InTown(me)) NTTM_TownMove("portalspot");
+				Delay(250);
+				if(TakeLeaderTP(leaderPlayerUnit.areaid)) return;
 			return;
 		}
 	
@@ -2205,7 +2207,7 @@ function FollowSorc(target) {
 			// This covers walking back in/out of acts and in/out of new areas
 			//
 				if(_distance >= followRange && _distance !== -1) {
-					if(leaderUnit) NTM_GetCloserInt(leaderUnit);
+					if(leaderUnit) d2B_GetCloserInt(leaderUnit);
 					else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
 					return;
 				}
@@ -2225,7 +2227,7 @@ function FollowSorc(target) {
 			// This covers walking to new area id's
 			//
 				if(_distance >= followRange && _distance !== -1 && me.areaid === leaderPlayerUnit.areaid) {
-					if(leaderUnit)  NTM_GetCloserInt(leaderUnit);
+					if(leaderUnit) d2B_GetCloserInt(leaderUnit);
 					else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y); 
 					return;
 				}
@@ -2319,7 +2321,7 @@ function FollowSorc(target) {
 			// This covers general moving
 			//
 				if(_distance >= followRange && _distance !== -1) {
-					if(leaderUnit) NTM_GetCloserInt(leaderUnit);
+					if(leaderUnit) d2B_GetCloserInt(leaderUnit);
 					else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
 					return;
 				}
@@ -2336,7 +2338,7 @@ function FollowSorc(target) {
 				if(NTC_InTown(leaderPlayerUnit)) return;
 			} while(!TakeLeaderTPFromTown(leaderPlayerUnit.areaid));
 			return;
-		}
+		}*/
 }
 // ________________________________________________________
 // ________________________________________________________
@@ -2481,7 +2483,7 @@ function d2H_actOnLeader() {
 // common functions
 
 function Action() {
-	if(!isBusy && NTC_InMyParty(leaderName)) {
+	if(NTC_InMyParty(leaderName)) {
 		if(isFollowingEnabled)	{Follow();}
 	}
 	if(NTC_InTown(me)) {
@@ -2523,7 +2525,7 @@ function ChatHandler( msg, type ) {
 				else {d2B_msg("~Unpaused chat commands");}
 			}
 			
-			if( !isBusy && !isPaused && _name == leaderName.toLowerCase())
+			if(!isPaused && _name == leaderName.toLowerCase())
 				CommandHandler( _commands[0], _commands[1], _commands[2], _commands[3], _commands[4] );
 			break;
 		case 1: // red
@@ -2591,7 +2593,7 @@ function ChatHandler( msg, type ) {
 				else {d2B_msg("~Unpaused chat commands");}
 			}
 			
-			if( !isBusy && !isPaused && _name == leaderName.toLowerCase())
+			if(!isPaused && _name == leaderName.toLowerCase())
 				CommandHandler( _commands[0], _commands[1], _commands[2], _commands[3], _commands[4] );
 			break;
 		case 3: // blue
@@ -2688,14 +2690,14 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		d2B_msg("~Follow range set to: " + followRange);
 		break;
 	case "come":
-		if(!isBusy && NTC_InTown(me))
+		if(NTC_InTown(me))
 		{
 			NTTM_TownMove("portalspot");
 			TakeLeaderTP();
 		}
 		break;
 	case "my":
-		if(msg2 == "tp" && !isBusy && NTC_InTown(me))
+		if(msg2 == "tp" && NTC_InTown(me))
 		{
 			NTTM_TownMove("portalspot");
 			Delay(250);
@@ -2703,7 +2705,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		}
 		break;
 	case "go":
-		if(!isBusy && !NTC_InTown(me))
+		if(!NTC_InTown(me))
 			if(!TakeLeaderTP())
 				Town();
 		break;
@@ -2741,7 +2743,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 	case ";":
 	case "buff":
 		if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
-		if(!isBusy && !NTC_InTown(me))
+		if(!NTC_InTown(me))
 		{
 			NTP_DoPrecast( true );
 			//Chant( msg2 );
@@ -2784,7 +2786,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				Print(COLOR_4 + "Ready at town portal");
 				break;
 			case ";":
-				if(!isBusy && !NTC_InTown(me)) {
+				if(!NTC_InTown(me)) {
 					NTP_DoPrecast( true );
 					//Chant( msg2 );
 				}
@@ -2826,7 +2828,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				Print(COLOR_4 + "Ready at town portal");
 				break;
 			case ";":
-				if(!isBusy && !NTC_InTown(me)) {
+				if(!NTC_InTown(me)) {
 					NTP_DoPrecast( true );
 					//Chant( msg2 );
 				}
@@ -2873,31 +2875,25 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		}
 		break;
 	case "help":
-		if(!isBusy)
-			DisplayHelp( msg2 );		// Display help menu.
+		DisplayHelp( msg2 );		// Display help menu.
 		break;
 	case "clear":
-		if(!isBusy)
-			CommandClear( msg2 );		// Clear function.
+		CommandClear( msg2 );		// Clear function.
 		break;
 	case "tp":
-		if(!isBusy)
-			TP(msg2);					// TP functions.
+		TP(msg2);					// TP functions.
 		break;
 	case "q":
 		if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
-		if(!isBusy)
-			Quest( msg2 );				// Quest functions.
+		Quest( msg2 );				// Quest functions.
 		break;
 	case "rush":
 		if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
-		if(!isBusy)
-			Rush( msg2 );				// Rush functions.
+		Rush( msg2 );				// Rush functions.
 		break;
 	case "chant":
 		if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
-		if(!isBusy)
-			Chant( msg2 );				// Chant functions.
+		Chant( msg2 );				// Chant functions.
 		break;
 	case "'":
 		if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
@@ -2929,8 +2925,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		d2B_townMove("portalspot");
 		break;
 	case "gold":
-		if(!isBusy)
-			GiveGold(msg2);
+		GiveGold(msg2);
 		break;
 	default:						// Say this when you receive an invalid command.
 		//Say("!Invalid command: " + msg1 + " " + msg2 + " " + msg3 + "." );
@@ -2940,8 +2935,6 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 }
 
 function DisplayHelp(msg) { // Eventually add multiple menus via 'help commandname'. 
-
-	isBusy = 1;
 	switch(msg)
 	{
 		case "":
@@ -2968,7 +2961,6 @@ function DisplayHelp(msg) { // Eventually add multiple menus via 'help commandna
 			break;
 	}
 	NTC_Delay(500);
-	isBusy = 0;
 	return;
 }
 
@@ -3028,7 +3020,7 @@ function Follow( target ) {
 				if(leaderUnit) {								// deeEdits: add this distance check to keep peeps near
 					_distance = GetDistance(me, leaderUnit);
 					if(_distance > followRange) {
-						NTM_GetCloserInt(leaderUnit);
+						d2B_GetCloserInt(leaderUnit);
 						return;
 					}
 				}												//
@@ -3065,14 +3057,14 @@ function Follow( target ) {
 					}
 					else
 					{
-						NTM_GetCloserInt(leaderUnit);
+						d2B_GetCloserInt(leaderUnit);
 					}
 					hAttack();
 					Delay(1000);
 				}
 				else
 				{
-					NTM_GetCloserInt(leaderUnit);
+					d2B_GetCloserInt(leaderUnit);
 				}
 			}
 			else
@@ -3139,7 +3131,7 @@ function Follow( target ) {
 		{
 			if(leaderUnit)
 			{
-				if(me.classid == NTC_CHAR_CLASS_SORCERESS) NTM_GetCloserInt(leaderUnit);
+				if(me.classid == NTC_CHAR_CLASS_SORCERESS) d2B_GetCloserInt(leaderUnit);
 				if(me.classid != NTC_CHAR_CLASS_SORCERESS) d2B_follow();
 			}
 			else
@@ -3232,7 +3224,7 @@ function Follow( target ) {
 		{
 			if(leaderUnit)
 			{
-				if(me.classid == NTC_CHAR_CLASS_SORCERESS) NTM_GetCloserInt(leaderUnit);
+				if(me.classid == NTC_CHAR_CLASS_SORCERESS) d2B_GetCloserInt(leaderUnit);
 				if(me.classid != NTC_CHAR_CLASS_SORCERESS) d2B_follow();
 			}
 			else
@@ -3304,7 +3296,7 @@ function Follow( target ) {
 		{
 			if(leaderUnit)
 			{
-				if(me.classid == NTC_CHAR_CLASS_SORCERESS) NTM_GetCloserInt(leaderUnit);
+				if(me.classid == NTC_CHAR_CLASS_SORCERESS) d2B_GetCloserInt(leaderUnit);
 				if(me.classid != NTC_CHAR_CLASS_SORCERESS) d2B_follow();			}
 			else
 			{
@@ -3423,7 +3415,7 @@ function Follow( target ) {
 		{
 			if(leaderUnit)
 			{
-				if(me.classid == NTC_CHAR_CLASS_SORCERESS) NTM_GetCloserInt(leaderUnit);
+				if(me.classid == NTC_CHAR_CLASS_SORCERESS) d2B_GetCloserInt(leaderUnit);
 				if(me.classid != NTC_CHAR_CLASS_SORCERESS) d2B_follow();
 			}
 			else
@@ -3453,6 +3445,10 @@ function d2B_follow() {
 	if(NTC_InTown(me)) {
 		d2B_townMove("portalspot");
 		d2B_littleJMP();
+		do{
+			Delay(250);
+			if(NTC_InTown(leaderPlayerUnit)) return;
+		} while(!TakeLeaderTPFromTown(leaderPlayerUnit.areaid));
 	}
 	isFollowingEnabled = true;
 	return;
@@ -3471,7 +3467,7 @@ function TPAtPlayersBody(playerName, enemysName) {
 	if(_playerDistance > 0 && _myArea == _playerArea)
 	{
 		if(_playerUnit)
-			NTM_GetCloserInt(_playerUnit);
+			d2B_GetCloserInt(_playerUnit);
 		else
 			NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
 		TP("");
@@ -3486,7 +3482,8 @@ function Guard() { 									// Done
 
 	if(!NTC_InTown(me))
 	{
-		NTA_ClearPosition(15);		// deeEdit orig: 15
+		if(me.classid == NTC_CHAR_CLASS_SORCERESS) NTA_ClearPosition(30);		// deeEdit orig: 15
+		else NTA_ClearPosition(10);												// deeEdit orig: 15
 	}
 	return;
 }
@@ -3497,14 +3494,17 @@ function hAttack() {
 		if(NTA_CheckForCloseMonsters(flwrAtk_Range))	// deeEdits orig: 30
 		{
 			NTA_ClearPosition(flwrAtk_Range);			// deeEdits orig: 30
-			Delay(300);									// deeEdits orig: 1000
+			Delay(750);									// deeEdits orig: 1000
 			return;
 		}
 		return;
 	}
 	Delay(300);											// deeEdits orig: 1000
 }
-
+function d2B_GetCloserInt(unit) {
+	if(GetDistance(me, unit) > 2) return NTM_MoveTo(unit.areaid, unit.x, unit.y);
+	return true;
+}
 function isATown(id) {
 
 	var _ret = false;
@@ -3518,10 +3518,8 @@ function isATown(id) {
 	}
 	return _ret;
 }
-
 function TakeLeaderTP(toArea) { 					// Done
 
-	isBusy = 1;
 	while(me.areaid == 0)
 		NTC_Delay(100);
 	var _portal = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3226), 15);
@@ -3593,7 +3591,6 @@ function TakeLeaderTP(toArea) { 					// Done
 	{
 		_ret = false;
 	}
-	isBusy = 0;
 	return _ret;
 }	
 function TakeLeaderTPFromTown(toArea) { 					// Done
@@ -3653,7 +3650,6 @@ function TakeLeaderTPFromTown(toArea) { 					// Done
 
 function GiveGold( amount ) { 						// Done
 
-	isBusy = 1;
 	_gold = me.GetStat(14);
 	if(amount != "")
 	{
@@ -3678,7 +3674,6 @@ function GiveGold( amount ) { 						// Done
 	{
 		d2B_msg("Invalid amount.  Valid range is 1-10000.");
 	}
-	isBusy = 0;
 }
 
 function Quest( msg ) { 							// Done (needs testing)
@@ -3769,7 +3764,6 @@ function Town() { 									// Done
 
 	if(!NTC_InTown(me))
 	{
-		isBusy = 1;
 		// Try to take our own tp or the leader's tp
 		var _portal = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3226), 10);
 		var _prearea = me.areaid;
@@ -3830,20 +3824,16 @@ function Town() { 									// Done
 		
 		if(me.areaid !== _prearea)
 		{	
-			isBusy = 0;
 			return true;
 		}
 		else
 		{
-			isBusy = 0;
 			return false;
 		}
 	}
 	else
 	{
-		isBusy = 1;
 		d2B_townMgr();
-		isBusy = 0;
 		return true;
 	}
 }
@@ -3912,7 +3902,6 @@ function Chant( msg ) { 							// Done
 		return;
 	}
 	
-	isBusy = 1;
 	if(!NTC_InTown(me) && NTC_GetSkillLevel(52))
 	{
 		// Enchant player
@@ -3950,11 +3939,9 @@ function Chant( msg ) { 							// Done
 		else if(!_tmp) d2B_msg("way");
 		Delay(300);
 	}
-	isBusy = 0;
 }	
 function TP(msg) { 									// Done
 
-	isBusy = 1;
 	switch(msg)
 	{
 		case "":
@@ -3982,7 +3969,6 @@ function TP(msg) { 									// Done
 			{
 				d2B_msg("I'm in town! Say 'help tp' for more information.");
 			}
-			isBusy = 0;
 			break;
 			
 		default:
@@ -3990,7 +3976,6 @@ function TP(msg) { 									// Done
 			if(wpID == -1)
 			{
 				Invalid();
-				isBusy = 0;
 				return;
 			}
 			
@@ -4053,12 +4038,10 @@ function TP(msg) { 									// Done
 			}
 			break;
 	}
-	isBusy = 0;
 }
 
 function CommandClear(msg) { 						// Done
 
-	isBusy = 1;
 	if(!NTC_InTown(me))
 	{
 		switch(msg)
@@ -4079,11 +4062,10 @@ function CommandClear(msg) { 						// Done
 	{
 		d2B_msg("I'm in town!");
 	}
-	isBusy = 0;
 }
 
 function Rush( msg ) { 								// Done (needs testing) 
-	isBusy = 1;
+	
 	isFollowingEnabled = false;
 	isAutoEnchantEnabled = false;
 	switch(msg)
@@ -4118,7 +4100,6 @@ function Rush( msg ) { 								// Done (needs testing)
 		default:
 			Invalid();
 	}
-	isBusy = 0;
 }
 
 function Rush1() {
