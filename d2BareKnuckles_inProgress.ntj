@@ -2074,10 +2074,10 @@ function FollowSorc(target) {
 	if(!leaderUnit) leaderUnit = GetLeaderUnit(leaderName); 					// Make sure we have the leaders unit.
 	if(leaderPlayerUnit.areaid <= 0) return;									// Don't do anything if we don't know the area yet.
 	if(NTC_InTown(me) && (leaderPlayerUnit.areaid == me.areaid)) return;		// if leader and I are in the same town, then do not follow the leader in that town
-	if((leaderPlayerUnit.areaid != me.areaid) && !NTC_InTown(me)) {				// if leader and I are not in the same area and I am not in town, then go to town
+	/*if((leaderPlayerUnit.areaid != me.areaid) && !NTC_InTown(me)) {			// if leader and I are not in the same area and I am not in town, then go to town
 		Town("");
 		return;
-	}
+	}*/
 	
 	// ____________________________________________________
 	
@@ -2197,6 +2197,7 @@ function FollowSorc(target) {
 						Delay(200);
 						NTM_TakeWaypoint(GetPlayerActWaypointID(leaderPlayerUnit));
 						Delay(200);
+						if(CheckAct(leaderPlayerUnit) !== CheckAct(me)) Town();					// deeEdits as an experiment
 						NTTM_TownMove("portalspot");
 						d2B_littleJMP();
 						return;
@@ -2256,7 +2257,7 @@ function FollowSorc(target) {
 		if(_distance === -1 && CheckAct(leaderPlayerUnit) !== CheckAct(me)) {
 			if(AreaHasWaypoint(leaderPlayerUnit.areaid)) {
 				if(!NTM_TakeWaypoint(leaderPlayerUnit.areaid)) {
-					if(!Town("")) Whisper(leaderPlayerUnit.name, "I seem to be stuck!");}
+					if(!Town("")) Whisper(leaderPlayerUnit.name, "I seem to be stuck!");
 				}
 			}
 			return;
@@ -3798,6 +3799,8 @@ function Town() { 									// Done
 	if(!NTC_InTown(me))
 	{
 		// Try to take our own tp or the leader's tp
+		TP("");
+		Delay(500);
 		var _portal = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3226), 10);
 		var _prearea = me.areaid;
 		if(_portal)
@@ -3826,7 +3829,7 @@ function Town() { 									// Done
 			Delay(500);
 		}
 		
-		if(me.areaid == _prearea) // If we failed, we need to make our own tp and try again
+		if(me.areaid == _prearea && !NTC_InTown(me)) // If we failed, we need to make our own tp and try again
 		{
 			TP("");
 			Delay(500);
