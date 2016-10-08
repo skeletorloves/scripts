@@ -1,10 +1,10 @@
 //	d2BareKnuckles.ntj
 	
-	var myLeader = ""				// for the d2B_retrievePause() thingy...
+	var myLeader = false;			// for the d2B_retrievePause() thingy...
 	
 	var _test = false;				// for testing chaos w/o using followere
-	var _testNoPeepChk = true;		// for testing chaos w/ bypassing peep checker
-	var _quiet = true;				// msg free silence
+	var _testNoPeepChk = false;		// for testing chaos w/ bypassing peep checker
+	var _quiet = false;				// msg free silence
 	var _msgMe = false;				// for enabling whispering to _myName
 	
 	var _dollChk = true;					// true: if dolls break or do other things | false: no throne room doll check
@@ -18,6 +18,7 @@
 	var d2B_usingAFollower = false; 		// using a follower therefore make townportals d2B_takeMyTP()
 	var d2B_refill = true;					// enable/disable NTTMGR_TownManager();
 	
+	var _noBoer = true;							// for impeding boer routines and the delays associated with those in throne
 	var _myName = "";							// peep to msg of what's a-happenin'
 	var _myBoBarb = false;						// bo barb name
 	var _myChantress = "";						// my chantress
@@ -49,7 +50,7 @@
 //
 
 var d2B_cases = 1;
-var d2B_toggleHelper = "solo";	// helper: for engaging helper | testing: for testing 
+var d2B_toggleHelper = "CBaal";	// helper: for engaging helper | testing: for testing 
 								// helperSorc : for engaging helpers which are sorcies
 								// solo : for running one continous run
 								
@@ -1320,13 +1321,14 @@ function d2B_chaos(a){								// case: 31
 	NTConfig_IdInField = false;
 	
 	d2B_commonInitSetup(107);
-	d2B_takeMyTP(true, true, true, false, false);
-	Delay(1000);
-	d2B_team(false, false);					// send the peeps back to town
+	if(!_noBoer) {
+		d2B_takeMyTP(true, true, true, false, false);
+		Delay(1000);
+		d2B_team(false, false);					// send the peeps back to town
+	}
+	if(a != "low") {							// if not leveling low peeps
 	
-	if(a != "low") {					// if not leveling low peeps
-	
-		NTM_MoveTo(108, 7790, 5544);						// tele to just inside the enterance
+		NTM_MoveTo(108, 7790, 5544);			// tele to just inside the enterance
 		
 		if(!_nonTelePeeps) {
 			NTM_MakeTP();
@@ -1352,7 +1354,7 @@ function d2B_chaos(a){								// case: 31
 	}
 	
 	NTM_MoveTo(108, 7795, 5295);
-	if(!_lowLvlPeeps) d2B_team(true, false);
+	//if(!_lowLvlPeeps) d2B_team(true, false);			// deeEdits: uncertain why I wrote this
 
 	for (i = 0; i < 80; i += 1) {
 		if (GetUnit(NTC_UNIT_MONSTER, 243)) {
@@ -1370,7 +1372,7 @@ function d2B_chaos(a){								// case: 31
 		Town();
 		Return;
 	}
-	d2B_takeMyTP(true, true, false, false, false);
+	if(!_noBoer) d2B_takeMyTP(true, true, false, false, false);
 	
 	d2B_team(true,4);
 }
@@ -1455,9 +1457,11 @@ function d2B_worldstonekeep() {
 	
 	d2B_commonInitSetup(129);
 	Delay(500);
-	d2B_takeMyTP(true, true, true, false, false);
-	d2B_team(false, false);
-	d2B_isTeamInTown(5,129);
+	if(!_nonTelePeeps) {
+		d2B_takeMyTP(true, true, true, false, false);
+		d2B_team(false, false);
+		d2B_isTeamInTown(5,129);
+	}
 	//Delay(Random(1500,2000));
 	
 	d2B_moveToStair(me.areaid, 130);
@@ -1492,10 +1496,12 @@ function d2B_worldstonekeep() {
 	d2B_throneWaves();
 	Delay(300);
 	
-	d2B_takeMyTP(false, true, true, false, false);
-	Delay(4000);
+	if(!_noBoer) {
+		d2B_takeMyTP(false, true, true, false, false);
+		Delay(4000);
+	}
 	d2B_team(false, false);
-	Delay(Random(4500,6000));
+	Delay(Random(2500,3000));
 	
 	d2B_baal();
 	Delay(Random(3000,4000));
@@ -4537,6 +4543,8 @@ function d2B_retrievePause() {
 	// d2B_line 	= store the complete bot pause date string from the text file
 	// d2B_pause 	= temporary var for opening, verifying, and reading, text file
 	// d2B_myPause	= store solely the needed bot paused string from the text file 
+	
+	if(!myLeader) myLeader=me.charname;
 	
 	var d2B_line;
 	var d2B_pause = FileOpen("logs/messagecomands/" + myLeader + "-pause.txt", 0); // open file in read only
