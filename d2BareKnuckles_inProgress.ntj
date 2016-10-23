@@ -2770,6 +2770,11 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			Delay(Random(1000,1200));
 			NTM_MoveTo(108,7763,5267);
 			break;
+		case "-":				// use leader's tp w/o following enabled
+			isFollowingEnabled = false;
+			TakeLeaderTP();
+			isFollowingEnabled = false;
+			break;
 		case ".":				//	follow
 			if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
 			if(NTC_InTown(me)) TakeLeaderTP();
@@ -2983,7 +2988,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			GiveGold(msg2);
 			break;
 		case "d":						// custom commands
-			if(msg2) d2B_dCmds(msg2)
+			if(msg2) d2B_dCmds(msg2);
 			break;
 		default:						// Say this when you receive an invalid command.
 			//Say("!Invalid command: " + msg1 + " " + msg2 + " " + msg3 + "." );
@@ -2994,17 +2999,184 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 function d2B_dCmds(msg) {
 	switch(msg) {
 		case "cain":
-			d2B_msg(
-			d2B_interact(msg, "NTC_NPC_ID_CAIN");
-	return;
+			NTTM_TownMove(msg);
+			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(2890), 5);
+			if(!_npc) return false;
+			
+			if(_npc) {
+				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
+				if(NTT_DoInteract(_npc)) {
+					Delay(Random(2000,4000));
+					me.Cancel(1);
+				}
+			}
+			break;
+		case "warriv":
+			NTTM_TownMove(msg);
+			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(2895), 5);
+			if(!_npc) return false;
+			
+			if(_npc) {
+				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
+				if(NTT_DoInteract(_npc)) {
+					for(var i = 0 ; i < 4 ; i++){
+						if((i % 4) == 0) {
+							if(me.act == 1) me.SelectNPCMenu(0x0FB4);
+							if(me.act == 2) me.SelectNPCMenu(0x0D37);
+						}
+						NTC_Delay(250);
+					}	
+				}
+				me.Cancel(1);
+			}
+			break;
+		case "akara":
+			NTTM_TownMove(msg);
+			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(2892), 5);
+			if(!_npc) return false;
+			
+			if(_npc) {
+				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
+				if(NTT_DoInteract(_npc)) {
+					Delay(Random(2000,4000));
+					me.Cancel(1);
+				}
+			}
+			break;
+		case "charsi":
+			NTTM_TownMove(msg);
+			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(2894), 5);
+			if(!_npc) return false;
+			
+			if(_npc) {
+				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
+				if(NTT_DoInteract(_npc)) {
+					Delay(Random(2000,4000));
+					me.Cancel(1);
+				}
+			}
+			break;
+		case "gheed":
+			NTTM_TownMove(msg);
+			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(2891), 5);
+			if(!_npc) return false;
+			
+			if(_npc) {
+				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
+				if(NTT_DoInteract(_npc)) {
+					Delay(Random(2000,4000));
+					me.Cancel(1);
+				}
+			}
+			break;
+		case "kashya":
+			NTTM_TownMove(msg);
+			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(2893), 5);
+			if(!_npc) return false;
+			
+			if(_npc) {
+				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
+				if(NTT_DoInteract(_npc)) {
+					Delay(Random(2000,4000));
+					me.Cancel(1);
+				}
+			}
+			break;
+		case "drognan":
+			NTTM_TownMove(msg);
+			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(3023), 5);
+			if(!_npc) return false;
+			
+			if(_npc) {
+				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
+				if(NTT_DoInteract(_npc)) {
+					Delay(Random(2000,4000));
+					me.Cancel(1);
+				}
+			}
+			break;
+		case "jehryn":
+			NTTM_TownMove("palace");
+			NTTM_TownMove(msg);
+			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(3027), 5);
+			_npc2 = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(3028), 5);
+			if(!_npc && !_npc2) return false;
+			
+			if(_npc) NTM_MoveTo(me.areaid, _npc.x, _npc.y);
+			if(_npc2) NTM_MoveTo(me.areaid, _npc2.x, _npc2.y);
+			
+			if(NTT_DoInteract(_npc)) {
+				Delay(Random(2000,4000));
+				me.Cancel(1);
+			}			
+			break;
+		case "meshif":
+			NTTM_TownMove(msg);
+			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(3032), 5);
+			if(!_npc) return false;
+			
+			if(_npc) {
+				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
+				if(NTT_DoInteract(_npc)) {
+					for(var i = 0 ; i < 4 ; i++){
+						if((i % 4) == 0) {
+							if(me.act == 1) me.SelectNPCMenu(0x0D38);
+							if(me.act == 2) me.SelectNPCMenu(0x0D39);
+						}
+						NTC_Delay(250);
+					}	
+				}
+				me.Cancel(1);
+			}
+			break;
+		case "hratli":
+			NTTM_TownMove(msg);
+			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(1009), 5);
+			if(!_npc) return false;
+			
+			if(_npc) {
+				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
+				if(NTT_DoInteract(_npc)) {
+					Delay(Random(2000,4000));
+					me.Cancel(1);
+				}
+			}
+			break;
+		case "alkor":
+			NTTM_TownMove(msg);
+			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(1010), 5);
+			if(!_npc) return false;
+			
+			if(_npc) {
+				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
+				if(NTT_DoInteract(_npc)) {
+					Delay(Random(2000,4000));
+					me.Cancel(1);
+				}
+			}
+			break;
+		case "tyrael":
+			NTTM_TownMove(msg);
+			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(1013), 5);
+			if(!_npc) return false;
+			
+			if(_npc) {
+				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
+				if(NTT_DoInteract(_npc)) {
+					for(var i = 0 ; i < 4 ; i++){
+						if((i % 4) == 0) { 
+							if(me.SelectNPCMenu(0x58D2));
+						}
+						NTC_Delay(250);
+					}	
+				}
+				me.Cancel(1);
+			}
+			break;
+	}
+	return true;
 }
-function d2B_interact(_npc1, _npcID) {
-	NTTM_TownMove(_npc1, _npcID);
-	_npc = NTC_FindUnit(NTC_UNIT_NPC, _npc1, _npcID, 5);
-	if(_npc) NTT_DoInteract(_npc);
-	
-	return;
-}
+
 function DisplayHelp(msg) { // Eventually add multiple menus via 'help commandname'. 
 	switch(msg)
 	{
