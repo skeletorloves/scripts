@@ -2999,17 +2999,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 function d2B_dCmds(msg) {
 	switch(msg) {
 		case "cain":
-			NTTM_TownMove(msg);
-			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(2890), 5);
-			if(!_npc) return false;
-			
-			if(_npc) {
-				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
-				if(NTT_DoInteract(_npc)) {
-					Delay(Random(2000,4000));
-					me.Cancel(1);
-				}
-			}
+			d2B_NPCinteract(msg, 2890);
 			break;
 		case "warriv":
 			NTTM_TownMove(msg);
@@ -3031,69 +3021,19 @@ function d2B_dCmds(msg) {
 			}
 			break;
 		case "akara":
-			NTTM_TownMove(msg);
-			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(2892), 5);
-			if(!_npc) return false;
-			
-			if(_npc) {
-				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
-				if(NTT_DoInteract(_npc)) {
-					Delay(Random(2000,4000));
-					me.Cancel(1);
-				}
-			}
+			d2B_NPCinteract(msg, 2892);
 			break;
 		case "charsi":
-			NTTM_TownMove(msg);
-			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(2894), 5);
-			if(!_npc) return false;
-			
-			if(_npc) {
-				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
-				if(NTT_DoInteract(_npc)) {
-					Delay(Random(2000,4000));
-					me.Cancel(1);
-				}
-			}
+			d2B_NPCinteract(msg, 2894);
 			break;
 		case "gheed":
-			NTTM_TownMove(msg);
-			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(2891), 5);
-			if(!_npc) return false;
-			
-			if(_npc) {
-				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
-				if(NTT_DoInteract(_npc)) {
-					Delay(Random(2000,4000));
-					me.Cancel(1);
-				}
-			}
+			d2B_NPCinteract(msg, 2891);
 			break;
 		case "kashya":
-			NTTM_TownMove(msg);
-			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(2893), 5);
-			if(!_npc) return false;
-			
-			if(_npc) {
-				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
-				if(NTT_DoInteract(_npc)) {
-					Delay(Random(2000,4000));
-					me.Cancel(1);
-				}
-			}
+			d2B_NPCinteract(msg, 2893);
 			break;
 		case "drognan":
-			NTTM_TownMove(msg);
-			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(3023), 5);
-			if(!_npc) return false;
-			
-			if(_npc) {
-				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
-				if(NTT_DoInteract(_npc)) {
-					Delay(Random(2000,4000));
-					me.Cancel(1);
-				}
-			}
+			d2B_NPCinteract(msg, 3023);
 			break;
 		case "jehryn":
 			NTTM_TownMove("palace");
@@ -3120,8 +3060,8 @@ function d2B_dCmds(msg) {
 				if(NTT_DoInteract(_npc)) {
 					for(var i = 0 ; i < 4 ; i++){
 						if((i % 4) == 0) {
-							if(me.act == 1) me.SelectNPCMenu(0x0D38);
-							if(me.act == 2) me.SelectNPCMenu(0x0D39);
+							if(me.act == 2) me.SelectNPCMenu(0x0D38);
+							if(me.act == 3) me.SelectNPCMenu(0x0D39);
 						}
 						NTC_Delay(250);
 					}	
@@ -3129,31 +3069,11 @@ function d2B_dCmds(msg) {
 				me.Cancel(1);
 			}
 			break;
-		case "hratli":
-			NTTM_TownMove(msg);
-			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(1009), 5);
-			if(!_npc) return false;
-			
-			if(_npc) {
-				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
-				if(NTT_DoInteract(_npc)) {
-					Delay(Random(2000,4000));
-					me.Cancel(1);
-				}
-			}
+		case "hratli":			// deeEdits: dos not speak to her when moving East after completing Duriel quest. Bots go to where she should be.
+			d2B_NPCinteract(msg, 1009);
 			break;
 		case "alkor":
-			NTTM_TownMove(msg);
-			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(1010), 5);
-			if(!_npc) return false;
-			
-			if(_npc) {
-				NTM_MoveTo(me.areaid, _npc.x, _npc.y);
-				if(NTT_DoInteract(_npc)) {
-					Delay(Random(2000,4000));
-					me.Cancel(1);
-				}
-			}
+			d2B_NPCinteract(msg, 1010);
 			break;
 		case "tyrael":
 			NTTM_TownMove(msg);
@@ -3177,6 +3097,21 @@ function d2B_dCmds(msg) {
 	return true;
 }
 
+function d2B_NPCinteract(NPCname, GLS) {
+	NTTM_TownMove(NPCname);
+	_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(GLS), 5);
+	if(!_npc) return false;
+	
+	if(_npc) {
+		NTM_MoveTo(me.areaid, _npc.x, _npc.y);
+		if(NTT_DoInteract(_npc)) {
+			Delay(Random(2000,4000));
+			me.Cancel(1);
+			return true;
+		}
+	}
+	return false;
+}
 function DisplayHelp(msg) { // Eventually add multiple menus via 'help commandname'. 
 	switch(msg)
 	{
