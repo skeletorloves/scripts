@@ -99,19 +99,19 @@ function NT_KeyEvents(keycode) {
 				NTM_MakeTP();
 				Delay(200);
 				if(d2B_usingAFollower) d2B_msg("."); // "." for enabling follow bots to follow
-				break;
 			}
 			if(me.areaid == 132) {	// while in the Worldstone Chamber: msg to bots
 				NTM_MoveTo(me.areaid, 15193, 5930);
 				NTM_MakeTP();
 				Delay(200);
 				if(d2B_usingAFollower) d2B_msg("."); // "." for enabling follow bots to follow
-				break;
 			}
 			if(me.areaid == 112) {	// Pit of Acheron run
 				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT,60); // enterance of Pit
 				NTM_TakeUnit(NTC_UNIT_OBJECT,60);
 				NTP_DoPrecast(true);
+				Delay(200);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 397);
 				
 				var _chest;
 				_chest = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3260));
@@ -147,6 +147,16 @@ function NT_KeyEvents(keycode) {
 				if(d2B_usingAFollower) d2B_team(true);
 				//d2B_teamPro(true,2879,40,true,2,"n w",false);						// 2879: Radament
 			}
+			if(me.areaid == 43) {	// Cube
+				Print(COLOR_2 + "going for cube");
+				NTP_DoPrecast(true);
+				for (i = 0; i < 3; i += 1) {
+					d2B_moveToStair(me.areaid, 62+i);
+					NTM_TakeStair(62+i);
+				}	
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 356, -5, -5);
+				if(d2B_usingAFollower) d2B_team(true);	
+			}		
 			if(me.areaid == 75) {	// Stormtree
 				Print(COLOR_2 + "going for stormtree");
 				d2B_moveWP();
