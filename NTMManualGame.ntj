@@ -1,5 +1,5 @@
 var _keyExtras = false;
-var d2B_usingAFollower = true;
+var d2B_usingAFollower = false;
 var _dollChk = true;
 var _dollSoul;
 
@@ -147,8 +147,16 @@ function NT_KeyEvents(keycode) {
 				if(d2B_usingAFollower) d2B_team(true);
 				//d2B_teamPro(true,2879,40,true,2,"n w",false);						// 2879: Radament
 			}
-			if(me.areaid == 43) {	// Cube
+			if(me.areaid == 57) {	// cube
 				Print(COLOR_2 + "going for cube");
+				NTP_DoPrecast(true);
+				d2B_moveToStair(me.areaid, 60);
+				NTM_TakeStair(60);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 354, -5, -5);
+				if(d2B_usingAFollower) d2B_team(true);
+			}
+			if(me.areaid == 43) {	// ataff
+				Print(COLOR_2 + "going for staff");
 				NTP_DoPrecast(true);
 				for (i = 0; i < 3; i += 1) {
 					d2B_moveToStair(me.areaid, 62+i);
@@ -156,15 +164,66 @@ function NT_KeyEvents(keycode) {
 				}	
 				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 356, -5, -5);
 				if(d2B_usingAFollower) d2B_team(true);	
-			}		
+			}
+			if(me.areaid == 44) {	// amulet
+				Print(COLOR_2 + "going for amulet");
+				NTP_DoPrecast(true);
+				d2B_moveToStair(45, 58);
+				NTM_TakeStair(58);
+				d2B_moveToStair(me.areaid, 61);
+				NTM_TakeStair(61);
+				Delay(300);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 149, +4, -8);
+				if(d2B_usingAFollower) d2B_team(true);
+			}
+			if(me.areaid == 76) {	// Khalim's eye
+				Print(COLOR_2 + "going for the eye");
+				NTP_DoPrecast(true);
+				NTM_MoveToStair(me.areaid, 85);
+				NTM_TakeStair(85);
+				Delay(300);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 407)
+				if(d2B_usingAFollower) d2B_team(true);	
+			}
+			if(me.areaid == 78) {	// Khalim's brain
+				Print(COLOR_2 + "going for the brain");
+				NTP_DoPrecast(true);
+				NTM_MoveToStair(78, 88);
+				NTM_TakeStair(88);
+				NTM_MoveToStair(88, 89);
+				NTM_TakeStair(89);
+				NTM_MoveToStair(89, 91);
+				NTM_TakeStair(91);
+				Delay(300);
+				NTM_MoveToPresetUnit(91, NTC_UNIT_MONSTER, 756, -3, 8);
+				if(d2B_usingAFollower) d2B_team(true);	
+			}
+			if(me.areaid == 80) {	// Khalim's heart
+				Print(COLOR_2 + "going for the heart");
+				NTP_DoPrecast(true);
+				NTM_MoveToStair(80,92);
+				NTM_TakeStair(92);
+				NTM_MoveToStair(92,93);
+				NTM_TakeStair(93);
+				Delay(300);
+				if(d2B_usingAFollower) d2B_team(true);	
+			}
 			if(me.areaid == 75) {	// Stormtree
 				Print(COLOR_2 + "going for stormtree");
 				d2B_moveWP();
 				d2B_gotoWP(79);
 				NTP_DoPrecast(true);
 				Delay(750);
-				
 				NTM_MoveToPresetUnit(78, NTC_UNIT_MONSTER, 757, 10, -10);			// 757: Stormtree
+				if(d2B_usingAFollower) d2B_team(true);
+			}
+			if(me.areaid == 80) {	// Act III tome
+				Print(COLOR_2 + "going for tome");
+				NTP_DoPrecast(true);
+				NTM_MoveToStair(me.areaid, 94);
+				NTM_TakeStair(94);
+				Delay(300);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 193);
 				if(d2B_usingAFollower) d2B_team(true);
 			}
 			if(me.areaid == 103) {	// Hephasto
@@ -173,7 +232,6 @@ function NT_KeyEvents(keycode) {
 				d2B_gotoWP(107);
 				NTP_DoPrecast(true);
 				Delay(750);
-				
 				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 376);				// area near to Hephasto
 				//NTM_MoveToPresetUnit(78, NTC_UNIT_MONSTER, 757, 10, -10);			// 757: Stormtree
 				if(d2B_usingAFollower) d2B_team(true);
@@ -184,7 +242,6 @@ function NT_KeyEvents(keycode) {
 				d2B_gotoWP(129);	// ws2
 				NTP_DoPrecast(true);
 				Delay(750);
-				
 				d2B_moveToStair(me.areaid, 130);
 				NTM_TakeStair(130);	// ws3
 				d2B_moveToStair(me.areaid, 131);
