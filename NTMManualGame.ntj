@@ -94,32 +94,6 @@ function NT_KeyEvents(keycode) {
 		case 219:		// [ open bracket 
 			if(busy || _keyExtras)
 				return Print(COLOR_1 + "Not now...");
-			if(me.areaid == 131) {	// while in the Throne of Destroction: msg to bots
-				NTM_MoveTo(me.areaid, 15118, 5046);
-				NTM_MakeTP();
-				Delay(200);
-				if(d2B_usingAFollower) d2B_msg("."); // "." for enabling follow bots to follow
-			}
-			if(me.areaid == 132) {	// while in the Worldstone Chamber: msg to bots
-				NTM_MoveTo(me.areaid, 15193, 5930);
-				NTM_MakeTP();
-				Delay(200);
-				if(d2B_usingAFollower) d2B_msg("."); // "." for enabling follow bots to follow
-			}
-			if(me.areaid == 112) {	// Pit of Acheron run
-				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT,60); // enterance of Pit
-				NTM_TakeUnit(NTC_UNIT_OBJECT,60);
-				NTP_DoPrecast(true);
-				Delay(200);
-				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 397);
-				
-				var _chest;
-				_chest = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3260));
-				if(_chest){
-					if(NTC_OpenChest(_chest))
-						NTSI_PickItems();
-				}
-			}
 			if(me.areaid == 1) {	// corpsefire
 				Print(COLOR_2 + "going for corpsefire");
 				d2B_moveWP();
@@ -135,27 +109,28 @@ function NT_KeyEvents(keycode) {
 				if(d2B_usingAFollower) d2B_team(true);
 				//d2B_teamPro(true,3319,40,true,1,"n w",false);						// 3319: Corpsefire
 			}
-			if(me.areadid == 5) {	// tree head
+			if(me.areaid == 5) {	// tree head
 				Print(COLOR_2 + "going for tree head");
 				NTP_DoPrecast(true);
 				Delay(200);
-				d2B_KoMoveToPresetUnit(5, NTC_UNIT_OBJECT, 30);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 30, 15, -15);
 				if(d2B_usingAFollower) d2B_team(true);
 			}
-			if(me.areadid == 4) {	// cairn stones
+			if(me.areaid == 4) {	// cairn stones
 				Print(COLOR_2 + "going for cairn stones");
 				NTP_DoPrecast(true);
 				Delay(200);
-				d2B_KoMoveToPresetUnit(4, NTC_UNIT_OBJECT, 22);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 15, -15);
 				if(d2B_usingAFollower) d2B_team(true);
 			}
-			if(me.areadid == 27) {	// horadric malus
+			if(me.areaid == 27) {	// horadric malus
 				Print(COLOR_2 + "going for horadric malus");
 				NTP_DoPrecast(true);
 				Delay(200);
-				d2B_KoMoveToPresetUnit(28, NTC_UNIT_OBJECT, 108, 5, 5);
+				NTM_MoveToPresetUnit(28, NTC_UNIT_MONSTER, 754, -5, 5);
 				if(d2B_usingAFollower) d2B_team(true);
 			}
+	// actII
 			if(me.areaid == 40) {	// Radament
 				Print(COLOR_2 + "going for radament");
 				d2B_moveWP();
@@ -197,6 +172,7 @@ function NT_KeyEvents(keycode) {
 				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 149, +4, -8);
 				if(d2B_usingAFollower) d2B_team(true);
 			}
+	// actIII
 			if(me.areaid == 76) {	// Khalim's eye
 				Print(COLOR_2 + "going for the eye");
 				NTP_DoPrecast(true);
@@ -247,6 +223,7 @@ function NT_KeyEvents(keycode) {
 				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 193);
 				if(d2B_usingAFollower) d2B_team(true);
 			}
+	// actIV
 			if(me.areaid == 103) {	// Hephasto
 				Print(COLOR_2 + "going for hephasto");
 				d2B_moveWP();
@@ -255,6 +232,38 @@ function NT_KeyEvents(keycode) {
 				Delay(750);
 				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 376);				// area near to Hephasto
 				//NTM_MoveToPresetUnit(78, NTC_UNIT_MONSTER, 757, 10, -10);			// 757: Stormtree
+				if(d2B_usingAFollower) d2B_team(true);
+			}
+	// actV		
+			if(me.areaid == 112) {	// Pit of Acheron run
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT,60); // enterance of Pit
+				NTM_TakeUnit(NTC_UNIT_OBJECT,60);
+				NTP_DoPrecast(true);
+				Delay(200);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 397);
+				
+				var _chest;
+				_chest = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3260));
+				if(_chest){
+					if(NTC_OpenChest(_chest))
+						NTSI_PickItems();
+				}
+			}
+			if(me.areaid == 113) {	// anya
+				Print(COLOR_2 + "going for anya");
+				NTP_DoPrecast(true);
+				Delay(200);
+				d2B_moveToStair(me.areaid, 114);
+				NTM_TakeStair(114);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 460, -8, -8);
+				if(d2B_usingAFollower) d2B_team(true);
+			}
+			if(me.areaid == 118) {	// ancients
+				Print(COLOR_2 + "going for ancients");
+				NTP_DoPrecast(true);
+				Delay(200);
+				d2B_moveToStair(me.areaid, 120);
+				NTM_TakeStair(120);
 				if(d2B_usingAFollower) d2B_team(true);
 			}
 			if(me.areaid == 109) {	// Throne
@@ -284,6 +293,18 @@ function NT_KeyEvents(keycode) {
 				}
 				if(_dollSoul) break;
 				_dollSoul = false;
+			}
+			if(me.areaid == 131) {	// while in the Throne of Destroction: msg to bots
+				NTM_MoveTo(me.areaid, 15118, 5046);
+				NTM_MakeTP();
+				Delay(200);
+				if(d2B_usingAFollower) d2B_msg("."); // "." for enabling follow bots to follow
+			}
+			if(me.areaid == 132) {	// while in the Worldstone Chamber: msg to bots
+				NTM_MoveTo(me.areaid, 15193, 5930);
+				NTM_MakeTP();
+				Delay(200);
+				if(d2B_usingAFollower) d2B_msg("."); // "." for enabling follow bots to follow
 			}
 			break;
 		case 221:		// ] close bracket 
