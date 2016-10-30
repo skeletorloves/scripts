@@ -139,21 +139,21 @@ function NT_KeyEvents(keycode) {
 				Print(COLOR_2 + "going for tree head");
 				NTP_DoPrecast(true);
 				Delay(200);
-				NTM_KoMoveToPresetUnit(5, NTC_UNIT_OBJECT, 30);
+				d2B_KoMoveToPresetUnit(5, NTC_UNIT_OBJECT, 30);
 				if(d2B_usingAFollower) d2B_team(true);
 			}
 			if(me.areadid == 4) {	// cairn stones
 				Print(COLOR_2 + "going for cairn stones");
 				NTP_DoPrecast(true);
 				Delay(200);
-				NTM_KoMoveToPresetUnit(4, NTC_UNIT_OBJECT, 22);
+				d2B_KoMoveToPresetUnit(4, NTC_UNIT_OBJECT, 22);
 				if(d2B_usingAFollower) d2B_team(true);
 			}
 			if(me.areadid == 27) {	// horadric malus
 				Print(COLOR_2 + "going for horadric malus");
 				NTP_DoPrecast(true);
 				Delay(200);
-				NTM_KoMoveToPresetUnit(28, NTC_UNIT_OBJECT, 108, 5, 5);
+				d2B_KoMoveToPresetUnit(28, NTC_UNIT_OBJECT, 108, 5, 5);
 				if(d2B_usingAFollower) d2B_team(true);
 			}
 			if(me.areaid == 40) {	// Radament
@@ -987,6 +987,63 @@ function d2B_movePresetUnitMonster(a,b,c) {
 		return;
 	}
 	return;
+}
+function d2B_KoMoveToPresetUnit(areaId, unitType, classId, offsetX, offsetY, clearpath) {
+
+    var i, j;
+    var _oldUnits, _newUnits;
+
+    if (arguments.length < 4) { offsetX = 0; offsetY = 0; }
+	if (arguments.length < 6) { clearpath = false }                               
+    for (i = 0; i < 3; i++)
+    {
+        _oldUnits = GetPresetUnits(areaId, unitType);
+        if (_oldUnits)
+        {
+            for (j = 0; j < _oldUnits.length; j++)
+            {
+                if (_oldUnits[j].id == classId)
+                {
+                    if (NTM_MoveTo(areaId, _oldUnits[j].roomx * 5 + _oldUnits[j].x + offsetX, _oldUnits[j].roomy * 5 + _oldUnits[j].y + offsetY, 3, clearpath))
+                        return true;
+                    else
+                    {
+                        switch (me.areaid)
+                        {
+						case 28:
+                        case 29:
+                        case 30:
+                        case 31:
+                        case 51:
+                        case 52:
+                        case 53:
+                        case 54:
+                            var _moveXy = [[30, 0], [0, 30], [-30, 0], [0, -30]];
+
+                            for (i = 0; i < 4; i++)
+                            {
+                                while (true)
+                                {
+                                    if (!NTM_TeleportTo(me.x + _moveXy[i][0], me.y + _moveXy[i][1]))
+                                        break;
+                                    if (NTM_MoveTo(areaId, _oldUnits[j].roomx * 5 + _oldUnits[j].x + offsetX, _oldUnits[j].roomy * 5 + _oldUnits[j].y + offsetY, 0, clearpath))
+                                        return true;
+                                }
+                            }
+                            break;
+                        }
+
+                        return false;
+                    }
+                }
+            }
+        }
+
+        if (i < 2)
+            Delay(500);
+    }
+
+    return false;
 }
 function d2B_usePortal(a,b){
 	if(!NTM_UsePortal(a, b)){
