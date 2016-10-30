@@ -135,6 +135,27 @@ function NT_KeyEvents(keycode) {
 				if(d2B_usingAFollower) d2B_team(true);
 				//d2B_teamPro(true,3319,40,true,1,"n w",false);						// 3319: Corpsefire
 			}
+			if(me.areadid == 5) {	// tree head
+				Print(COLOR_2 + "going for tree head");
+				NTP_DoPrecast(true);
+				Delay(200);
+				NTM_KoMoveToPresetUnit(5, NTC_UNIT_OBJECT, 30);
+				if(d2B_usingAFollower) d2B_team(true);
+			}
+			if(me.areadid == 4) {	// cairn stones
+				Print(COLOR_2 + "going for cairn stones");
+				NTP_DoPrecast(true);
+				Delay(200);
+				NTM_KoMoveToPresetUnit(4, NTC_UNIT_OBJECT, 22);
+				if(d2B_usingAFollower) d2B_team(true);
+			}
+			if(me.areadid == 27) {	// horadric malus
+				Print(COLOR_2 + "going for horadric malus");
+				NTP_DoPrecast(true);
+				Delay(200);
+				NTM_KoMoveToPresetUnit(28, NTC_UNIT_OBJECT, 108, 5, 5);
+				if(d2B_usingAFollower) d2B_team(true);
+			}
 			if(me.areaid == 40) {	// Radament
 				Print(COLOR_2 + "going for radament");
 				d2B_moveWP();
@@ -155,7 +176,7 @@ function NT_KeyEvents(keycode) {
 				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 354, -5, -5);
 				if(d2B_usingAFollower) d2B_team(true);
 			}
-			if(me.areaid == 43) {	// ataff
+			if(me.areaid == 43) {	// staff
 				Print(COLOR_2 + "going for staff");
 				NTP_DoPrecast(true);
 				for (i = 0; i < 3; i += 1) {
