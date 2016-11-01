@@ -32,32 +32,33 @@
 //	__________________________________
 //		a collection of function calls
 		
-//		d2B_storePause(a)				a: 1 as an initializer had been placed into: line 150 of LeaderStarter.ntj
-//		d2B_retrievePause()				NT_File("logs/messagecommands/"+me.charname+"-pause.txt", 1, "1" + "/");
-//		
-//		d2B_checkTown(town, wp)			*not used* (a: which act to head to | b: which town wp to go to)
-//		d2B_checkActOfPeep(peep)		*not used* (returns value of the main town of the act of peep: me or leader)	
-//
-//		d2B_takeMyTP(delayTF, bo, precast, clrlvlopenchests, rA, rB) 			(if rA = false, then no Delay(Random(rA, rB)))
-//
-//		d2B_team(teamTown, teamAct)		(teamTown: true - towns team, false - team follows | teamAct: false does nothing, 1-sends team to act 1 thru 5)
-//
-//		d2B_teamPro(teamTown, gLocStrng, clrPosDist, teamTown2, teamAct, dMsg, myOrig_X, myOrig_Y)	(d2B_team(teamTown, false) | GetLocaleString(gLocStrng) | NTA_ClearPosition(clrPosDist, true)
-//																									d2B_team(teamTown2, teamAct) | if(dMsg) d2B_msg(dMsg) 
-//																									myOrig_X, myOrig_Y : original x, y of where team tp was made)
-//
-//		d2B_boSafe(a,b,c,d)				(a: d2B_chkAct(a) | b: d2B_gotoWP(b) | c,d: d2B_isTeamInTown(c,d) ) 
-//		d2B_isTeamInTown(a,b) {			(a: act | b: area of where the tp is open in and to go to | b = false then stay put and wait for instructions)
-//
-//		d2B_clrLvlOC()					clear level and open chests
+/*		d2B_storePause(a)				a: 1 as an initializer had been placed into: line 150 of LeaderStarter.ntj
+		d2B_retrievePause()				NT_File("logs/messagecommands/"+me.charname+"-pause.txt", 1, "1" + "/");
+		
+		d2B_checkTown(town, wp)			*not used* (a: which act to head to | b: which town wp to go to)
+		d2B_checkActOfPeep(peep)		*not used* (returns value of the main town of the act of peep: me or leader)	
 
+		d2B_takeMyTP(delayTF, bo, precast, clrlvlopenchests, rA, rB) 			(if rA = false, then no Delay(Random(rA, rB)))
+
+		d2B_team(teamTown, teamAct)		(teamTown: true - towns team, false - team follows | teamAct: false does nothing, 1-sends team to act 1 thru 5)
+
+		d2B_teamPro(teamTown, gLocStrng, clrPosDist, teamTown2, teamAct, dMsg, myOrig_X, myOrig_Y)	(d2B_team(teamTown, false) | GetLocaleString(gLocStrng) | NTA_ClearPosition(clrPosDist, true)
+																									d2B_team(teamTown2, teamAct) | if(dMsg) d2B_msg(dMsg) 
+																									myOrig_X, myOrig_Y : original x, y of where team tp was made)
+
+		d2B_boSafe(a,b,c,d)				(a: d2B_chkAct(a) | b: d2B_gotoWP(b) | c,d: d2B_isTeamInTown(c,d) ) 
+		d2B_isTeamInTown(a,b) 			(a: act | b: area of where the tp is open in and to go to | b = false then stay put and wait for instructions)
+
+		d2B_clrLvlOC()					clear level and open chests
+*/
 
 //
 //
 
-var d2B_cases = 3;
-var d2B_toggleHelper = "CBaal";	
-	/*	helper: for engaging helper | testing: for testing 
+var d2B_cases = 1;
+var d2B_toggleHelper = "solo";	
+	/*	d2B_toggleHelper choices...
+		helper: for engaging helper | testing: for testing 
 		helperSorc : for engaging helpers which are sorcies
 		solo : for running one continous run
 	
@@ -171,152 +172,117 @@ function d2B_SoloAct1() {							// Act 1 complete
 	//	blood moor
 	//
 		d2B_commonInitSetup(3);
-		d2B_moveToStair(2,8);						// head to front of den as a starting point
-	
-		d2B_preCastClrLvlOC();
-		
-		d2B_moveToStair(2,8);
+		d2B_moveToStair(2,8, true);					// head to front of den as a starting point (areaid, stairs, preCastClrLvlOC)
+		d2B_moveToStair(2,8, false);
 		d2B_takeStairs(8, true);
-		
 		d2B_chkAct();
 		
 	// cold plains
 	//
 		d2B_commonInitSetup(3);
-	
 		d2B_preCastClrLvlOC();
-		
-		d2B_moveToStair(3,9);
+		d2B_moveToStair(3,9, false);
 		d2B_takeStairs(9, true);
-		
-		d2B_moveToStair(9,13);
+		d2B_moveToStair(9,13, false);
 		d2B_takeStairs(13, true);
-		
 		d2B_chkAct();
 		
 	// burial grounds
 	//
 		d2B_commonInitSetup(3);
-		
 		d2B_movePresetUnitTitle(17,7,8,15);			// move to burial grounds
 		d2B_preCastClrLvlOC();
-		
-		d2B_moveToStair(me.areaid,19);				// enter the mausoleum
+		d2B_moveToStair(me.areaid,19, false);		// enter the mausoleum
 		Delay(Random(4000,5000));
 		d2B_takeStairs(19, true);
-		
-		d2B_moveToStair(me.areaid,17);
+		d2B_moveToStair(me.areaid,17, false);
 		Delay(Random(4000,5000));
 		d2B_takeStairs(17, false);
-		
-		d2B_moveToStair(me.areaid,18);				// enter the crypt
+		d2B_moveToStair(me.areaid,18, false);		// enter the crypt
 		Delay(Random(4000,5000));
 		d2B_takeStairs(18, true);
-
 		d2B_chkAct();
 	
 	// stony field
 	//
 		d2B_commonInitSetup(4);
 		d2B_preCastClrLvlOC();
-		
 		d2B_movePresetUnitMonster(737, 10, 10);
 		Delay(Random(6000,8000));
 		d2B_usePortal("Portal",38);					// use portal to enter tristram
 		Delay(Random(2000,4000));
 		d2B_preCastClrLvlOC();
-
 		d2B_chkAct();
 	
 	// underground passage
 	//
 		d2B_commonInitSetup(4);
-
-		d2B_moveToStair(me.areaid,10);
+		d2B_moveToStair(me.areaid,10, false);
 		d2B_takeStairs(10, true);
-		
-		d2B_moveToStair(me.areaid,14);
+		d2B_moveToStair(me.areaid,14, false);
 		Delay(Random(4000,5000));
 		d2B_takeStairs(14, true);
-		
 		d2B_chkAct();
 	
 	// dark wood
 	//
 		d2B_commonInitSetup(5);
 		d2B_preCastClrLvlOC();
-		
 		d2B_chkAct();
 		
 	//	black marsh
 	//
 		d2B_commonInitSetup(6);
 		d2B_preCastClrLvlOC();
-		
-		d2B_moveToStair(me.areaid,11);	// clear the hole
+		d2B_moveToStair(me.areaid,11, false);	// clear the hole
 		d2B_takeStairs(11, true);
-		
-		d2B_moveToStair(me.areaid,15);	// clear the hole
+		d2B_moveToStair(me.areaid,15, false);	// clear the hole
 		d2B_takeStairs(15, true);
-		
 		d2B_chkAct();
-		
 		d2B_commonInitSetup(6);
-		
 		for(var i = 0 ; i < 6 ; i++) {
-			d2B_moveToStair(me.areaid,20+i);	// go to the forgotten tower and do tower things
+			d2B_moveToStair(me.areaid,20+i, false);	// go to the forgotten tower and do tower things
 			d2B_takeStairs(20+i, true);
 		}
-		
 		d2B_chkAct();
 	
 	//	tamoe highland
 	//
 		d2B_commonInitSetup(6);
-		
-		d2B_moveToStair(7,12);	// go to the enterance of tamoe highland pit
+		d2B_moveToStair(7,12, false);			// go to the enterance of tamoe highland pit
 		d2B_preCastClrLvlOC();
-		
-		d2B_moveToStair(7,12);	// go to the enterance of the tamoe highland pit
+		d2B_moveToStair(7,12, false);			// go to the enterance of the tamoe highland pit
 		d2B_takeStairs(12, true);
-		
-		d2B_moveToStair(me.areaid,16);	// go to the 2nd level of the tamoe highland pit
+		d2B_moveToStair(me.areaid,16, false);	// go to the 2nd level of the tamoe highland pit
 		d2B_takeStairs(16, true);
-		
 		d2B_chkAct();
 	
 	// outer cloister
 	//
 		d2B_commonInitSetup(27);
 		d2B_preCastClrLvlOC();
-		
 		d2B_chkAct();
 	
 	// outer barracks
 	//
 		d2B_commonInitSetup(27);
 		d2B_preCastClrLvlOC();
-		
 		d2B_movePresetUnitMonster(28, 754, -5, 5);	// go to where main monster is in the malus dude
 		d2B_preCastClrLvlOC();
-		
 		d2B_chkAct();
 	
 	// jail
 	//
 		d2B_commonInitSetup(29);
 		d2B_preCastClrLvlOC();
-		
 		d2B_chkAct();
 	
 	// inner cloister
 	//
 		d2B_commonInitSetup(32);
 		d2B_preCastClrLvlOC();
-		
 		d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
 		d2B_preCastClrLvlOC();
-		
 		d2B_chkAct();
 	
 	//	cata
@@ -325,23 +291,34 @@ function d2B_SoloAct1() {							// Act 1 complete
 		// clear all catacombs...
 		d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
 		d2B_takeStairs(34);
-		
 		d2B_preCastClrLvlOC();
-		
 		for(var i = 35; i <= 37; i++) {
-		
 			d2B_movePresetUnitTitle(me.areaid,18,0);
 			Delay(Random(400,500));
 			d2B_takeStairs(i, true);
 		}
-		
 		Delay(Random(400,500));
 		NTM_MoveTo(me.areaid, 22594, 9622);
-		
 		d2B_chkAct()
+		
+		return;
 }
+function d2B_actions(CIS,MTSa,MTSb,PCL,TSa,TSb,CA	{
+	/*
+		CIS:	d2B_commonInitSetup(wp);
+		MTS:	d2B_moveToStair(me.areaid,stairs); (MTSa,MTSb)
+		PCL:	d2B_preCastClrLvlOC();
+		TS:		d2B_takeStairs(stairs, true); (TSa,TSb)
+		CA:		d2B_chkAct();
+		
+	*/
+	if(CIS)	d2B_commonInitSetup(CIS);
+	if(MTSa) d2B_moveToStair(MTSa, MTSb);
+	if(PCL) d2B_preCastClrLvlOC();
+	if(TS) d2B_takeStairs(TSa, TSb);
+	if(CA) d2B_chkAct();
 
-
+}
 //
 // Act I: complete
 
@@ -1845,6 +1822,63 @@ function d2B_movePresetUnitMonster(a,b,c) {
 	if(d2B_usingSorcFlwrs) NTM_MakeTP();
 	return;
 }
+function d2B_KoMoveToPresetUnit(areaId, unitType, classId, offsetX, offsetY, clearpath) {
+
+    var i, j;
+    var _oldUnits, _newUnits;
+
+    if (arguments.length < 4) { offsetX = 0; offsetY = 0; }
+	if (arguments.length < 6) { clearpath = false }                               
+    for (i = 0; i < 3; i++)
+    {
+        _oldUnits = GetPresetUnits(areaId, unitType);
+        if (_oldUnits)
+        {
+            for (j = 0; j < _oldUnits.length; j++)
+            {
+                if (_oldUnits[j].id == classId)
+                {
+                    if (NTM_MoveTo(areaId, _oldUnits[j].roomx * 5 + _oldUnits[j].x + offsetX, _oldUnits[j].roomy * 5 + _oldUnits[j].y + offsetY, 3, clearpath))
+                        return true;
+                    else
+                    {
+                        switch (me.areaid)
+                        {
+						case 28:
+                        case 29:
+                        case 30:
+                        case 31:
+                        case 51:
+                        case 52:
+                        case 53:
+                        case 54:
+                            var _moveXy = [[30, 0], [0, 30], [-30, 0], [0, -30]];
+
+                            for (i = 0; i < 4; i++)
+                            {
+                                while (true)
+                                {
+                                    if (!NTM_TeleportTo(me.x + _moveXy[i][0], me.y + _moveXy[i][1]))
+                                        break;
+                                    if (NTM_MoveTo(areaId, _oldUnits[j].roomx * 5 + _oldUnits[j].x + offsetX, _oldUnits[j].roomy * 5 + _oldUnits[j].y + offsetY, 0, clearpath))
+                                        return true;
+                                }
+                            }
+                            break;
+                        }
+
+                        return false;
+                    }
+                }
+            }
+        }
+
+        if (i < 2)
+            Delay(500);
+    }
+
+    return false;
+}
 function d2B_usePortal(a,b){
 	if(!NTM_UsePortal(a, b)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_UsePortal()");
@@ -1852,10 +1886,9 @@ function d2B_usePortal(a,b){
 	}
 	return;
 }
-function d2B_moveToStair(a,b) {
-	if(!NTM_MoveToStair(a, b)) {
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToStair()");
-	}
+function d2B_moveToStair(a,b,c) {
+	if(!NTM_MoveToStair(a, b);
+	if(c) d2B_preCastClrLvlOC();
 	return;
 }
 function d2B_takeStairs(a,b) {						// a: area stairs | b: engage clr lvl & open chests
@@ -3011,7 +3044,7 @@ function d2B_dCmds(msg) {
 				if(NTT_DoInteract(_npc)) {
 					for(var i = 0 ; i < 4 ; i++){
 						if((i % 4) == 0) {
-							if(me.act == 1) me.SelectNPCMenu(0x0FB4);
+							if(me.act == 1) me.SelectNPCMenu(0x0D36);
 							if(me.act == 2) me.SelectNPCMenu(0x0D37);
 						}
 						NTC_Delay(250);
@@ -3035,7 +3068,7 @@ function d2B_dCmds(msg) {
 		case "drognan":
 			d2B_NPCinteract(msg, 3023);
 			break;
-		case "jehryn":
+		case "jerhyn":
 			NTTM_TownMove("palace");
 			NTTM_TownMove(msg);
 			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(3027), 5);
@@ -3069,7 +3102,7 @@ function d2B_dCmds(msg) {
 				me.Cancel(1);
 			}
 			break;
-		case "hratli":			// deeEdits: dos not speak to her when moving East after completing Duriel quest. Bots go to where she should be.
+		case "hratli":			// deeEdits: does not speak to her when moving East after completing Duriel quest. Bots go to where she should be.
 			d2B_NPCinteract(msg, 1009);
 			break;
 		case "alkor":
@@ -3093,6 +3126,35 @@ function d2B_dCmds(msg) {
 				me.Cancel(1);
 			}
 			break;
+		case "malah":
+			d2B_NPCinteract(msg, 22478);
+			break;
+		case "wp":
+			isFollowingEnabled = false;
+			TakeLeaderTP();
+			isFollowingEnabled = false;
+			Delay(1000);
+			
+			var _waypoint = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(22526), 5);
+
+			if(_waypoint && (me.areaid != 123)) {
+				for (var i = 0; i < 55; i++) {
+					if((i % 10) == 0)
+						NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _waypoint);
+						Delay(Random(1000,2000));
+					if(_waypoint.mode) {
+						if(GetUIState(0x14)) me.Cancel(1);
+						Delay(1000);
+						TakeLeaderTP();
+						isFollowingEnabled = false;
+						Delay(Random(1000,2000));
+						d2B_townMove("portalspot");
+						d2B_littleJMP();
+						return true;
+					}
+				}
+			} return false;
+		
 	}
 	return true;
 }
