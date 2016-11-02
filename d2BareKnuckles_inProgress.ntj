@@ -360,13 +360,15 @@ function d2B_SoloAct2() {							// Act 2 complete
 		d2B_moveToStair(me.areaid,58, false);
 		d2B_takeStairs(58, true);
 		d2B_moveToStair(58,61, false);
-		d2B_takeStairs(65, true);
+		d2B_takeStairs(61, true);
 		d2B_chkAct();
 	
 	// harem
 	//
-		d2B_commonInitSetup(53);
-		d2B_moveToStair(me.areaid,54, true);
+		d2B_commonInitSetup(52);
+		d2B_moveToStair(me.areaid,53, true);
+		d2B_moveToStair(me.areaid,53, false);
+		d2B_takeStairs(53, true);
 		d2B_moveToStair(me.areaid,54, false);
 		d2B_takeStairs(54, true);
 		d2B_chkAct();
