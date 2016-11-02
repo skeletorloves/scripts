@@ -143,6 +143,17 @@ function NT_KeyEvents(keycode) {
 				if(d2B_usingAFollower) d2B_team(true);
 				//d2B_teamPro(true,2879,40,true,2,"n w",false);						// 2879: Radament
 			}
+			if(me.areaid == 52) {	// make a tp in harem
+				Print(COLOR_2 + "going to make a tp in the harem");
+				NTP_DoPrecast(true);
+				for(i=51;i>=50;i--) {
+					d2B_moveToStair(me.areaid, i, false);
+					NTM_TakeStair(i,false);
+				}
+				NTM_MakeTP();
+				Delay(200);
+				if(d2B_usingAFollower) d2B_team(true);
+			}
 			if(me.areaid == 57) {	// cube
 				Print(COLOR_2 + "going for cube");
 				NTP_DoPrecast(true);
