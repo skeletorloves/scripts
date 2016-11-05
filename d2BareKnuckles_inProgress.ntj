@@ -24,9 +24,11 @@
 	var d2B_usingAFollower = false; 		// using a follower therefore make townportals d2B_takeMyTP()
 	var d2B_refill = true;					// enable/disable NTTMGR_TownManager();
 	
-	var _noBoer = true;							// for impeding boer routines and the delays associated with those in throne
+	var _teamBO = true;						// send team to a safe wp and bo
+	
+	var _noBoer = true;						// for impeding boer routines and the delays associated with those in throne
 	var _myName = "";							// peep to msg of what's a-happenin'
-	var _myBoBarb = false;						// bo barb name
+	var _myBoBarb = "";			// bo barb name
 	var _myChantress = "";						// my chantress
 
 //	__________________________________
@@ -85,7 +87,7 @@
 	var pathRushBots = "NTRush/rushbots/";						// . .. follow, unfollow
 	var isBusy = false;											// ;	precast, buff
 	var isPaused = false;										// '	town & unfollow
-	var isFollowingEnabled = true;								// ,	in town move to portal area
+	var isFollowingEnabled = false;								// ,	in town move to portal area
 	var isAttackEnabled = true;
 	var isAutoEnchantEnabled = false;
 	var leaderUnit;
@@ -2107,6 +2109,11 @@ function d2B_boSafe(a,b,c,d) {						// (a: d2B_chkAct(a) | b: d2B_gotoWP(b) | c:
 	Delay(Random(2000,5000));
 	d2B_team(false, false);
 	Delay(Random(5000,7000));
+	if(!c) {
+		d2B_msg("..");
+		Delay(Random(5000,7000));
+		return;
+	}
 	d2B_isTeamInTown(c,d);
 	return;
 }	
@@ -3157,9 +3164,11 @@ function d2B_dCmds(msg) {
 			d2B_NPCinteract(msg, 2893);
 			break;
 		case "drognan":
+			Delay(Random(2000,20000));
 			d2B_NPCinteract(msg, 3023);
 			break;
 		case "jerhyn":
+			Delay(Random(2000,20000));
 			NTTM_TownMove("palace");
 			NTTM_TownMove(msg);
 			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(3027), 5);
@@ -3175,6 +3184,7 @@ function d2B_dCmds(msg) {
 			}			
 			break;
 		case "meshif":
+			Delay(Random(2000,20000));
 			NTTM_TownMove(msg);
 			_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(3032), 5);
 			if(!_npc) return false;
@@ -6002,7 +6012,7 @@ function d2B_killBaal(classid) {
 					NTTMGR_VisitTown();
 				}
 			}
-			NTM_MoveTo(me.areaid, _target.x, _target.y);
+			if(Math.abs(me.x - _target.x) > 5 || Math.abs(me.y - _target.y) > 5 ) NTM_MoveTo(me.areaid, _target.x, _target.y); // deeEdits: for range to monster
 			_attackcount++;
 			_sorcattack++;
 		}
@@ -6299,7 +6309,12 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 				else if(_nonTelePeeps) d2B_chaos(true);
 				break;
 			case 2: if(!baal) break;
-				d2B_msg("ummm 5"); 
+				if(_teamBO) {
+					d2B_boSafe(5,129,false);
+					d2B_gotoWP(109);
+					delay(Random(2000,3000));
+				}
+				d2B_msg("ummm 5");
 				Delay(Random(15000,20000));
 				d2B_chkAct(5);
 				d2B_townMgr();
