@@ -4,14 +4,14 @@
 
 //	d2BareKnuckles.ntj
 	
-	var myLeader = me.charname;			// for the d2B_retrievePause() thingy...
+	var myLeader = me.charname;		// for the d2B_retrievePause() thingy...
 	
 	_centreMe = false;				// for sending leader to the centre of Chaos Sanctuary
 	
-	var _test = false;				// for testing chaos w/o using followere
-	var _testNoPeepChk = false;		// for testing chaos w/ bypassing peep checker
-	var _quiet = false;				// msg free silence
-	var _msgMe = false;				// for enabling whispering to _myName
+	var _debug = false;						// for testing chaos w/o using followere
+	var _quiet = false;						// msg free silence
+	var _msgMe = false;						// for enabling whispering to _myName
+	var _whereRchaosSeals = false;			// to msg the location of the chaos seals
 	
 	var _dollChk = true;					// true: if dolls break or do other things | false: no throne room doll check
 	var _dollSoul = false;					// global var for if there are dolls
@@ -19,22 +19,25 @@
 
 	var _lowLvlPeeps = false;				// leveling really low level peeps | if enabled, will not engage d2B_team() function calls
 	var _nonTelePeeps = false;				// if followers cannot tele
-
+	
+	var _chaosHelpers = false;				// if no chaos helpers
+	var _throneLeechers = false;			// if stationary throne leechers are following in the throne
+	var _throneHelpers = false;				// if active fighters are following in the throne
+	
 	var d2B_usingSorcFlwrs = true;			// using sorcies as followers
-	var d2B_usingAFollower = false; 		// using a follower therefore make townportals d2B_takeMyTP()
+	var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_takeMyTP()
 	var d2B_refill = true;					// enable/disable NTTMGR_TownManager();
 	
 	var _teamBO = true;						// send team to a safe wp and bo
 	
 	var _noBoer = true;						// for impeding boer routines and the delays associated with those in throne
-	var _myName = "";							// peep to msg of what's a-happenin'
-	var _myBoBarb = "";			// bo barb name
-	var _myChantress = "";						// my chantress
+	var _myName = "";						// peep to msg of what's a-happenin'
+	var _myBoBarb = "";						// bo barb name
+	var _myChantress = "";					// my chantress
 
-//	__________________________________
-//		a collection of function calls
+/*	a collection of function calls
 		
-/*		d2B_storePause(a)				a: 1 as an initializer had been placed into: line 150 of LeaderStarter.ntj
+		d2B_storePause(a)				a: 1 as an initializer had been placed into: line 150 of LeaderStarter.ntj
 		d2B_retrievePause()				NT_File("logs/messagecommands/"+me.charname+"-pause.txt", 1, "1" + "/");
 		
 		d2B_checkTown(town, wp)			*not used* (a: which act to head to | b: which town wp to go to)
@@ -56,10 +59,11 @@
 
 //
 //
-	var d2B_cases = 1;
-	var d2B_toggleHelper = "solo";	
+	var d2B_cases = 3;
+	var d2B_toggleHelper = "CBaal";
+	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 	
-	/*	d2B_toggleHelper choices...
+/*	d2B_toggleHelper choices...
 		helper: for engaging helper | testing: for testing 
 		helperSorc : for engaging helpers which are sorcies
 		solo : for running one continous run
@@ -106,18 +110,23 @@
 
 function NTMain() {
 	
-	d2B_load();   									// initializing & loading thingies
-	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters
-	
+	d2B_load();   										// initializing & loading thingies
 	d2B_myPauseValue = Number(d2B_retrievePause());		// retrieve & convert to numerical value the pause value
 	
 	NTTMGR_TownManager();
 	NTTM_TownMove("waypoint");
 	Delay(700);
 	
-	if(d2B_toggleHelper == "helper") {d2H_helper();}			// for enabling a follower
-	if(d2B_toggleHelper == "helperSorc") {d2H_helperSorc();}	// for enabling a follower which is a sorc
-	if(!(_test || _testNoPeepChk)) d2B_newGmDlyPeepChk();		// bypass the function for check if all peeps have entered game
+	switch(d2B_toggleHelper) {
+		case "helper": 	
+			d2H_helper();					// for enabling a follower
+			break;
+		case "helperSorc":
+			d2H_helperSorc();			// for enabling a follower which is a sorc
+			break;
+	}
+	
+	if(!_debug) d2B_newGmDlyPeepChk();							// bypass the function for check if all peeps have entered game
 	
 	if(d2B_toggleHelper != "testing") {
 		
@@ -160,7 +169,8 @@ function NTMain() {
 		Delay(Random(35000,40000));
 	}
 	Delay(Random(15000,20000));
-	NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
+	ExitGame();
+	//NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 }
 
 // ________________________________________________________
@@ -716,13 +726,15 @@ function d2B_blackmarsh() {							// case: 7
 	
 	d2B_team(true,1);	// return to Act 1 town
 }
-function d2B_blackMarsh2() {						// a useful delay for when dolls are found in throne room
+function d2B_blackMarsh2(a) {						// a useful delay for when dolls are found in throne room
 	Delay(Random(3000,5000));
-	d2B_msg("ummm 1");
-	Delay(Random(15000,20000));
+	if(a) {
+		d2B_msg("ummm 1");
+		Delay(Random(15000,20000));
+	}
 	d2B_commonInitSetup(6);
 	
-	if(d2B_usingAFollower) {
+	if(a && d2B_usingAFollower) {
 		d2B_takeMyTP(true, true, true, false, false);
 		d2B_team(false, false);
 	}
@@ -736,8 +748,10 @@ function d2B_blackMarsh2() {						// a useful delay for when dolls are found in 
 		}
 	}
 	Delay(Random(4000,7000));
-	d2B_msg("ummm 4");
-	Delay(Random(14000,17000));
+	if(a) {
+		d2B_msg("ummm 4");
+		Delay(Random(14000,17000));
+	}
 	d2B_chkAct(4);
 }
 function d2B_countess() {
@@ -1347,99 +1361,120 @@ function d2B_Meph() {								// case: 30
 //
 //	Act VI
 function d2B_chaos(a){								// case: 31
-	d2B_chkAct(4);					// if not Pandemonium Fortress, then go to Pandemonium Fortress
-	d2B_msg("ummm 4");					// saying this again as a precaution
-	if(!_test) Delay(Random(30000,35000));
-	
-	if(a) {								// a: true is for running with non tele peeps
-		d2B_commonInitSetup(107);
-		if(!_test) {
-			d2B_takeMyTP(true, true, true, false, false);
-			d2B_team(false, false);									// send the peeps back to town
-		}
-		Delay(Random(5000,7000));
-		d2B_isTeamInTown(4,107);
-		
-		// deeOriginal: [7796,5501, 7801,5356, 7842,5308, 7716,5309];
-		// 7788,5555 entrance lt | 7801,5507 in 'n rt | 7774,5426 in btwn 'n lt | 7818,5443 in btwn 'n right | 7772,5361 btm from star lt | 7802,5350 btm from star rt
-		// 7738,5297 lt up of star	| 7793, 5243 rt up of star | 7842,5292 rt down of star
-		
-		// Chaos enterance
-		var _iCoor = 0;
-		var _CScoords = [7796,5518, 7802,5427];
-		do{
-			NTM_MoveTo(108, _CScoords[_iCoor], _CScoords[_iCoor+1]);
-			if(!_test) d2B_team(true);
-			NTA_ClearPosition(35, true);
-			NTM_MoveTo(108, _CScoords[_iCoor], _CScoords[_iCoor+1]);
-			if(!_test) d2B_chaosCtrl();
-			Delay(Random(4000,5000));
-			_iCoor += 2;
-		} while (_iCoor < _CScoords.length)
-		
-		// centre areas
-		var _iCoor = 0;
-		var _CScoords = [7803,5349, 7772,5361, 7738,5297, 7793,5243, 7842,5292];
-		do{
-			NTM_MoveTo(108, _CScoords[_iCoor], _CScoords[_iCoor+1]);
-			if(!_test) d2B_team(true);
-			NTA_ClearPosition(30, true);
-			NTM_MoveTo(108, _CScoords[_iCoor], _CScoords[_iCoor+1]);
-			if(!_test) d2B_chaosCtrl();
-			Delay(Random(4000,5000));
-			_iCoor += 2;
-		} while (_iCoor < _CScoords.length)
-		d2B_openAllSeals();
-		return;
-	}
-	
-	NTConfig_FastChaos = false;
-	NTConfig_LeechSupport = false;
-	NTConfig_IdInField = false;
-	
+	d2B_chkAct(4);									// if not Pandemonium Fortress, then go to Pandemonium Fortress
+	if(_chaosHelpers) d2B_msg("ummm 4");			// saying this again as a precaution
+	if(!_debug) Delay(Random(30000,35000));
 	d2B_commonInitSetup(107);
-	if(!_noBoer) {
-		d2B_takeMyTP(true, true, true, false, false);
-		Delay(1000);
-		d2B_team(false, false);					// send the peeps back to town
-	}
-	if(a != "low") {							// if not leveling low peeps
 	
-		if(!_centreMe) {
-			NTM_MoveTo(108, 7790, 5544);			// tele to just inside the enterance
+	switch(a) {
+		case true:
+			if(!_debug && _chaosHelpers) {
+				d2B_takeMyTP(true, true, true, false, false);
+				d2B_team(false, false);									// send the peeps back to town
+			}
+			Delay(Random(5000,7000));
+			if(_chaosHelpers) d2B_isTeamInTown(4,107);
 			
-			if(!_nonTelePeeps) {
+			// deeOriginal: [7796,5501, 7801,5356, 7842,5308, 7716,5309];
+			// 7788,5555 entrance lt | 7801,5507 in 'n rt | 7774,5426 in btwn 'n lt | 7818,5443 in btwn 'n right | 7772,5361 btm from star lt | 7802,5350 btm from star rt
+			// 7738,5297 lt up of star	| 7793, 5243 rt up of star | 7842,5292 rt down of star
+			
+			// Chaos enterance
+			var _iCoor = 0;
+			var _CScoords = [7796,5518, 7802,5427];
+			do{
+				NTM_MoveTo(108, _CScoords[_iCoor], _CScoords[_iCoor+1]);
+				if(!_test && _chaosHelpers) d2B_team(true);
+				NTA_ClearPosition(35, true);
+				NTM_MoveTo(108, _CScoords[_iCoor], _CScoords[_iCoor+1]);
+				if(!_test) d2B_chaosCtrl();
+				Delay(Random(4000,5000));
+				_iCoor += 2;
+			} while (_iCoor < _CScoords.length)
+			
+			// centre areas
+			var _iCoor = 0;
+			var _CScoords = [7803,5349, 7772,5361, 7738,5297, 7793,5243, 7842,5292];
+			do{
+				NTM_MoveTo(108, _CScoords[_iCoor], _CScoords[_iCoor+1]);
+				if(!_test && _chaosHelpers) d2B_team(true);
+				NTA_ClearPosition(30, true);
+				NTM_MoveTo(108, _CScoords[_iCoor], _CScoords[_iCoor+1]);
+				if(!_test) d2B_chaosCtrl();
+				Delay(Random(4000,5000));
+				_iCoor += 2;
+			} while (_iCoor < _CScoords.length)
+			d2B_openAllSeals();
+			break;
+		case false:
+			NTConfig_FastChaos = false;
+			NTConfig_LeechSupport = false;
+			NTConfig_IdInField = false;
+			
+			if(!_noBoer && _chaosHelpers) {
+				d2B_takeMyTP(true, true, true, false, false);
+				Delay(1000);
+				d2B_team(false, false);					// send the peeps back to town
+			}
+			if(a != "low") {							// if not leveling low peeps
+			
+				if(!_centreMe) {
+					NTM_MoveTo(108, 7790, 5544);			// tele to just inside the enterance
+					
+					if(!_nonTelePeeps) {
+						if(_chaosHelpers) {
+							NTM_MakeTP();
+							Delay(700);
+							d2B_msg(".");
+						}
+						NTCS_ClearPosition(30, EntranceSort);
+						Delay(Random(2000.3000));
+						if(_chaosHelpers) d2B_msg(".");
+						var FrontToStarX = [7792,7794,7791,7777,7813,7769,7782,7802,7819,7768,7770,7791,7819, 7804];
+						var FrontToStarY = [5564,5529,5495,5486,5486,5445,5421,5421,5446,5390,5355,5355,5376, 5340];
+						for (var i = 0; i < FrontToStarX.length; i += 1) {
+							NTM_MoveTo(108, FrontToStarX[i], FrontToStarY[i]);
+							NTCS_ClearPosition(35, EntranceSort);
+						}
+					}
+				}
+			}
+			
+			NTM_MoveTo(108, 7794, 5292);						// tele to the centre of chaos
+			if(_chaosHelpers) {
 				NTM_MakeTP();
 				Delay(300);
 				d2B_msg(".");
-
-				NTCS_ClearPosition(30, EntranceSort);
-				Delay(Random(2000.3000));
-				d2B_msg(".");
-				var FrontToStarX = [7792,7794,7791,7777,7813,7769,7782,7802,7819,7768,7770,7791,7819, 7804];
-				var FrontToStarY = [5564,5529,5495,5486,5486,5445,5421,5421,5446,5390,5355,5355,5376, 5340];
-				for (var i = 0; i < FrontToStarX.length; i += 1) {
-					NTM_MoveTo(108, FrontToStarX[i], FrontToStarY[i]);
-					NTCS_ClearPosition(35, EntranceSort);
-				}
 			}
-		}
-	}
-	
-	NTM_MoveTo(108, 7794, 5292);						// tele to the centre of chaos
-	NTM_MakeTP();
-	Delay(300);
-	d2B_msg(".");
-	
-	if (!NT_OpenSealsInt(a)) {							// a: "low" for leveling low peeps
-		NTC_SendMsgToScript("NTBotGame.ntj", "NT_OpenSealsInt()");
+			if (!NT_OpenSealsInt(a)) {							// a: "low" for leveling low peeps
+				NTC_SendMsgToScript("NTBotGame.ntj", "NT_OpenSealsInt()");
+			}
+			break;
+		case "seals":
+			if(!_debug && !_noBoer && _chaosHelpers) {
+				d2B_takeMyTP(true, true, true, false, false);
+				d2B_team(false, false);									// send the peeps back to town
+			}
+			Delay(Random(5000,7000));
+			if(_chaosHelpers) d2B_isTeamInTown(4,107);
+			
+			NTM_MoveTo(108, 7794, 5292);								// tele to the centre of chaos
+			if(_chaosHelpers) {
+				NTM_MakeTP();
+				Delay(300);
+				d2B_msg(".");
+				Delay(Random(1000,3000));
+			}
+			if (!NT_OpenSealsInt(a)) {									// a: "low" for leveling low peeps
+				NTC_SendMsgToScript("NTBotGame.ntj", "NT_OpenSealsInt()");
+			}
+			break;	
 	}
 	
 	NTM_MoveTo(108, 7795, 5295);
-	//if(!_lowLvlPeeps) d2B_team(true, false);			// deeEdits: uncertain why I wrote this
-
-	for (i = 0; i < 80; i += 1) {
-		if (GetUnit(NTC_UNIT_MONSTER, 243)) {
+	
+	for(i = 0; i < 80; i += 1) {
+		if(GetUnit(NTC_UNIT_MONSTER, 243)) {
 			break;
 		}
 		NTCS_DiaSpam();
@@ -1447,14 +1482,14 @@ function d2B_chaos(a){								// case: 31
 	NTA_KillMonster(243);
 	NTSI_PickItems();
 	Delay(1000);
-	
+			
 	if(_lowLvlPeeps) {
 		d2B_msg("'");
 		Delay(2000);
 		Town();
 		Return;
 	}
-	if(!_noBoer) d2B_takeMyTP(true, true, false, false, false);
+	if(!_noBoer && _chaosHelpers) d2B_takeMyTP(true, true, false, false, false);
 	
 	d2B_team(true,4);
 }
@@ -1573,6 +1608,9 @@ function d2B_worldstonekeep() {
 	
 	NT_ClearThroneInt();
 	//d2B_msg("yo");
+	NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
+	NTM_MakeTP();
+	Delay(750);
 	if(!_quiet) Say("yo");
 	
 	d2B_throneWaves();
@@ -1827,13 +1865,15 @@ function d2B_chkAct(act) {
 	return true;
 }
 function d2B_team(teamTown, teamAct) {				// (teamTown: true - towns team, false - team follows | teamAct: sends team to act 1 thru 5)
-	if(teamTown) {
-		d2B_team2(false);
-		Delay(Random(10000,14000));
-	}
-	if(teamAct) {
-		if(!d2B_chkAct(teamAct)){
-			NTC_SendMsgToScript("NTBotGame.ntj", "d2B_chkAct()");
+	if(_chaosHelpers) {
+		if(teamTown) {
+			d2B_team2(false);
+			Delay(Random(10000,14000));
+		}
+		if(teamAct) {
+			if(!d2B_chkAct(teamAct)){
+				NTC_SendMsgToScript("NTBotGame.ntj", "d2B_chkAct()");
+			}
 		}
 	}
 	if(NTC_InTown(me)) {
@@ -1844,15 +1884,17 @@ function d2B_team(teamTown, teamAct) {				// (teamTown: true - towns team, false
 	return;
 }
 function d2B_team2(a) {								// (a: false = send team to town true: bring team)
-	NTM_MakeTP();
-	Delay(200);
-	if(a) d2B_msg(".");	
-	else if(!a) {
-		d2B_msg("'");
-		Delay(Random(3000,4000));
-		return;
+	if(_chaosHelpers) {
+		NTM_MakeTP();
+		Delay(200);
+		if(a) d2B_msg(".");	
+		else if(!a) {
+			d2B_msg("'");
+			Delay(Random(3000,4000));
+			return;
+		}
+		Delay(200);
 	}
-	Delay(200);
 	return;
 }
 function d2B_townMgr() {
@@ -2105,12 +2147,12 @@ function d2B_boSafe(a,b,c,d) {						// (a: d2B_chkAct(a) | b: d2B_gotoWP(b) | c:
 	d2B_gotoWP(b);
 	d2B_littleJMP();
 	d2B_takeMyTP(true,true,true,false,false);
-	d2B_msg("..");
+	d2B_msg("-");
 	Delay(Random(2000,5000));
 	d2B_team(false, false);
 	Delay(Random(5000,7000));
 	if(!c) {
-		d2B_msg("..");
+		d2B_msg("-");
 		Delay(Random(5000,7000));
 		return;
 	}
@@ -2902,6 +2944,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			NTM_MoveTo(108,7763,5267);
 			break;
 		case "-":				// use leader's tp w/o following enabled
+			if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
 			isFollowingEnabled = false;
 			TakeLeaderTP();
 			isFollowingEnabled = false;
@@ -5023,18 +5066,18 @@ function NT_OpenSealsInt(a) {
 		return false;
 	}
 	if (_unit[0].roomy * 5 + _unit[0].y == 5275) {
-		d2B_msg("Vizier is 1");
+		if(_whereRchaosSeals) d2B_msg("Vizier is 1");
 		_result = NT_OpenVizierSealInt(1);
 	} else {
-		d2B_msg("Vizier is 2");
+		if(_whereRchaosSeals) d2B_msg("Vizier is 2");
 		_result = NT_OpenVizierSealInt(2);
 	}
 	_unit = GetPresetUnits(108, NTC_UNIT_OBJECT, 394);
 	if (_unit[0].roomx * 5 + _unit[0].x == 7773) {
-		d2B_msg("Seis is 1");
+		if(_whereRchaosSeals) d2B_msg("Seis is 1");
 		_result = NT_OpenDeSeisSealInt(1);
 	} else {
-		d2B_msg("Seis is 2");
+		if(_whereRchaosSeals) d2B_msg("Seis is 2");
 		_result = NT_OpenDeSeisSealInt(2);
 	}
 	if (!_result) {
@@ -5047,10 +5090,10 @@ function NT_OpenSealsInt(a) {
 		return false;
 	}
 	if (_unit[0].roomx * 5 + _unit[0].x == 7893) {
-		d2B_msg("Venom is 1");
+		if(_whereRchaosSeals) d2B_msg("Venom is 1");
 		_result = NT_OpenVenomSealInt(1);
 	} else {
-		d2B_msg("Venom is 2");
+		if(_whereRchaosSeals) d2B_msg("Venom is 2");
 		_result = NT_OpenVenomSealInt(2);
 	}
 	NTP_DoPrecast(true);
@@ -6305,22 +6348,26 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 				d2B_chkAct(4);
 				d2B_townMgr();
 				Delay(Random(20000,25000));
-				if(!_nonTelePeeps) d2B_chaos(false);						// chaos thingy
+				if(!_nonTelePeeps) {
+					_quiet = true;
+					d2B_chaos(false);						// chaos thingy
+					_quiet = false;
+				}
 				else if(_nonTelePeeps) d2B_chaos(true);
 				break;
 			case 2: if(!baal) break;
 				if(_teamBO) {
-					d2B_boSafe(5,129,false);
+					d2B_boSafe(5,129,5,109);
 					d2B_gotoWP(109);
-					delay(Random(2000,3000));
+					Delay(Random(2000,3000));
 				}
 				d2B_msg("ummm 5");
 				Delay(Random(15000,20000));
 				d2B_chkAct(5);
 				d2B_townMgr();
-				d2B_worldstonekeep();				// world stone keep thingy
+				d2B_worldstonekeep();						// world stone keep thingy
 				if(_dollSoul) {
-					if(countess) { 					// add countess if _dollSoul
+					if(countess) {		 					// add countess if _dollSoul
 						d2B_msg("Dolls and/or souls, so going to do countess as a filler...");
 						Delay(4000);
 						d2B_msg("ummm 1");
@@ -6331,7 +6378,7 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 					}
 					else if(!countess && !chaos) {			// add long break if (_dollSoul == true) and no countess runs
 						d2B_msg("Dolls and/or souls, so going on a lengthy break...");
-						Delay(Random(225000,230000));
+						Delay(Random(75000,110000));
 					}
 				}
 				if(countess && _dollSoul) _dollSoul = false;
@@ -6358,7 +6405,6 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 	else if(!chaos) d2B_msg("ummm 5");
 	Delay(Random(25000,30000));
 	if(!baal && !countess) Delay(Random(25000,30000));
-	d2B_townMgr();
 }
 
 function d2B_switchGrinding() {
