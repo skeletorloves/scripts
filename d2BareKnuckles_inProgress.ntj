@@ -1611,7 +1611,7 @@ function d2B_worldstonekeep() {
 	NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
 	NTM_MakeTP();
 	Delay(750);
-	if(!_quiet) Say("yo");
+	if(!_quiet && _throneLeechers) Say("yo");
 	
 	d2B_throneWaves();
 	Delay(300);
@@ -5112,14 +5112,14 @@ function NT_OpenVizierSealInt(type) {
 		var vx = [7654,7660,  7655,7666,7680,7707,7714,7723,7733];
 		var vy = [5393,5311,  5282,5311,5310,5315,5282,5300,5291];
 	}
-	if(!_nonTelePeeps) {
+	if(_nonTelePeeps) {
 		for (i = 0; i < vx.length; i += 1) {
 			NTM_MoveTo(108, vx[i], vy[i]);
 			NTCS_ClearPosition(30, SealSort);
 		}
 	}
 	
-	if(_nonTelePeeps) NTM_MoveTo(108, vx[0], vy[0]);
+	if(!_nonTelePeeps) NTM_MoveTo(108, vx[0], vy[0]);
 		
 	
 	if (!NT_OpenSealInt(395) || !NT_OpenSealInt(396)) {
@@ -5168,14 +5168,14 @@ function NT_OpenDeSeisSealInt(type) {
 		var sx = [7992,7775,  7794,7773,7774,7790,7810,7811,7810,7787,7786];
 		var sy = [5154,5177,  5154,5156,5181,5194,5198,5215,5233,5227,5245];
 	}
-	if(!_nonTelePeeps) {
+	if(_nonTelePeeps) {
 		for (var i = 0; i < sx.length; i += 1) {
 			NTM_MoveTo(108, sx[i], sy[i]);
 			NTCS_ClearPosition(30, type === 1 ? SealSort : SealSortB);
 		}
 	}
 	
-	if(_nonTelePeeps) NTM_MoveTo(108, sx[0], sy[0]);
+	if(!_nonTelePeeps) NTM_MoveTo(108, sx[0], sy[0]);
 	
 	if (!NT_OpenSealInt(394)) {
 		return false;
@@ -5224,14 +5224,14 @@ function NT_OpenVenomSealInt(type) {
 		var IX = [7935,7926,7899,  7923,7927,7907,7894,7877,7868]; // looks like a hook
 		var IY = [5301,5275,5275,  5298,8279,5276,5276,5276,5297];
 	}
-	if(!_nonTelePeeps) {
+	if(_nonTelePeeps) {
 		for (var i = 0; i < IX.length; i += 1) {
 			NTM_MoveTo(108, IX[i], IY[i]);
 			NTCS_ClearPosition(30, type === 1 ? SealSort : SealSortB);
 		}
 	}
 	
-	NTM_MoveTo(108, IX[0], IY[0]);
+	if(!_nonTelePeeps) NTM_MoveTo(108, IX[0], IY[0]);
 	
 	if (!NT_OpenSealInt(392)) {
 		return false;
@@ -5754,7 +5754,7 @@ function d2B_throneWaves() {
                 }
 				NTA_ClearPosition(40, true, 2);
 				NTP_DoPrecast(true);
-				if(!_quiet) Say("yo");
+				if(!_quiet && _throneLeechers) Say("yo");
 				break;
 			case 2:
 				if(NTConfig_PreWaveTele){
@@ -5769,7 +5769,7 @@ function d2B_throneWaves() {
 					NTTMGR_VisitTown();
 				}
 				//d2B_msg("yo");
-				if(!_quiet) Say("yo");
+				if(!_quiet && _throneLeechers) Say("yo");
 				Delay(700);
 				break;
 			case 3:
@@ -5784,7 +5784,7 @@ function d2B_throneWaves() {
 				}
 				else {
 					//d2B_msg("yo");
-					if(!_quiet) Say("yo");
+					if(!_quiet && _throneLeechers) Say("yo");
 					NTC_Delay(3000);
 				}
 				break;
