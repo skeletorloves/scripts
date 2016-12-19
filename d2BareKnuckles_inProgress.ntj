@@ -1,6 +1,7 @@
 // to do...
 // dollcheck: create a conditional norm/nm/hell check. If norm, do not do dollcheck
 
+// _newSorcNoTele : NTMove.ntl line 34 | used to impede teleing of new sorces
 
 //	d2BareKnuckles.ntj
 	
@@ -19,6 +20,7 @@
 
 	var _lowLvlPeeps = false;				// leveling really low level peeps | if enabled, will not engage d2B_team() function calls
 	var _nonTelePeeps = false;				// if followers cannot tele
+	var _soloChaos = true;					// for leader not to msg followers nor to make tps in chaos
 	
 	var _chaosHelpers = false;				// if no chaos helpers
 	var _throneLeechers = false;			// if stationary throne leechers are following in the throne
@@ -119,7 +121,7 @@ function NTMain() {
 	
 	switch(d2B_toggleHelper) {
 		case "helper": 	
-			d2H_helper();					// for enabling a follower
+			d2H_helper();				// for enabling a follower
 			break;
 		case "helperSorc":
 			d2H_helperSorc();			// for enabling a follower which is a sorc
@@ -1361,6 +1363,9 @@ function d2B_Meph() {								// case: 30
 //
 //	Act VI
 function d2B_chaos(a){								// case: 31
+													// a = true for when using _nonTelePeeps
+													// a = false for when solo chaosing
+													// a = seals for when soloing chaos, hitting only seals, and killing d 
 	d2B_chkAct(4);									// if not Pandemonium Fortress, then go to Pandemonium Fortress
 	if(_chaosHelpers) d2B_msg("ummm 4");			// saying this again as a precaution
 	if(!_debug) Delay(Random(30000,35000));
@@ -2217,6 +2222,11 @@ function d2B_usePortal() {
 	return;
 }
 
+function d2B_swapWeapons() {
+	Delay(Random(300,700));
+	me.SwapWeapons();
+	return;
+}
 // ________________________________________________________
 // ________________________________________________________
 //
@@ -3088,7 +3098,12 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			}
 			break;
 		case "c2":
+			Delay(300);
+			d2B_swapWeapons();
+			Delay(300);
 			Chant2();
+			Delay(300);
+			d2B_swapWeapons();
 			break;
 		case "n":													// for necromancer calls	
 			if(me.classid != NTC_CHAR_CLASS_NECROMANCER) break;
@@ -6343,17 +6358,18 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 	if(chaos != false || baal != false || countess != false) {
 		switch(d2B_myPauseValue) {
 			case 1: if(!chaos) break;
-				d2B_msg("ummm 4");
+				if(_soloChaos) d2B_msg("ummm 4");
 				NTConfig_SkipRegularMonsters = false;
 				d2B_chkAct(4);
 				d2B_townMgr();
 				Delay(Random(20000,25000));
-				if(!_nonTelePeeps) {
+				if(!_nonTelePeeps && _soloChaos) {
 					_quiet = true;
-					d2B_chaos(false);						// chaos thingy
+					d2B_chaos("seals");						// chaos thingy
 					_quiet = false;
 				}
 				else if(_nonTelePeeps) d2B_chaos(true);
+				else if(_soloChaos) d2B_chaos(false);
 				break;
 			case 2: if(!baal) break;
 				if(_teamBO) {
@@ -6379,13 +6395,14 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 					else if(!countess && !chaos) {			// add long break if (_dollSoul == true) and no countess runs
 						d2B_msg("Dolls and/or souls, so going on a lengthy break...");
 						Delay(Random(75000,110000));
+						break;
 					}
 				}
 				if(countess && _dollSoul) _dollSoul = false;
 				Delay(Random(10000,12000));
 				if(!countess && !chaos) {				// add long break
 					d2B_msg("Going on a lengthy break...");
-					Delay(Random(225000,230000));
+					Delay(Random(110000,130000));
 				}
 				break;
 			case 3: if(!countess) break;
@@ -6397,7 +6414,18 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 				d2B_msg("ummm 1");
 				Delay(Random(25000,30000));
 				d2B_blackMarsh2();
-				Delay(Random(4000,8000));
+				Delay(1000);
+				NTTMGR_TownManager();
+				Delay(750);
+				d2B_chkAct(4);
+				Delay(1000);
+				NTTMGR_TownManager();
+				Delay(750);
+				
+				if(!chaos && !baal) {
+					Print(COLOR_2 + "Taking an extended break...");
+					Delay(Random(110000,130000));
+				}
 				break;
 		}
 	}
