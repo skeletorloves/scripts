@@ -63,8 +63,8 @@
 
 //
 //
-	var d2B_cases = 3;
-	var d2B_toggleHelper = "leveling";
+	var d2B_cases = 1;
+	var d2B_toggleHelper = "mf";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 	
 /*	d2B_toggleHelper choices...
@@ -143,6 +143,7 @@ function NTMain() {
 			// d2B_switchMainRuns(chaos, baal, countess)
 			
 			if(d2B_toggleHelper == "solo") d2B_SoloAct1();										// (1)
+			if(d2B_toggleHelper == "mf") d2B_mf();												// (1)
 			
 			if(d2B_toggleHelper == false) d2B_switchMainRuns(false, false, false);				// (31) for a list of action cases which are reasonably complete
 			if(d2B_toggleHelper == "cBCountess") d2B_switchMainRuns(true, true, true);			// (3) for a Chaos, Throne, & Countess leveling
@@ -185,6 +186,8 @@ function NTMain() {
 
 function d2B_SoloAct1() {							// Act 1 complete
 	
+		if(_teamBO) d2B_soloBO();
+	
 	//	blood moor
 	//
 		d2B_commonInitSetup(3);
@@ -192,6 +195,8 @@ function d2B_SoloAct1() {							// Act 1 complete
 		d2B_moveToStair(2,8, false);
 		d2B_takeStairs(8, true);
 		d2B_chkAct();
+		
+		if(_teamBO) d2B_soloBO();
 		
 	// cold plains
 	//
@@ -202,6 +207,8 @@ function d2B_SoloAct1() {							// Act 1 complete
 		d2B_moveToStair(9,13, false);
 		d2B_takeStairs(13, true);
 		d2B_chkAct();
+		
+		if(_teamBO) d2B_soloBO();
 		
 	// burial grounds
 	//
@@ -218,7 +225,9 @@ function d2B_SoloAct1() {							// Act 1 complete
 		Delay(Random(4000,5000));
 		d2B_takeStairs(18, true);
 		d2B_chkAct();
-	
+		
+		if(_teamBO) d2B_soloBO();
+		
 	// stony field
 	//
 		d2B_commonInitSetup(4);
@@ -229,7 +238,9 @@ function d2B_SoloAct1() {							// Act 1 complete
 		Delay(Random(2000,4000));
 		d2B_preCastClrLvlOC();
 		d2B_chkAct();
-	
+		
+		if(_teamBO) d2B_soloBO();
+		
 	// underground passage
 	//
 		d2B_commonInitSetup(4);
@@ -240,11 +251,15 @@ function d2B_SoloAct1() {							// Act 1 complete
 		d2B_takeStairs(14, true);
 		d2B_chkAct();
 	
+		if(_teamBO) d2B_soloBO();
+	
 	// dark wood
 	//
 		d2B_commonInitSetup(5);
 		d2B_preCastClrLvlOC();
 		d2B_chkAct();
+		
+		if(_teamBO) d2B_soloBO();
 		
 	//	black marsh
 	//
@@ -261,6 +276,8 @@ function d2B_SoloAct1() {							// Act 1 complete
 			d2B_takeStairs(20+i, true);
 		}
 		d2B_chkAct();
+		
+		if(_teamBO) d2B_soloBO();
 	
 	//	tamoe highland
 	//
@@ -272,12 +289,16 @@ function d2B_SoloAct1() {							// Act 1 complete
 		d2B_moveToStair(me.areaid,16, false);	// go to the 2nd level of the tamoe highland pit
 		d2B_takeStairs(16, true);
 		d2B_chkAct();
+		
+		if(_teamBO) d2B_soloBO();
 	
 	// outer cloister
 	//
 		d2B_commonInitSetup(27);
 		d2B_preCastClrLvlOC();
 		d2B_chkAct();
+		
+		if(_teamBO) d2B_soloBO();
 	
 	// outer barracks
 	//
@@ -286,12 +307,16 @@ function d2B_SoloAct1() {							// Act 1 complete
 		d2B_movePresetUnitMonster(28, 754, -5, 5);	// go to where main monster is in the malus dude
 		d2B_preCastClrLvlOC();
 		d2B_chkAct();
+		
+		if(_teamBO) d2B_soloBO();
 	
 	// jail
 	//
 		d2B_commonInitSetup(29);
 		d2B_preCastClrLvlOC();
 		d2B_chkAct();
+		
+		if(_teamBO) d2B_soloBO();
 	
 	// inner cloister
 	//
@@ -300,6 +325,8 @@ function d2B_SoloAct1() {							// Act 1 complete
 		d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
 		d2B_preCastClrLvlOC();
 		d2B_chkAct();
+		
+		if(_teamBO) d2B_soloBO();
 	
 	//	cata
 	//
@@ -315,7 +342,9 @@ function d2B_SoloAct1() {							// Act 1 complete
 		}
 		Delay(Random(400,500));
 		NTM_MoveTo(me.areaid, 22594, 9622);
-		d2B_chkAct()
+		d2B_chkAct();
+		
+		if(_teamBO) d2B_soloBO();
 		
 		return;
 }
@@ -425,6 +454,13 @@ function d2B_actions(CIS,MTSa,MTSb,PCL,TSa,TSb,CA)	{
 	if(TS) d2B_takeStairs(TSa, TSb);
 	if(CA) d2B_chkAct();
 
+}
+function d2B_soloBO() {
+	if(_teamBO) {
+		d2B_boSafe(1.35. "justBO");
+		Delay(Random(2000,3000));
+	}
+	return;
 }
 //
 // Act I: complete
@@ -747,6 +783,7 @@ function d2B_blackMarsh2(a) {						// a useful delay for when dolls are found in
 	for(var i = 0 ; i < 6 ; i++) {
 		d2B_moveToStair(me.areaid,20+i, false);	// go to the forgotten tower and do tower things
 		NTM_TakeStair(20+i);
+		Delay(Random(1000,1200));
 		if(i==5) {
 			d2B_countess();
 		}
@@ -817,6 +854,12 @@ function d2B_countess() {
 			}
 		}
 		if(d2B_usingAFollower) d2B_team(true, false);
+		if(d2B_toggleHelper == "mf") {
+			d2B_clrLvlOC();
+			Delay(Random(4000,5000));
+			d2B_chkAct(1);
+			return;
+		}
 		NTA_ClearPosition();
 		NTSI_PickItems();
 		Delay(Random(2000,4000));
@@ -928,8 +971,16 @@ function d2B_cata2() {								// case: 13
 		Delay(300);
 	}
 	NTM_MoveTo(me.areaid, 22545, 9517);						// walls  right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547 | 22545, 9517: towards the back where the rogues hang
-	d2B_teamPro(true,3021,40,true,1,"n w", 22545, 9517);	// 3021: Andarial						
-	return;	
+	if(!(d2B_toggleHelper == "mf")) {
+		d2B_teamPro(true,3021,40,true,1,"n w", 22545, 9517);	// 3021: Andarial						
+		return;
+	}
+	NTA_ClearPosition();
+	NTSI_PickItems();
+	d2B_clrLvlOC();
+	Delay(Random(4000,5000));
+	d2B_chkAct(1);
+	return;
 }
 //
 //	Act II
@@ -2172,6 +2223,7 @@ function d2B_boSafe(a,b,c,d) {						// (a: d2B_chkAct(a) | b: d2B_gotoWP(b) | c:
 	Delay(Random(2000,5000));
 	d2B_team(false, false);
 	Delay(Random(5000,7000));
+	if(c == "justBO") return;
 	if(!c) {
 		d2B_msg("-");
 		Delay(Random(5000,7000));
@@ -6214,6 +6266,12 @@ function d2B_commonVars() {
 //
 // switchies for switching
 //
+function d2B_mf() {
+	if(_teamBO) d2B_soloBO();
+	d2B_blackMarsh2(false);
+	Delay(Random(20000,30000));
+	return;
+}	
 function d2B_leveling() {
 	switch(d2B_myPauseValue) {
 	// act 1	
