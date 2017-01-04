@@ -186,6 +186,12 @@ function NT_KeyEvents(keycode) {
 				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 149, +4, -8);
 				if(d2B_usingAFollower) d2B_team(true);
 			}
+			/*if(me.areaid == 73) {	// duriel's lair
+				Print(COLOR_2 + "going to make a tp at Tyrael"); // const NTC_NPC_ID_TYRAEL_ACT_2 = 251;
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 149, +4, -8);
+				if(d2B_usingAFollower) d2B_team(true);
+			}*/
+			
 	// actIII
 			if(me.areaid == 76) {	// Khalim's eye
 				Print(COLOR_2 + "going for the eye");
@@ -444,7 +450,7 @@ function NT_KeyEvents(keycode) {
 			}
 			if(me.areaid == 131) {	// throne room
 				Print(COLOR_2 + "clearing throne");
-				d2B_d2B_throneWaves();
+				d2B_throneWaves();
 			}
 			break;
 		case 222:		// ' single quote
@@ -459,6 +465,7 @@ function NT_KeyEvents(keycode) {
 				Delay(750);
 				for(var i = 0 ; i < 6 ; i++) {
 					d2B_moveToStair(me.areaid,20+i);	// go to the forgotten tower and do tower things
+					Delay(Random(1000,1200));
 					NTM_TakeStair(20+i);
 					if(i==5) {
 						d2B_countess();
