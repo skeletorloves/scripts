@@ -457,7 +457,7 @@ function d2B_actions(CIS,MTSa,MTSb,PCL,TSa,TSb,CA)	{
 }
 function d2B_soloBO() {
 	if(_teamBO) {
-		d2B_boSafe(1.35. "justBO");
+		d2B_boSafe(1,35, "justBO");
 		Delay(Random(2000,3000));
 	}
 	return;
@@ -978,6 +978,7 @@ function d2B_cata2() {								// case: 13
 	NTA_ClearPosition();
 	NTSI_PickItems();
 	d2B_clrLvlOC();
+	NTM_MoveTo(me.areaid, 22545, 9517);
 	Delay(Random(4000,5000));
 	d2B_chkAct(1);
 	return;
@@ -1933,6 +1934,7 @@ function d2B_chkAct(act) {
 	return true;
 }
 function d2B_team(teamTown, teamAct) {				// (teamTown: true - towns team, false - team follows | teamAct: sends team to act 1 thru 5)
+	if((!d2B_usingAFollower && !d2B_usingSorcFlwrs) || d2B_toggleHelper == "mf") return;
 	if(teamTown) {
 		d2B_team2(false);
 		Delay(Random(10000,14000));
@@ -6269,7 +6271,12 @@ function d2B_commonVars() {
 function d2B_mf() {
 	if(_teamBO) d2B_soloBO();
 	d2B_blackMarsh2(false);
-	Delay(Random(20000,30000));
+	Delay(Random(120000,140000));
+	if(_teamBO) d2B_soloBO();
+	d2B_cata2();
+	Delay(Random(210000,300000));
+	
+	
 	return;
 }	
 function d2B_leveling() {
