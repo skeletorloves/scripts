@@ -93,6 +93,13 @@ function CheckMap() {
 function NT_KeyEvents(keycode) {
 
 	switch(keycode) {
+		case 104:		// number pad #8
+			MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
+			MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
+			Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+			Delay(Random(1000,1700));
+			Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+			break;
 		case 219:		// [ open bracket 
 			if(busy || _keyExtras)
 				return Print(COLOR_1 + "Not now...");
@@ -141,6 +148,7 @@ function NT_KeyEvents(keycode) {
 				Delay(750);
 				d2B_moveToStair(me.areaid, 49);
 				NTM_TakeStair(49);
+				Delay(Random(750,1000));
 				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 355, 10, -10);		// 355: chest near to Radament
 				if(d2B_usingAFollower) d2B_team(true);
 				//d2B_teamPro(true,2879,40,true,2,"n w",false);						// 2879: Radament
@@ -151,6 +159,7 @@ function NT_KeyEvents(keycode) {
 				for(i=51;i>=49;i--) {
 					d2B_moveToStair(me.areaid, i, false);
 					NTM_TakeStair(i,false);
+					Delay(Random(750,1000));
 				}
 				d2B_moveToStair(me.areaid, 40, false);
 				NTM_MakeTP();
@@ -162,6 +171,7 @@ function NT_KeyEvents(keycode) {
 				NTP_DoPrecast(true);
 				d2B_moveToStair(me.areaid, 60);
 				NTM_TakeStair(60);
+				Delay(Random(750,1000));
 				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 354, -5, -5);
 				if(d2B_usingAFollower) d2B_team(true);
 			}
@@ -171,6 +181,7 @@ function NT_KeyEvents(keycode) {
 				for (i = 0; i < 3; i += 1) {
 					d2B_moveToStair(me.areaid, 62+i);
 					NTM_TakeStair(62+i);
+					Delay(Random(750,1000));
 				}	
 				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 356, -5, -5);
 				if(d2B_usingAFollower) d2B_team(true);	
@@ -180,6 +191,7 @@ function NT_KeyEvents(keycode) {
 				NTP_DoPrecast(true);
 				d2B_moveToStair(45, 58);
 				NTM_TakeStair(58);
+				Delay(Random(750,1000));
 				d2B_moveToStair(me.areaid, 61);
 				NTM_TakeStair(61);
 				Delay(300);
@@ -207,8 +219,10 @@ function NT_KeyEvents(keycode) {
 				NTP_DoPrecast(true);
 				NTM_MoveToStair(78, 88);
 				NTM_TakeStair(88);
+				Delay(Random(750,1000));
 				NTM_MoveToStair(88, 89);
 				NTM_TakeStair(89);
+				Delay(Random(750,1000));
 				NTM_MoveToStair(89, 91);
 				NTM_TakeStair(91);
 				Delay(300);
@@ -220,6 +234,7 @@ function NT_KeyEvents(keycode) {
 				NTP_DoPrecast(true);
 				NTM_MoveToStair(80,92);
 				NTM_TakeStair(92);
+				Delay(Random(750,1000));
 				NTM_MoveToStair(92,93);
 				NTM_TakeStair(93);
 				Delay(300);
@@ -275,6 +290,7 @@ function NT_KeyEvents(keycode) {
 				Delay(200);
 				d2B_moveToStair(me.areaid, 114);
 				NTM_TakeStair(114);
+				Delay(Random(750,1000));
 				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 460, -8, -8);
 				if(d2B_usingAFollower) d2B_team(true);
 			}
@@ -294,6 +310,7 @@ function NT_KeyEvents(keycode) {
 				Delay(750);
 				d2B_moveToStair(me.areaid, 130);
 				NTM_TakeStair(130);	// ws3
+				Delay(750);
 				d2B_moveToStair(me.areaid, 131);
 				NTM_TakeStair(131);	// ws4
 				
@@ -406,6 +423,7 @@ function NT_KeyEvents(keycode) {
 				Delay(750);
 				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 10, 10);		// 737:	 Rakanishu
 				NTM_UsePortal("Portal", 38);										// 38:	 Cain Stones portal
+				Delay(Random(300,500));
 				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 739, 10, 10);		// 739:	 Griswold
 				if(d2B_usingAFollower) d2B_team(true);
 				//d2B_teamPro(true,2874,40,true,1,"n w",false);						// 2874: Griswold
@@ -420,6 +438,7 @@ function NT_KeyEvents(keycode) {
 				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_TILE, _tombs.correcttomb-28);
 				_unit = NTC_FindUnit(NTC_UNIT_TILE, _tombs.correcttomb-28, 5);
 				NTM_TakeStair(_unit.subareaid);
+				Delay(Random(300,500));
 				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 152, -2, 2);
 				NTC_FindUnit(NTC_UNIT_OBJECT, 100, 10);
 				NTM_TakeUnit(NTC_UNIT_OBJECT, 100);
@@ -434,7 +453,7 @@ function NT_KeyEvents(keycode) {
 				
 				d2B_moveToStair(me.areaid, 102);
 				NTM_TakeStair(102);
-				
+				Delay(Random(300,500));
 				NTM_MoveTo(me.areaid, 17564, 8069);							// time for Mpeh
 				if(d2B_usingAFollower) d2B_team(true);
 			}
@@ -465,8 +484,8 @@ function NT_KeyEvents(keycode) {
 				Delay(750);
 				for(var i = 0 ; i < 6 ; i++) {
 					d2B_moveToStair(me.areaid,20+i);	// go to the forgotten tower and do tower things
-					Delay(Random(1000,1200));
 					NTM_TakeStair(20+i);
+					Delay(Random(1000,1200));
 					if(i==5) {
 						d2B_countess();
 					}
@@ -492,11 +511,21 @@ function NT_KeyEvents(keycode) {
 				for (i = 0; i < 2; i++) {
 					NTM_MoveToStair(me.areaid, 36 + i);
 					NTM_TakeStair(36 + i);
+					Delay(Random(1000,1200));
 				}
 				NTM_MoveTo(me.areaid, 22545, 9517);						// walls  right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547 | 22545, 9517: towards the back where the rogues hang
 				if(d2B_usingAFollower) d2B_team(true);
 				//d2B_teamPro(true,3021,40,true,1,"n w", 22545, 9517);	// 3021: Andarial	
 			}
+
+// for finding exp shrines
+	// blood moor
+			if(me.areaid == 2)	{
+				Print(COLOR_2 + "Looking for exp shrine...");
+				Delay(500);
+				d2B_LXPC_SearchShrines();
+				break;
+			}	
 			if(me.areaid == 40) {	// 
 				Print(COLOR_2 + "nothing set for this in act II");
 			}
@@ -1410,6 +1439,28 @@ function d2B_isTeamInTown(a,b) {					// a: act | b: area of where the tp is open
 	}
 	d2B_msg("Everyone is in town.");
 	return;
+}
+//
+function d2B_LXPC_SearchShrines(){	// could add an arguement here to call which area array to work with so can use this in choas and baal
+	_FindXPArea = [2,3,4];
+	XpSearchContinue = true;
+	if(_FindXPArea.length > 0){ 
+		for(var i = 0 ; i < _FindXPArea.length && XpSearchContinue ; i++){ 	
+			NTTM_CheckAct();												  		
+			if(_FindXPArea[i] == 2)
+				CheckBloodMoor();
+			else if(_FindXPArea[i] == 7) // could make this into a switch statement switch(_FindXPArea[i]) if I add more areas that don't have wp's
+				CheckTamoeHighland();
+			else if(NTC_InTown()){	
+				NTTMGR_TownManager();
+				NTTM_TownMove("waypoint");			
+				Delay(1000)
+				NTM_TakeWaypoint(_FindXPArea[i]);							 
+			}															  
+			NTP_DoPrecast(true);
+			LXPC_FindShrines();
+		}
+	}
 }
 //
 function d2B_countess() {
