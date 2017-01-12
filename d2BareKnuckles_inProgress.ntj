@@ -28,8 +28,8 @@
 	var _throneLeechers = false;			// if stationary throne leechers are following in the throne
 	var _throneHelpers = false;				// if active fighters are following in the throne
 	
-	var d2B_usingSorcFlwrs = true;			// using sorcies as followers
-	var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_takeMyTP()
+	var d2B_usingSorcFlwrs = false;			// using sorcies as followers
+	var d2B_usingAFollower = false; 			// using a follower therefore make townportals d2B_takeMyTP()
 	var d2B_refill = true;					// enable/disable NTTMGR_TownManager();
 	
 	var _teamBO = true;						// send team to a safe wp and bo
@@ -2253,7 +2253,7 @@ function d2B_checkTown(town, wp) {					// (town: which act | b: which town wp to
 	return;
 }
 function d2B_msg(a) {
-	if(d2B_usingAFollower || d2B_usingSorcFlwrs) {
+	if(d2B_usingAFollower || d2B_usingSorcFlwrs || _teamBO) {
 		if(!_quiet) Say("/f m " + a);
 		Delay(300);
 	}
@@ -6275,8 +6275,6 @@ function d2B_mf() {
 	if(_teamBO) d2B_soloBO();
 	d2B_cata2();
 	Delay(Random(210000,300000));
-	
-	
 	return;
 }	
 function d2B_leveling() {
