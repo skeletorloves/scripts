@@ -6288,7 +6288,10 @@ function d2B_mf() {
 		_quiet = false;
 	}
 	else if(_nonTelePeeps && !_soloChaos) d2B_chaos(true);
-	else if(_soloChaos && !_nonTelePeeps) d2B_chaos("seals");
+	else if(_soloChaos && !_nonTelePeeps) d2B_chaos("false");
+	//else if(_soloChaos && !_nonTelePeeps) d2B_chaos("seals");
+	d2B_chkAct(1);
+	Delay(Random(30000,60000));
 	return;
 }	
 function d2B_leveling() {
