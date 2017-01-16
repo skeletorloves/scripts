@@ -64,7 +64,7 @@
 //
 //
 	var d2B_cases = 1;
-	var d2B_toggleHelper = "mf";
+	var d2B_toggleHelper = "helper";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 	
 /*	d2B_toggleHelper choices...
@@ -3192,6 +3192,20 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					}
 					break;
 			}
+			break;
+		case "sorc":										// barbarian calls
+			if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
+			switch(msg2) {									// for bo town barb only
+				case "countess":
+					d2B_blackMarsh2(false);
+					break;
+				case "andarial":
+					d2B_cata2();
+					break;
+				case "chaos":
+					d2B_chaos("false");
+					break;
+			}	
 			break;
 		case "help":
 			DisplayHelp( msg2 );		// Display help menu.
