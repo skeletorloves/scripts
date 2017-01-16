@@ -28,8 +28,8 @@
 	var _throneLeechers = false;			// if stationary throne leechers are following in the throne
 	var _throneHelpers = false;				// if active fighters are following in the throne
 	
-	var d2B_usingSorcFlwrs = false;			// using sorcies as followers
-	var d2B_usingAFollower = false; 			// using a follower therefore make townportals d2B_takeMyTP()
+	var d2B_usingSorcFlwrs = true;			// using sorcies as followers
+	var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_takeMyTP()
 	var d2B_refill = true;					// enable/disable NTTMGR_TownManager();
 	
 	var _teamBO = true;						// send team to a safe wp and bo
@@ -6269,12 +6269,26 @@ function d2B_commonVars() {
 // switchies for switching
 //
 function d2B_mf() {
+//Countess:
 	if(_teamBO) d2B_soloBO();
 	d2B_blackMarsh2(false);
-	Delay(Random(120000,140000));
+	Delay(Random(30000,60000));
+//Andarial
 	if(_teamBO) d2B_soloBO();
 	d2B_cata2();
-	Delay(Random(210000,300000));
+	Delay(Random(10000,15000));
+//Chaos
+	if(_teamBO) d2B_soloBO();
+	d2B_chkAct(4);
+	d2B_townMgr();
+	Delay(Random(10000,15000));
+	if(!_nonTelePeeps && _soloChaos) {
+		_quiet = true;
+		d2B_chaos(false);						// chaos thingy
+		_quiet = false;
+	}
+	else if(_nonTelePeeps && !_soloChaos) d2B_chaos(true);
+	else if(_soloChaos && !_nonTelePeeps) d2B_chaos("seals");
 	return;
 }	
 function d2B_leveling() {
