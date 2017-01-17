@@ -28,11 +28,11 @@
 	var _throneLeechers = false;			// if stationary throne leechers are following in the throne
 	var _throneHelpers = false;				// if active fighters are following in the throne
 	
-	var d2B_usingSorcFlwrs = true;			// using sorcies as followers
-	var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_takeMyTP()
+	var d2B_usingSorcFlwrs = false;			// using sorcies as followers
+	var d2B_usingAFollower = false; 			// using a follower therefore make townportals d2B_takeMyTP()
 	var d2B_refill = true;					// enable/disable NTTMGR_TownManager();
 	
-	var _teamBO = true;						// send team to a safe wp and bo
+	var _teamBO = false;						// send team to a safe wp and bo
 	
 	var _noBoer = true;						// for impeding boer routines and the delays associated with those in throne
 	var _myName = "";						// peep to msg of what's a-happenin'
@@ -157,6 +157,8 @@ function NTMain() {
 			if(d2B_toggleHelper == "NecroRuns") d2B_switchNecroRuns();		// for a sorc leader to run tightly with necro crew
 			if(d2B_toggleHelper == "CBaalNoTele") d2B_CBaalNoTele();		// for cbaaling with a non tele team
 			if(d2B_toggleHelper == "CBaalLow") d2B_CBaalLow();				// for cbaaling low levels
+			
+			if(d2B_toggleHelper == "boBaba") d2B_boBaba();					// for running a bo baba leader
 			
 			d2B_msgIncPause();	
 		}
@@ -789,16 +791,17 @@ function d2B_blackMarsh2(a) {						// a useful delay for when dolls are found in
 		}
 	}
 	Delay(Random(3000,4000));
-	if(a) {
-		d2B_team(true,1);	// return to Act 1 town
-		Delay(Random(4000,6000));
-		d2B_msg("ummm 4");
-		Delay(750);
-		d2B_chkAct(4);
-		Delay(Random(14000,17000));
-		Return;
+	if(!a) {
+		d2B_chkAct(1);
+		return;
 	}
+	d2B_team(true,1);	// return to Act 1 town
+	Delay(Random(4000,6000));
+	d2B_msg("ummm 4");
+	Delay(750);
 	d2B_chkAct(4);
+	Delay(Random(14000,17000));
+	Return;
 }
 function d2B_countess() {
 	if(me.y > 11060 && me.y <= 11078){
@@ -868,11 +871,11 @@ function d2B_countess() {
 		Delay(Random(4000,6000));
 		if(d2B_usingAFollower) d2B_isTeamInTown(1,false);
 	}	
-	d2B_chkAct(4);
+	d2B_chkAct(1);
 	Delay(Random(4000,6000));
 	d2B_msg(".");
 	Delay(Random(8000,10000));
-	d2B_msg("ummm 4");
+	d2B_msg("ummm 1");
 	Delay(Random(8000,10000));
 	return;
 }
@@ -1967,6 +1970,8 @@ function d2B_townMgr() {
 	if(NTC_InTown(me)) {
 		if(d2B_refill) NTTMGR_TownManager();
 	}
+	NTTM_TownMove("portalspot");
+	d2B_littleJMP();
 	return;
 }
 function d2B_townMove(a) {
@@ -3196,6 +3201,14 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		case "sorc":										// barbarian calls
 			if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 			switch(msg2) {									// for bo town barb only
+				case "townmgr":
+					d2B_townMgr();
+					break;
+				case "solo":
+					NTConfig_SkipRegularMonsters = true;
+					d2B_SoloAct1();
+					NTConfig_SkipRegularMonsters = false;
+					break;
 				case "countess":
 					d2B_blackMarsh2(false);
 					break;
@@ -3203,7 +3216,11 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					d2B_cata2();
 					break;
 				case "chaos":
-					d2B_chaos("false");
+					d2B_chaos(false);
+					break;
+				case "baal":
+					d2B_worldstonekeep();
+					d2B_chkAct(5);
 					break;
 			}	
 			break;
@@ -6282,6 +6299,25 @@ function d2B_commonVars() {
 //
 // switchies for switching
 //
+function d2B_boBaba() {			// for running a bo baba leader
+	d2B_chkAct(1);
+	d2B_townMgr();
+	d2B_commonInitSetup(35);	// goto cata 2
+	Delay(Random(3000,4000));
+	d2B_msg(".");
+	Delay(Random(15000,20000));
+	NTP_DoPrecast();
+	d2B_msg("..");
+	Delay(Random(3000,4000));
+	NTM_MakeTP();
+	Delay(300);
+	d2B_msg("-");
+	Delay(Random(3000,4000));
+	d2B_msg("sorc chaos");
+	Delay(750);
+	d2B_chkAct(1);	
+	return;
+}
 function d2B_mf() {
 //Countess:
 	if(_teamBO) d2B_soloBO();
@@ -6302,7 +6338,7 @@ function d2B_mf() {
 		_quiet = false;
 	}
 	else if(_nonTelePeeps && !_soloChaos) d2B_chaos(true);
-	else if(_soloChaos && !_nonTelePeeps) d2B_chaos("false");
+	else if(_soloChaos && !_nonTelePeeps) d2B_chaos(false);
 	//else if(_soloChaos && !_nonTelePeeps) d2B_chaos("seals");
 	d2B_chkAct(1);
 	Delay(Random(30000,60000));
