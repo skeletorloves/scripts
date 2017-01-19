@@ -21,15 +21,15 @@
 
 	var _lowLvlPeeps = false;				// leveling really low level peeps | if enabled, will not engage d2B_team() function calls
 	var _nonTelePeeps = false;				// if followers cannot tele
-	var _soloCountess = true;				// for leader not to msg followers nor to make tps while solo countessing
-	var _soloChaos = true;					// for leader not to msg followers nor to make tps in chaos
+	var _soloCountess = false;				// for leader not to msg followers nor to make tps while solo countessing
+	var _soloChaos = false;					// for leader not to msg followers nor to make tps in chaos
 	
-	var _chaosHelpers = false;				// if no chaos helpers
+	var _chaosHelpers = true;				// if no chaos helpers
 	var _throneLeechers = false;			// if stationary throne leechers are following in the throne
 	var _throneHelpers = false;				// if active fighters are following in the throne
 	
-	var d2B_usingSorcFlwrs = false;			// using sorcies as followers
-	var d2B_usingAFollower = false; 			// using a follower therefore make townportals d2B_takeMyTP()
+	var d2B_usingSorcFlwrs = true;			// using sorcies as followers
+	var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_takeMyTP()
 	var d2B_refill = true;					// enable/disable NTTMGR_TownManager();
 	
 	var _teamBO = false;						// send team to a safe wp and bo
@@ -64,7 +64,7 @@
 //
 //
 	var d2B_cases = 1;
-	var d2B_toggleHelper = "helper";
+	var d2B_toggleHelper = "mf";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 	
 /*	d2B_toggleHelper choices...
@@ -128,6 +128,10 @@ function NTMain() {
 		case "helperSorc":
 			d2H_helperSorc();			// for enabling a follower which is a sorc
 			break;
+		case "boBaba":
+			if(!_debug) d2B_newGmDlyPeepChk();
+			d2B_boBaba();				// for running a bo baba leader
+			break;
 	}
 	
 	if(!_debug) d2B_newGmDlyPeepChk();							// bypass the function for check if all peeps have entered game
@@ -157,8 +161,6 @@ function NTMain() {
 			if(d2B_toggleHelper == "NecroRuns") d2B_switchNecroRuns();		// for a sorc leader to run tightly with necro crew
 			if(d2B_toggleHelper == "CBaalNoTele") d2B_CBaalNoTele();		// for cbaaling with a non tele team
 			if(d2B_toggleHelper == "CBaalLow") d2B_CBaalLow();				// for cbaaling low levels
-			
-			if(d2B_toggleHelper == "boBaba") d2B_boBaba();					// for running a bo baba leader
 			
 			d2B_msgIncPause();	
 		}
@@ -598,18 +600,23 @@ function d2B_Act1(noTele) {							// Act 1 complete | noTele = var _nonTelePeeps
 
 //
 //	Act I	
+function d2B_Solo_bloodmoor() {	// case: 1
+	NTConfig_SkipRegularMonsters = SkipRegMnstrs;
+	
+	if(InTown(me)) d2B_moveWP();
+	d2B_gotoWP(3);
+	d2B_moveToStair(2,8, false);										// front of den
+	d2B_TakeStair(8, false);
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 15, -15);	// 774: Corpsefire
+	d2B_KillMonster(3319, 10);											// 3319: Corpsefire
+	
+	Delay(750);
+	d2B_chkAct(1);
+	return;
+}
 function d2B_bloodmoor(a) {							// case: 1
 	if(InTown(me)) d2B_moveWP();
 	d2B_gotoWP(3);
-	
-	/*d2B_chkAct(1);
-	d2B_townMgr();
-	
-	d2B_townMove("exit");							// exit town
-	NTC_PingDelay(200);
-	NTTM_OutOfAct1();
-	NTM_TeleportTo(me.x+1, me.y+3);					// for keeping merc near
-	Delay(300);*/
 	
 	d2B_moveToStair(2,8, false);							// head to front of den as a starting point
 	
@@ -797,9 +804,9 @@ function d2B_blackMarsh2(a) {						// a useful delay for when dolls are found in
 	}
 	d2B_team(true,1);	// return to Act 1 town
 	Delay(Random(4000,6000));
-	d2B_msg("ummm 4");
+	d2B_msg("ummm 1");
 	Delay(750);
-	d2B_chkAct(4);
+	d2B_chkAct(1);
 	Delay(Random(14000,17000));
 	Return;
 }
@@ -976,6 +983,8 @@ function d2B_cata2() {								// case: 13
 	NTM_MoveTo(me.areaid, 22545, 9517);						// walls  right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547 | 22545, 9517: towards the back where the rogues hang
 	if(!(d2B_toggleHelper == "mf")) {
 		d2B_teamPro(true,3021,40,true,1,"n w", 22545, 9517);	// 3021: Andarial						
+		Delay(Random(4000,5000));
+		d2B_chkAct(1);
 		return;
 	}
 	NTA_ClearPosition();
@@ -2094,12 +2103,13 @@ function d2B_usePortal(a,b){
 }
 function d2B_moveToStair(a,b,c) {
 	NTM_MoveToStair(a, b);
+	Delay(Random(1000,1200));
 	if(c) d2B_preCastClrLvlOC();
 	return;
 }
 function d2B_takeStairs(a,b) {						// a: area stairs | b: engage clr lvl & open chests
 	if(d2B_usingAFollower) Delay(Random(4000,6000));
-	else if(!d2B_usingAFollower) Delay(Random(500,750));
+	else if(!d2B_usingAFollower) Delay(Random(1000,1550));
 	if(!NTM_TakeStair(a)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeStair()");
 	}
@@ -2195,6 +2205,17 @@ function d2B_teamPro(teamTown, gLocStrng, clrPosDist, teamTown2, teamAct, dMsg, 
 	d2B_msg(",");
 	return;
 }
+function d2B_KillMonster(gLocStrng, clrPosDist) {
+	NTA_KillMonster(GetLocaleString(gLocStrng));
+	Delay(300);
+	NTA_ClearPosition(clrPosDist, true);								// a: distance | true: enable pick items
+	for(i=0;i<5;i++) {
+		NTSI_PickItems();
+		Delay(500);
+	}
+	return;
+}
+	
 function d2B_bo() {									//	for instructing a bo barb
 	if(!_myBoBarb) {								// if there is no official boer, then let team barb bo
 		Delay(Random(4000,6000));
@@ -5754,7 +5775,7 @@ function NTA_SortRooms(a, b) {
 	return 1;
 }
 
-function NTCS_DiaSpam(){
+function NTCS_DiaSpam() {
 	if(me.classid == NTC_CHAR_CLASS_AMAZON && NTConfig_DiaSpam > 0){
 			return NTC_CastSkill(NTConfig_DiaSpam, 0, 7792, 5291);
 	}
@@ -5968,7 +5989,7 @@ function d2B_baal() {
 	
 	return;
 }
-function NT_ClearThroneInt(){
+function NT_ClearThroneInt() {
 	var _attackpos = [15112, 5068, 15075, 5065, 15114, 5045, 15114, 5012, 15095, 5024, 15078, 5013, 15092, 5040];
 	for(var i = 0 ; i < _attackpos.length ; i += 2){
 		NTM_MoveTo(me.areaid, _attackpos[i], _attackpos[i+1]);
@@ -5976,7 +5997,7 @@ function NT_ClearThroneInt(){
 	}
 }
 
-function NT_ThroneCheckInt(){
+function NT_ThroneCheckInt() {
 	var _monster;
 	if(!NTC_FindUnit(NTC_UNIT_MONSTER, 543))
 		return 5;
@@ -6000,7 +6021,7 @@ function NT_ThroneCheckInt(){
 	return 0;
 }
 
-function NT_ThronePreAttackInt(){
+function NT_ThronePreAttackInt() {
 	if(me.classid == NTC_CHAR_CLASS_SORCERESS){
 		if(NTConfig_PreWaveSpam > 0){
 			if(poscount == 1){
@@ -6067,7 +6088,7 @@ function NT_ThronePreAttackInt(){
 	return false;
 }
 
-function NT_CheckHydraInt(){
+function NT_CheckHydraInt() {
 	var _hydra1, _hydra2, _hydra3;
 	_hydra1 = NTC_FindUnit(NTC_UNIT_MONSTER, 351);
 	_hydra2 = NTC_FindUnit(NTC_UNIT_MONSTER, 352);
@@ -6085,7 +6106,7 @@ function NT_CheckHydraInt(){
 	}
 }
 
-function achmel(){
+function achmel() {
 	var x = 0;
 	var _holdTargetHp = 0;
 	var _achmel = NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(21852));
@@ -6300,22 +6321,57 @@ function d2B_commonVars() {
 // switchies for switching
 //
 function d2B_boBaba() {			// for running a bo baba leader
+	// chaos instructions...
 	d2B_chkAct(1);
 	d2B_townMgr();
-	d2B_commonInitSetup(35);	// goto cata 2
-	Delay(Random(3000,4000));
-	d2B_msg(".");
-	Delay(Random(15000,20000));
-	NTP_DoPrecast();
-	d2B_msg("..");
-	Delay(Random(3000,4000));
-	NTM_MakeTP();
-	Delay(300);
-	d2B_msg("-");
-	Delay(Random(3000,4000));
+	d2B_boBabaPre();
+
 	d2B_msg("sorc chaos");
 	Delay(750);
-	d2B_chkAct(1);	
+	d2B_chkAct(1);
+	Delay(Random(230000,300000));
+
+	d2B_boBabaPre();
+	
+	d2B_msg("sorc baal");
+	Delay(750);
+	d2B_chkAct(1);
+	Delay(Random(230000,300000));
+	
+	d2B_boBabaPre();
+	
+	d2B_msg("sorc countess");
+	Delay(750);
+	d2B_chkAct(1);
+	Delay(Random(130000,140000));
+
+	d2B_msg("sorc andarial");
+	Delay(750);
+	d2B_chkAct(1);
+	Delay(Random(130000,140000));
+
+	Delay(750);
+	d2B_chkAct(1);
+	
+	Delay(Random(10000,150000));
+	return;
+}
+function d2B_boBabaPre() {
+	d2B_commonInitSetup(35);	// goto cata 2
+	d2B_littleJMP();
+	Delay(300);
+	NTM_MakeTP();
+	Delay(Random(3000,4000));
+	d2B_msg(".");
+	Delay(Random(30000,40000));
+	if(!NTC_InTown(me)) NTP_DoPrecast(true);
+	Delay(750);
+	d2B_msg("..");
+	Delay(Random(8000,10000));
+	if(!NTC_InTown(me)) NTP_DoPrecast(true);
+	Delay(750);
+	d2B_msg("-");
+	Delay(Random(8000,11000));
 	return;
 }
 function d2B_mf() {
@@ -7191,4 +7247,14 @@ function d2B_CBaalLow() {
 	if(me.name != myLeader) {
 		if(!CheckLeader(NTConfig_Leader)) NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
 	}
+	
+	_______________________
+	d2B_chkAct(1);
+	d2B_townMgr();
+	
+	d2B_townMove("exit");							// exit town
+	NTC_PingDelay(200);
+	NTTM_OutOfAct1();
+	NTM_TeleportTo(me.x+1, me.y+3);					// for keeping merc near
+	Delay(300);
 */
