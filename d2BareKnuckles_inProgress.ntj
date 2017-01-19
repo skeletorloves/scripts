@@ -24,12 +24,12 @@
 	var _soloCountess = false;				// for leader not to msg followers nor to make tps while solo countessing
 	var _soloChaos = false;					// for leader not to msg followers nor to make tps in chaos
 	
-	var _chaosHelpers = true;				// if no chaos helpers
+	var _chaosHelpers = false;				// if no chaos helpers
 	var _throneLeechers = false;			// if stationary throne leechers are following in the throne
 	var _throneHelpers = false;				// if active fighters are following in the throne
 	
-	var d2B_usingSorcFlwrs = true;			// using sorcies as followers
-	var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_takeMyTP()
+	var d2B_usingSorcFlwrs = false;			// using sorcies as followers
+	var d2B_usingAFollower = false; 			// using a follower therefore make townportals d2B_takeMyTP()
 	var d2B_refill = true;					// enable/disable NTTMGR_TownManager();
 	
 	var _teamBO = false;						// send team to a safe wp and bo
@@ -64,7 +64,7 @@
 //
 //
 	var d2B_cases = 1;
-	var d2B_toggleHelper = "mf";
+	var d2B_toggleHelper = "helper";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 	
 /*	d2B_toggleHelper choices...
@@ -603,10 +603,41 @@ function d2B_Act1(noTele) {							// Act 1 complete | noTele = var _nonTelePeeps
 function d2B_Solo_corpsefire() {
 	if(InTown(me)) d2B_moveWP();
 	d2B_gotoWP(3);
+	NTP_DoPrecast(true);
 	d2B_moveToStair(2,8, false);										// front of den
-	d2B_TakeStair(8, false);
+	d2B_takeStairs(8, false);
 	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 15, -15);	// 774: Corpsefire
 	d2B_KillMonster(3319, 10);											// 3319: Corpsefire
+	
+	Delay(750);
+	d2B_chkAct(1);
+	return;
+}
+function d2B_Solo_bishiboshcoldcrow() {
+	if(InTown(me)) d2B_moveWP();
+	d2B_gotoWP(3);
+	NTP_DoPrecast(true);
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 15, -15);	// 734: Bishibosh
+	d2B_KillMonster(2869, 10);											// 2869: Bishibosh
+	
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 736, 15, -15);	// 736: Cold Crow
+	d2B_KillMonster(2871, 10);											// 2871: Cold Crow
+	
+	Delay(750);
+	d2B_chkAct(1);
+	return;
+}
+function d2B_Solo_bloodravenbonebreaker() {
+	if(InTown(me)) d2B_moveWP();
+	d2B_gotoWP(3);
+	NTP_DoPrecast(true);
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 7, 15, -15);		// 7: Blood Raven
+	d2B_KillMonster(3111, 10);											// 3111: Blood Raven
+	
+	d2B_moveToStair(17,18, false);										// front of crypt
+	d2B_takeStairs(18, false);
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 735, 15, -15);	// 735: Bone Breaker
+	d2B_KillMonster(2870, 10);											// 2870: Bone Breaker
 	
 	Delay(750);
 	d2B_chkAct(1);
@@ -642,11 +673,6 @@ function d2B_coldplains(a) {						// case: 2 | (false: all of cold plains | true
 	
 	if(d2B_usingAFollower) d2B_boSafe(1,35,1,false);		// (a: d2B_chkAct(a) | b: d2B_gotoWP(b) | c,d: d2B_isTeamInTown(c,d) ) 
 	d2B_commonInitSetup(3);
-	
-	/*d2B_takeMyTP(true, true, true, false, false);
-	d2B_team(false, false);
-	Delay(Random(4000,6000));
-	d2B_isTeamInTown(1,3);*/
 	
 	if(a) {										// do bishibosh
 		Delay(750);
@@ -2103,6 +2129,8 @@ function d2B_usePortal(a,b){
 }
 function d2B_moveToStair(a,b,c) {
 	NTM_MoveToStair(a, b);
+	Delay(500);
+	NTP_DoPrecast(true);
 	Delay(Random(1000,1200));
 	if(c) d2B_preCastClrLvlOC();
 	return;
@@ -3232,6 +3260,12 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					break;
 				case "corpsefire":
 					d2B_Solo_corpsefire();
+					break;
+				case "bishibosh":
+					d2B_Solo_bishiboshcoldcrow();
+					break;
+				case "bloodraven":
+					d2B_Solo_bloodravenbonebreaker();
 					break;
 				case "countess":
 					d2B_blackMarsh2(false);
