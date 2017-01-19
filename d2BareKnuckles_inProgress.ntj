@@ -606,7 +606,7 @@ function d2B_Solo_corpsefire() {
 	NTP_DoPrecast(true);
 	d2B_moveToStair(2,8, false);										// front of den
 	d2B_takeStairs(8, false);
-	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 15, -15);	// 774: Corpsefire
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 0, 0);		// 774: Corpsefire
 	d2B_KillMonster(3319, 10);											// 3319: Corpsefire
 	
 	Delay(750);
@@ -617,10 +617,12 @@ function d2B_Solo_bishiboshcoldcrow() {
 	if(InTown(me)) d2B_moveWP();
 	d2B_gotoWP(3);
 	NTP_DoPrecast(true);
-	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 15, -15);	// 734: Bishibosh
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 0, 0);		// 734: Bishibosh
 	d2B_KillMonster(2869, 10);											// 2869: Bishibosh
 	
-	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 736, 15, -15);	// 736: Cold Crow
+	d2B_moveToStair(3,9, false);
+	d2B_takeStairs(9, false);
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 736, 0, 0);		// 736: Cold Crow
 	d2B_KillMonster(2871, 10);											// 2871: Cold Crow
 	
 	Delay(750);
@@ -631,14 +633,29 @@ function d2B_Solo_bloodravenbonebreaker() {
 	if(InTown(me)) d2B_moveWP();
 	d2B_gotoWP(3);
 	NTP_DoPrecast(true);
-	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 7, 15, -15);		// 7: Blood Raven
+	NTM_MoveToPresetUnit(17, NTC_UNIT_TILE, 7, 0, 0);					// 7: Blood Raven
 	d2B_KillMonster(3111, 10);											// 3111: Blood Raven
 	
 	d2B_moveToStair(17,18, false);										// front of crypt
 	d2B_takeStairs(18, false);
-	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 735, 15, -15);	// 735: Bone Breaker
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 735, 0, 0);		// 735: Bone Breaker
 	d2B_KillMonster(2870, 10);											// 2870: Bone Breaker
 	
+	Delay(750);
+	d2B_chkAct(1);
+	return;
+}
+function d2B_Solo_rakanishytristram() {
+	if(InTown(me)) d2B_moveWP();
+	d2B_gotoWP(4);
+	NTP_DoPrecast(true);
+	d2B_movePresetUnitMonster(737, 10, 10);								// 737: Rakanishu
+	d2B_KillMonster(2872, 10);											// 2872: Rakanishu
+	
+	d2B_usePortal("Portal",38);											// use portal to enter tristram
+	Delay(Random(1000,1500));
+	d2B_clrLvlOC();
+
 	Delay(750);
 	d2B_chkAct(1);
 	return;
@@ -3266,6 +3283,9 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					break;
 				case "bloodraven":
 					d2B_Solo_bloodravenbonebreaker();
+					break;
+				case "rakanishy":
+					d2B_Solo_rakanishytristram();
 					break;
 				case "countess":
 					d2B_blackMarsh2(false);
