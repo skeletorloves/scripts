@@ -29,7 +29,7 @@
 	var _throneHelpers = false;				// if active fighters are following in the throne
 	
 	var d2B_usingSorcFlwrs = false;			// using sorcies as followers
-	var d2B_usingAFollower = false; 			// using a follower therefore make townportals d2B_takeMyTP()
+	var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_takeMyTP()
 	var d2B_refill = true;					// enable/disable NTTMGR_TownManager();
 	
 	var _teamBO = false;						// send team to a safe wp and bo
@@ -64,7 +64,7 @@
 //
 //
 	var d2B_cases = 1;
-	var d2B_toggleHelper = "helper";
+	var d2B_toggleHelper = "boBaba2";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 	
 /*	d2B_toggleHelper choices...
@@ -131,6 +131,10 @@ function NTMain() {
 		case "boBaba":
 			if(!_debug) d2B_newGmDlyPeepChk();
 			d2B_boBaba();				// for running a bo baba leader
+			break;
+		case "boBaba2":
+			if(!_debug) d2B_newGmDlyPeepChk();
+			d2B_boBaba2();				// for running a bo baba leader
 			break;
 	}
 	
@@ -596,6 +600,120 @@ function d2B_Act1(noTele) {							// Act 1 complete | noTele = var _nonTelePeeps
 		if(!d2B_usingAFollower) d2B_takeMyTP(false, false, true, true, false);
 		
 		d2B_team(true,1);							// return to Act1 town
+}
+
+//
+//
+function d2B_Solo_a1() {
+	if(InTown(me)) d2B_moveWP();
+	d2B_gotoWP(3);
+	NTP_DoPrecast(true);
+	d2B_moveToStair(2,8, false);										// front of den
+	d2B_takeStairs(8, false);
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 0, 0);		// 774: Corpsefire
+	d2B_KillMonster(3319, 10);											// 3319: Corpsefire
+	
+	Delay(750);
+	d2B_chkAct(1);
+	
+	Delay(Random(3000,3500));
+	if(InTown(me)) d2B_moveWP();
+	d2B_gotoWP(3);
+	NTP_DoPrecast(true);
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 0, 0);		// 734: Bishibosh
+	d2B_KillMonster(2869, 10);											// 2869: Bishibosh
+	
+	d2B_moveToStair(3,9, false);
+	d2B_takeStairs(9, false);
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 736, 0, 0);		// 736: Cold Crow
+	d2B_KillMonster(2871, 10);											// 2871: Cold Crow
+	
+	Delay(750);
+	d2B_chkAct(1);
+	
+	Delay(Random(3000,3500));
+	if(InTown(me)) d2B_moveWP();
+	d2B_gotoWP(3);
+	NTP_DoPrecast(true);
+	NTM_MoveToPresetUnit(17, NTC_UNIT_TILE, 7, 0, 0);					// 7: Blood Raven
+	d2B_KillMonster(3111, 10);											// 3111: Blood Raven
+	
+	d2B_moveToStair(17,18, false);										// front of crypt
+	d2B_takeStairs(18, false);
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 735, 0, 0);		// 735: Bone Breaker
+	d2B_KillMonster(2870, 10);											// 2870: Bone Breaker
+	
+	Delay(750);
+	d2B_chkAct(1);
+	
+	Delay(Random(3000,3500));
+	if(InTown(me)) d2B_moveWP();
+	d2B_gotoWP(4);
+	NTP_DoPrecast(true);
+	d2B_movePresetUnitMonster(737, 0, 0);								// 737: Rakanishu
+	d2B_KillMonster(2872, 10);											// 2872: Rakanishu
+	
+	d2B_usePortal("Portal",38);											// use portal to enter tristram
+	Delay(Random(1000,1500));
+	d2B_clrLvlOC();
+
+	Delay(750);
+	d2B_chkAct(1);
+	
+	Delay(Random(3000,3500));
+	if(InTown(me)) d2B_moveWP();
+	d2B_gotoWP(5);
+	NTP_DoPrecast(true);
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 30, 15, -15);		// 30: Treehead Woodfist
+	d2B_KillMonster(2873, 10);											// 2873: Treehead Woodfist
+	
+	Delay(750);
+	d2B_chkAct(1);
+	
+	Delay(Random(3000,3500));
+	if(InTown(me)) d2B_moveWP();
+	d2B_gotoWP(6);
+	NTP_DoPrecast(true);
+	for(var i = 0 ; i < 6 ; i++) {
+		d2B_moveToStair(me.areaid,20+i, false);	// go to the forgotten tower and do tower things
+		d2B_takeStairs(20+i, false);
+		Delay(Random(1000,1200));
+		if(i==5) {
+			d2B_clrLvlOC();
+		}
+	}
+
+	Delay(750);
+	d2B_chkAct(1);
+	
+	Delay(Random(3000,3500));
+	if(InTown(me)) d2B_moveWP();
+	d2B_gotoWP(32);
+	NTP_DoPrecast(true);
+	
+	d2B_movePresetUnitTitle(33,15,0);			// go to the enterance of the catacombs
+	d2B_clrLvlOC();								// clear the cathedral
+	
+	Delay(750);
+	d2B_chkAct(1);
+	
+	Delay(Random(3000,3500));
+	if(InTown(me)) d2B_moveWP();
+	d2B_gotoWP(35);
+	NTP_DoPrecast(true);
+
+	for(var i = 36 ; i <= 37 ; i++){			// head to catacombs 4
+		d2B_movePresetUnitTitle(me.areaid,18,0);
+		Delay(Random(1000,1500));
+		d2B_takeStairs(i, false);
+	}
+	NTM_MoveTo(me.areaid, 22545, 9517);
+	d2B_clrLvlOC();
+	NTM_MoveTo(me.areaid, 22545, 9517);
+	Delay(Random(2000,3000));
+	
+	d2B_chkAct(1);
+	return;
 }
 
 //
@@ -3332,6 +3450,9 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					NTConfig_SkipRegularMonsters = true;
 					d2B_SoloAct1();
 					NTConfig_SkipRegularMonsters = false;
+					break;
+				case "a1":
+					d2B_Solo_a1():
 					break;
 				case "corpsefire":
 					d2B_Solo_corpsefire();
@@ -6441,6 +6562,31 @@ function d2B_commonVars() {
 //
 // switchies for switching
 //
+function d2B_boBaba2() {
+
+	d2B_chkAct(1);
+	d2B_townMgr();
+	d2B_boBabaPre();
+
+	d2B_msg("sorc chaos");
+	Delay(750);
+	d2B_chkAct(1);
+	Delay(Random(230000,300000));
+
+	d2B_boBabaPre();
+	
+	d2B_msg("sorc baal");
+	Delay(750);
+	d2B_chkAct(1);
+	Delay(Random(230000,300000));
+	
+	d2B_boBabaPre();
+	
+	d2B_Solo_a1();
+	Delay(Random(600000,700000));
+	
+	return;
+}	
 function d2B_boBaba() {			// for running a bo baba leader
 	// chaos instructions...
 	d2B_chkAct(1);
