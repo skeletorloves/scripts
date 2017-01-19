@@ -649,7 +649,7 @@ function d2B_Solo_rakanishytristram() {
 	if(InTown(me)) d2B_moveWP();
 	d2B_gotoWP(4);
 	NTP_DoPrecast(true);
-	d2B_movePresetUnitMonster(737, 10, 10);								// 737: Rakanishu
+	d2B_movePresetUnitMonster(737, 0, 0);								// 737: Rakanishu
 	d2B_KillMonster(2872, 10);											// 2872: Rakanishu
 	
 	d2B_usePortal("Portal",38);											// use portal to enter tristram
@@ -657,6 +657,64 @@ function d2B_Solo_rakanishytristram() {
 	d2B_clrLvlOC();
 
 	Delay(750);
+	d2B_chkAct(1);
+	return;
+}
+function d2B_Solo_treehead() {
+	if(InTown(me)) d2B_moveWP();
+	d2B_gotoWP(5);
+	NTP_DoPrecast(true);
+	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 30, 15, -15);		// 30: Treehead Woodfist
+	d2B_KillMonster(2873, 10);											// 2873: Treehead Woodfist
+	
+	Delay(750);
+	d2B_chkAct(1);
+	return;
+}
+function d2B_Solo_countess() {
+	if(InTown(me)) d2B_moveWP();
+	d2B_gotoWP(6);
+	NTP_DoPrecast(true);
+	for(var i = 0 ; i < 6 ; i++) {
+		d2B_moveToStair(me.areaid,20+i, false);	// go to the forgotten tower and do tower things
+		d2B_takeStairs(20+i, false);
+		Delay(Random(1000,1200));
+		if(i==5) {
+			d2B_clrLvlOC();
+		}
+	}
+
+	Delay(750);
+	d2B_chkAct(1);
+	return;
+}
+function d2B_Solo_boneash() {
+	if(InTown(me)) d2B_moveWP();
+	d2B_gotoWP(32);
+	NTP_DoPrecast(true);
+	
+	d2B_movePresetUnitTitle(33,15,0);			// go to the enterance of the catacombs
+	d2B_clrLvlOC();								// clear the cathedral
+	
+	Delay(750);
+	d2B_chkAct(1);
+	return;
+}
+function d2B_cata4() {
+	if(InTown(me)) d2B_moveWP();
+	d2B_gotoWP(35);
+	NTP_DoPrecast(true);
+
+	for(var i = 36 ; i <= 37 ; i++){
+		d2B_movePresetUnitTitle(me.areaid,18,0);
+		Delay(Random(1000,1500));
+		d2B_takeStairs(i, false);
+	}
+	NTM_MoveTo(me.areaid, 22545, 9517);
+	d2B_clrLvlOC();
+	NTM_MoveTo(me.areaid, 22545, 9517);
+	Delay(Random(2000,3000));
+	
 	d2B_chkAct(1);
 	return;
 }
@@ -3287,11 +3345,17 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				case "rakanishy":
 					d2B_Solo_rakanishytristram();
 					break;
-				case "countess":
-					d2B_blackMarsh2(false);
+				case "treehead":
+					d2B_Solo_treehead();
 					break;
-				case "andarial":
-					d2B_cata2();
+				case "countess"
+					d2B_Solo_countess();
+					break;
+				case "boneash":
+					d2B_Solo_boneash();
+					break;
+				case "cata4"
+					d2B_cata4();
 					break;
 				case "chaos":
 					d2B_chaos(false);
