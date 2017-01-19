@@ -600,9 +600,7 @@ function d2B_Act1(noTele) {							// Act 1 complete | noTele = var _nonTelePeeps
 
 //
 //	Act I	
-function d2B_Solo_bloodmoor() {	// case: 1
-	NTConfig_SkipRegularMonsters = SkipRegMnstrs;
-	
+function d2B_Solo_corpsefire() {
 	if(InTown(me)) d2B_moveWP();
 	d2B_gotoWP(3);
 	d2B_moveToStair(2,8, false);										// front of den
@@ -614,6 +612,8 @@ function d2B_Solo_bloodmoor() {	// case: 1
 	d2B_chkAct(1);
 	return;
 }
+//
+// regular Act I functions:
 function d2B_bloodmoor(a) {							// case: 1
 	if(InTown(me)) d2B_moveWP();
 	d2B_gotoWP(3);
@@ -3229,6 +3229,9 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					NTConfig_SkipRegularMonsters = true;
 					d2B_SoloAct1();
 					NTConfig_SkipRegularMonsters = false;
+					break;
+				case "corpsefire":
+					d2B_Solo_corpsefire();
 					break;
 				case "countess":
 					d2B_blackMarsh2(false);
