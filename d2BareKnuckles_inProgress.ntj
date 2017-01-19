@@ -3348,13 +3348,13 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				case "treehead":
 					d2B_Solo_treehead();
 					break;
-				case "countess"
+				case "countess":
 					d2B_Solo_countess();
 					break;
 				case "boneash":
 					d2B_Solo_boneash();
 					break;
-				case "cata4"
+				case "cata4":
 					d2B_cata4();
 					break;
 				case "chaos":
@@ -6461,12 +6461,42 @@ function d2B_boBaba() {			// for running a bo baba leader
 	
 	d2B_boBabaPre();
 	
+	d2B_msg("sorc corpsefire");
+	Delay(750);
+	d2B_chkAct(1);
+	Delay(Random(130000,140000));
+	
+	d2B_msg("sorc bishibosh");
+	Delay(750);
+	d2B_chkAct(1);
+	Delay(Random(130000,140000));
+	
+	d2B_msg("sorc bloodraven");
+	Delay(750);
+	d2B_chkAct(1);
+	Delay(Random(130000,140000));
+	
+	d2B_msg("sorc rakanishy");
+	Delay(750);
+	d2B_chkAct(1);
+	Delay(Random(130000,140000));
+	
+	d2B_msg("sorc treehead");
+	Delay(750);
+	d2B_chkAct(1);
+	Delay(Random(130000,140000));
+	
 	d2B_msg("sorc countess");
 	Delay(750);
 	d2B_chkAct(1);
 	Delay(Random(130000,140000));
+	
+	d2B_msg("sorc boneash");
+	Delay(750);
+	d2B_chkAct(1);
+	Delay(Random(130000,140000));
 
-	d2B_msg("sorc andarial");
+	d2B_msg("sorc cata4");
 	Delay(750);
 	d2B_chkAct(1);
 	Delay(Random(130000,140000));
