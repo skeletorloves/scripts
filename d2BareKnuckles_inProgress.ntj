@@ -610,7 +610,7 @@ function d2B_Solo_a1() {
 	NTP_DoPrecast(true);
 	d2B_moveToStair(2,8, false);										// front of den
 	d2B_takeStairs(8, false);
-	if(NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 0, 0)) d2B_KillMonster(3319, 10);		// 774: Corpsefire 3319: Corpsefire
+	if(NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 0, 0)) d2B_KillMonster(3319, 5);		// 774: Corpsefire 3319: Corpsefire
 	Delay(750);
 	d2B_chkAct(1);
 	
@@ -618,10 +618,10 @@ function d2B_Solo_a1() {
 	if(InTown(me)) d2B_moveWP();
 	d2B_gotoWP(3);
 	NTP_DoPrecast(true);
-	if(NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 0, 0)) d2B_KillMonster(2869, 10);		// 734: Bishibosh 2869: Bishibosh
+	if(NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 0, 0)) d2B_KillMonster(2869, 5);		// 734: Bishibosh 2869: Bishibosh
 	d2B_moveToStair(3,9, false);
 	d2B_takeStairs(9, false);
-	if(NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 736, 0, 0)) d2B_KillMonster(2871, 10);		// 736: Cold Crow 2871: Cold Crow 
+	if(NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 736, 0, 0)) d2B_KillMonster(2871, 5);		// 736: Cold Crow 2871: Cold Crow 
 	Delay(750);
 	d2B_chkAct(1);
 	
@@ -629,10 +629,10 @@ function d2B_Solo_a1() {
 	if(InTown(me)) d2B_moveWP();
 	d2B_gotoWP(3);
 	NTP_DoPrecast(true);
-	if(NTM_MoveToPresetUnit(17, NTC_UNIT_TILE, 7, 0, 0)) d2B_KillMonster(3111, 10);					// 7: Blood Raven 3111: Blood Raven
+	if(NTM_MoveToPresetUnit(17, NTC_UNIT_TILE, 7, 0, 0)) d2B_KillMonster(3111, 5);					// 7: Blood Raven 3111: Blood Raven
 	d2B_moveToStair(17,18, false);																	// front of crypt
 	d2B_takeStairs(18, false);
-	if(NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 735, 0, 0)) d2B_KillMonster(2870, 10);		// 735: Bone Breaker 2870: Bone Breaker
+	if(NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 735, 0, 0)) d2B_KillMonster(2870, 5);		// 735: Bone Breaker 2870: Bone Breaker
 	Delay(750);
 	d2B_chkAct(1);
 	
@@ -640,7 +640,7 @@ function d2B_Solo_a1() {
 	if(InTown(me)) d2B_moveWP();
 	d2B_gotoWP(4);
 	NTP_DoPrecast(true);
-	if(d2B_movePresetUnitMonster(737, 0, 0)) d2B_KillMonster(2872, 10);								// 737: Rakanishu 2872: Rakanishu
+	if(d2B_movePresetUnitMonster(737, 0, 0)) d2B_KillMonster(2872, 5);								// 737: Rakanishu 2872: Rakanishu
 	d2B_usePortal("Portal",38);																		// use portal to enter tristram
 	Delay(Random(1000,1500));
 	d2B_clrLvlOC();
@@ -652,7 +652,7 @@ function d2B_Solo_a1() {
 	if(InTown(me)) d2B_moveWP();
 	d2B_gotoWP(5);
 	NTP_DoPrecast(true);
-	if(NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 30, 15, -15)) d2B_KillMonster(2873, 10);	// 30: Treehead Woodfist 2873: Treehead Woodfist
+	if(NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 30, 15, -15)) d2B_KillMonster(2873, 5);	// 30: Treehead Woodfist 2873: Treehead Woodfist
 	Delay(750);
 	d2B_chkAct(1);
 	
@@ -2221,13 +2221,13 @@ function d2B_gotoWP(a) {
 function d2B_movePresetUnitTitle(a,b,c,d) {			// NTM_MoveToPresetUnit(areaid, unittype, classid, offsetx, offsety, clearpath)
 	if(c != 0) {
 		if(!NTM_MoveToPresetUnit(a, NTC_UNIT_TILE, b, c, d)){
-			NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
+			//NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
 			return false;
 		}
 	}
 	if(c == 0) {
 		if(!NTM_MoveToPresetUnit(a, NTC_UNIT_TILE, b)){
-			NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
+			//NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
 			return false;
 		}
 	}
@@ -2236,7 +2236,7 @@ function d2B_movePresetUnitTitle(a,b,c,d) {			// NTM_MoveToPresetUnit(areaid, un
 }
 function d2B_movePresetUnitMonster(a,b,c) {
 	if(!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, a, b, c)){
-		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
+		//NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
 		return false;
 	}
 	if(d2B_usingSorcFlwrs) NTM_MakeTP();
@@ -2413,6 +2413,8 @@ function d2B_teamPro(teamTown, gLocStrng, clrPosDist, teamTown2, teamAct, dMsg, 
 	return;
 }
 function d2B_KillMonster(gLocStrng, clrPosDist) {
+	_target = NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(gLocStrng));  // as an example: NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(2904))
+	if(!_target) return;
 	NTA_KillMonster(GetLocaleString(gLocStrng));
 	Delay(300);
 	NTA_ClearPosition(clrPosDist, true);								// a: distance | true: enable pick items
@@ -6557,6 +6559,7 @@ function d2B_boBaba2() {
 	d2B_msg("sorc chaos");
 	Delay(750);
 	d2B_chkAct(1);
+	d2B_moveWP();
 	Delay(Random(230000,300000));
 
 	d2B_boBabaPre();
@@ -6564,11 +6567,15 @@ function d2B_boBaba2() {
 	d2B_msg("sorc baal");
 	Delay(750);
 	d2B_chkAct(1);
+	d2B_moveWP();
 	Delay(Random(230000,300000));
 	
 	d2B_boBabaPre();
 	
-	d2B_Solo_a1();
+	d2B_msg("sorc a1");
+	Delay(750);
+	d2B_chkAct(1);
+	d2B_moveWP();
 	Delay(Random(450000,500000));
 	
 	return;
