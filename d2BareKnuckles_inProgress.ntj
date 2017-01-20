@@ -610,9 +610,7 @@ function d2B_Solo_a1() {
 	NTP_DoPrecast(true);
 	d2B_moveToStair(2,8, false);										// front of den
 	d2B_takeStairs(8, false);
-	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 0, 0);		// 774: Corpsefire
-	d2B_KillMonster(3319, 10);											// 3319: Corpsefire
-	
+	if(NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 0, 0)) d2B_KillMonster(3319, 10);		// 774: Corpsefire 3319: Corpsefire
 	Delay(750);
 	d2B_chkAct(1);
 	
@@ -620,14 +618,10 @@ function d2B_Solo_a1() {
 	if(InTown(me)) d2B_moveWP();
 	d2B_gotoWP(3);
 	NTP_DoPrecast(true);
-	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 0, 0);		// 734: Bishibosh
-	d2B_KillMonster(2869, 10);											// 2869: Bishibosh
-	
+	if(NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 0, 0)) d2B_KillMonster(2869, 10);		// 734: Bishibosh 2869: Bishibosh
 	d2B_moveToStair(3,9, false);
 	d2B_takeStairs(9, false);
-	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 736, 0, 0);		// 736: Cold Crow
-	d2B_KillMonster(2871, 10);											// 2871: Cold Crow
-	
+	if(NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 736, 0, 0)) d2B_KillMonster(2871, 10);		// 736: Cold Crow 2871: Cold Crow 
 	Delay(750);
 	d2B_chkAct(1);
 	
@@ -635,14 +629,10 @@ function d2B_Solo_a1() {
 	if(InTown(me)) d2B_moveWP();
 	d2B_gotoWP(3);
 	NTP_DoPrecast(true);
-	NTM_MoveToPresetUnit(17, NTC_UNIT_TILE, 7, 0, 0);					// 7: Blood Raven
-	d2B_KillMonster(3111, 10);											// 3111: Blood Raven
-	
-	d2B_moveToStair(17,18, false);										// front of crypt
+	if(NTM_MoveToPresetUnit(17, NTC_UNIT_TILE, 7, 0, 0)) d2B_KillMonster(3111, 10);					// 7: Blood Raven 3111: Blood Raven
+	d2B_moveToStair(17,18, false);																	// front of crypt
 	d2B_takeStairs(18, false);
-	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 735, 0, 0);		// 735: Bone Breaker
-	d2B_KillMonster(2870, 10);											// 2870: Bone Breaker
-	
+	if(NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 735, 0, 0)) d2B_KillMonster(2870, 10);		// 735: Bone Breaker 2870: Bone Breaker
 	Delay(750);
 	d2B_chkAct(1);
 	
@@ -650,10 +640,8 @@ function d2B_Solo_a1() {
 	if(InTown(me)) d2B_moveWP();
 	d2B_gotoWP(4);
 	NTP_DoPrecast(true);
-	d2B_movePresetUnitMonster(737, 0, 0);								// 737: Rakanishu
-	d2B_KillMonster(2872, 10);											// 2872: Rakanishu
-	
-	d2B_usePortal("Portal",38);											// use portal to enter tristram
+	if(d2B_movePresetUnitMonster(737, 0, 0)) d2B_KillMonster(2872, 10);								// 737: Rakanishu 2872: Rakanishu
+	d2B_usePortal("Portal",38);																		// use portal to enter tristram
 	Delay(Random(1000,1500));
 	d2B_clrLvlOC();
 
@@ -664,9 +652,7 @@ function d2B_Solo_a1() {
 	if(InTown(me)) d2B_moveWP();
 	d2B_gotoWP(5);
 	NTP_DoPrecast(true);
-	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 30, 15, -15);		// 30: Treehead Woodfist
-	d2B_KillMonster(2873, 10);											// 2873: Treehead Woodfist
-	
+	if(NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 30, 15, -15)) d2B_KillMonster(2873, 10);	// 30: Treehead Woodfist 2873: Treehead Woodfist
 	Delay(750);
 	d2B_chkAct(1);
 	
@@ -2236,25 +2222,25 @@ function d2B_movePresetUnitTitle(a,b,c,d) {			// NTM_MoveToPresetUnit(areaid, un
 	if(c != 0) {
 		if(!NTM_MoveToPresetUnit(a, NTC_UNIT_TILE, b, c, d)){
 			NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
-			return;
+			return false;
 		}
 	}
 	if(c == 0) {
 		if(!NTM_MoveToPresetUnit(a, NTC_UNIT_TILE, b)){
 			NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
-			return;
+			return false;
 		}
 	}
 	if(d2B_usingSorcFlwrs) NTM_MakeTP();
-	return;
+	return true;
 }
 function d2B_movePresetUnitMonster(a,b,c) {
 	if(!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, a, b, c)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
-		return;
+		return false;
 	}
 	if(d2B_usingSorcFlwrs) NTM_MakeTP();
-	return;
+	return true;
 }
 function d2B_KoMoveToPresetUnit(areaId, unitType, classId, offsetX, offsetY, clearpath) {
 
@@ -6583,7 +6569,7 @@ function d2B_boBaba2() {
 	d2B_boBabaPre();
 	
 	d2B_Solo_a1();
-	Delay(Random(600000,700000));
+	Delay(Random(450000,500000));
 	
 	return;
 }	
