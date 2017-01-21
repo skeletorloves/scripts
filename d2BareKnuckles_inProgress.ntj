@@ -643,8 +643,8 @@ function d2B_Solo_a1() {
 	if(d2B_movePresetUnitMonster(737, 0, 0)) d2B_KillMonster(2872, 5);								// 737: Rakanishu 2872: Rakanishu
 	d2B_usePortal("Portal",38);																		// use portal to enter tristram
 	Delay(Random(1000,1500));
-	d2B_clrLvlOC();
-
+	if(d2B_movePresetUnitMonster(739, 0, 0)) d2B_KillMonster(2874, 5);								// 739: Gris 2874: Gris
+	
 	Delay(750);
 	d2B_chkAct(1);
 	
@@ -1873,7 +1873,7 @@ function d2B_worldstonekeep() {
 	NTM_TakeStair(131);
 	
 	NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
-	NTM_MakeTP();
+	if(_throneLeechers || _throneHelpers) NTM_MakeTP();
 	
 	if(_dollChk) {
 		if(d2B_dollsoulChk()) {
@@ -1888,14 +1888,14 @@ function d2B_worldstonekeep() {
 	}
 	_dollSoul = false;
 	NTM_MoveTo(me.areaid, 15094, 5039);				// safe: 15118, 5051 | centre: 15094, 5039 | orig(15112, 5068, 1, true)
-	NTM_MakeTP();
+	if(_throneLeechers || _throneHelpers) NTM_MakeTP();
 	d2B_msg(".");
 	NTA_ClearPosition();
 	
 	NT_ClearThroneInt();
 	//d2B_msg("yo");
 	NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
-	NTM_MakeTP();
+	if(_throneLeechers || _throneHelpers) NTM_MakeTP();
 	Delay(750);
 	if(!_quiet && _throneLeechers) Say("yo");
 	
@@ -2414,7 +2414,12 @@ function d2B_teamPro(teamTown, gLocStrng, clrPosDist, teamTown2, teamAct, dMsg, 
 }
 function d2B_KillMonster(gLocStrng, clrPosDist) {
 	_target = NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(gLocStrng));  // as an example: NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(2904))
-	if(!_target) return;
+	if(!_target) {
+		if(!InTown(me)) Town();
+		Delay(500);
+		d2B_moveWP();
+		return;
+	}
 	NTA_KillMonster(GetLocaleString(gLocStrng));
 	Delay(300);
 	NTA_ClearPosition(clrPosDist, true);								// a: distance | true: enable pick items
@@ -3440,7 +3445,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					NTConfig_SkipRegularMonsters = false;
 					break;
 				case "a1":
-					d2B_Solo_a1():
+					d2B_Solo_a1();
 					break;
 				case "corpsefire":
 					d2B_Solo_corpsefire();
