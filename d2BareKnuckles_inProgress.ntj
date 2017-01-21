@@ -5,7 +5,8 @@
 
 //	d2BareKnuckles.ntj
 	
-	var myLeader = me.charname;		// for the d2B_retrievePause() thingy...
+	var myLeader = me.charname;			// for the d2B_retrievePause() thingy...
+	var _TeamMsgMyself = me.charname; 	// to msg to myself a list of peeps in game
 	
 	_centreMe = false;				// for sending leader to the centre of Chaos Sanctuary
 	_justSuperUniques = true;		// for only running super unique monsters
@@ -88,7 +89,9 @@
 	var _peeps = [];						// d2B_Peeps()
 	var _peepsNum = 0;						// number of peeps (incl. leader)
 	var _peepsIn = false;					// d2B_peepsIn() for verifying if peeps are still in game
-
+	
+	var _teamPeeps = [];
+	var _teamPeepsQty;
 
 	var debug = false;
 
@@ -1873,7 +1876,6 @@ function d2B_worldstonekeep() {
 	NTM_TakeStair(131);
 	
 	NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
-	if(_throneLeechers || _throneHelpers) NTM_MakeTP();
 	
 	if(_dollChk) {
 		if(d2B_dollsoulChk()) {
@@ -1886,6 +1888,8 @@ function d2B_worldstonekeep() {
 		return;
 		}
 	}
+	if(_throneLeechers || _throneHelpers) NTM_MakeTP();
+	
 	_dollSoul = false;
 	NTM_MoveTo(me.areaid, 15094, 5039);				// safe: 15118, 5051 | centre: 15094, 5039 | orig(15112, 5068, 1, true)
 	if(_throneLeechers || _throneHelpers) NTM_MakeTP();
@@ -1917,6 +1921,30 @@ function d2B_worldstonekeep() {
 // ________________________________________________________
 //  goal functions
 //
+function d2B_team() {
+	var Player = GetPlayerUnit();
+	if(Player){
+		do{
+			if(_teamPeeps.indexOf(Player.name) == -1){
+				_teamPeeps.push(Player.name);	
+			}
+		} while(Player.GetNext())
+	}
+	_teamPeepsQty = _teamPeeps.length;
+	
+	return;
+}
+function d2b_teamMsgMe() {
+	for(int i = 0; i <= _teamPeeps.length; i++) {
+		Print(COLOR_1 + "team peep #" + i + ": " +
+		COLOR_2 + _teamPeeps[i].name + " " +
+		COLOR_3 + " lvl" + _teamPeeps[i].level + " "
+		COLOR_4 + " class: " + _teamPeeps[i].classid);
+		Delay(Random(1000,1500));
+	}
+	return;
+}
+		
 function d2B_Peeps() {								// store name of leader & followers in storePeeps.txt
 											// 
 	var TheTime = MyTime();
@@ -2502,7 +2530,7 @@ function d2B_msg(a) {
 }
 function d2B_littleJMP() {
 	if(me.areaid != 109) {
-		var x_tmp = Random(2,4);
+		var x_tmp = Random(3,8);
 		x_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
 		var y_tmp = Random(3,8);
 		y_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
@@ -3477,6 +3505,10 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				case "baal":
 					d2B_worldstonekeep();
 					d2B_chkAct(5);
+					break;
+				case: "team":
+					d2B_
+					d2B_
 					break;
 			}	
 			break;
@@ -6379,10 +6411,10 @@ function achmel() {
 function d2B_dollsoulChk() {
 	// GetLocaleString(2903) = undead stygian doll | GetLocaleString(2904) = undead soul killer
 	if(NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(2904)) || NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(2903))) {
-		if(!NTM_UsePortal("BluePortal", 109, me.charname)) {
+		if(!NTM_UsePortal("BluePortal", 109, me.charname) && !InTown(me)) {
 			NTM_MakeTP();
 			Delay(100);
-			NTTMGR_VisitTown();
+			Town();	// NTTMGR_VisitTown()
 		}
 		Delay(300);
 		Print(COLOR_4 + "Oops... Souls & dolls!");
