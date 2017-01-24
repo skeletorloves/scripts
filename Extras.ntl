@@ -39,7 +39,7 @@ var Extras =  {
 
 		NTM_MoveTo(me.areaid, xx, yy);
 
-		Say(Messages.cainscroll);
+		//Say(Messages.cainscroll);
 
 		NTM_MakeTP();
 
@@ -110,7 +110,7 @@ var Extras =  {
 		yy = me.y;
 		
 		NTM_MakeTP();
-		Say(Messages.cainstones);	
+		//Say(Messages.cainstones);	
 
 		while (!NTC_IsQuesterIn()) {
 			NTC_TPGuard(25);
@@ -122,7 +122,7 @@ var Extras =  {
 			NTM_MoveTo(me.areaid, xx, yy);
 		}
 
-		Say(Messages.caintristup);
+		//Say(Messages.caintristup);
 
 		NTSI_PickItems();						
 
@@ -137,7 +137,7 @@ var Extras =  {
 		NTM_MoveTo(me.areaid, 25134, 5143);
 		
 		NTM_MakeTP();
-		Say(Messages.cainup);
+		//Say(Messages.cainup);
 		
 		while (!NTC_IsQuesterIn()) {
 			NTC_TPGuard(25);
@@ -149,7 +149,7 @@ var Extras =  {
 			NTM_MoveTo(me.areaid, 25134, 5143);		
 		}
 
-		Say(Messages.cainfreed);
+		//Say(Messages.cainfreed);
 
 		NTSI_PickItems();	
 
@@ -308,7 +308,7 @@ var Extras =  {
 
 		NTM_MakeTP();
 
-		Say(Messages.radamentup);
+		//Say(Messages.radamentup);
 
 		while (!NTC_IsQuesterIn()) {				
 			NTC_TPGuard(15);
@@ -321,7 +321,7 @@ var Extras =  {
 
 		_rad = [me.x, me.y];
 
-		Say(Messages.radamentdown);
+		//Say(Messages.radamentdown);
 
 		NTA_ClearPosition(30);
 
@@ -474,7 +474,7 @@ var Extras =  {
 
 		NTM_MakeTP();
 
-		Say(Messages.tomeup);
+		//Say(Messages.tomeup);
 
 		while (!NTC_IsQuesterIn()) {
 			NTC_TPGuard(25);
@@ -593,7 +593,7 @@ var Extras =  {
 
 		NTM_MakeTP();
 
-		Say(Messages.izzyup);
+		//Say(Messages.izzyup);
 
 		while (!NTC_IsQuesterIn()) {
 			NTC_TPGuard(10);
@@ -611,7 +611,7 @@ var Extras =  {
 
 		NTSI_PickItems();
 
-		Say(Messages.izzydown);
+		//Say(Messages.izzydown);
 
 		NTM_MoveTo(me.areaid, xx, yy);
 
@@ -662,7 +662,7 @@ var Extras =  {
 			return false;
 		}
 
-		Say(Messages.forgeup);
+		//Say(Messages.forgeup);
 
 		NTM_MakeTP();
 
@@ -711,7 +711,7 @@ var Extras =  {
 
 		NTM_MakeTP();
 
-		Say(Messages.shenkup);
+		//Say(Messages.shenkup);
 
 		while (!NTC_IsQuesterIn()) {
 			NTC_TPGuard(20);
@@ -722,7 +722,7 @@ var Extras =  {
 			return false;
 		}
 
-		Say(Messages.shenkdown);
+		//Say(Messages.shenkdown);
 
 		if (!NTM_MoveTo(110, 3865, 5125)) {
 			Common.LogError("NTM_MoveTo()");
@@ -815,13 +815,13 @@ var Extras =  {
 
 		NTM_MakeTP();
 
-		Say(Messages.anyaup);
+		//Say(Messages.anyaup);
 
 		while (this.GetAnya()) {
 			NTC_TPGuard(25);
 		}
 
-		Say(Messages.anyadown);
+		//Say(Messages.anyadown);
 
 		NTM_UsePortal("BluePortal", 109, me.charname);
 		
@@ -897,7 +897,7 @@ var Extras =  {
 				if(NTM_MakeTP()) {					
 					_wppos = [me.x, me.y];
 
-					Say(Messages.waypoint + GetArea().name);
+					//Say(Messages.waypoint + GetArea().name);
 
 					if(!me.GetState(51)) {
 						NTP_DoPrecast(true);
