@@ -522,9 +522,8 @@ function NT_KeyEvents(keycode) {
 						//d2B_teamPro(true,3021,40,true,1,"n w", 22545, 9517);	// 3021: Andarial	
 					}
 
-		// for finding exp shrines
-			// blood moor
-					if((me.areaid == 2) || (me.areaid == 3) || (me.areaid == 4) || (me.areaid == 5)) {
+		// for finding an exp shrine
+					if(!InTown(me)) {
 						Print(COLOR_2 + "Looking for exp shrine...");
 						Delay(500);
 						NTP_DoPrecast(true);
@@ -532,12 +531,6 @@ function NT_KeyEvents(keycode) {
 						d2B_LXPC_FindShrines();
 						break;
 					}	
-					if(me.areaid == 40) {	// 
-						Print(COLOR_2 + "nothing set for this in act II");
-					}
-					if(me.areaid == 75) {	// 
-						Print(COLOR_2 + "nothing set for this in act III");
-					}
 					break;
 				case Key_POI:		
 					if(busy)
@@ -606,7 +599,7 @@ function NT_KeyEvents(keycode) {
 						Print(COLOR_4 + "Baal customized manual key menu...");
 						Delay(Random(1000,1200));
 					}
-					if(_keycodeMenu > 5) _keycodeMenu = 0;
+					if(_keycodeMenu > 1) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu);
 					/*if(MGAntiIdle) {
 						MGAntiIdle = false;
@@ -652,7 +645,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 5) _keycodeMenu = 0;
+					if(_keycodeMenu > 1) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu);
 					break;
 				case 103:			// #pad 7: grab exp shrine (orig:Key_MyChicken)
@@ -678,6 +671,20 @@ function NT_KeyEvents(keycode) {
 						Delay(300);
 						if(me.areaid == 131) NTM_MoveTo(131, 15113, 5053);		// moves to safe spot for lvling
 						NTP_DoPrecast(true);
+					}
+					break;
+				case 102:			// #pad 6: (orig: Key_Refresh)
+					if(me.areaid == 131) {
+						NTM_MoveTo(131, 15092, 5010);			// moves to entrance to worldstone chamber
+						NTP_DoPrecast(true);
+						for(var i = 0; i < 60; i++) {			// wait for baal to enter chamber
+							Delay(500);
+							if(!NTC_FindUnit(NTC_UNIT_MONSTER, 543)) break;
+						}
+						_portal = NTC_FindUnit(NTC_UNIT_OBJECT, 563, 1);
+						NTM_UsePortal("Portal", 132, null, _portal);	// enter into worldstone chamber
+						NTM_MoveTo(me.areaid, 15138, 5916);				// tele near baal
+						//NTA_KillMonster(544);							// kill baal
 					}
 					break;
 			}
