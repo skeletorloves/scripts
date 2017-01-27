@@ -564,8 +564,9 @@ function NT_KeyEvents(keycode) {
 				case Key_Breakpoints:
 					T_BPsPrint();
 					break;
-				case Key_MyChicken:
-					ChickenValues();
+				case Key_MyChicken:			// for stating x,y, and areaid parameters	
+					Print(COLOR_4 + me.x + "," + me.y + COLOR_1 + " - " + me.areaid);
+					//ChickenValues();
 					break;
 				case Key_CharStats:
 					NTU_CheckMyStats();
@@ -643,7 +644,10 @@ function NT_KeyEvents(keycode) {
 			break;
 		case 1:						// baal customized manual key menu
 			switch(keycode) {
-				case 46:			//[del] button (orig: Key_ExitGame)
+				case 46:			// [del] button (orig: Key_ExitGame)
+					ExitGame();
+					break;
+				case 96:			// #pad 0: exit game (orig: Key_DoPrecast)
 					ExitGame();
 					break;
 				case Key_AntiIdle: // [pause/break] button
@@ -651,6 +655,15 @@ function NT_KeyEvents(keycode) {
 					if(_keycodeMenu > 5) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu);
 					break;
+				case 103:			// #pad 7: grab exp shrine (orig:Key_MyChicken)
+					if(!InTown(me)) {
+						Print(COLOR_2 + "Looking for exp shrine...");
+						Delay(500);
+						NTP_DoPrecast(true);
+						Delay(500);
+						d2B_LXPC_FindShrines();
+					}
+					break; 
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
 					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
 					MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
@@ -658,13 +671,15 @@ function NT_KeyEvents(keycode) {
 					Delay(Random(1000,1700));
 					Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
 					break;
-				case 103:			// #pad 7: grab exp shrine (orig:Key_MyChicken)
-					Print(COLOR_2 + "Looking for exp shrine...");
-					Delay(500);
-					NTP_DoPrecast(true);
-					Delay(500);
-					d2B_LXPC_FindShrines();
-					break; 
+				case 105:			// #pad 9: enter throne blue portal then move to safe spot (orig: Key_CursoriLvL)
+					if(me.areaid == 109) {					// 109: Harrogoth
+						NTTM_TownMove("portalspot");
+						NTM_UsePortal("BluePortal", 131);	// 131: throne room
+						Delay(300);
+						if(me.areaid == 131) NTM_MoveTo(131, 15113, 5053);		// moves to safe spot for lvling
+						NTP_DoPrecast(true);
+					}
+					break;
 			}
 			break;
 		case 2:
