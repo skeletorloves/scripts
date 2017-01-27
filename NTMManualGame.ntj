@@ -598,7 +598,16 @@ function NT_KeyEvents(keycode) {
 					MGConfig_EstRun = true;
 					break;
 				case Key_AntiIdle:
-					if(MGAntiIdle) {
+					Print(COLOR_4 + "Changing customized key menu...");
+					Delay(500);
+					_keycodeMenu = _keycodeMenu + 1;
+					if(_keycodeMenu == 1) {
+						Print(COLOR_4 + "Baal customized manual key menu...");
+						Delay(Random(1000,1200));
+					}
+					if(_keycodeMenu > 5) _keycodeMenu = 0;
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu);
+					/*if(MGAntiIdle) {
 						MGAntiIdle = false;
 						Print(COLOR_4 + "AntiIdle " + COLOR_1 + "OFF");
 						if(me.gameserverip) Say("Alright, I'm back!");
@@ -607,7 +616,7 @@ function NT_KeyEvents(keycode) {
 						MGAntiIdle = true;
 						Print(COLOR_4 + "AntiIdle " + COLOR_2 + "ON");
 						if(me.gameserverip) Say("Going AFK, may be a while!");
-					}
+					}*/
 					break;
 				case Key_PickItems:
 					NTSI_PickItems();
@@ -632,8 +641,75 @@ function NT_KeyEvents(keycode) {
 					break;
 			}
 			break;
-		case 1:
-			Print(COLOR_2 + "Customized key menu: "+ COLOR_5 + "CBaal...");
+		case 1:						// baal customized manual key menu
+			switch(keycode) {
+				case 46:			//[del] button (orig: Key_ExitGame)
+					ExitGame();
+					break;
+				case Key_AntiIdle: // [pause/break] button
+					_keycodeMenu = _keycodeMenu + 1;
+					if(_keycodeMenu > 5) _keycodeMenu = 0;
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu);
+					break;
+				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
+					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
+					MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
+					Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+					Delay(Random(1000,1700));
+					Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+					break;
+				case 103:			// #pad 7: grab exp shrine (orig:Key_MyChicken)
+					Print(COLOR_2 + "Looking for exp shrine...");
+					Delay(500);
+					NTP_DoPrecast(true);
+					Delay(500);
+					d2B_LXPC_FindShrines();
+					break; 
+			}
+			break;
+		case 2:
+			switch(keycode) {
+				case Key_AntiIdle:
+					Print(COLOR_4 + "Changing customized key menu...");
+					Delay(500);
+					_keycodeMenu = _keycodeMenu + 1;
+					if(_keycodeMenu > 5) _keycodeMenu = 0;
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu);
+					break;
+			}
+			break;
+		case 3:
+			switch(keycode) {
+				case Key_AntiIdle:
+					Print(COLOR_4 + "Changing customized key menu...");
+					Delay(500);
+					_keycodeMenu = _keycodeMenu + 1;
+					if(_keycodeMenu > 5) _keycodeMenu = 0;
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu);
+					break;
+			}
+			break;
+		case 4:
+			switch(keycode) {
+				case Key_AntiIdle:
+					Print(COLOR_4 + "Changing customized key menu...");
+					Delay(500);
+					_keycodeMenu = _keycodeMenu + 1;
+					if(_keycodeMenu > 5) _keycodeMenu = 0;
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu);
+					break;
+			}
+			break;
+		case 5:
+			switch(keycode) {
+				case Key_AntiIdle:
+					Print(COLOR_4 + "Changing customized key menu...");
+					Delay(500);
+					_keycodeMenu = _keycodeMenu + 1;
+					if(_keycodeMenu > 5) _keycodeMenu = 0;
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu);
+					break;
+			}
 			break;
 	}
 }
