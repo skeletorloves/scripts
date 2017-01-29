@@ -94,9 +94,29 @@ function CheckMap() {
 
 function NT_KeyEvents(keycode) {
 	switch(_keycodeMenu) {
-		case 0:				// main customized keycode menu
-			Print(COLOR_2 + "Customized key menu: "+ COLOR_5 + "Main...");
+		case 0:						// main customized keycode menu
 			switch(keycode) {
+				case Key_AntiIdle:
+					Print(COLOR_4 + "Changing customized key menu...");
+					Delay(500);
+					_keycodeMenu = _keycodeMenu + 1;
+					if(_keycodeMenu == 1) {
+						Print(COLOR_4 + "Baal customized manual key menu...");
+						Delay(Random(1000,1200));
+					}
+					if(_keycodeMenu > 2) _keycodeMenu = 0;
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu);
+					/*if(MGAntiIdle) {
+						MGAntiIdle = false;
+						Print(COLOR_4 + "AntiIdle " + COLOR_1 + "OFF");
+						if(me.gameserverip) Say("Alright, I'm back!");
+					}
+					else {
+						MGAntiIdle = true;
+						Print(COLOR_4 + "AntiIdle " + COLOR_2 + "ON");
+						if(me.gameserverip) Say("Going AFK, may be a while!");
+					}*/
+					break;
 				case 104:		// number pad #8
 					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
 					MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
@@ -591,27 +611,6 @@ function NT_KeyEvents(keycode) {
 					Print(COLOR_4 + "Current Game Stats sent to Manager!");
 					MGConfig_EstRun = true;
 					break;
-				case Key_AntiIdle:
-					Print(COLOR_4 + "Changing customized key menu...");
-					Delay(500);
-					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu == 1) {
-						Print(COLOR_4 + "Baal customized manual key menu...");
-						Delay(Random(1000,1200));
-					}
-					if(_keycodeMenu > 1) _keycodeMenu = 0;
-					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu);
-					/*if(MGAntiIdle) {
-						MGAntiIdle = false;
-						Print(COLOR_4 + "AntiIdle " + COLOR_1 + "OFF");
-						if(me.gameserverip) Say("Alright, I'm back!");
-					}
-					else {
-						MGAntiIdle = true;
-						Print(COLOR_4 + "AntiIdle " + COLOR_2 + "ON");
-						if(me.gameserverip) Say("Going AFK, may be a while!");
-					}*/
-					break;
 				case Key_PickItems:
 					NTSI_PickItems();
 					break;
@@ -645,8 +644,8 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 1) _keycodeMenu = 0;
-					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu);
+					if(_keycodeMenu > 2) _keycodeMenu = 0;
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "rushing customized manual key menu");
 					break;
 				case 103:			// #pad 7: grab exp shrine (orig:Key_MyChicken)
 					if(!InTown(me)) {
@@ -683,13 +682,187 @@ function NT_KeyEvents(keycode) {
 						}
 						_portal = NTC_FindUnit(NTC_UNIT_OBJECT, 563, 1);
 						NTM_UsePortal("Portal", 132, null, _portal);	// enter into worldstone chamber
-						NTM_MoveTo(me.areaid, 15138, 5916);				// tele near baal
+						NTM_MoveTo(me.areaid, 15138, 5899);				// tele near baal (orig: 15138, 5916)
 						//NTA_KillMonster(544);							// kill baal
 					}
 					break;
 			}
 			break;
-		case 2:
+		case 2:						// rushing customized manual key menu
+			switch(keycode) {
+				case 46:			// [del] button (orig: Key_ExitGame)
+					ExitGame();
+					break;
+				case 96:			// #pad 0: exit game (orig: Key_DoPrecast)
+					ExitGame();
+					break;
+				case Key_AntiIdle: // [pause/break] button
+					_keycodeMenu = _keycodeMenu + 1;
+					if(_keycodeMenu > 2) _keycodeMenu = 0;
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "rushing customized manual key menu");
+					break;
+				case 97:			// #pad 1: den of evil
+					if(me.areaid == 1) {	// corpsefire
+						Print(COLOR_2 + "going for corpsefire");
+						d2B_moveWP();
+						d2B_gotoWP(3);
+						NTP_DoPrecast(true);
+						Delay(300);
+						d2B_moveToStair(2,8);							// head to front of den as a starting point
+						Delay(750);
+						NTM_TakeStair(8);
+						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 15, -15);	// 774: Corpsefire
+					}
+					break;
+				case 98:			// #pad 2: cain
+					if(me.areaid == 1) {	// from town going for tree head
+						Print(COLOR_2 + "going for tree head");
+						d2B_moveWP();
+						d2B_gotoWP(5);
+						NTP_DoPrecast(true);
+						Delay(200);
+						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 30, 15, -15);
+						NTM_MakeTP();
+						break;
+					}
+					if(me.areaid == 5) {	// from tree going to cairn stones
+						Print(COLOR_2 + "going for cairn stones");
+						Town();
+						d2B_moveWP();
+						d2B_gotoWP(4);
+						NTP_DoPrecast(true);
+						Delay(200);
+						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 15, -15);
+						NTM_MakeTP();
+					}
+					
+				case 99:			// #pad 3: andy
+					if(me.areaid == 1) {	// Andarial
+						Print(COLOR_2 + "going for andy");
+						d2B_moveWP();
+						d2B_gotoWP(35);
+						NTP_DoPrecast(true);
+						Delay(750);
+						for (i = 0; i < 2; i++) {
+							NTM_MoveToStair(me.areaid, 36 + i);
+							NTM_TakeStair(36 + i);
+							Delay(Random(1000,1200));
+						}
+						NTM_MakeTP();
+						//NTM_MoveTo(me.areaid, 22545, 9517);						// walls  right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547 | 22545, 9517: towards the back where the rogues hang
+						//if(d2B_usingAFollower) d2B_team(true);
+						//d2B_teamPro(true,3021,40,true,1,"n w", 22545, 9517);	// 3021: Andarial	
+					}
+					
+				case 100:			// #pad 4: radamant
+					if(!InTown(me)) Town();
+					Print(COLOR_2 + "going for radament");
+					d2B_moveWP();
+					d2B_gotoWP(48);
+					NTP_DoPrecast(true);
+					Delay(750);
+					d2B_moveToStair(me.areaid, 49);
+					NTM_TakeStair(49);
+					Delay(Random(750,1000));
+					NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 355, 10, -10);		// 355: chest near to Radament
+					//NTM_MakeTP();
+				case 101:			// #pad 5: cube,staff,ammy,summoner
+					if(InTown(me)) {										// cube
+						Print(COLOR_2 + "going for cube");
+						if(!me.areaid == 57) {
+							d2B_moveWP();
+							d2B_gotoWP(57);
+						}
+						NTP_DoPrecast(true);
+						d2B_moveToStair(me.areaid, 60);
+						NTM_TakeStair(60);
+						Delay(Random(750,1000));
+						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 354, -5, -5);
+					}
+					if(!InTown(me)) {										// staff
+						if(me.areaid == 60 || me.areaid == 43) {
+							Print(COLOR_2 + "going for staff");
+							if(me.areaid == 60) {
+								Town();
+								d2B_moveWP();
+								d2B_gotoWP(43);
+							}
+							NTP_DoPrecast(true);
+							for (i = 0; i < 3; i += 1) {
+								d2B_moveToStair(me.areaid, 62+i);
+								NTM_TakeStair(62+i);
+								Delay(Random(750,1000));
+							}	
+							NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 356, -5, -5);
+						}
+					}
+					if(!InTown(me)) {										// amulet
+						if(me.areaid == 64 || me.areaid == 44) {
+							Print(COLOR_2 + "going for amulet");
+							if(me.areaid == 64) {
+								Town();
+								d2B_moveWP();
+								d2B_gotoWP(44);
+							}
+							NTP_DoPrecast(true);
+							d2B_moveToStair(45, 58);
+							NTM_TakeStair(58);
+							Delay(Random(750,1000));
+							d2B_moveToStair(me.areaid, 61);
+							NTM_TakeStair(61);
+							Delay(300);
+							NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 149, +4, -8);
+							NTM_MakeTP();
+						}
+					}
+					if(!InTown(me)) {										// summoner
+						if(me.areaid == 61 || me.areaid == 74) {
+							Print(COLOR_2 + "going for summoner");
+							If(me.areaid == 61) {
+								Town();
+								d2B_moveWP();
+								d2B_gotoWP(74);
+							}
+							NTP_DoPrecast(true);
+							Delay(750);
+							
+							var _object = GetPresetUnits(me.areaid);
+							for(var i = 0; i < _object.length; i++) {
+								if(_object[i].id == 357) {
+									if(_object[i].x == 11 && _object[i].y == 11) NTM_MoveTo(me.areaid,  25450, 5030);
+									else if(_object[i].x == 26 && _object[i].y == 11) NTM_MoveTo(me.areaid,  25863, 5449);
+									else if(_object[i].x == 11 && _object[i].y == 21) NTM_MoveTo(me.areaid,  25445, 5869);
+									else NTM_MoveTo(me.areaid,  25023, 5449);
+								}
+							}
+							NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 357, 2, 2);		// 357: the journal stand beside Summoner
+						}	
+						
+					}
+					if(!InTown(me)) {										// duri
+						if(me.areaid == 74 || me.areaid == 46) {
+							Print(COLOR_2 + "going for duri");
+							If(me.areaid == 74) {
+								Town();
+								d2B_moveWP();
+								d2B_gotoWP(46);
+							}
+							NTP_DoPrecast(true);
+							Delay(750);
+							_tombs = GetRoom();
+							NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_TILE, _tombs.correcttomb-28);
+							_unit = NTC_FindUnit(NTC_UNIT_TILE, _tombs.correcttomb-28, 5);
+							NTM_TakeStair(_unit.subareaid);
+							Delay(Random(300,500));
+							NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 152, -2, 2);
+							NTC_FindUnit(NTC_UNIT_OBJECT, 100, 10);
+							NTM_TakeUnit(NTC_UNIT_OBJECT, 100);
+							NTM_MakeTP();
+						}
+					}
+			}
+			break;
+		case 3:						// this one is in-progress
 			switch(keycode) {
 				case Key_AntiIdle:
 					Print(COLOR_4 + "Changing customized key menu...");
@@ -700,7 +873,7 @@ function NT_KeyEvents(keycode) {
 					break;
 			}
 			break;
-		case 3:
+		case 4:						// this one is in-progress
 			switch(keycode) {
 				case Key_AntiIdle:
 					Print(COLOR_4 + "Changing customized key menu...");
@@ -711,18 +884,7 @@ function NT_KeyEvents(keycode) {
 					break;
 			}
 			break;
-		case 4:
-			switch(keycode) {
-				case Key_AntiIdle:
-					Print(COLOR_4 + "Changing customized key menu...");
-					Delay(500);
-					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 5) _keycodeMenu = 0;
-					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu);
-					break;
-			}
-			break;
-		case 5:
+		case 5:						// this one is in-progress
 			switch(keycode) {
 				case Key_AntiIdle:
 					Print(COLOR_4 + "Changing customized key menu...");
