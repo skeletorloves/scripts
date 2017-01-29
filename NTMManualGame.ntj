@@ -702,20 +702,19 @@ function NT_KeyEvents(keycode) {
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "rushing customized manual key menu");
 					break;
 				case 97:			// #pad 1: den of evil
-					if(me.areaid == 1) {	// corpsefire
-						Print(COLOR_2 + "going for corpsefire");
-						d2B_moveWP();
-						d2B_gotoWP(3);
-						NTP_DoPrecast(true);
-						Delay(300);
-						d2B_moveToStair(2,8);							// head to front of den as a starting point
-						Delay(750);
-						NTM_TakeStair(8);
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 15, -15);	// 774: Corpsefire
-					}
+					Print(COLOR_2 + "going for corpsefire");
+					if(!InTown(me)) NTTM_CheckAct();
+					d2B_moveWP();
+					d2B_gotoWP(3);
+					NTP_DoPrecast(true);
+					Delay(300);
+					d2B_moveToStair(2,8);							// head to front of den as a starting point
+					Delay(750);
+					NTM_TakeStair(8);
+					NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 15, -15);	// 774: Corpsefire
 					break;
 				case 98:			// #pad 2: cain
-					if(me.areaid == 1) {	// from town going for tree head
+					if(InTown(me)) {						// from town going for tree head
 						Print(COLOR_2 + "going for tree head");
 						d2B_moveWP();
 						d2B_gotoWP(5);
@@ -725,9 +724,9 @@ function NT_KeyEvents(keycode) {
 						NTM_MakeTP();
 						break;
 					}
-					if(me.areaid == 5) {	// from tree going to cairn stones
+					if(!InTown() || me.areaid == 5) {		// from tree going to cairn stones
 						Print(COLOR_2 + "going for cairn stones");
-						Town();
+						if(!InTown()) NTTM_CheckAct();
 						d2B_moveWP();
 						d2B_gotoWP(4);
 						NTP_DoPrecast(true);
@@ -735,10 +734,10 @@ function NT_KeyEvents(keycode) {
 						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 15, -15);
 						NTM_MakeTP();
 					}
-					
 				case 99:			// #pad 3: andy
-					if(me.areaid == 1) {	// Andarial
-						Print(COLOR_2 + "going for andy");
+					Print(COLOR_2 + "going for andy");
+					if(!InTown()) {							// Andarial
+						NTTM_CheckAct();			
 						d2B_moveWP();
 						d2B_gotoWP(35);
 						NTP_DoPrecast(true);
@@ -749,11 +748,9 @@ function NT_KeyEvents(keycode) {
 							Delay(Random(1000,1200));
 						}
 						NTM_MakeTP();
-						//NTM_MoveTo(me.areaid, 22545, 9517);						// walls  right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547 | 22545, 9517: towards the back where the rogues hang
-						//if(d2B_usingAFollower) d2B_team(true);
-						//d2B_teamPro(true,3021,40,true,1,"n w", 22545, 9517);	// 3021: Andarial	
+						break;
 					}
-					
+					if(me.areaid == 37) NTM_MoveTo(me.areaid, 22545, 9517);	// wall: right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547 | 22545, 9517: towards the back where the rogues hang
 				case 100:			// #pad 4: radamant
 					if(!InTown(me)) Town();
 					Print(COLOR_2 + "going for radament");
@@ -783,7 +780,7 @@ function NT_KeyEvents(keycode) {
 						if(me.areaid == 60 || me.areaid == 43) {
 							Print(COLOR_2 + "going for staff");
 							if(me.areaid == 60) {
-								Town();
+								NTTM_CheckAct();
 								d2B_moveWP();
 								d2B_gotoWP(43);
 							}
@@ -800,7 +797,7 @@ function NT_KeyEvents(keycode) {
 						if(me.areaid == 64 || me.areaid == 44) {
 							Print(COLOR_2 + "going for amulet");
 							if(me.areaid == 64) {
-								Town();
+								NTTM_CheckAct();
 								d2B_moveWP();
 								d2B_gotoWP(44);
 							}
@@ -818,8 +815,8 @@ function NT_KeyEvents(keycode) {
 					if(!InTown(me)) {										// summoner
 						if(me.areaid == 61 || me.areaid == 74) {
 							Print(COLOR_2 + "going for summoner");
-							If(me.areaid == 61) {
-								Town();
+							if(me.areaid == 61) {
+								NTTM_CheckAct();
 								d2B_moveWP();
 								d2B_gotoWP(74);
 							}
@@ -842,8 +839,8 @@ function NT_KeyEvents(keycode) {
 					if(!InTown(me)) {										// duri
 						if(me.areaid == 74 || me.areaid == 46) {
 							Print(COLOR_2 + "going for duri");
-							If(me.areaid == 74) {
-								Town();
+							if(me.areaid == 74) {
+								NTTM_CheckAct();
 								d2B_moveWP();
 								d2B_gotoWP(46);
 							}
