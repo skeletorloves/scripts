@@ -699,7 +699,7 @@ function NT_KeyEvents(keycode) {
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
 					if(_keycodeMenu > 2) _keycodeMenu = 0;
-					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "rushing customized manual key menu");
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "main customized keycode menu...");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
 					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
@@ -764,8 +764,8 @@ function NT_KeyEvents(keycode) {
 			//act ii
 				case 100:			// #pad 4: radamant
 					Print(COLOR_2 + "going for radament");
-					if(!InTown()) NTTM_CheckAct();
-					if(InTown(me) {
+					if(!InTown() && me.areaid != 48) NTTM_CheckAct();
+					if(InTown(me)) {
 						d2B_moveWP();
 						d2B_gotoWP(48);
 					}
@@ -779,11 +779,13 @@ function NT_KeyEvents(keycode) {
 					}
 					break;	
 				case 101:			// #pad 5: cube,staff,ammy,summoner
-					Print(COLOR_2 + "going for cube");
-					if(!InTown()) NTTM_CheckAct();
-					if(InTown(me)) {										// cube
-						d2B_moveWP();
-						d2B_gotoWP(57);
+					if(!InTown() && me.areaid != 57 && me.areaid != 60 && me.areaid != 43 && me.areaid != 64 && me.areaid != 44 && me.areaid != 61 && me.areaid != 74 && me.areaid != 46) NTTM_CheckAct();
+					if(InTown(me) || me.areaid == 57) {										// cube
+						Print(COLOR_2 + "going for cube");
+						if(InTown(me)) {
+							d2B_moveWP();
+							d2B_gotoWP(57);
+						}
 						NTP_DoPrecast(true);
 						d2B_moveToStair(me.areaid, 60);
 						NTM_TakeStair(60);
@@ -827,7 +829,7 @@ function NT_KeyEvents(keycode) {
 						NTM_MakeTP();
 						break;
 					}
-					if(me.areaid == 61 || me.areaid == 74)					// summoner
+					if(me.areaid == 61 || me.areaid == 74) {				// summoner
 						Print(COLOR_2 + "going for summoner");
 						if(me.areaid == 61) {
 							NTTM_CheckAct();
@@ -845,10 +847,11 @@ function NT_KeyEvents(keycode) {
 								else if(_object[i].x == 11 && _object[i].y == 21) NTM_MoveTo(me.areaid,  25445, 5869);
 								else NTM_MoveTo(me.areaid,  25023, 5449);
 							}
+						}
 						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 357, 2, 2);		// 357: the journal stand beside Summoner	
 						break;
 					}
-					if(me.areaid == 74 || me.areaid == 46) {				// duri
+					if(me.areaid == 46) {				// duri
 						Print(COLOR_2 + "going for duri");
 						if(me.areaid == 74) {
 							NTTM_CheckAct();
@@ -867,6 +870,58 @@ function NT_KeyEvents(keycode) {
 						NTM_TakeUnit(NTC_UNIT_OBJECT, 100);
 						NTM_MakeTP();
 						break;
+					}
+				case 102:			// #pad 6: khalim's eye, brain, heart
+					if(!InTown && me.areaid != 76 && me.areaid != 85) {
+						NTTM_CheckAct();
+						d2B_moveWP();
+						d2B_gotoWP(76);
+					}
+					if(me.areaid == 76) {										// eye
+						Print(COLOR_2 + "going for the eye");
+						NTP_DoPrecast(true);
+						NTM_MoveToStair(me.areaid, 85);
+						NTM_TakeStair(85);
+						Delay(300);
+						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 407);
+						break;
+					}	
+					if(me.areaid == 85 || me.areaid == 78) {					// brain
+						if(me.areaid == 85) {
+							NTTM_CheckAct();
+							d2B_moveWP();
+							d2B_gotoWP(78);
+						}
+						Print(COLOR_2 + "going for the brain");
+						NTP_DoPrecast(true);
+						NTM_MoveToStair(78, 88);
+						NTM_TakeStair(88);
+						Delay(Random(750,1000));
+						NTM_MoveToStair(88, 89);
+						NTM_TakeStair(89);
+						Delay(Random(750,1000));
+						NTM_MoveToStair(89, 91);
+						NTM_TakeStair(91);
+						Delay(300);
+						NTM_MoveToPresetUnit(91, NTC_UNIT_MONSTER, 756, -3, 8);
+						NTM_MakeTP();
+						break;
+					}
+					if(me.areaid == 91 || me.areaid == 80 || me.areaid == 81) {	// Khalim's heart
+						if(me.areaid == 91) {
+							NTTM_CheckAct();
+							d2B_moveWP();
+							d2B_gotoWP(80);
+						}
+						Print(COLOR_2 + "going for the heart");
+						NTP_DoPrecast(true);
+						if(me.areaid == 80) NTM_MoveToStair(80,92);
+						if(me.areaid == 81) NTM_MoveToStair(81,92);
+						NTM_TakeStair(92);
+						Delay(Random(750,1000));
+						NTM_MoveToStair(92,93);
+						NTM_TakeStair(93);
+						break;	
 					}
 			}
 			break;
