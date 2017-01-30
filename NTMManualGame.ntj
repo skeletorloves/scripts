@@ -779,7 +779,7 @@ function NT_KeyEvents(keycode) {
 					}
 					break;	
 				case 101:			// #pad 5: cube,staff,ammy,summoner,duir,tyrael
-					if(!InTown() && me.areaid != 57 && me.areaid != 60 && me.areaid != 43 && me.areaid != 64 && me.areaid != 44 && me.areaid != 61 && me.areaid != 74 && me.areaid != 46) d2B_NTTM_CheckAct(43);
+					if(!InTown() && me.areaid != 57 && me.areaid != 60 && me.areaid != 43 && me.areaid != 64 && me.areaid != 44 && me.areaid != 61 && me.areaid != 74 && me.areaid != 46 && me.areaid !=73) d2B_NTTM_CheckAct(43);
 					if(InTown(me) || me.areaid == 57) {										// cube
 						Print(COLOR_2 + "going for cube");
 						if(InTown(me)) {
@@ -873,7 +873,25 @@ function NT_KeyEvents(keycode) {
 					}
 					if(me.areaid == 73) {				// make a tp by tyrael
 						Print(COLOR_2 + "going for tyrael");
-						if(!NTM_MoveTo(73,  22577, 15598)) break;
+						var _npc;
+						var px = [22579,22576,22577];
+						var py = [15660,15638,15593];
+						var bx = [22632,22621,22609,22592,22579, 22579];
+						var by = [15708,15710,15707,15706,15704, 15690];
+							
+						for(var i = 0 ; i < bx.length ; i += 1){
+							NTM_WalkTo(bx[i], by[i]);
+						}
+						
+						for(var i = 0 ; i < px.length ; i += 1){
+							NTM_WalkTo(px[i], py[i]);
+						}
+						
+						_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(1013), 5);
+						if(_npc){
+							if(GetDistance(me, _npc) > 2)
+								NTM_WalkTo(_npc.x, _npc.y-3);
+						}
 						d2B_NTTM_CheckAct(43);
 						d2B_moveWP();
 						d2B_gotoWP(52);
