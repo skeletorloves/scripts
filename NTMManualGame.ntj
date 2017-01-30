@@ -711,7 +711,7 @@ function NT_KeyEvents(keycode) {
 			// act i
 				case 97:			// #pad 1: den of evil
 					Print(COLOR_2 + "going for corpsefire");
-					if(!InTown(me)) NTTM_CheckAct();
+					if(!InTown(me)) d2B_NTTM_CheckAct(1);
 					d2B_moveWP();
 					d2B_gotoWP(3);
 					NTP_DoPrecast(true);
@@ -734,7 +734,7 @@ function NT_KeyEvents(keycode) {
 					}
 					if(!InTown() || me.areaid == 5) {		// from tree going to cairn stones
 						Print(COLOR_2 + "going for cairn stones");
-						if(!InTown()) NTTM_CheckAct();
+						if(!InTown()) d2B_NTTM_CheckAct(1);
 						d2B_moveWP();
 						d2B_gotoWP(4);
 						NTP_DoPrecast(true);
@@ -749,7 +749,7 @@ function NT_KeyEvents(keycode) {
 						break;
 					}
 					Print(COLOR_2 + "going for andy");
-					if(!InTown()) NTTM_CheckAct();			// Andarial
+					if(!InTown()) d2B_NTTM_CheckAct(1);			// Andarial
 					d2B_moveWP();
 					d2B_gotoWP(35);
 					NTP_DoPrecast(true);
@@ -764,7 +764,7 @@ function NT_KeyEvents(keycode) {
 			//act ii
 				case 100:			// #pad 4: radamant
 					Print(COLOR_2 + "going for radament");
-					if(!InTown() && me.areaid != 48) NTTM_CheckAct();
+					if(!InTown() && me.areaid != 48) d2B_NTTM_CheckAct(43);
 					if(InTown(me)) {
 						d2B_moveWP();
 						d2B_gotoWP(48);
@@ -778,8 +778,8 @@ function NT_KeyEvents(keycode) {
 						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 355, 10, -10);		// 355: chest near to Radament
 					}
 					break;	
-				case 101:			// #pad 5: cube,staff,ammy,summoner
-					if(!InTown() && me.areaid != 57 && me.areaid != 60 && me.areaid != 43 && me.areaid != 64 && me.areaid != 44 && me.areaid != 61 && me.areaid != 74 && me.areaid != 46) NTTM_CheckAct();
+				case 101:			// #pad 5: cube,staff,ammy,summoner,duir,tyrael
+					if(!InTown() && me.areaid != 57 && me.areaid != 60 && me.areaid != 43 && me.areaid != 64 && me.areaid != 44 && me.areaid != 61 && me.areaid != 74 && me.areaid != 46) d2B_NTTM_CheckAct(43);
 					if(InTown(me) || me.areaid == 57) {										// cube
 						Print(COLOR_2 + "going for cube");
 						if(InTown(me)) {
@@ -797,7 +797,7 @@ function NT_KeyEvents(keycode) {
 					if(me.areaid == 60 || me.areaid == 43) {				// staff
 						Print(COLOR_2 + "going for staff");
 						if(me.areaid == 60) {
-							NTTM_CheckAct();
+							d2B_NTTM_CheckAct(43);
 							d2B_moveWP();
 							d2B_gotoWP(43);
 						}
@@ -814,7 +814,7 @@ function NT_KeyEvents(keycode) {
 					if(me.areaid == 64 || me.areaid == 44) {				// amulet
 						Print(COLOR_2 + "going for amulet");
 						if(me.areaid == 64) {
-							NTTM_CheckAct();
+							d2B_NTTM_CheckAct(43);
 							d2B_moveWP();
 							d2B_gotoWP(44);
 						}
@@ -832,7 +832,7 @@ function NT_KeyEvents(keycode) {
 					if(me.areaid == 61 || me.areaid == 74) {				// summoner
 						Print(COLOR_2 + "going for summoner");
 						if(me.areaid == 61) {
-							NTTM_CheckAct();
+							d2B_NTTM_CheckAct(43);
 							d2B_moveWP();
 							d2B_gotoWP(74);
 						}
@@ -854,7 +854,7 @@ function NT_KeyEvents(keycode) {
 					if(me.areaid == 46) {				// duri
 						Print(COLOR_2 + "going for duri");
 						if(me.areaid == 74) {
-							NTTM_CheckAct();
+							d2B_NTTM_CheckAct(43);
 							d2B_moveWP();
 							d2B_gotoWP(46);
 						}
@@ -871,9 +871,27 @@ function NT_KeyEvents(keycode) {
 						NTM_MakeTP();
 						break;
 					}
+					if(me.areaid == 73) {				// make a tp by tyrael
+						Print(COLOR_2 + "going for tyrael");
+						if(!NTM_MoveTo(73,  22577, 15598)) break;
+						d2B_NTTM_CheckAct(43);
+						d2B_moveWP();
+						d2B_gotoWP(52);
+						NTM_MoveToStair(52, 51);
+						NTM_TakeStair(51);
+						Delay(1000);
+						NTM_MoveToStair(51, 50);
+						NTM_TakeStair(50);
+						Delay(1000);
+						if(!NTM_MoveTo(50, 10015, 5047)) break;
+						d2B_NTTM_CheckAct(43);
+						d2B_moveWP();
+						d2B_gotoWP(75);
+						break;
+					}	
 				case 102:			// #pad 6: khalim's eye, brain, heart
 					if(!InTown && me.areaid != 76 && me.areaid != 85) {
-						NTTM_CheckAct();
+						d2B_NTTM_CheckAct(75);
 						d2B_moveWP();
 						d2B_gotoWP(76);
 					}
@@ -888,7 +906,7 @@ function NT_KeyEvents(keycode) {
 					}	
 					if(me.areaid == 85 || me.areaid == 78) {					// brain
 						if(me.areaid == 85) {
-							NTTM_CheckAct();
+							d2B_NTTM_CheckAct(75);
 							d2B_moveWP();
 							d2B_gotoWP(78);
 						}
@@ -909,7 +927,7 @@ function NT_KeyEvents(keycode) {
 					}
 					if(me.areaid == 91 || me.areaid == 80 || me.areaid == 81) {	// Khalim's heart
 						if(me.areaid == 91) {
-							NTTM_CheckAct();
+							d2B_NTTM_CheckAct(75);
 							d2B_moveWP();
 							d2B_gotoWP(80);
 						}
@@ -1647,6 +1665,12 @@ function d2B_usePortal() {
 	NTM_MoveTo(me.areaid, _portal.x, _portal.y);
 	NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
 	Delay(Random(1000,2000));
+	return;
+}
+function d2B_NTTM_CheckAct(area) {
+	if(!NTM_UsePortal("BluePortal", area)) {
+		NTTM_CheckAct();
+	}
 	return;
 }
 //
