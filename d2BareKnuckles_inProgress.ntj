@@ -2638,12 +2638,19 @@ function FollowSorc(target) {
 	
 	if(!leaderUnit) leaderUnit = GetLeaderUnit(leaderName); 					// Make sure we have the leaders unit.
 	if(leaderPlayerUnit.areaid <= 0) return;									// Don't do anything if we don't know the area yet.
-	if(NTC_InTown(me) && (leaderPlayerUnit.areaid == me.areaid)) return;		// if leader and I are in the same town, then do not follow the leader in that town
-	if((leaderPlayerUnit.areaid != me.areaid) && !NTC_InTown(me)) {				// if leader and I are not in the same area and I am not in town, then go to town
-		Town("");
-		NTTM_TownMove("portalspot");
-		Delay(250);
-		if(!NTM_UsePortal("BluePortal", leaderPlayerUnit.areaid)) Delay(Random(2000,4000));
+	
+	if(NTC_InTown(me) && (leaderPlayerUnit.areaid == me.areaid)) return;		// Leader & I in same town? Don't follow leader in that town
+	
+	if((leaderPlayerUnit.areaid != me.areaid) && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {	// Leader & I not in the same area & I'm not in town, then go to town
+		Town("");																
+		NTTM_TownMove("portalspot");											
+		Delay(Random(1000,1200));
+		//if(!NTM_UsePortal("BluePortal", leaderPlayerUnit.areaid)) Delay(Random(1000,1200));
+		if(NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {
+			if(!NTM_UsePortal("BluePortal", leaderPlayerUnit.areaid)) {				// Try leader's tp to return to where leader is
+				if(!NTM_TakeWaypoint(GetPlayerActWaypointID(leaderPlayerUnit)) return;	// No leader's portal & I'm in town? Try to go to the area via wp
+			}
+		}
 		return;
 	}
 	
