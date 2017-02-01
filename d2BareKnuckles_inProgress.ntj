@@ -68,7 +68,7 @@
 //
 //
 	var d2B_cases = 22;
-	var d2B_toggleHelper = "leveling";
+	var d2B_toggleHelper = "hmmm";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 	
 /*	d2B_toggleHelper choices...
@@ -158,7 +158,8 @@ function NTMain() {
 			
 			// d2B_switchMainRuns(chaos, baal, countess)
 			
-			if(d2B_toggleHelper == "leveling") d2B_leveling(d2B_helpers);										// (1)
+			if(d2B_toggleHelper == "hmmm") d2B_hmmm(d2B_helpers);								// (1)
+			if(d2B_toggleHelper == "leveling") d2B_leveling(d2B_helpers);						// (1)
 			
 			if(d2B_toggleHelper == "solo") d2B_SoloAct1();										// (1)
 			if(d2B_toggleHelper == "mf") d2B_mf(d2B_helpers);									// (1)
@@ -2641,7 +2642,7 @@ function FollowSorc(target) {
 	
 	if(NTC_InTown(me) && (leaderPlayerUnit.areaid == me.areaid)) return;		// Leader & I in same town? Don't follow leader in that town
 	
-	if((leaderPlayerUnit.areaid != me.areaid) && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {	// Leader & I not in the same area & I'm not in town, then go to town
+	/*if((leaderPlayerUnit.areaid != me.areaid) && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {	// Leader & I not in the same area & I'm not in town, then go to town
 		Town("");																
 		NTTM_TownMove("portalspot");											
 		Delay(Random(1000,1200));
@@ -2652,6 +2653,16 @@ function FollowSorc(target) {
 			}
 		}
 		return;
+	}*/
+	if((leaderPlayerUnit.areaid != me.areaid) && NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {	// Leader & I not in the same area, leader is not int own, & I'm in town																
+		NTTM_TownMove("portalspot");											
+		Delay(Random(1000,1200));
+		if(!NTC_InTown(leaderPlayerUnit)) {
+			if(!NTM_UsePortal("BluePortal", leaderPlayerUnit.areaid)) {				// Try leader's tp to return to where leader is
+				d2B_moveWP();
+				if(!NTM_TakeWaypoint(GetPlayerActWaypointID(leaderPlayerUnit)) return;	// No leader's portal & I'm in town? Try to go to the area via wp
+			}
+		}
 	}
 	
 	// ____________________________________________________
@@ -6632,6 +6643,68 @@ function d2B_commonVars() {
 //
 // switchies for switching
 //
+function d2B_hmmm(flwrs) {
+	switch(d2B_myPauseValue) {
+	// act 1	
+		case 1: 
+			d2B_msg("ummm 1");
+			Delay(Random(12000,16000));
+			
+			if(_teamBO) {
+				d2B_boSafe(1,35,1,false);
+				Delay(Random(4000,7000));
+			}
+			d2B_bloodmoor(flwrs);				// blood moore thingy
+			break;
+		case 2: d2B_coldplains(flwrs);			// cold plains thingy | true: for clearing all of the cold plains
+			break;
+		case 3: d2B_burialgrounds(flwrs);		// burial grounds thingy
+			break;
+		case 4: d2B_stonyfield(flwrs);			// stony field thiny
+			break;
+		case 5: //d2B_undergroundpassage();		// underground passage thingy
+			break;
+		case 6: d2B_darkwood(flwrs);			// dark wood thingy
+			break;
+		case 7: d2B_blackmarsh();				// black marsh thingy
+			break;
+		case 8: d2B_tamohighland();				// tamoe highland thingy
+			break;
+		case 9: d2B_outercloister();			// outer cloister thingy
+			break;
+		case 10: d2B_barracks(flwrs);			// barracks thingy deeNotes: needs to be fixed
+			Delay(Random(8000,12000));
+			break;
+		case 11: //d2B_jail();							// jail thingy
+			break;
+		case 12: //d2B_innercloister();					// inner cloister thingy
+			break;
+		case 13: d2B_cata();							// catacombs thingy
+			d2B_cata2(flwrs);
+			break;
+	// act 2
+		case 14: d2B_msg("ummm 2");
+			Delay(Random(12000,16000));
+			d2B_sewers(flwrs);					// sewers thingy
+			break;
+		case 15: d2B_rockywaste();						// rocky waste thingy
+			break;
+		case 16: d2B_dryhills();						// dry hills thingy
+			break;
+		case 17: d2B_faroasis(flwrs);			// far oasis thingy
+			break;
+		case 18: d2B_lostcity(flwrs);			// lost city thingy
+			break;
+		case 19: d2B_clawvipertemple();					// claw viper temple thingy
+			break;
+		case 20: d2B_haremtoceller();					// harem to celler thingy
+			break;
+		case 21: d2B_arcane(flwrs);				// arcane thingy
+			break;
+		case 22: d2B_canyon(flwrs);				// canyon thingy
+			break;
+	}
+}
 function d2B_boBaba2() {
 
 	d2B_chkAct(1);
@@ -6799,7 +6872,7 @@ function d2B_leveling(flwrs) {
 			break;
 		case 8: //d2B_tamohighland();						// tamoe highland thingy
 			break;
-		case 9: //d2B_outercloister();					// outer cloister thingy
+		case 9: d2B_outercloister();					// outer cloister thingy
 			break;
 		case 10: d2B_barracks(_nonTelePeeps);			// barracks thingy deeNotes: needs to be fixed
 			Delay(Random(8000,12000));
