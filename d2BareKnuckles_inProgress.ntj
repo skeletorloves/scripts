@@ -853,7 +853,7 @@ function d2B_bloodmoor(a) {							// case: 1
 	
 	if(d2B_usingAFollower) d2B_takeMyTP(true, true, true, true, false); 		// (delay,bo,precast,clr&chests,delay(x,y))
 	else if(!d2B_usingAFollower) d2B_takeMyTP(false, false, true, true, false);
-	d2B_moveToStair(2,8, false);
+	d2B_moveToStair(2,8, false, true);
 	d2B_takeMyTP(true, false, true, false, false);
 	d2B_takeStairs(8, true);
 
@@ -2361,17 +2361,16 @@ function d2B_usePortal(a,b){
 	}
 	return;
 }
-function d2B_moveToStair(a,b,c) {
+function d2B_moveToStair(a,b,c,d) {					// a: me.areaid | b: areaid of stairs | c: d2B_preCastClrLvlOC() | d: add a lengthier delay
 	NTM_MoveToStair(a, b);
 	Delay(500);
 	NTP_DoPrecast(true);
 	Delay(Random(1000,1200));
+	if(d) Delay(Random(3000,4000));
 	if(c) d2B_preCastClrLvlOC();
 	return;
 }
 function d2B_takeStairs(a,b) {						// a: area stairs | b: engage clr lvl & open chests
-	if(d2B_usingAFollower) Delay(Random(4000,6000));
-	else if(!d2B_usingAFollower) Delay(Random(1000,1550));
 	if(!NTM_TakeStair(a)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_TakeStair()");
 	}
@@ -2379,8 +2378,9 @@ function d2B_takeStairs(a,b) {						// a: area stairs | b: engage clr lvl & open
 		NTM_MakeTP();
 		Delay(300);
 		if(!_quiet) d2B_msg(".");
-		if(d2B_usingAFollower) Delay(Random(5000,7000));
+		if(d2B_usingAFollower || d2B_usingSorcFlwrs) Delay(Random(5000,7000));
 	}
+	else if(!d2B_usingAFollower) Delay(Random(1000,1550));
 	if(b) {
 		NTP_DoPrecast();
 		d2B_clrLvlOC();
@@ -2660,7 +2660,7 @@ function FollowSorc(target) {
 		if(!NTC_InTown(leaderPlayerUnit)) {
 			if(!NTM_UsePortal("BluePortal", leaderPlayerUnit.areaid)) {				// Try leader's tp to return to where leader is
 				d2B_moveWP();
-				if(!NTM_TakeWaypoint(GetPlayerActWaypointID(leaderPlayerUnit)) return;	// No leader's portal & I'm in town? Try to go to the area via wp
+				if(!NTM_TakeWaypoint(GetPlayerActWaypointID(leaderPlayerUnit))) return;	// No leader's portal & I'm in town? Try to go to the area via wp
 			}
 		}
 	}
@@ -6644,27 +6644,28 @@ function d2B_commonVars() {
 // switchies for switching
 //
 function d2B_hmmm(flwrs) {
+	NTTMGR_TownManager();
 	switch(d2B_myPauseValue) {
 	// act 1	
 		case 1: 
 			d2B_msg("ummm 1");
 			Delay(Random(12000,16000));
 			
-			if(_teamBO) {
+			/*if(_teamBO) {
 				d2B_boSafe(1,35,1,false);
 				Delay(Random(4000,7000));
-			}
-			d2B_bloodmoor(flwrs);				// blood moore thingy
+			}*/
+			d2B_bloodmoor(false);				// blood moore thingy
 			break;
-		case 2: d2B_coldplains(flwrs);			// cold plains thingy | true: for clearing all of the cold plains
+		case 2: d2B_coldplains(false);			// cold plains thingy | true: for clearing all of the cold plains
 			break;
-		case 3: d2B_burialgrounds(flwrs);		// burial grounds thingy
+		case 3: d2B_burialgrounds(false);		// burial grounds thingy
 			break;
-		case 4: d2B_stonyfield(flwrs);			// stony field thiny
+		case 4: d2B_stonyfield(false);			// stony field thiny
 			break;
 		case 5: //d2B_undergroundpassage();		// underground passage thingy
 			break;
-		case 6: d2B_darkwood(flwrs);			// dark wood thingy
+		case 6: d2B_darkwood(false);			// dark wood thingy
 			break;
 		case 7: d2B_blackmarsh();				// black marsh thingy
 			break;
@@ -6672,7 +6673,7 @@ function d2B_hmmm(flwrs) {
 			break;
 		case 9: d2B_outercloister();			// outer cloister thingy
 			break;
-		case 10: d2B_barracks(flwrs);			// barracks thingy deeNotes: needs to be fixed
+		case 10: d2B_barracks(false);			// barracks thingy deeNotes: needs to be fixed
 			Delay(Random(8000,12000));
 			break;
 		case 11: //d2B_jail();							// jail thingy
@@ -6680,8 +6681,9 @@ function d2B_hmmm(flwrs) {
 		case 12: //d2B_innercloister();					// inner cloister thingy
 			break;
 		case 13: d2B_cata();							// catacombs thingy
-			d2B_cata2(flwrs);
+			d2B_cata2(false);
 			break;
+		NTTMGR_TownManager();
 	// act 2
 		case 14: d2B_msg("ummm 2");
 			Delay(Random(12000,16000));
@@ -6691,18 +6693,19 @@ function d2B_hmmm(flwrs) {
 			break;
 		case 16: d2B_dryhills();						// dry hills thingy
 			break;
-		case 17: d2B_faroasis(flwrs);			// far oasis thingy
+		case 17: d2B_faroasis(false);			// far oasis thingy
 			break;
-		case 18: d2B_lostcity(flwrs);			// lost city thingy
+		case 18: d2B_lostcity(false);			// lost city thingy
 			break;
 		case 19: d2B_clawvipertemple();					// claw viper temple thingy
 			break;
 		case 20: d2B_haremtoceller();					// harem to celler thingy
 			break;
-		case 21: d2B_arcane(flwrs);				// arcane thingy
+		case 21: d2B_arcane(false);				// arcane thingy
 			break;
-		case 22: d2B_canyon(flwrs);				// canyon thingy
+		case 22: d2B_canyon(false);				// canyon thingy
 			break;
+		NTTMGR_TownManager();
 	}
 }
 function d2B_boBaba2() {
