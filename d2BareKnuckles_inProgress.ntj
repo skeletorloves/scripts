@@ -838,7 +838,6 @@ function d2B_cata4() {
 function d2B_bloodmoor(a) {							// case: 1
 	if(InTown(me)) d2B_moveWP();
 	d2B_gotoWP(3);
-	
 	d2B_moveToStair(2,8, false);							// head to front of den as a starting point
 	
 	if(a) {
@@ -1141,10 +1140,14 @@ function d2B_barracks(a) {							// case: 10
 	}
 	
 	d2B_takeMyTP(true, true, true, false, false);
-	d2B_team(false, false);
-	
-	d2B_movePresetUnitMonster(28, 754, -5, 5);	// go to where main monster is in the malus dude
 	d2B_team(true, false);
+	
+	if(!NTM_MoveToPresetUnit(28, NTC_UNIT_MONSTER, 754, -5, 5)) {
+		Town();
+		return;
+	}
+	//d2B_movePresetUnitMonster(28, 754, -5, 5);	// go to where main monster is in the malus dude
+	d2B_team(false, false);
 	d2B_clrLvlOC();
 	
 	d2B_team(true,1);	// return to Act 1 town
