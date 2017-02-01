@@ -67,7 +67,7 @@
 
 //
 //
-	var d2B_cases = 1;
+	var d2B_cases = 22;
 	var d2B_toggleHelper = "leveling";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 	
@@ -2639,10 +2639,13 @@ function FollowSorc(target) {
 	if(!leaderUnit) leaderUnit = GetLeaderUnit(leaderName); 					// Make sure we have the leaders unit.
 	if(leaderPlayerUnit.areaid <= 0) return;									// Don't do anything if we don't know the area yet.
 	if(NTC_InTown(me) && (leaderPlayerUnit.areaid == me.areaid)) return;		// if leader and I are in the same town, then do not follow the leader in that town
-	/*if((leaderPlayerUnit.areaid != me.areaid) && !NTC_InTown(me)) {			// if leader and I are not in the same area and I am not in town, then go to town
+	if((leaderPlayerUnit.areaid != me.areaid) && !NTC_InTown(me)) {				// if leader and I are not in the same area and I am not in town, then go to town
 		Town("");
+		NTTM_TownMove("portalspot");
+		Delay(250);
+		if(!NTM_UsePortal("BluePortal", leaderPlayerUnit.areaid)) Delay(Random(2000,4000));
 		return;
-	}*/
+	}
 	
 	// ____________________________________________________
 	
@@ -6802,7 +6805,7 @@ function d2B_leveling(flwrs) {
 			//d2B_cata2(_nonTelePeeps);
 			break;
 	// act 2
-	/*	case 14: d2B_msg("ummm 2");
+		case 14: d2B_msg("ummm 2");
 			Delay(Random(12000,16000));
 			d2B_sewers(_nonTelePeeps);					// sewers thingy
 			break;
@@ -6821,7 +6824,7 @@ function d2B_leveling(flwrs) {
 		case 21: d2B_arcane(_nonTelePeeps);				// arcane thingy
 			break;
 		case 22: d2B_canyon(_nonTelePeeps);				// canyon thingy
-			break;
+			break;/*
 	// act 3
 		case 23: d2B_msg("ummm 3");
 			Delay(Random(12000,16000));
