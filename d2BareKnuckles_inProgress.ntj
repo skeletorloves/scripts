@@ -934,7 +934,8 @@ function d2B_stonyfield(a) {						// case: 4
 	d2B_movePresetUnitMonster(737, 10, 10);
 	Delay(Random(6000,8000));
 	d2B_usePortal("Portal",38);			// use portal to enter tristram
-	Delay(Random(2000,4000));
+	NTM_MakeTP();
+	Delay(Random(5000,6000));
 	d2B_clrLvlOC();
 
 	d2B_team(true,1);	// return to Act 1 town
@@ -1103,16 +1104,12 @@ function d2B_countess() {
 }
 function d2B_tamohighland() {						// case: 8
 	d2B_commonInitSetup(6);
-	d2B_takeMyTP(true, true, true, true, false);
-	d2B_team(false, false);
-	
 	d2B_moveToStair(7,12, false);	// go to the enterance of tamoe highland pit
-	d2B_team(true, false);
-	NTP_DoPrecast();
-	d2B_clrLvlOC();
+	d2B_takeMyTP(true, true, true, true, false);
 	
 	d2B_moveToStair(7,12, false);	// go to the enterance of the tamoe highland pit
 	Delay(Random(4000,5000));
+	
 	d2B_takeStairs(12, true);
 	
 	d2B_moveToStair(me.areaid,16, false);	// go to the 2nd level of the tamoe highland pit
@@ -2129,9 +2126,9 @@ function d2B_load() {
 }
 function d2B_newGmDlyPeepChk() {
 	Print(COLOR_2 + "Taking an extended break, so as to give the peeps time to enter game...");
-	Delay(Random(35000,40000));
+	Delay(Random(50000,60000));
 	d2B_msg(",");
-	Delay(Random(7300,10000));
+	Delay(Random(9300,15000));
 		
 	// check to see if peeps have arrived...
 		
@@ -2212,6 +2209,10 @@ function d2B_team(teamTown, teamAct) {				// (teamTown: true - towns team, false
 	if((!d2B_usingAFollower && !d2B_usingSorcFlwrs) || d2B_toggleHelper == "mf") return;
 	if(teamTown) {
 		d2B_team2(false);
+		Delay(Random(10000,14000));
+	}
+	if(!teamTown) {
+		d2B_team2(true);
 		Delay(Random(10000,14000));
 	}
 	if(teamAct) {
@@ -2499,6 +2500,8 @@ function d2B_bo() {									//	for instructing a bo barb
 	Delay(Random(7000,9000));
 	d2B_msg("b .");				// tell barb to come through tp
 	Delay(Random(8000,10000));
+	d2B_msg("b ..");
+	Delay(1200);
 	d2B_msg("b ;");				// instruct barb to precast
 	Delay(Random(10000,13000));
 	d2B_msg("b '");				// send barb back to town
@@ -2632,11 +2635,83 @@ function ActionSorc() {
 	}
 }
 function FollowSorc(target) {
-	if(NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {
-		NTTM_TownMove("portalspot");
-		Delay(250);
-	}
+	if(me.areaid !== leaderPlayerUnit.areaid && !NTC_InTown(leaderPlayerUnit) && !NTC_InTown(me)) {
 	
+		// Get the distance between our character and the leader
+		if(leaderUnit) _distance = GetDistance(me, leaderUnit);
+		else _distance = -1;
+		
+		// If we get a valid distance, and we're outside the follow range, attempt to get closer!
+		// This covers walking to new area id's
+		if(_distance >= followRange && _distance !== -1 && me.areaid === leaderPlayerUnit.areaid) {
+			if(leaderUnit) d2B_GetCloserInt(leaderUnit);
+			else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
+			return;
+		}
+		
+		// Check to see if we entered a doorway or stairs
+		var _unit = GetPresetUnits(me.areaid, NTC_UNIT_TILE);
+		if (_unit) {
+			for (var i = 0; i < _unit.length; i += 1) {
+				if (_unit[i].subareaid == leaderPlayerUnit.areaid) {
+					NTM_TakeStair(leaderPlayerUnit.areaid); // take stairs
+					return;
+				}
+			}
+		}
+		
+		// This covers outside-to-outside waypoint changes
+		if(AreaHasWaypoint(leaderPlayerUnit.areaid)) {
+			if(NTM_TakeWaypoint(leaderPlayerUnit.areaid)) return;
+		}
+
+		// Check for special doors
+		// Leaving Arcane Sanctuary
+		if(me.areaid == 74 && leaderPlayerUnit.areaid == 54) {
+			if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 298)) {
+				Town("");
+			return;
+		}
+
+		// Entering Arcane Sanctuary
+		if(me.areaid == 54 && leaderPlayerUnit.areaid == 74) {
+			if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 298)) Town("");
+			return;
+		}
+
+		// Entering Duriel's Chamber
+		if(me.areaid >= 66 && me.areaid <= 72 && leaderPlayerUnit.areaid == 73) {
+			if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 100)) Town("");
+			return;
+		}
+
+		// Entering Tristram
+		if(me.areaid == 4 && leaderPlayerUnit.areaid == 38) {
+			if(!NTM_UsePortal("Portal", 38)) Town(""); 
+			return;
+		}
+
+		// Exiting Tristram
+		if(me.areaid == 38 && leaderPlayerUnit.areaid == 4) {
+			if(!NTM_UsePortal("Portal", 4)) Town("");}
+			return;
+		}
+
+		// Entering Baal's Chamber
+		if(me.areaid == 131 && leaderPlayerUnit.areaid == 132) {
+			if(NTConfig_FollowtoWorldStone) {
+				if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 563)) Town("");
+				return;
+			}
+		}
+			
+		if(NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {
+			NTTM_TownMove("portalspot");
+			Delay(250);
+		}
+		Town("");
+		return;
+	}
 	var _distance = -1;
 	var leaderPlayerUnitintown, _meintown;
 	
@@ -2657,6 +2732,11 @@ function FollowSorc(target) {
 		}
 		return;
 	}*/
+	if((leaderPlayerUnit.areaid != me.areaid) && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {
+		Town();
+		NTTM_TownMove("portalspot");
+		return;
+	}
 	if((leaderPlayerUnit.areaid != me.areaid) && NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {	// Leader & I not in the same area, leader is not int own, & I'm in town																
 		NTTM_TownMove("portalspot");											
 		Delay(Random(1000,1200));
@@ -2666,6 +2746,7 @@ function FollowSorc(target) {
 				if(!NTM_TakeWaypoint(GetPlayerActWaypointID(leaderPlayerUnit))) return;	// No leader's portal & I'm in town? Try to go to the area via wp
 			}
 		}
+		return
 	}
 	
 	// ____________________________________________________
@@ -2712,6 +2793,7 @@ function FollowSorc(target) {
 		if(!TakeLeaderTP()) {
 			if(!NTM_TakeWaypoint(leaderPlayerUnit.areaid)) Town("");
 		}
+		return;
 	}
 	
 	// If we get a valid distance, and we're outside the follow range, but still inside the range for GetDistance() to work,  attempt to get closer!
@@ -2872,79 +2954,7 @@ function FollowSorc(target) {
 	}
 	
 	// If we are both outside but in different areas
-	if(me.areaid !== leaderPlayerUnit.areaid && !NTC_InTown(leaderPlayerUnit) && !NTC_InTown(me)) {
 	
-		// Get the distance between our character and the leader
-		if(leaderUnit) _distance = GetDistance(me, leaderUnit);
-		else _distance = -1;
-		
-		// If we get a valid distance, and we're outside the follow range, attempt to get closer!
-		// This covers walking to new area id's
-		if(_distance >= followRange && _distance !== -1 && me.areaid === leaderPlayerUnit.areaid) {
-			if(leaderUnit) d2B_GetCloserInt(leaderUnit);
-			else NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
-			return;
-		}
-		
-		// Check to see if we entered a doorway or stairs
-		var _unit = GetPresetUnits(me.areaid, NTC_UNIT_TILE);
-		if (_unit) {
-			for (var i = 0; i < _unit.length; i += 1) {
-				if (_unit[i].subareaid == leaderPlayerUnit.areaid) {
-					NTM_TakeStair(leaderPlayerUnit.areaid); // take stairs
-					return;
-				}
-			}
-		}
-		
-		// This covers outside-to-outside waypoint changes
-		if(AreaHasWaypoint(leaderPlayerUnit.areaid)) {
-			if(NTM_TakeWaypoint(leaderPlayerUnit.areaid)) return;
-		}
-		
-		// Check for special doors
-		// Leaving Arcane Sanctuary
-		if(me.areaid == 74 && leaderPlayerUnit.areaid == 54) {
-			if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 298)) {
-				Town("");
-			return;
-		}
-		
-		// Entering Arcane Sanctuary
-		if(me.areaid == 54 && leaderPlayerUnit.areaid == 74) {
-			if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 298)) Town("");
-			return;
-		}
-		
-		// Entering Duriel's Chamber
-		if(me.areaid >= 66 && me.areaid <= 72 && leaderPlayerUnit.areaid == 73) {
-			if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 100)) Town("");
-			return;
-		}
-		
-		// Entering Tristram
-		if(me.areaid == 4 && leaderPlayerUnit.areaid == 38) {
-			if(!NTM_UsePortal("Portal", 38)) Town(""); 
-			return;
-		}
-		
-		// Exiting Tristram
-		if(me.areaid == 38 && leaderPlayerUnit.areaid == 4) {
-			if(!NTM_UsePortal("Portal", 4)) Town("");}
-			return;
-		}
-		
-		// Entering Baal's Chamber
-		if(me.areaid == 131 && leaderPlayerUnit.areaid == 132) {
-			if(NTConfig_FollowtoWorldStone) {
-				if(!NTM_TakeUnit(NTC_UNIT_OBJECT, 563)) Town("");
-				return;
-			}
-		}
-		
-		Town("");
-		return;
-	}
 	
 	// If we are both outside and in the same area
 	if(me.areaid === leaderPlayerUnit.areaid && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {
@@ -2966,6 +2976,7 @@ function FollowSorc(target) {
 			return;
 		}
 	}
+	return;
 }
 // ________________________________________________________
 // ________________________________________________________
@@ -6671,6 +6682,7 @@ function d2B_hmmm(flwrs) {
 		case 6: d2B_darkwood(false);			// dark wood thingy
 			break;
 		case 7: d2B_blackmarsh();				// black marsh thingy
+			NTTMGR_TownManager();
 			break;
 		case 8: d2B_tamohighland();				// tamoe highland thingy
 			break;
@@ -6684,9 +6696,9 @@ function d2B_hmmm(flwrs) {
 		case 12: //d2B_innercloister();					// inner cloister thingy
 			break;
 		case 13: d2B_cata();							// catacombs thingy
-			d2B_cata2(false);
+			//d2B_cata2(false);
+			NTTMGR_TownManager();
 			break;
-		NTTMGR_TownManager();
 	// act 2
 		case 14: d2B_msg("ummm 2");
 			Delay(Random(12000,16000));
@@ -6707,8 +6719,8 @@ function d2B_hmmm(flwrs) {
 		case 21: d2B_arcane(false);				// arcane thingy
 			break;
 		case 22: d2B_canyon(false);				// canyon thingy
+			NTTMGR_TownManager();
 			break;
-		NTTMGR_TownManager();
 	}
 }
 function d2B_boBaba2() {
