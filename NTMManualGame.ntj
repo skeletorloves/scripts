@@ -4,6 +4,7 @@ var _quiet = true;
 var _throneLeechers = false;
 var _dollChk = true;
 var _dollSoul;
+var _follow = false;
 
 var _keycodeMenu = 0;	// for switching through thru customized keycode menus
 
@@ -686,6 +687,22 @@ function NT_KeyEvents(keycode) {
 						//NTA_KillMonster(544);							// kill baal
 					}
 					break;
+				case 101:	// #pad 5: (orig: )
+					if(!InTown(me)) {
+						NTM_MakeTP();
+						d2B_msg("-");
+					}
+					if(InTown(me)) {
+						if(_follow) d2B_msg("/f m ..");
+						else if(!_follow) d2B_msg("/f m .");
+					}
+					break;
+				case 100:	// #pad 4: (orig: )
+					if(InTown(me)) {
+						if(me.areaid == 103) d2B_msg("/f m ummmm 5");
+						else if(me.areaid == 109) d2B_msg("/f m ummmm 4");
+					}
+					break;
 			}
 			break;
 		case 2:						// rushing customized manual key menu
@@ -896,10 +913,10 @@ function NT_KeyEvents(keycode) {
 						d2B_moveWP();
 						d2B_gotoWP(52);
 						NTM_MoveToStair(52, 51);
-						NTM_TakeStair(51);
+						NTM_TakeStair(51, false);
 						Delay(1000);
 						NTM_MoveToStair(51, 50);
-						NTM_TakeStair(50);
+						NTM_TakeStair(50, false);
 						Delay(1000);
 						if(!NTM_MoveTo(50, 10015, 5047)) break;
 						d2B_NTTM_CheckAct(43);
@@ -908,7 +925,7 @@ function NT_KeyEvents(keycode) {
 						break;
 					}	
 				case 102:			// #pad 6: khalim's eye, brain, heart
-					if(!InTown && me.areaid != 76 && me.areaid != 85) {
+					if(InTown || me.areaid != 76 && me.areaid != 85) {
 						d2B_NTTM_CheckAct(75);
 						d2B_moveWP();
 						d2B_gotoWP(76);
@@ -1657,7 +1674,7 @@ function d2B_msg(a) {
 		Delay(300);
 		return;
 	}
-	d2B_msg(a);
+	Say("/f m " + a);
 	Delay(300);
 	return;
 }
