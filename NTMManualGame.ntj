@@ -654,7 +654,7 @@ function NT_KeyEvents(keycode) {
 						Delay(500);
 						NTP_DoPrecast(true);
 						Delay(500);
-						d2B_LXPC_FindShrines();
+						d2B_LXPC_FindShrines(true);
 					}
 					break; 
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
@@ -692,15 +692,21 @@ function NT_KeyEvents(keycode) {
 						NTM_MakeTP();
 						d2B_msg("-");
 					}
-					if(InTown(me)) {
-						if(_follow) d2B_msg("/f m ..");
-						else if(!_follow) d2B_msg("/f m .");
-					}
 					break;
 				case 100:	// #pad 4: (orig: )
 					if(InTown(me)) {
-						if(me.areaid == 103) d2B_msg("/f m ummmm 5");
-						else if(me.areaid == 109) d2B_msg("/f m ummmm 4");
+						if(me.areaid == 103) d2B_msg("ummm 5");
+						else if(me.areaid == 109) d2B_msg("ummm 4");
+					}
+					if(InTown(me)) {
+						if(_follow) {
+							_follow = false;
+							d2B_msg("..");
+						}
+						else if(!_follow) {
+							_follow = true;
+							d2B_msg(".");
+						}
 					}
 					break;
 			}
@@ -725,6 +731,15 @@ function NT_KeyEvents(keycode) {
 					Delay(Random(1000,1700));
 					Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
 					break;
+				case 103:			// #pad 7: grab exp shrine (orig:Key_MyChicken)
+					if(!InTown(me)) {
+						Print(COLOR_2 + "Looking for exp shrine...");
+						Delay(500);
+						NTP_DoPrecast(true);
+						Delay(500);
+						d2B_LXPC_FindShrines(false);
+					}
+					break; 
 			// act i
 				case 97:			// #pad 1: den of evil
 					Print(COLOR_2 + "going for corpsefire");
@@ -745,18 +760,32 @@ function NT_KeyEvents(keycode) {
 						d2B_gotoWP(5);
 						NTP_DoPrecast(true);
 						Delay(200);
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 30, 15, -15);
+						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 30, 5, 5);
 						NTM_MakeTP();
 						break;
 					}
-					if(!InTown() || me.areaid == 5) {		// from tree going to cairn stones
+					if(!InTown() && me.areaid == 5) {		// from tree going to cairn stones
 						Print(COLOR_2 + "going for cairn stones");
-						if(!InTown()) d2B_NTTM_CheckAct(1);
-						d2B_moveWP();
-						d2B_gotoWP(4);
-						NTP_DoPrecast(true);
-						Delay(200);
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 15, -15);
+						if(!InTown() && me.areaid != 4) {
+							d2B_NTTM_CheckAct(1);
+							d2B_moveWP();
+							d2B_gotoWP(4);
+							NTP_DoPrecast(true);
+							Delay(200);
+							NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 10, -10);
+							Delay(300);
+							NTM_MakeTP();
+						}
+						break;
+					}
+					if(me.areaid == 4) {					// from cairn stones to cain in tristram
+						Print(COLOR_2 + "going for cain");
+						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737);
+						Dekay(Random(1200,2000));
+						NTM_UsePortal("Portal", 38);										// 38:	 Cain Stones portal
+						Delay(Random(1300,1500));
+						NTM_MoveTo(38, 25133, 5139);										// go right to where Cain is hanging in tristram
+						Delay(300);
 						NTM_MakeTP();
 					}
 					break;
@@ -923,14 +952,13 @@ function NT_KeyEvents(keycode) {
 						d2B_moveWP();
 						d2B_gotoWP(75);
 						break;
-					}	
+					}
+					break;
 				case 102:			// #pad 6: khalim's eye, brain, heart
-					if(InTown || me.areaid != 76 && me.areaid != 85) {
+					if(InTown(me) || (me.areaid != 76 && me.areaid != 85 && me.areaid != 91)) {
 						d2B_NTTM_CheckAct(75);
 						d2B_moveWP();
 						d2B_gotoWP(76);
-					}
-					if(me.areaid == 76) {										// eye
 						Print(COLOR_2 + "going for the eye");
 						NTP_DoPrecast(true);
 						NTM_MoveToStair(me.areaid, 85);
@@ -1834,7 +1862,7 @@ function d2B_isTeamInTown(a,b) {					// a: act | b: area of where the tp is open
 	return;
 }
 //
-function d2B_LXPC_FindShrines() {	
+function d2B_LXPC_FindShrines(a) {	
 	
 	var ShrineIds = [2, 81, 83, 85, 86, 93, 96, 97, 109, 116, 120, 123, 124, 133, 134, 135, 
 					136, 150, 151, 172, 173, 184, 190, 191, 197, 199, 200, 201, 226, 231, 
@@ -1870,11 +1898,17 @@ function d2B_LXPC_FindShrines() {
 						Delay(500);
 						if(ThisShrine) {
 							while(!me.GetState(137) && !ThisShrine.mode) {
-								if(NTM_GetCloserIntS(ThisShrine)) NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, ThisShrine);
+								if(a) {
+									if(NTM_GetCloserIntS(ThisShrine)) NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, ThisShrine);
+								}
 							}
 							NTC_Delay(100);
 						}
-						NTTM_CheckAct(5);
+						if(a) NTTM_CheckAct(5);
+						else if(!a) {
+							Town();
+							d2B_moveWP();
+						}
 					}
 				}
 			}while(shrine.GetNext());
