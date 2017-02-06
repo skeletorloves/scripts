@@ -17,7 +17,7 @@
 	var _msgMe = false;						// for enabling whispering to _myName
 	var _whereRchaosSeals = false;			// to msg the location of the chaos seals
 	
-	var _dollChk = true;					// true: if dolls break or do other things | false: no throne room doll check
+	var _dollChk = false;					// true: if dolls break or do other things | false: no throne room doll check
 	var _dollSoul = false;					// global var for if there are dolls
 	var _boneWall = false;					// enable or disable msging for a bonewall
 
@@ -27,7 +27,7 @@
 	var _soloChaos = false;					// for leader not to msg followers nor to make tps in chaos
 	
 	var _chaosHelpers = true;				// if no chaos helpers
-	var _throneLeechers = false;			// if stationary throne leechers are following in the throne
+	var _throneLeechers = true;				// if stationary throne leechers are following in the throne
 	var _throneHelpers = true;				// if active fighters are following in the throne
 	
 	var d2B_helpers = true;					// general helpers thang
@@ -39,9 +39,9 @@
 	var _teamBO = true;						// send team to a safe wp and bo
 	
 	var _noBoer = false;						// for impeding boer routines and the delays associated with those in throne
-	var _myName = "";						// peep to msg of what's a-happenin'
-	var _myBoBarb = "shoe";						// bo barb name
-	var _myChantress = "";					// my chantress
+	var _myName = "";							// peep to msg of what's a-happenin'
+	var _myBoBarb = "Z-kaBaba";					// bo barb name
+	var _myChantress = "";						// my chantress
 
 /*	a collection of function calls
 		
@@ -67,8 +67,8 @@
 
 //
 //
-	var d2B_cases = 22;
-	var d2B_toggleHelper = "hmmm";
+	var d2B_cases = 3;
+	var d2B_toggleHelper = "CBaal";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 	
 /*	d2B_toggleHelper choices...
@@ -2524,7 +2524,7 @@ function d2B_boSafe(a,b,c,d) {						// (a: d2B_chkAct(a) | b: d2B_gotoWP(b) | c:
 	Delay(Random(4000,6000));
 	d2B_msg("-");
 	Delay(Random(2000,5000));
-	d2B_team(false, false);
+	if(!_soloChaos) d2B_team(false, false);
 	Delay(Random(5000,7000));
 	if(c == "justBO") return;
 	if(!c) {
@@ -7108,6 +7108,11 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 	if(chaos != false || baal != false || countess != false) {
 		switch(d2B_myPauseValue) {
 			case 1: if(!chaos) break;
+				if(_teamBO) {
+					d2B_boSafe(5,129,"justBO");
+					d2B_gotoWP(109);
+					Delay(Random(2000,3000));
+				}
 				if(!_soloChaos) d2B_msg("ummm 4");
 				NTConfig_SkipRegularMonsters = false;
 				d2B_chkAct(4);
