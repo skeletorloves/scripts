@@ -12,6 +12,7 @@
 	_centreMe = false;				// for sending leader to the centre of Chaos Sanctuary
 	_justSuperUniques = false;		// for only running super unique monsters
 	
+	var _test = false;
 	var _debug = false;						// for testing chaos w/o using followere
 	var _quiet = false;						// msg free silence
 	var _msgMe = false;						// for enabling whispering to _myName
@@ -1761,6 +1762,46 @@ function d2B_chaos(a){								// case: 31
 				Delay(Random(1000,3000));
 			}
 			if (!NT_OpenSealsInt(1)) {									// a: "low" for leveling low peeps
+				NTC_SendMsgToScript("NTBotGame.ntj", "NT_OpenSealsInt()");
+			}
+			break;
+		case "sorcies":
+			NTConfig_FastChaos = false;
+			NTConfig_LeechSupport = false;
+			NTConfig_IdInField = false;
+			
+			if(!_debug && _chaosHelpers) {
+				if(_teamBO) {
+					d2B_boSafe(5,107,"justBO");
+				}
+			}
+			if(!_centreMe) {
+				NTM_MoveTo(108, 7790, 5544);			// tele to just inside the enterance
+				
+				if(!_nonTelePeeps) {
+					if(_chaosHelpers) {
+						NTM_MakeTP();
+						Delay(700);
+						d2B_msg(".");
+					}
+					NTCS_ClearPosition(30, EntranceSort);
+					Delay(Random(4000,8000));
+					if(_chaosHelpers) d2B_msg(".");
+					var FrontToStarX = [7792,7794,7791,7777,7813,7769,7782,7802,7819,7768,7770,7791,7819, 7804, 7831,7857, 7807,7794, 7762,7736];
+					var FrontToStarY = [5564,5529,5495,5486,5486,5445,5421,5421,5446,5390,5355,5355,5376, 5340, 5289,5292, 5265,5247, 5281,5291];
+					for (var i = 0; i < FrontToStarX.length; i += 1) {
+						NTM_MoveTo(108, FrontToStarX[i], FrontToStarY[i]);
+						NTCS_ClearPosition(35, EntranceSort);
+					}
+				}
+			}
+			NTM_MoveTo(108, 7794, 5292);						// tele to the centre of chaos
+			if(_chaosHelpers) {
+				NTM_MakeTP();
+				Delay(Random(3000,4000));
+				d2B_msg(".");
+			}
+			if (!NT_OpenSealsInt()) {							// a: "low" for leveling low peeps
 				NTC_SendMsgToScript("NTBotGame.ntj", "NT_OpenSealsInt()");
 			}
 			break;	
@@ -5501,7 +5542,7 @@ function d2B_openAllSeals() {
 	return;
 }
 function d2B_sealThingy(a) {
-	d2B_team(true, false);
+	if(!_test && !_chaosHelpers) d2B_team(true, false);
 	NTA_ClearPosition(40, true);
 	
 	switch(a) {
@@ -5516,8 +5557,8 @@ function d2B_sealThingy(a) {
 			break;
 	}
 	
-	d2B_team(false, false);
-	d2B_chaosResetTeam();
+	if(!_test && !_chaosHelpers) d2B_team(false, false);
+	if(!_test && !_chaosHelpers) d2B_chaosResetTeam();
 }
 function d2B_bWall() {
 	_xTmp = me.x;
@@ -5530,7 +5571,7 @@ function d2B_bWall() {
 	NTM_MoveTo(me.areaid, _xTmp, _yTmp);
 	return;
 }
-function NT_OpenSealsInt(a) {
+function NT_OpenSealsInt() {
 	var _unit;
 	var _result;
 
