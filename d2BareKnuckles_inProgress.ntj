@@ -1,18 +1,27 @@
-v1.20170214a
+//	v1.20170214a
+
 // to do...
 // dollcheck: create a conditional norm/nm/hell check. If norm, do not do dollcheck
 
 /*	some thingies...
 		colours:
-			green:	Print(COLOR_2 +  "hi");
-			blue: 	Print(COLOR_3 +  "hi");
-			gold: 	Print(COLOR_4 +  "hi");
+			white:		Print(COLOR_0 +  "hi");
+			red:		Print(COLOR_1 +  "hi");
+			green:		Print(COLOR_2 +  "hi");
+			blue: 		Print(COLOR_3 +  "hi");
+			gold: 		Print(COLOR_4 +  "hi");
+			dark grey: 	Print(COLOR_5 +  "hi");
+			black:		Print(COLOR_6 +  "hi");
+			light gold: Print(COLOR_7 +  "hi");
+			orange: 	Print(COLOR_8 +  "hi");
+			yellow:		Print(COLOR_9 +  "hi");
 */
 
 // _newSorcNoTele : NTMove.ntl line 34 | used to impede teleing of new sorces
 
 //	d2BareKnuckles.ntj
 	
+	// var leader = NTConfig_Leader;		// store leader's name here
 	var myLeader = me.charname;			// for the d2B_retrievePause() thingy...
 	var _TeamMsgMyself = me.charname; 	// to msg to myself a list of peeps in game
 	var _teamSize = 8;					// size of team to check for
@@ -45,11 +54,11 @@ v1.20170214a
 	var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_takeMyTP()
 	var d2B_refill = true;					// enable/disable NTTMGR_TownManager();
 	
-	var _teamBO = true;						// send team to a safe wp and bo
+	var _teamBO = true;							// send team to a safe wp and bo
 	
 	var _noBoer = false;						// for impeding boer routines and the delays associated with those in throne
 	var _myName = "";							// peep to msg of what's a-happenin'
-	var _myBoBarb = "Z-kaBaba";					// bo barb name
+	var _myBoBarb = "";							// bo barb name
 	var _myChantress = "";						// my chantress
 
 /*	a collection of function calls
@@ -76,8 +85,8 @@ v1.20170214a
 
 //
 //
-	var d2B_cases = 3;
-	var d2B_toggleHelper = "CBaal";
+	var d2B_cases = 1;
+	var d2B_toggleHelper = "helper";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 	
 /*	d2B_toggleHelper choices...
@@ -2688,7 +2697,7 @@ function ActionSorc() {
 }
 function FollowSorc(target) {
 	var _distance = -1;
-	var leader PlayerUnitintown, _meintown;
+	var leaderPlayerUnitintown, _meintown;
 	
 	if(!leaderUnit) leaderUnit = GetLeaderUnit(leaderName);		// retreive leader's unit
 	if(leaderPlayerUnit.areaid <= 0) return;					// don't do anything w/o knowing leader's area
@@ -3914,12 +3923,12 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		case "d":						// custom commands
 			if(msg2) d2B_dCmds(msg2);
 			break;
+		case "data":					// time to explore the NT functions
+			if(msg2) d2B_data(msg2,msg3,msg4);
+			break;
 		default:						// Say this when you receive an invalid command.
 			//Say("!Invalid command: " + msg1 + " " + msg2 + " " + msg3 + "." );
 			return 0;
-		case "data":					// time to explore the NT functions
-			d2B_data(msg2);
-			break;
 	}
 	return 1;
 }
@@ -5325,20 +5334,171 @@ function Imbue() {
 }
 
 //
-// d2B_data(msg2) - exploring the NT functions:
+//	******************************************************************************
+//	d2B_data(msg2) - exploring the NT functions:
+//	******************************************************************************
 //
-function d2B_data(msg2) {
+function d2B_data(msg2,msg3,msg4) {
+	//Print(COLOR_2 + "I got to d2B_data() ...");
 	switch(msg2) {
-		case "myArea":
-			Print(COLOR_5 + me.name + "'s act: " + COLOR_2 + me.areaid);
+		case "my":
+			if(msg3) {
+				switch(msg3) {
+					case "stats": d2B_stats(me);
+						break;
+					default: return 0;
+				}
+				return 1;
+			}
+		case "leader":
+			//Print(COLOR_3 + "I got to d2B_data() leader section...");
+			if(!leaderUnit) leaderUnit = GetLeaderUnit(NTConfig_Leader);		// retreive leader's unit
+			if(leaderPlayerUnit.areaid <= 0) return;							// don't do anything w/o knowing leader's area
+	
+			if(msg3) {
+				switch(msg3) {
+					case "area":
+						Print(COLOR_3 + NTConfig_Leader + "'s act: " + COLOR_2 + leaderPlayerUnit.areaid);
+						break;
+					default: return 0;
+				}
+				return 1;
+			}
+		default: return 0;
+	}
+	return 1;
+}
+function d2B_stats(_character) {
+	Print(COLOR_2 + _character.name + COLOR_7 + "'s my account: " + COLOR_3 + _character.account);
+	Print(COLOR_2 + _character.name + COLOR_7 + "'s my name: " + COLOR_3 + _character.name);
+	switch(_character.playertype) {
+		case false: mytype = "softcore";
+			break;
+		case true: mytype = "hardcore";
+			break;
+		default: mytype = "unknown";
 			break;
 	}
+	Print(COLOR_2 + _character.name + COLOR_7 + "'s my name: " + COLOR_3 + mytype);
+	switch(_character.classid) {
+		case 0: id = "amazon";
+			break;
+		case 1: id = "sorceress";
+			break;
+		case 2: id = "necromancer";
+			break;
+		case 3: id = "paladin";
+			break;
+		case 4: id = "barbarian";
+			break;
+		case 5: id = "druid";
+			break;
+		case 6: id = "assassin";
+			break;
+	}
+	Print(COLOR_2 + _character.name + COLOR_7 + "'s classid: " + COLOR_3 + id);
+	Print(" ");
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s level: " + COLOR_2 + _character.GetStat(12));
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s experience: " + COLOR_2 + _character.GetStat(13));
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s magic find %: " + COLOR_2 + _character.GetStat(80));
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s gold find %: " + COLOR_2 + _character.GetStat(79));
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s fcr: " + COLOR_2 + _character.GetStat(105));
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s ias: " + COLOR_2 + _character.GetStat(93));
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s crushing blow %: " + COLOR_2 + _character.GetStat(136));
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s deadly strike: % " + COLOR_2 + _character.GetStat(142));
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s chance to block %: " + COLOR_2 + _character.GetStat(20));
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s open wounds %: " + COLOR_2 + _character.GetStat(135));
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s life leech %: " + COLOR_2 + _character.GetStat(60));
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s dmg reduced %: " + COLOR_2 + _character.GetStat(36));
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s magic dmg reduced %: " + COLOR_2 + _character.GetStat(37));
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s fwr %: " + COLOR_2 + _character.GetStat(96));
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s cannot be frozen: " + COLOR_2 + _character.GetStat(153));
+	Print(" ");
+	Print(COLOR_7 + _character.name + COLOR_2 + "'s min hp: " + COLOR_3 + _character.GetStat(6));
+	Print(COLOR_7 + _character.name + COLOR_2 + "'s max hp: " + COLOR_3 + _character.GetStat(7));
+	Print(COLOR_7 + _character.name + COLOR_2 + "'s min mp: " + COLOR_3 + _character.GetStat(8));
+	Print(COLOR_7 + _character.name + COLOR_2 + "'s max hp: " + COLOR_3 + _character.GetStat(9));
+	Print(COLOR_7 + _character.name + COLOR_2 + "'s str: " + COLOR_3 + _character.GetStat(0));
+	Print(COLOR_7 + _character.name + COLOR_2 + "'s dex: " + COLOR_3 + _character.GetStat(2));
+	Print(COLOR_7 + _character.name + COLOR_2 + "'s vit: " + COLOR_3 + _character.GetStat(3));
+	Print(COLOR_7 + _character.name + COLOR_2 + "'s energy: " + COLOR_3 + _character.GetStat(1));
+	Print(" ");
+	Print(COLOR_2 + _character.name + COLOR_3 + "'s fire absorb: " + COLOR_7 + _character.GetStat(142));
+	Print(COLOR_2 + _character.name + COLOR_3 + "'s fire max absorb: " + COLOR_7 + _character.GetStat(143));
+	Print(COLOR_2 + _character.name + COLOR_3 + "'s lightning abosrb: " + COLOR_7 + _character.GetStat(144));
+	Print(COLOR_2 + _character.name + COLOR_3 + "'s lightning max abosrb: " + COLOR_7 + _character.GetStat(145));
+	Print(COLOR_2 + _character.name + COLOR_3 + "'s cold abosrb: " + COLOR_7 + _character.GetStat(148));
+	Print(COLOR_2 + _character.name + COLOR_3 + "'s cold max abosrb: " + COLOR_7 + _character.GetStat(149));
+	Print(COLOR_2 + _character.name + COLOR_3 + "'s magic abosrb: " + COLOR_7 + _character.GetStat(146));
+	Print(" ");
+	switch(_character.ingame) {
+		case false: inside = "not in game";
+			break;
+		case true: inside = "in game";
+			break;
+		default: inside = "unknown if in/out of game";
+			break;
+	}
+	Print(COLOR_3 + _character.name + COLOR_7 + " is " + COLOR_2 + inside);
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s my GID: " + COLOR_2 + _character.gid);	// controlled unit's ID which is unique within a single game
+	switch(_character.gatewayid) {
+		case 0: gateway = "US West";
+			break;
+		case 1: gateway = "US East";
+			break;
+		case 2: gateway = "US Asia";
+			break;
+		case 3: gateway = "US Europe";
+			break;
+	}
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s game gateway: " + COLOR_2 + gateway);
+	switch(_character.gametype) {
+		case false: gmt = "classic";
+			break;
+		case true: gmt = "expansion";
+			break;
+		default: gmt = "unknown";
+			break;
+	}
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s game type: " + COLOR_2 + gmt);
+	switch(_character.diff) {
+		case 0: difficulty = "normal";
+			break;
+		case 1: difficulty = "nightmare";
+			break;
+		case 2: difficulty = "hell";
+			break;
+	}
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s game difficulty: " + COLOR_2 + difficulty);
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s ping: " + COLOR_2 + _character.ping);
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s game server ip: " + COLOR_2 + _character.gameserverip);
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s game name: " + COLOR_2 + _character.gamename);
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s game pwd: " + COLOR_2 + _character.gamepassword);
+	Print(" ");
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s areaid: " + COLOR_2 + _character.areaid);
+	Print(COLOR_5 + _character.name + COLOR_8 + "'s x-value: " + COLOR_7 + _character.x);
+	Print(COLOR_5 + _character.name + COLOR_8 + "'s y-value: " + COLOR_7 + _character.y);
+	Print(" ");
+	Print(COLOR_8 + "List of party members:");
+	Print(COLOR_3 + "_____________________");
+	d2B_listParty();
 	return;
 }
+function d2B_listParty() {	// this lists everyone in party and their stats
+	var output;
+	var _player = GetPlayerUnit();
+	if(_player) {
+		while(_player.GetNext()) {
+			Print(COLOR_3 + _player.name + COLOR_8 + "'s level is: " + COLOR_7 + _player.level);			
+		}
+	}
+	return;
+}	
+//
 // ******************************************************************************
 // Internal functions
 // ******************************************************************************
-
+//
 function WaypointNameToID(name) { // for Nith, you have to say 'nit' instead of 'hal'.  Conflicts with 'hal'ls of the dead.
 
 	var partial = name.substring(0, 3);
@@ -5638,11 +5798,11 @@ function LogActionPl0x(message) {
 	file.Close();
 }
 
-// ____________________________________________________________
 //
+//	******************************************************************************
 //	Write/Read functions...
+//	******************************************************************************
 //
-
 function d2B_storePause(a_d2B_myPauseValue) {
 	NT_File("logs/messagecomands/"+me.name+"-pause.txt", 1, a_d2B_myPauseValue + "/"); // for leader to print game/pw to txt
 	return;
@@ -5744,7 +5904,9 @@ function classid(i) {
 }
 
 //
-// act iv functions
+//	******************************************************************************
+//	act iv functions
+//	******************************************************************************
 //
 function d2B_openAllSeals() {
 	var _unit;
@@ -6482,7 +6644,9 @@ function OutOfBounds(Monst){
 	return true;
 }
 //
-// act v functions
+//	******************************************************************************
+// 	act v functions
+//	******************************************************************************
 //
 function NT_ClearThroneInt(){
 	var _attackpos = [15112, 5068, 15075, 5065, 15114, 5045, 15114, 5012, 15095, 5024, 15078, 5013, 15092, 5040];
@@ -6832,7 +6996,9 @@ function d2B_killBaal(classid) {
 	return (_target.hp <= 0 || _target.mode == 0 || _target.mode == 12);
 }
 //
+//	******************************************************************************
 // character functions
+//	******************************************************************************
 //
 function d2B_commonVars() {
 	
@@ -6951,7 +7117,9 @@ function d2B_commonVars() {
 	return;
 }
 //
+//	******************************************************************************
 // switchies for switching
+//	******************************************************************************
 //
 function d2B_hmmm(flwrs) {
 	NTTMGR_TownManager();
