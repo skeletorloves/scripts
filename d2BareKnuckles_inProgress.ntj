@@ -2212,6 +2212,28 @@ function d2B_PP(amount) {							// to monitor party
 	if(_numberinpartyX2 != _numberinpartyX) return false; // 1 or more peeps left
 	return true; // true: the right amount of peeps are in still in game and in party
 }
+function d2B_rPPinTown() {							// is everyone in town?
+	var _InTown = true;
+	
+	if(!leaderUnit) leaderUnit = GetLeaderUnit(leaderName);		// retreive leader's unit
+	if(leaderPlayerUnit.areaid <= 0) return;					// don't do anything w/o knowing leader's area
+	
+	
+	var Player = GetPlayerUnit();
+	if(Player){
+		do{
+			if(_peeps.indexOf(Player.name) == -1){
+				_peeps.push(Player.name);
+				if(Player.areaid !== leaderUnit.areaid) {
+					_InTown = false;
+					break;
+			}
+		} while(Player.GetNext())
+	}
+	
+	if(!_InTown) return false; // false: 1 or more peeps are not in town
+	return true; // true: all peeps are in town
+}
 // ________________________________________________________
 // common functions
 //
@@ -7210,17 +7232,22 @@ function d2B_commonVars() {
 // switchies for switching
 //	******************************************************************************
 //
-function d2B_boBabaLeader(chaos,baal,countess) {
+function d2B_boBarbLeader(chaos,baal,countess) {
 	if(chaos != false || baal != false || countess != false) {
 		switch(d2B_myPauseValue) {
 			case 1: if(!chaos) break;
 				if(d2B_PP(_PPamount)) {			// are all the expected party peeps in game?
+					Print(COLOR_7 + "All of the expected # of peeps are in the game...");
 					d2B_msg("ummm 4");
 					Delay(Random(20000,25000));
-					if(d2B_rPPinTown(_PPamount) && InTown(me)) {
+					if(d2B_rPPinTown() && InTown(me)) {
+						Print(COLOR_7 + "All of the expected # of peeps are in town...");
 						d2B_safeBObyBOLeader(4,107);
 						d2B_msg("sorc chaos"); // if party is in town, then send them off to do chaos
 					}
+					else {
+						Print(COLOR_7 + "One or more of the expected # of peeps are outside of town...");
+					}	
 					Delay(Random(230000,245000));
 				}
 				else {
@@ -7238,6 +7265,7 @@ function d2B_boBabaLeader(chaos,baal,countess) {
 					}
 					Delay(Random(220000,225000));
 					d2B_msg("ummm 4");
+					Delay(Random(20000,25000));
 				}
 				break;
 			case 3: break;
