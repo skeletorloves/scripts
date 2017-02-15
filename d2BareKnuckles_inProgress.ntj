@@ -26,7 +26,7 @@
 	var _TeamMsgMyself = me.charname; 	// to msg to myself a list of peeps in game
 	var _teamSize = 8;					// size of team to check for
 	
-	var _PPamount = 2;					// size of party to check for; it does not include leader
+	var _PPamount = 3;					// size of party to check for; it does not include leader
 	
 	_centreMe = false;				// for sending leader to the centre of Chaos Sanctuary
 	_justSuperUniques = false;		// for only running super unique monsters
@@ -37,7 +37,7 @@
 	var _msgMe = false;						// for enabling whispering to _myName
 	var _whereRchaosSeals = false;			// to msg the location of the chaos seals
 	
-	var _dollChk = false;					// true: if dolls break or do other things | false: no throne room doll check
+	var _dollChk = true;					// true: if dolls break or do other things | false: no throne room doll check
 	var _dollSoul = false;					// global var for if there are dolls
 	var _boneWall = false;					// enable or disable msging for a bonewall
 
@@ -51,6 +51,7 @@
 	var _throneHelpers = true;				// if active fighters are following in the throne
 	
 	var d2B_helpers = true;					// general helpers thang
+	var _ldr		= true;					// for msg'ing
 	
 	var d2B_usingSorcFlwrs = true;			// using sorcies as followers
 	var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_takeMyTP()
@@ -88,7 +89,7 @@
 //
 //
 	var d2B_cases = 3;
-	var d2B_toggleHelper = "sorcLeader";
+	var d2B_toggleHelper = "boBarbLeader";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 	
 /*	d2B_toggleHelper choices...
@@ -188,6 +189,7 @@ function NTMain() {
 			if(d2B_toggleHelper == "mf") d2B_mf(d2B_helpers);									// (1)
 			
 			if(d2B_toggleHelper == "sorcLeader") d2B_sorcLeader(true, true, true);				// (3)
+			if(d2B_toggleHelper == "boBarbLeader") d2B_boBarbLeader(true, true, true);				// (3)
 			
 			if(d2B_toggleHelper == false) d2B_switchMainRuns(false, false, false);				// (31) for a list of action cases which are reasonably complete
 			if(d2B_toggleHelper == "cBCountess") d2B_switchMainRuns(true, true, true);			// (3) for a Chaos, Throne, & Countess leveling
@@ -1684,7 +1686,7 @@ function d2B_chaos(a){								// case: 31
 													// a = seals for when soloing chaos, hitting only seals, and killing d 
 	d2B_chkAct(4);									// if not Pandemonium Fortress, then go to Pandemonium Fortress
 	if(_chaosHelpers) d2B_msg("ummm 4");			// saying this again as a precaution
-	if(!_debug) Delay(Random(30000,35000));
+	if(!_debug || !_ldr) Delay(Random(30000,35000));
 	d2B_commonInitSetup(107);
 	
 	switch(a) {
@@ -2194,7 +2196,21 @@ function d2B_rPPinTown(amount) {					// returns: 1- all peeps in town; 0- not al
 	return 1;
 }*/
 function d2B_PP(amount) {							// to monitor party
-	return 1;
+	var _numberinpartyX = amount;
+	var _numberinpartyX2 = 0;
+	
+	var Player = GetPlayerUnit();
+	if(Player){
+		do{
+			if(_peeps.indexOf(Player.name) == -1){
+				_peeps.push(Player.name);
+				_numberinpartyX2 = (_numberinpartyX2 + 1)
+			}
+		} while(Player.GetNext())
+	}
+	
+	if(_numberinpartyX2 != _numberinpartyX) return false; // 1 or more peeps left
+	return true; // true: the right amount of peeps are in still in game and in party
 }
 // ________________________________________________________
 // common functions
@@ -2635,7 +2651,7 @@ function d2B_safeBObyBOLeader(act, wp) {			// a safe bo function for when using 
 	Delay(300);
 	d2B_msg("'");
 	while(!InTown()) {
-		if(!NTM_UsePortal("BluePortal") Town();
+		if(!NTM_UsePortal("BluePortal", 103)) Town();
 		Delay(Random(3000,4000));
 	}
 	while(!d2B_rPPinTown(_PPamount)) {
@@ -2665,7 +2681,7 @@ function d2B_checkTown(town, wp) {					// (town: which act | b: which town wp to
 	return;
 }
 function d2B_msg(a) {
-	if(d2B_usingAFollower || d2B_usingSorcFlwrs || _teamBO) {
+	if(d2B_usingAFollower || d2B_usingSorcFlwrs || _teamBO || _ldr) {
 		if(!_quiet) Say("/f m " + a);
 		Delay(300);
 	}
@@ -6123,7 +6139,7 @@ function NT_OpenVizierSealInt(type) {
 	
 	if(!_nonTelePeeps) NTM_MoveTo(108, vx[0], vy[0]);
 		
-	
+	NTA_ClearPosition(40, true);
 	if (!NT_OpenSealInt(395) || !NT_OpenSealInt(396)) {
 		d2B_team(false, false);
 		return false;
@@ -6179,6 +6195,7 @@ function NT_OpenDeSeisSealInt(type) {
 	
 	if(!_nonTelePeeps) NTM_MoveTo(108, sx[0], sy[0]);
 	
+	NTA_ClearPosition(40, true);
 	if (!NT_OpenSealInt(394)) {
 		return false;
 	}
@@ -6235,6 +6252,7 @@ function NT_OpenVenomSealInt(type) {
 	
 	if(!_nonTelePeeps) NTM_MoveTo(108, IX[0], IY[0]);
 	
+	NTA_ClearPosition(40, true);
 	if (!NT_OpenSealInt(392)) {
 		return false;
 	}
@@ -7197,18 +7215,35 @@ function d2B_boBabaLeader(chaos,baal,countess) {
 		switch(d2B_myPauseValue) {
 			case 1: if(!chaos) break;
 				if(d2B_PP(_PPamount)) {			// are all the expected party peeps in game?
-					d2B_msg("ummm 4);
+					d2B_msg("ummm 4");
 					Delay(Random(20000,25000));
-					safeBObyBOLeader(4,107);	// act 4 | river wp (107)
-					if(d2B_rPPinTown(_PPamount) && InTown(me)) d2B_msg("sorc chaos"); // if party is in town, then send them off to do chaos
-					while(!d2B_rPPinTown(_PPamount)) {
-						Delay(Random(10000,20000));
-						Print(COLOR_8 + "Waiting for all the peeps to return to town...")
+					if(d2B_rPPinTown(_PPamount) && InTown(me)) {
+						d2B_safeBObyBOLeader(4,107);
+						d2B_msg("sorc chaos"); // if party is in town, then send them off to do chaos
 					}
+					Delay(Random(230000,245000));
 				}
+				else {
+					Print(COLOR_8 + "One or more of the expected # of peeps are missing from game...");
+					Delay(Random(230000,245000));
+				}
+				break;
+			case 2: if(!baal) break;
+				if(d2B_PP(_PPamount)) {			// are all the expected party peeps in game?
+					d2B_msg("ummm 4");
+					Delay(Random(20000,25000));
+					if(d2B_rPPinTown(_PPamount) && InTown(me)) {
+						d2B_safeBObyBOLeader(4,107);
+						d2B_msg("sorc baal"); // if party is in town, then send them off to do chaos
+					}
+					Delay(Random(220000,225000));
+					d2B_msg("ummm 4");
+				}
+				break;
+			case 3: break;
+			default: break;
 		}
 	}
-	
 	return 1;
 }
 function d2B_sorcLeader(chaos,baal,countess) {
@@ -7216,7 +7251,7 @@ function d2B_sorcLeader(chaos,baal,countess) {
 		switch(d2B_myPauseValue) {
 			case 1: if(!chaos) break;
 				if(d2B_PP(_PPamount)) {			// are all the expected party peeps in game?
-					d2B_msg("ummm 4);
+					d2B_msg("ummm 4");
 					Delay(Random(20000,25000));
 					if(d2B_rPPinTown(_PPamount) && InTown(me)) d2B_msg("sorc chaos"); // if party is in town, then send them off to do chaos
 					Delay(Random(220000,225000));
@@ -7224,6 +7259,7 @@ function d2B_sorcLeader(chaos,baal,countess) {
 				break;
 			case 2: break;
 			case 3: break;
+			default: break;
 		}
 	}
 	return 1;
