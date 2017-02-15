@@ -21,10 +21,12 @@
 
 //	d2BareKnuckles.ntj
 	
-	// var leader = NTConfig_Leader;		// store leader's name here
+	// var leader = NTConfig_Leader;	// store leader's name here
 	var myLeader = me.charname;			// for the d2B_retrievePause() thingy...
 	var _TeamMsgMyself = me.charname; 	// to msg to myself a list of peeps in game
 	var _teamSize = 8;					// size of team to check for
+	
+	var _PPamount = 2;					// size of party to check for; it does not include leader
 	
 	_centreMe = false;				// for sending leader to the centre of Chaos Sanctuary
 	_justSuperUniques = false;		// for only running super unique monsters
@@ -85,8 +87,8 @@
 
 //
 //
-	var d2B_cases = 1;
-	var d2B_toggleHelper = "helper";
+	var d2B_cases = 3;
+	var d2B_toggleHelper = "sorcLeader";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 	
 /*	d2B_toggleHelper choices...
@@ -184,6 +186,8 @@ function NTMain() {
 			
 			if(d2B_toggleHelper == "solo") d2B_SoloAct1();										// (1)
 			if(d2B_toggleHelper == "mf") d2B_mf(d2B_helpers);									// (1)
+			
+			if(d2B_toggleHelper == "sorcLeader") d2B_sorcLeader(true, true, true);				// (3)
 			
 			if(d2B_toggleHelper == false) d2B_switchMainRuns(false, false, false);				// (31) for a list of action cases which are reasonably complete
 			if(d2B_toggleHelper == "cBCountess") d2B_switchMainRuns(true, true, true);			// (3) for a Chaos, Throne, & Countess leveling
@@ -1988,9 +1992,9 @@ function d2B_worldstonekeep() {
 	d2B_team(true,5);
 }
 // ________________________________________________________
-//  goal functions
+//  goal team functions
 //
-function d2B_peepsMe() {								// scan all the peeps in team & store them in arrays
+function d2B_peepsMe() {							// scan all the peeps in team & store them in arrays
 	var Player = GetPlayerUnit();
 	if(Player){
 		do{
@@ -2006,7 +2010,7 @@ function d2B_peepsMe() {								// scan all the peeps in team & store them in ar
 	
 	return;
 }
-/*function d2B_peepsMsgMe() {								// output the peeps data
+/*function d2B_peepsMsgMe() {						// output the peeps data
 	for(int i = 0; i <= _teamPeepsName.length; i++) {
 		Print(COLOR_2 + i + ": " +
 		COLOR_3 + _teamPeepsName[i] + " " +
@@ -2016,7 +2020,7 @@ function d2B_peepsMe() {								// scan all the peeps in team & store them in ar
 	}
 	return;
 }*/
-/*function d2B_peepsCheck() {								// check to see if anyone has dropped
+/*function d2B_peepsCheck() {						// check to see if anyone has dropped
 	var _drooped = false;
 	var _peepTeamTmp = [];
 	
@@ -2171,6 +2175,26 @@ function d2B_chaosResetTeam() {
 	d2B_msg("'r");		// reset team by sending them to the river wp
 	Delay(Random(18000,22000));
 	NTM_UsePortal("BluePortal", 108);
+}
+function d2B_rPPinTown(amount) {					// returns: 1- all peeps in town; 0- not all peeps in town; peepLeft- 1 or more peeps left game
+	return 1;
+}
+/*	_peeps = [];
+	var _player = GetPlayerUnit();
+	
+	if(_player){
+		do{
+			if(_peeps.indexOf(_player.name) == -1){
+				_peeps.push(_player.name);
+				if(me.areaid !== _player.areaid) return 0;	// not all peeps are in town
+			}
+		} while(_player.GetNext())
+	}
+	if(_peeps.length < amount) return "peepLeft";			// if less than expected # of peeps, then notify that someone left
+	return 1;
+}*/
+function d2B_PP(amount) {							// to monitor party
+	return 1;
 }
 // ________________________________________________________
 // common functions
@@ -2596,6 +2620,32 @@ function d2B_boSafe(a,b,c,d) {						// (a: d2B_chkAct(a) | b: d2B_gotoWP(b) | c:
 	d2B_isTeamInTown(c,d);
 	return;
 }	
+function d2B_safeBObyBOLeader(act, wp) {			// a safe bo function for when using a BO baba as a leader
+	if(!InTown()) d2B_chkAct(act);
+	d2B_moveWP();
+	d2B_gotoWP(wp);
+	d2B_msg(",");
+	Delay(Random(3000,4000));
+	d2B_littleJMP();
+	NTM_MakeTP();
+	Delay(300);
+	d2B_msg(".");
+	Delay(Random(8000,12000));
+	NTP_DoPrecast(true);
+	Delay(300);
+	d2B_msg("'");
+	while(!InTown()) {
+		if(!NTM_UsePortal("BluePortal") Town();
+		Delay(Random(3000,4000));
+	}
+	while(!d2B_rPPinTown(_PPamount)) {
+		Delay(Random(8000,12000));
+		d2B_msg("'");
+		Delay(1200);
+		Print(COLOR_8 + "Waiting for all the peeps to return to town...")
+	}
+	return 1;
+}
 function d2B_checkActOfPeep(peep) {					// peep = "me", "leader"
 	if (peep.areaid <= 39) { return 1;}											// Rogue Encampment	
 	else if(peep.areaid >= 40 && peep.areaid <= 74) { return 2; }				// Lut Gholein
@@ -5357,8 +5407,22 @@ function d2B_data(msg2,msg3,msg4) {
 	
 			if(msg3) {
 				switch(msg3) {
-					case "area":
-						Print(COLOR_3 + NTConfig_Leader + "'s act: " + COLOR_2 + leaderPlayerUnit.areaid);
+					case "location":
+						Print(COLOR_3 + NTConfig_Leader + "'s areaid: " + COLOR_2 + leaderPlayerUnit.areaid);
+						Print(COLOR_2 + NTConfig_Leader + "'s areaid: " + COLOR_3 + CheckAct(leaderPlayerUnit));
+						break;
+					case "ldract":
+						if(CheckAct(me) !== CheckAct(leaderPlayerUnit)) {
+							if(!NTM_TakeWaypoint(GetPlayerActWaypointID(leaderPlayerUnit))) return 0; // if in diff act, goto leader's act
+							NTTM_TownMove("portalspot");
+						}
+						break
+					case "ldrwp":
+						var _mta = (AreaHasWaypoint(leaderPlayerUnit.areaid) ? leaderPlayerUnit.areaid : GetPlayerActWaypointID(leaderPlayerUnit));
+						NTTM_TownMove("waypoint");
+						Delay(200);
+						NTM_TakeWaypoint(_mta);
+						if(InTown(me)) NTTM_TownMove("portalspot");
 						break;
 					default: return 0;
 				}
@@ -5412,7 +5476,15 @@ function d2B_stats(_character) {
 	Print(COLOR_3 + _character.name + COLOR_7 + "'s dmg reduced %: " + COLOR_2 + _character.GetStat(36));
 	Print(COLOR_3 + _character.name + COLOR_7 + "'s magic dmg reduced %: " + COLOR_2 + _character.GetStat(37));
 	Print(COLOR_3 + _character.name + COLOR_7 + "'s fwr %: " + COLOR_2 + _character.GetStat(96));
-	Print(COLOR_3 + _character.name + COLOR_7 + "'s cannot be frozen: " + COLOR_2 + _character.GetStat(153));
+	switch(_character.GetStat(153)) {
+		case false: frozen = "false";
+			break;
+		case true: frozen = "true";
+			break;
+		default: frozen = "unknown";
+			break;
+	}
+	Print(COLOR_3 + _character.name + COLOR_7 + "'s cannot be frozen: " + COLOR_2 + frozen);
 	Print(" ");
 	Print(COLOR_7 + _character.name + COLOR_2 + "'s min hp: " + COLOR_3 + _character.GetStat(6));
 	Print(COLOR_7 + _character.name + COLOR_2 + "'s max hp: " + COLOR_3 + _character.GetStat(7));
@@ -5485,14 +5557,13 @@ function d2B_stats(_character) {
 	return;
 }
 function d2B_listParty() {	// this lists everyone in party and their stats
-	var output;
 	var _player = GetPlayerUnit();
 	if(_player) {
 		while(_player.GetNext()) {
 			Print(COLOR_3 + _player.name + COLOR_8 + "'s level is: " + COLOR_7 + _player.level);			
 		}
 	}
-	return;
+	return ;
 }	
 //
 // ******************************************************************************
@@ -7121,6 +7192,42 @@ function d2B_commonVars() {
 // switchies for switching
 //	******************************************************************************
 //
+function d2B_boBabaLeader(chaos,baal,countess) {
+	if(chaos != false || baal != false || countess != false) {
+		switch(d2B_myPauseValue) {
+			case 1: if(!chaos) break;
+				if(d2B_PP(_PPamount)) {			// are all the expected party peeps in game?
+					d2B_msg("ummm 4);
+					Delay(Random(20000,25000));
+					safeBObyBOLeader(4,107);	// act 4 | river wp (107)
+					if(d2B_rPPinTown(_PPamount) && InTown(me)) d2B_msg("sorc chaos"); // if party is in town, then send them off to do chaos
+					while(!d2B_rPPinTown(_PPamount)) {
+						Delay(Random(10000,20000));
+						Print(COLOR_8 + "Waiting for all the peeps to return to town...")
+					}
+				}
+		}
+	}
+	
+	return 1;
+}
+function d2B_sorcLeader(chaos,baal,countess) {
+	if(chaos != false || baal != false || countess != false) {
+		switch(d2B_myPauseValue) {
+			case 1: if(!chaos) break;
+				if(d2B_PP(_PPamount)) {			// are all the expected party peeps in game?
+					d2B_msg("ummm 4);
+					Delay(Random(20000,25000));
+					if(d2B_rPPinTown(_PPamount) && InTown(me)) d2B_msg("sorc chaos"); // if party is in town, then send them off to do chaos
+					Delay(Random(220000,225000));
+				}
+				break;
+			case 2: break;
+			case 3: break;
+		}
+	}
+	return 1;
+}
 function d2B_hmmm(flwrs) {
 	NTTMGR_TownManager();
 	switch(d2B_myPauseValue) {
@@ -7659,6 +7766,7 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 	else if(!chaos) d2B_msg("ummm 5");
 	Delay(Random(55000,60000));
 	if(!baal && !countess) Delay(Random(25000,30000));
+	return 1;
 }
 
 function d2B_switchGrinding() {
