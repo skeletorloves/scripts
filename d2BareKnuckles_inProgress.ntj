@@ -26,7 +26,7 @@
 	var _TeamMsgMyself = me.charname; 	// to msg to myself a list of peeps in game
 	var _teamSize = 8;					// size of team to check for
 	
-	var _PPamount = 3;					// size of party to check for; it does not include leader
+	var _PPamount = 4;					// size of party to check for; it does not include leader
 	
 	_centreMe = false;				// for sending leader to the centre of Chaos Sanctuary
 	_justSuperUniques = false;		// for only running super unique monsters
@@ -2215,18 +2215,15 @@ function d2B_PP(amount) {							// to monitor party
 function d2B_rPPinTown() {							// is everyone in town?
 	var _InTown = true;
 	
-	if(!leaderUnit) leaderUnit = GetLeaderUnit(leaderName);		// retreive leader's unit
-	if(leaderPlayerUnit.areaid <= 0) return;					// don't do anything w/o knowing leader's area
-	
-	
 	var Player = GetPlayerUnit();
 	if(Player){
 		do{
 			if(_peeps.indexOf(Player.name) == -1){
 				_peeps.push(Player.name);
-				if(Player.areaid !== leaderUnit.areaid) {
+				if(Player.areaid !== me.areaid) {
 					_InTown = false;
 					break;
+				}
 			}
 		} while(Player.GetNext())
 	}
