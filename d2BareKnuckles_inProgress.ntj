@@ -1963,7 +1963,7 @@ function d2B_worldstonekeep() {
 		return;
 		}
 	}
-	if(_throneLeechers || _throneHelpers) NTM_MakeTP();
+	if(_throneLeechers || _throneHelpers || _ldr) NTM_MakeTP();
 	
 	_dollSoul = false;
 	NTM_MoveTo(me.areaid, 15094, 5039);				// safe: 15118, 5051 | centre: 15094, 5039 | orig(15112, 5068, 1, true)
@@ -2198,6 +2198,7 @@ function d2B_rPPinTown(amount) {					// returns: 1- all peeps in town; 0- not al
 function d2B_PP(amount) {							// to monitor party
 	var _numberinpartyX = amount;
 	var _numberinpartyX2 = 0;
+	_peeps.length = 0;								// erasing/resetting array
 	
 	var Player = GetPlayerUnit();
 	if(Player){
@@ -2214,15 +2215,18 @@ function d2B_PP(amount) {							// to monitor party
 }
 function d2B_rPPinTown() {							// is everyone in town?
 	var _InTown = true;
+	_peeps.length = 0;								// erasing/resetting array
 	
 	var Player = GetPlayerUnit();
 	if(Player){
 		do{
 			if(_peeps.indexOf(Player.name) == -1){
 				_peeps.push(Player.name);
-				if(Player.areaid !== me.areaid) {
-					_InTown = false;
-					break;
+				if(Player.name != me.name) {
+					if(Player.areaid !== me.areaid) {
+						_InTown = false;
+						break;
+					}
 				}
 			}
 		} while(Player.GetNext())
@@ -2262,7 +2266,7 @@ function d2B_newGmDlyPeepChk() {
 }
 function d2B_commonInitSetup(a) {
 	d2B_chkAct();
-	d2B_townMgr();
+	if(d2B_toggleHelper != "helper") d2B_townMgr();
 	d2B_moveWP();
 	d2B_gotoWP(a);
 	NTP_DoPrecast(true);
@@ -2667,8 +2671,9 @@ function d2B_safeBObyBOLeader(act, wp) {			// a safe bo function for when using 
 	d2B_msg(".");
 	Delay(Random(8000,12000));
 	NTP_DoPrecast(true);
-	Delay(300);
+	Delay(Delay(2000,3000));
 	d2B_msg("'");
+	Delay(Delay(2000,3000));
 	while(!InTown()) {
 		if(!NTM_UsePortal("BluePortal", 103)) Town();
 		Delay(Random(3000,4000));
@@ -2679,6 +2684,7 @@ function d2B_safeBObyBOLeader(act, wp) {			// a safe bo function for when using 
 		Delay(1200);
 		Print(COLOR_8 + "Waiting for all the peeps to return to town...")
 	}
+	Delay(Random(4000,5000));
 	return 1;
 }
 function d2B_checkActOfPeep(peep) {					// peep = "me", "leader"
@@ -3454,6 +3460,8 @@ function d2H_load() {
 	return;
 }
 function d2H_wait4leader() {
+	d2B_townMgr();
+	
 	var leaderInGame = false;				// Wait for the leader to join the game
 	for(i = 0; i < NTConfig_PartyMaxTime+1; i++)
 	{
@@ -3901,7 +3909,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			break;
 		case "sorc":										// barbarian calls
 			if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
-			switch(msg2) {									// for bo town barb only
+			switch(msg2) {
 				case "townmgr":
 					d2B_townMgr();
 					break;
@@ -3951,7 +3959,8 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			}	
 			break;
 		case "sa":						// sorc assisting me 
-			sorcassist(msg2);
+			if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
+			else if(me.classid == NTC_CHAR_CLASS_SORCERESS) sorcassist(msg2);
 			break;
 		case "help":
 			DisplayHelp( msg2 );		// Display help menu.
@@ -4203,7 +4212,22 @@ function sorcassist(order) {
 		case "chaos":
 			//temp space to create a chaos leveling function
 			break;
+		case "ancients":
+			d2B_moveWP();
+			d2B_gotoWP(118);
+			NTP_DoPrecast(true);
+			if(me.areaid == 118) {	
+				Print(COLOR_2 + "going for ancients");
+				NTP_DoPrecast(true);
+				d2B_moveToStair(me.areaid, 120);
+				d2B_takeStairs(120, false);
+				if(d2B_usingAFollower) d2B_team(true);
+			}
+			break;
+		default: break;
+		break;
 	}
+	return 1;
 }
 function Follow( target ) {
 	var _distance = -1;
@@ -7245,23 +7269,31 @@ function d2B_boBarbLeader(chaos,baal,countess) {
 					else {
 						Print(COLOR_7 + "One or more of the expected # of peeps are outside of town...");
 					}	
-					Delay(Random(230000,245000));
 				}
 				else {
 					Print(COLOR_8 + "One or more of the expected # of peeps are missing from game...");
-					Delay(Random(230000,245000));
 				}
+				Delay(Random(260000,275000));
 				break;
 			case 2: if(!baal) break;
 				if(d2B_PP(_PPamount)) {			// are all the expected party peeps in game?
+					Print(COLOR_7 + "All of the expected # of peeps are in the game...");
 					d2B_msg("ummm 4");
 					Delay(Random(20000,25000));
 					if(d2B_rPPinTown(_PPamount) && InTown(me)) {
 						d2B_safeBObyBOLeader(4,107);
 						d2B_msg("sorc baal"); // if party is in town, then send them off to do chaos
 					}
-					Delay(Random(220000,225000));
+				}
+				else {
+					Print(COLOR_7 + "One or more of the expected # of peeps are outside of town...");
+				}
+				Delay(Random(260000,276000));
+				if(!coutness) { 
 					d2B_msg("ummm 4");
+					Delay(300);
+					d2B_moveWP();
+					d2B_gotoWP(103);
 					Delay(Random(20000,25000));
 				}
 				break;
