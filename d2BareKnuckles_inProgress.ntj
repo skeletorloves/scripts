@@ -62,6 +62,7 @@
 	var _noBoer = false;						// for impeding boer routines and the delays associated with those in throne
 	var _myName = "";							// peep to msg of what's a-happenin'
 	var _myBoBarb = "";							// bo barb name
+	var _myBarb = "Z-kaBaba";					// for disabling atk for my barb
 	var _myChantress = "";						// my chantress
 
 /*	a collection of function calls
@@ -125,7 +126,8 @@
 	var isBusy = false;											// ;	precast, buff
 	var isPaused = false;										// '	town & unfollow
 	var isFollowingEnabled = false;								// ,	in town move to portal area
-	var isAttackEnabled = true;
+	var isAttackEnabled = false;
+	if(_myBarb != me.name) isAttackEnabled = true;
 	var isAutoEnchantEnabled = false;
 	var leaderUnit;
 	var leaderPlayerUnit;
@@ -4216,7 +4218,11 @@ function sorcassist(order) {
 			NTP_DoPrecast(true);
 			Delay(Random(1200,1750));
 			NTM_MoveTo(108, 7794, 5292);	// tele to the ctr
-			Town();
+			NTM_MakeTP();
+			Delay(300);
+			if(!NTM_UsePortal("BluePortal",103)) Town();
+			NTTM_TownMove("portalspot");
+			d2B_littleJMP();
 			break;
 		case "ancients":
 			Print(COLOR_2 + "going for ancients");
@@ -4229,15 +4235,19 @@ function sorcassist(order) {
 			NTM_MakeTP();
 			Delay(300);
 			break;
-		case "travi"
+		case "travi":
 			Print(COLOR_2 + "going to Travi's back wall...");
 			d2B_moveWP();
 			d2B_gotoWP(83);
 			NTP_DoPrecast(true);
 			Delay(Random(1200,1750));
-			NTM_MoveTo(83, 5694, 2087);	// tele to the wall
-			NTM_MoveTo(83, 5796, 2087);	// tele to the wall behind council
-			Town();
+			NTM_MoveTo(83, 5698, 2090);	// tele to the wall
+			NTM_MoveTo(83, 5800, 2090);	// tele to the wall behind council
+			NTM_MakeTP();
+			Delay(300);
+			if(!NTM_UsePortal("BluePortal",75)) Town();
+			NTTM_TownMove("portalspot");
+			d2B_littleJMP();
 			break;
 		default: break;
 		break;
