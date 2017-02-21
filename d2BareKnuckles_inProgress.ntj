@@ -4210,19 +4210,34 @@ function Busy(){d2B_msg("I'm busy!");}
 function sorcassist(order) {
 	switch(order) {									// for bo town barb only
 		case "chaos":
-			//temp space to create a chaos leveling function
+			Print(COLOR_2 + "going for chaos ctr");
+			d2B_moveWP();
+			d2B_gotoWP(107);
+			NTP_DoPrecast(true);
+			Delay(Random(1200,1750));
+			NTM_MoveTo(108, 7794, 5292);	// tele to the ctr
+			Town();
 			break;
 		case "ancients":
+			Print(COLOR_2 + "going for ancients");
 			d2B_moveWP();
 			d2B_gotoWP(118);
 			NTP_DoPrecast(true);
-			if(me.areaid == 118) {	
-				Print(COLOR_2 + "going for ancients");
-				NTP_DoPrecast(true);
-				d2B_moveToStair(me.areaid, 120);
-				d2B_takeStairs(120, false);
-				if(d2B_usingAFollower) d2B_team(true);
-			}
+			Delay(Random(1200,1750));
+			d2B_moveToStair(me.areaid, 120);
+			d2B_takeStairs(120, false);
+			NTM_MakeTP();
+			Delay(300);
+			break;
+		case "travi"
+			Print(COLOR_2 + "going to Travi's back wall...");
+			d2B_moveWP();
+			d2B_gotoWP(83);
+			NTP_DoPrecast(true);
+			Delay(Random(1200,1750));
+			NTM_MoveTo(83, 5694, 2087);	// tele to the wall
+			NTM_MoveTo(83, 5796, 2087);	// tele to the wall behind council
+			Town();
 			break;
 		default: break;
 		break;
