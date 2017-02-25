@@ -45,6 +45,7 @@
 	var _nonTelePeeps = false;				// if followers cannot tele
 	var _soloCountess = false;				// for leader not to msg followers nor to make tps while solo countessing
 	var _soloChaos = false;					// for leader not to msg followers nor to make tps in chaos
+	var _solo = true;						// for soloing
 	
 	var _chaosHelpers = true;				// if no chaos helpers
 	var _throneLeechers = true;				// if stationary throne leechers are following in the throne
@@ -172,7 +173,7 @@ function NTMain() {
 			break;
 	}
 	
-	if(!_debug) d2B_newGmDlyPeepChk();							// bypass the function for check if all peeps have entered game
+	if(!_solo) d2B_newGmDlyPeepChk();							// bypass the function for check if all peeps have entered game
 	
 	if(d2B_toggleHelper != "testing") {
 		
@@ -7314,7 +7315,7 @@ function d2B_boBarbLeader(chaos,baal,countess) {
 					Print(COLOR_7 + "One or more of the expected # of peeps are outside of town...");
 				}
 				Delay(Random(260000,276000));
-				if(!coutness) { 
+				if(!countess) { 
 					d2B_msg("ummm 4");
 					Delay(300);
 					d2B_moveWP();
