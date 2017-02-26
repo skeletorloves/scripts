@@ -1,5 +1,5 @@
 var _keyExtras = false;
-var d2B_usingAFollower = false;
+var d2B_usingAFollower = true;
 var _quiet = true;
 var _throneLeechers = false;
 var _dollChk = true;
@@ -96,544 +96,7 @@ function CheckMap() {
 function NT_KeyEvents(keycode) {
 	switch(_keycodeMenu) {
 		case 0:						// main customized keycode menu
-			switch(keycode) {
-				case Key_AntiIdle:
-					Print(COLOR_4 + "Changing customized key menu...");
-					Delay(500);
-					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu == 1) {
-						Print(COLOR_4 + "Baal customized manual key menu...");
-						Delay(Random(1000,1200));
-					}
-					if(_keycodeMenu > 2) _keycodeMenu = 0;
-					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu);
-					/*if(MGAntiIdle) {
-						MGAntiIdle = false;
-						Print(COLOR_4 + "AntiIdle " + COLOR_1 + "OFF");
-						if(me.gameserverip) Say("Alright, I'm back!");
-					}
-					else {
-						MGAntiIdle = true;
-						Print(COLOR_4 + "AntiIdle " + COLOR_2 + "ON");
-						if(me.gameserverip) Say("Going AFK, may be a while!");
-					}*/
-					break;
-				case 104:		// number pad #8
-					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
-					MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
-					Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
-					Delay(Random(1000,1700));
-					Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
-					break;
-				case 219:		// [ open bracket 
-					if(busy || _keyExtras)
-						return Print(COLOR_1 + "Not now...");
-					if(me.areaid == 1) {	// corpsefire
-						Print(COLOR_2 + "going for corpsefire");
-						d2B_moveWP();
-						d2B_gotoWP(3);
-						NTP_DoPrecast(true);
-						Delay(300);
-						
-						d2B_moveToStair(2,8);							// head to front of den as a starting point
-
-						Delay(750);
-						NTM_TakeStair(8);
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 15, -15);	// 774: Corpsefire
-						if(d2B_usingAFollower) d2B_team(true);
-						//d2B_teamPro(true,3319,40,true,1,"n w",false);						// 3319: Corpsefire
-					}
-					if(me.areaid == 5) {	// tree head
-						Print(COLOR_2 + "going for tree head");
-						NTP_DoPrecast(true);
-						Delay(200);
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 30, 15, -15);
-						if(d2B_usingAFollower) d2B_team(true);
-					}
-					if(me.areaid == 4) {	// cairn stones
-						Print(COLOR_2 + "going for cairn stones");
-						NTP_DoPrecast(true);
-						Delay(200);
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 15, -15);
-						if(d2B_usingAFollower) d2B_team(true);
-					}
-					if(me.areaid == 27) {	// horadric malus
-						Print(COLOR_2 + "going for horadric malus");
-						NTP_DoPrecast(true);
-						Delay(200);
-						NTM_MoveToPresetUnit(28, NTC_UNIT_MONSTER, 754, -5, 5);
-						if(d2B_usingAFollower) d2B_team(true);
-					}
-			// actII
-					if(me.areaid == 40) {	// Radament
-						Print(COLOR_2 + "going for radament");
-						d2B_moveWP();
-						d2B_gotoWP(48);
-						NTP_DoPrecast(true);
-						Delay(750);
-						d2B_moveToStair(me.areaid, 49);
-						NTM_TakeStair(49);
-						Delay(Random(750,1000));
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 355, 10, -10);		// 355: chest near to Radament
-						if(d2B_usingAFollower) d2B_team(true);
-						//d2B_teamPro(true,2879,40,true,2,"n w",false);						// 2879: Radament
-					}
-					if(me.areaid == 52) {	// make a tp in harem
-						Print(COLOR_2 + "going to make a tp in the harem");
-						NTP_DoPrecast(true);
-						for(i=51;i>=49;i--) {
-							d2B_moveToStair(me.areaid, i, false);
-							NTM_TakeStair(i,false);
-							Delay(Random(750,1000));
-						}
-						d2B_moveToStair(me.areaid, 40, false);
-						NTM_MakeTP();
-						Delay(200);
-						if(d2B_usingAFollower) d2B_team(true);
-					}
-					if(me.areaid == 57) {	// cube
-						Print(COLOR_2 + "going for cube");
-						NTP_DoPrecast(true);
-						d2B_moveToStair(me.areaid, 60);
-						NTM_TakeStair(60);
-						Delay(Random(750,1000));
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 354, -5, -5);
-						if(d2B_usingAFollower) d2B_team(true);
-					}
-					if(me.areaid == 43) {	// staff
-						Print(COLOR_2 + "going for staff");
-						NTP_DoPrecast(true);
-						for (i = 0; i < 3; i += 1) {
-							d2B_moveToStair(me.areaid, 62+i);
-							NTM_TakeStair(62+i);
-							Delay(Random(750,1000));
-						}	
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 356, -5, -5);
-						if(d2B_usingAFollower) d2B_team(true);	
-					}
-					if(me.areaid == 44) {	// amulet
-						Print(COLOR_2 + "going for amulet");
-						NTP_DoPrecast(true);
-						d2B_moveToStair(45, 58);
-						NTM_TakeStair(58);
-						Delay(Random(750,1000));
-						d2B_moveToStair(me.areaid, 61);
-						NTM_TakeStair(61);
-						Delay(300);
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 149, +4, -8);
-						if(d2B_usingAFollower) d2B_team(true);
-					}
-					/*if(me.areaid == 73) {	// duriel's lair
-						Print(COLOR_2 + "going to make a tp at Tyrael"); // const NTC_NPC_ID_TYRAEL_ACT_2 = 251;
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 149, +4, -8);
-						if(d2B_usingAFollower) d2B_team(true);
-					}*/
-					
-			// actIII
-					if(me.areaid == 76) {	// Khalim's eye
-						Print(COLOR_2 + "going for the eye");
-						NTP_DoPrecast(true);
-						NTM_MoveToStair(me.areaid, 85);
-						NTM_TakeStair(85);
-						Delay(300);
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 407)
-						if(d2B_usingAFollower) d2B_team(true);	
-					}
-					if(me.areaid == 78) {	// Khalim's brain
-						Print(COLOR_2 + "going for the brain");
-						NTP_DoPrecast(true);
-						NTM_MoveToStair(78, 88);
-						NTM_TakeStair(88);
-						Delay(Random(750,1000));
-						NTM_MoveToStair(88, 89);
-						NTM_TakeStair(89);
-						Delay(Random(750,1000));
-						NTM_MoveToStair(89, 91);
-						NTM_TakeStair(91);
-						Delay(300);
-						NTM_MoveToPresetUnit(91, NTC_UNIT_MONSTER, 756, -3, 8);
-						if(d2B_usingAFollower) d2B_team(true);	
-					}
-					if(me.areaid == 80) {	// Khalim's heart
-						Print(COLOR_2 + "going for the heart");
-						NTP_DoPrecast(true);
-						NTM_MoveToStair(80,92);
-						NTM_TakeStair(92);
-						Delay(Random(750,1000));
-						NTM_MoveToStair(92,93);
-						NTM_TakeStair(93);
-						Delay(300);
-						if(d2B_usingAFollower) d2B_team(true);	
-					}
-					if(me.areaid == 75) {	// Stormtree
-						Print(COLOR_2 + "going for stormtree");
-						d2B_moveWP();
-						d2B_gotoWP(79);
-						NTP_DoPrecast(true);
-						Delay(750);
-						NTM_MoveToPresetUnit(78, NTC_UNIT_MONSTER, 757, 10, -10);			// 757: Stormtree
-						if(d2B_usingAFollower) d2B_team(true);
-					}
-					if(me.areaid == 80) {	// Act III tome
-						Print(COLOR_2 + "going for tome");
-						NTP_DoPrecast(true);
-						NTM_MoveToStair(me.areaid, 94);
-						NTM_TakeStair(94);
-						Delay(300);
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 193);
-						if(d2B_usingAFollower) d2B_team(true);
-					}
-			// actIV
-					if(me.areaid == 103) {	// Hephasto
-						Print(COLOR_2 + "going for hephasto");
-						d2B_moveWP();
-						d2B_gotoWP(107);
-						NTP_DoPrecast(true);
-						Delay(750);
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 376);				// area near to Hephasto
-						//NTM_MoveToPresetUnit(78, NTC_UNIT_MONSTER, 757, 10, -10);			// 757: Stormtree
-						if(d2B_usingAFollower) d2B_team(true);
-					}
-			// actV		
-					if(me.areaid == 112) {	// Pit of Acheron run
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT,60); // enterance of Pit
-						NTM_TakeUnit(NTC_UNIT_OBJECT,60);
-						NTP_DoPrecast(true);
-						Delay(200);
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 397);
-						
-						var _chest;
-						_chest = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3260));
-						if(_chest){
-							if(NTC_OpenChest(_chest))
-								NTSI_PickItems();
-						}
-					}
-					if(me.areaid == 113) {	// anya
-						Print(COLOR_2 + "going for anya");
-						NTP_DoPrecast(true);
-						Delay(200);
-						d2B_moveToStair(me.areaid, 114);
-						NTM_TakeStair(114);
-						Delay(Random(750,1000));
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 460, -8, -8);
-						if(d2B_usingAFollower) d2B_team(true);
-					}
-					if(me.areaid == 118) {	// ancients
-						Print(COLOR_2 + "going for ancients");
-						NTP_DoPrecast(true);
-						Delay(200);
-						d2B_moveToStair(me.areaid, 120);
-						NTM_TakeStair(120);
-						if(d2B_usingAFollower) d2B_team(true);
-					}
-					if(me.areaid == 109) {	// Throne
-						Print(COLOR_2 + "going for the throne");
-						d2B_moveWP();
-						d2B_gotoWP(129);	// ws2
-						NTP_DoPrecast(true);
-						Delay(750);
-						d2B_moveToStair(me.areaid, 130);
-						NTM_TakeStair(130);	// ws3
-						Delay(750);
-						d2B_moveToStair(me.areaid, 131);
-						NTM_TakeStair(131);	// ws4
-						
-						NTM_MoveTo(me.areaid, 15118, 5051);				// safe: 15118, 5051 | centre: 15094, 5039 | orig(15112, 5068, 1, true)
-						NTM_MakeTP();
-					
-						if(_dollChk) {
-							if(d2B_dollsoulChk()) {
-							_dollSoul = true;
-							return;
-							}
-							Delay(100);
-							if(d2B_dollsoulChk()) {
-							_dollSoul = true;
-							return;
-							}
-						}
-						if(_dollSoul) break;
-						_dollSoul = false;
-					}
-					if(me.areaid == 131) {	// while in the Throne of Destroction: msg to bots
-						NTM_MoveTo(me.areaid, 15118, 5046);
-						NTM_MakeTP();
-						Delay(200);
-						if(d2B_usingAFollower) d2B_msg("."); // "." for enabling follow bots to follow
-					}
-					if(me.areaid == 132) {	// while in the Worldstone Chamber: msg to bots
-						NTM_MoveTo(me.areaid, 15193, 5930);
-						NTM_MakeTP();
-						Delay(200);
-						if(d2B_usingAFollower) d2B_msg("."); // "." for enabling follow bots to follow
-					}
-					break;
-				case 221:		// ] close bracket 
-					if(busy || _keyExtras)
-						return Print(COLOR_1 + "Not now...");
-						
-					if(me.areaid == 131 || me.areaid == 132) {	// msg to bots
-						if(d2B_usingAFollower) d2B_msg("'");
-						break;
-					}
-					if(me.areaid == 1) {	// Bishibosh
-						Print(COLOR_2 + "going for bishibosh");
-						d2B_moveWP();
-						d2B_gotoWP(3);
-						NTP_DoPrecast(true);
-						Delay(750);
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 15, -15);	// 734: Bishibosh
-						if(d2B_usingAFollower) d2B_team(true);
-						//d2B_teamPro(true,2869,40,true,1,"n w",false);						// 2869: Bishibosh 
-					}
-					if(me.areaid == 40) {	// Summoner
-						Print(COLOR_2 + "going for summoner");
-						d2B_moveWP();
-						d2B_gotoWP(74);
-						NTP_DoPrecast(true);
-						Delay(750);
-						
-						var _object = GetPresetUnits(me.areaid);
-						for(var i = 0; i < _object.length; i++) {
-							if(_object[i].id == 357) {
-								if(_object[i].x == 11 && _object[i].y == 11) NTM_MoveTo(me.areaid,  25450, 5030);
-								else if(_object[i].x == 26 && _object[i].y == 11) NTM_MoveTo(me.areaid,  25863, 5449);
-								else if(_object[i].x == 11 && _object[i].y == 21) NTM_MoveTo(me.areaid,  25445, 5869);
-								else NTM_MoveTo(me.areaid,  25023, 5449);
-							}
-						}
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 357, 2, 2);		// 357: the journal stand beside Summoner
-						if(d2B_usingAFollower) d2B_team(true);
-					}
-					if(me.areaid == 75) {	// Bremm Sparkfist
-						Print(COLOR_2 + "going for bremm sparkfist");
-						d2B_moveWP();
-						d2B_gotoWP(83);
-						NTP_DoPrecast(true);
-						Delay(750);
-						
-						_waypoint = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(22526), 5);
-						_deltax = _waypoint.x - 5699;
-						_deltay = _waypoint.y - 1584;
-						NTM_MoveTo(me.areaid, 5780+_deltax, 1555+_deltay);
-						NTM_MoveTo(me.areaid, 5157, 1833);
-						
-						//NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 762, 10, -10);	//	762: Brem Sparkfist
-						if(d2B_usingAFollower) d2B_team(true);
-					}
-					
-					if(me.areaid == 103) {	// Izual
-						Print(COLOR_2 + "going for izual");
-						d2B_moveWP();
-						d2B_gotoWP(106);
-						NTP_DoPrecast(true);
-						Delay(750);
-						
-						var _izzy = GetPresetUnits(105, NTC_UNIT_MONSTER, 256);
-						NTM_MoveTo(me.areaid, _izzy[0].roomx*5+_izzy[0].x, _izzy[0].roomy*5+_izzy[0].y);
-						
-						if(d2B_usingAFollower) d2B_team(true);
-					}
-					break;
-				case 220:		// \ backslash
-					if(busy || _keyExtras)
-						return Print(COLOR_1 + "Not now...");
-					
-					if(me.areaid == 1) {	// Griswold
-						Print(COLOR_2 + "going for griswold");
-						d2B_moveWP();
-						d2B_gotoWP(4);
-						NTP_DoPrecast(true);
-						Delay(750);
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 10, 10);		// 737:	 Rakanishu
-						NTM_UsePortal("Portal", 38);										// 38:	 Cain Stones portal
-						Delay(Random(300,500));
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 739, 10, 10);		// 739:	 Griswold
-						if(d2B_usingAFollower) d2B_team(true);
-						//d2B_teamPro(true,2874,40,true,1,"n w",false);						// 2874: Griswold
-					}
-					if(me.areaid == 40) {	// Duriel
-						Print(COLOR_2 + "going for duriel");
-						d2B_moveWP();
-						d2B_gotoWP(46);
-						NTP_DoPrecast(true);
-						Delay(750);
-						_tombs = GetRoom();
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_TILE, _tombs.correcttomb-28);
-						_unit = NTC_FindUnit(NTC_UNIT_TILE, _tombs.correcttomb-28, 5);
-						NTM_TakeStair(_unit.subareaid);
-						Delay(Random(300,500));
-						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 152, -2, 2);
-						NTC_FindUnit(NTC_UNIT_OBJECT, 100, 10);
-						NTM_TakeUnit(NTC_UNIT_OBJECT, 100);
-						if(d2B_usingAFollower) d2B_team(true);
-					}
-					if(me.areaid == 75) {	// Meph
-						Print(COLOR_2 + "going for meph");
-						d2B_moveWP();
-						d2B_gotoWP(101);
-						NTP_DoPrecast(true);
-						Delay(750);
-						
-						d2B_moveToStair(me.areaid, 102);
-						NTM_TakeStair(102);
-						Delay(Random(300,500));
-						NTM_MoveTo(me.areaid, 17564, 8069);							// time for Mpeh
-						if(d2B_usingAFollower) d2B_team(true);
-					}
-					if(me.areaid == 103) {	// Chaos centre
-						Print(COLOR_2 + "going for chaos ctr");
-						d2B_moveWP();
-						d2B_gotoWP(107);
-						NTP_DoPrecast(true);
-						Delay(750);
-						
-						NTM_MoveTo(108, 7794, 5292);	// tele to the ctr
-						if(d2B_usingAFollower) d2B_team(true);
-					}
-					if(me.areaid == 131) {	// throne room
-						Print(COLOR_2 + "clearing throne");
-						d2B_throneWaves();
-					}
-					break;
-				case 222:		// ' single quote
-					if(busy || _keyExtras)
-						return Print(COLOR_1 + "Not now...");
-					
-					if(me.areaid == 1) {	// Countess
-						Print(COLOR_2 + "going for countess");
-						d2B_moveWP();
-						d2B_gotoWP(6);
-						NTP_DoPrecast(true);
-						Delay(750);
-						for(var i = 0 ; i < 6 ; i++) {
-							d2B_moveToStair(me.areaid,20+i);	// go to the forgotten tower and do tower things
-							NTM_TakeStair(20+i);
-							Delay(Random(1000,1200));
-							if(i==5) {
-								d2B_countess();
-							}
-						}
-					}
-					if(me.areaid == 40) {	//
-						Print(COLOR_2 + "nothing set for this in act II");
-					}
-					if(me.areaid == 75) {	//
-						Print(COLOR_2 + "nothing set for this in act III");
-					}
-					break;
-				case 191:		// / forward slash
-					if(busy || _keyExtras)
-						return Print(COLOR_1 + "Not now...");
-					
-					if(me.areaid == 1) {	// Andarial
-						Print(COLOR_2 + "going for andy");
-						d2B_moveWP();
-						d2B_gotoWP(35);
-						NTP_DoPrecast(true);
-						Delay(750);
-						for (i = 0; i < 2; i++) {
-							NTM_MoveToStair(me.areaid, 36 + i);
-							NTM_TakeStair(36 + i);
-							Delay(Random(1000,1200));
-						}
-						NTM_MoveTo(me.areaid, 22545, 9517);						// walls  right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547 | 22545, 9517: towards the back where the rogues hang
-						if(d2B_usingAFollower) d2B_team(true);
-						//d2B_teamPro(true,3021,40,true,1,"n w", 22545, 9517);	// 3021: Andarial	
-					}
-
-		// for finding an exp shrine
-					if(!InTown(me)) {
-						Print(COLOR_2 + "Looking for exp shrine...");
-						Delay(500);
-						NTP_DoPrecast(true);
-						Delay(500);
-						d2B_LXPC_FindShrines();
-						break;
-					}	
-					break;
-				case Key_POI:		
-					if(busy)
-						return Print(COLOR_1 + "Other Features are running.");
-					else {
-						if(_Teleport == -1) {
-							_Teleport = 0;
-							Delay(300);
-							if(_Teleport != 0) break;
-						}
-						else if(_Teleport == 0) {_Teleport = 1; }
-						else{ _Teleport = -1; break; }
-						busy = true;
-						TelePoi();
-						_Teleport = -1;
-					}
-					busy = false;
-					break;
-				case Key_HiddenStats:
-					StackedRes();
-					FCRPlusPrint();
-					SorbPrint();
-					break;
-				case Key_Breakpoints:
-					T_BPsPrint();
-					break;
-				case Key_MyChicken:			// for stating x,y, and areaid parameters	
-					Print(COLOR_4 + me.x + "," + me.y + COLOR_1 + " - " + me.areaid);
-					//ChickenValues();
-					break;
-				case Key_CharStats:
-					NTU_CheckMyStats();
-					break;
-				case Key_HotKeyInfo:
-					Do_KeyHotList();
-					Print(COLOR_4 + "Hotkeys sent to manager Common Log!");
-					break;
-				case Key_ExitGame:
-					Print(COLOR_4 + "Calculating stats for game!");
-					MG_ComputeStats(false);
-					if(NTConfig_ChatRecording) ClosingChatRLogs();
-					if(ItemSInfo) ItemSInfo = false;
-					ExitGame();
-					break;
-				case Key_InvStashCheck:
-					MG_CheckFreeStashSpace(StashChecking);
-					MG_CheckFreeInventorySpace(InvChecking);
-					break;
-				case Key_DoPrecast:
-					NTP_DoPrecast(true);
-					break;
-				case Key_GoToTown:
-					HeadingHome();
-					break;
-				case Key_GameStats:
-					MGConfig_EstRun = false;
-					MG_ComputeStats(false);
-					Print(COLOR_4 + "Current Game Stats sent to Manager!");
-					MGConfig_EstRun = true;
-					break;
-				case Key_PickItems:
-					NTSI_PickItems();
-					break;
-				case Key_NextWaypoint:
-					MG_WaypointUp();
-					break;
-				case Key_CursoriLvL:
-					NTU_CursorILvl();
-					break;
-				case Key_Refresh:
-					MG_CheckBeltStuff();
-					break;
-				case Key_DevTools:
-					NTMG_DevelopementTools();
-					break;
-				case 101:
-					break;
-				default:
-					if(CheckKeyNumber)
-						Print(COLOR_2 + WhatHotKey(keycode) + " / " + keycode);
-					break;
-			}
+			d2B_KeyCodeMain(keycode);
 			break;
 		case 1:						// baal customized manual key menu
 			switch(keycode) {
@@ -740,6 +203,23 @@ function NT_KeyEvents(keycode) {
 						d2B_LXPC_FindShrines(false);
 					}
 					break; 
+			// throne thingies
+				case 191:		// / forward slash
+					if(me.areaid == 131) {	// while in the Throne of Destroction: msg to bots
+						NTM_MoveTo(me.areaid, 15118, 5046);
+						NTM_MakeTP();
+						Delay(200);
+						if(d2B_usingAFollower) d2B_msg("-"); // "-" for enabling follow bots to follow
+						break;
+					}
+					if(me.areaid == 132) {	// while in the Throne of Destroction: msg to bots
+						NTM_MoveTo(me.areaid, 15193, 5933);
+						NTM_MakeTP();
+						Delay(200);
+						if(d2B_usingAFollower) d2B_msg("-"); // "-" for enabling follow bots to follow
+						break;
+					}
+					
 			// act i
 				case 97:			// #pad 1: den of evil
 					Print(COLOR_2 + "going for corpsefire");
@@ -1042,6 +522,594 @@ function NT_KeyEvents(keycode) {
 	}
 }
 
+function d2B_KeyCodeMain(keycode){
+	switch(keycode) {
+		case 19:									// 19: Key_AntiIdle | scrolling thru keypad menus
+			_keycodeMenu = _keycodeMenu + 1;
+			if(_keycodeMenu > 2) _keycodeMenu = 0;
+			Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "Baal customized keypad...");
+			Delay(Random(1000,1200));
+			break;
+		case 104:									// number pad #8 | pickit enable/disable
+			MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
+			MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
+			Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+			Delay(Random(300,700));
+			Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+			break;
+		//	____________________________________________
+		//
+		case 219:										// [ open bracket 
+			if(busy || _keyExtras)
+				return Print(COLOR_1 + "Not now...");
+		//
+		// act i
+			// corpsefire
+			if(me.areaid == 1) {
+				Print(COLOR_2 + "going for corpsefire");
+				d2B_moveWP();
+				d2B_gotoWP(3);
+				NTP_DoPrecast(true);
+				d2B_moveToStair(2,8);					// head to front of den as a starting point
+				d2B_takeStairs(8, false);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 15, -15);	// 774: Corpsefire
+				if(d2B_usingAFollower) d2B_team(true);
+				//d2B_teamPro(true,3319,40,true,1,"n w",false);						// 3319: Corpsefire
+				break;
+			}
+			// tree head
+			if(me.areaid == 5) {
+				Print(COLOR_2 + "going for tree head");
+				NTP_DoPrecast(true);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 30, 15, -15);
+				if(d2B_usingAFollower) d2B_team(true);
+				break;
+			}
+			// cairn stones
+			if(me.areaid == 4) {
+				Print(COLOR_2 + "going for cairn stones");
+				NTP_DoPrecast(true);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 15, -15);
+				if(d2B_usingAFollower) d2B_team(true);
+				break;
+			}
+			// horadric malus
+			if(me.areaid == 27) {
+				Print(COLOR_2 + "going for horadric malus");
+				NTP_DoPrecast(true);
+				NTM_MoveToPresetUnit(28, NTC_UNIT_MONSTER, 754, -5, 5);
+				if(d2B_usingAFollower) d2B_team(true);
+				break;
+			}
+		//
+		// actII
+			// Radament
+			if(me.areaid == 40) {	
+				Print(COLOR_2 + "going for radament");
+				d2B_moveWP();
+				d2B_gotoWP(48);
+				NTP_DoPrecast(true);
+				d2B_moveToStair(me.areaid, 49);
+				d2B_takeStairs(49, true);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 355, 10, -10);		// 355: chest near to Radament
+				if(d2B_usingAFollower) d2B_team(true);
+				//d2B_teamPro(true,2879,40,true,2,"n w",false);						// 2879: Radament
+				break;
+			}
+			// make a tp in harem
+			if(me.areaid == 52) {	
+				Print(COLOR_2 + "going to make a tp in the harem");
+				NTP_DoPrecast(true);
+				for(i=51;i>=50;i--) {
+					d2B_moveToStair(me.areaid, i, false);
+					d2B_takeStairs(i, false);
+				}
+				d2B_moveToStair(me.areaid, 40, false);
+				NTM_MakeTP();
+				Delay(200);
+				if(d2B_usingAFollower) d2B_team(true);
+				break;
+			}
+			// cube
+			if(me.areaid == 57) {
+				Print(COLOR_2 + "going for cube");
+				NTP_DoPrecast(true);
+				d2B_moveToStair(me.areaid, 60);
+				d2B_takeStairs(60, false);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 354, -5, -5);
+				if(d2B_usingAFollower) d2B_team(true);
+				break;
+			}
+			// staff
+			if(me.areaid == 43) {
+				Print(COLOR_2 + "going for staff");
+				NTP_DoPrecast(true);
+				for (i = 0; i < 3; i += 1) {
+					d2B_moveToStair(me.areaid, 62+i);
+					d2B_takeStairs(62+i, false);
+					Delay(Random(750,1000));
+				}	
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 356, -5, -5);
+				if(d2B_usingAFollower) d2B_team(true);
+				break;	
+			}
+			// amulet
+			if(me.areaid == 44) {
+				Print(COLOR_2 + "going for amulet");
+				NTP_DoPrecast(true);
+				d2B_moveToStair(45, 58);
+				d2B_takeStairs(58, false);
+				d2B_moveToStair(me.areaid, 61);
+				d2B_takeStairs(61, false);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 149, +4, -8);
+				if(d2B_usingAFollower) d2B_team(true);
+				break;
+			}
+			/*if(me.areaid == 73) {	// duriel's lair
+				Print(COLOR_2 + "going to make a tp at Tyrael"); // const NTC_NPC_ID_TYRAEL_ACT_2 = 251;
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 149, +4, -8);
+				if(d2B_usingAFollower) d2B_team(true);
+			}*/
+		//		
+		// actIII
+			// Khalim's eye
+			if(me.areaid == 76) {	
+				Print(COLOR_2 + "going for the eye");
+				NTP_DoPrecast(true);
+				d2B_moveToStair(76, 85);
+				d2B_takeStairs(85, false);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 407)
+				if(d2B_usingAFollower) d2B_team(true);
+				break;
+			}
+			// Khalim's brain
+			if(me.areaid == 78) {	
+				Print(COLOR_2 + "going for the brain");
+				NTP_DoPrecast(true);
+				d2B_moveToStair(78, 88);
+				d2B_takeStairs(88, false);
+				Delay(Random(750,1000));
+				d2B_moveToStair(88, 89);
+				d2B_takeStairs(89, false);
+				Delay(Random(750,1000));
+				d2B_moveToStair(89, 91);
+				d2B_takeStairs(91, false);
+				NTM_MoveToPresetUnit(91, NTC_UNIT_MONSTER, 756, -3, 8);
+				if(d2B_usingAFollower) d2B_team(true);	
+				break;
+			}
+			// Khalim's heart
+			if(me.areaid == 80) {	// Khalim's heart
+				Print(COLOR_2 + "going for the heart");
+				NTP_DoPrecast(true);
+				d2B_moveToStair(80,92);
+				d2B_takeStairs(92, false);
+				Delay(Random(750,1000));
+				d2B_moveToStair(92,93);
+				d2B_takeStairs(93, false);
+				if(d2B_usingAFollower) d2B_team(true);
+				break;	
+			}
+			// Stormtree
+			if(me.areaid == 75) {	
+				Print(COLOR_2 + "going for stormtree");
+				d2B_moveWP();
+				d2B_gotoWP(79);
+				NTP_DoPrecast(true);
+				Delay(750);
+				NTM_MoveToPresetUnit(78, NTC_UNIT_MONSTER, 757, 10, -10);			// 757: Stormtree
+				if(d2B_usingAFollower) d2B_team(true);
+				break;
+			}
+			// Act III tome
+			if(me.areaid == 80) {
+				Print(COLOR_2 + "going for tome");
+				NTP_DoPrecast(true);
+				d2B_moveToStair(me.areaid, 94);
+				d2B_takeStairs(94, false);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 193);
+				if(d2B_usingAFollower) d2B_team(true);
+				break;
+			}
+		//
+		// actIV
+			// Hephasto
+			if(me.areaid == 103) {	
+				Print(COLOR_2 + "going for hephasto");
+				d2B_moveWP();
+				d2B_gotoWP(107);
+				NTP_DoPrecast(true);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 376);				// area near to Hephasto
+				//NTM_MoveToPresetUnit(78, NTC_UNIT_MONSTER, 757, 10, -10);			// 757: Stormtree
+				if(d2B_usingAFollower) d2B_team(true);
+				break;
+			}
+		//
+		// actV
+			// Pit of Acheron run
+			if(me.areaid == 112) {
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT,60); // enterance of Pit
+				NTM_TakeUnit(NTC_UNIT_OBJECT,60);
+				NTP_DoPrecast(true);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 397);
+				
+				var _chest;
+				_chest = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3260));
+				if(_chest){
+					if(NTC_OpenChest(_chest))
+						NTSI_PickItems();
+				}
+				break;
+			}
+			// anya
+			if(me.areaid == 113) {
+				Print(COLOR_2 + "going for anya");
+				NTP_DoPrecast(true);
+				d2B_moveToStair(me.areaid, 114);
+				d2B_takeStairs(114, false);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 460, -8, -8);
+				if(d2B_usingAFollower) d2B_team(true);
+				break;
+			}
+			// ancients
+			if(me.areaid == 118) {	
+				Print(COLOR_2 + "going for ancients");
+				NTP_DoPrecast(true);
+				d2B_moveToStair(me.areaid, 120);
+				d2B_takeStairs(120, false);
+				if(d2B_usingAFollower) d2B_team(true);
+				break;
+			}
+			// Throne
+			if(me.areaid == 109) {	
+				Print(COLOR_2 + "going for the throne");
+				d2B_moveWP();
+				d2B_gotoWP(129);	// ws2
+				NTP_DoPrecast(true);
+				d2B_moveToStair(me.areaid, 130);
+				d2B_takeStairs(130, false);	// ws3
+				d2B_moveToStair(me.areaid, 131);
+				d2B_takeStairs(131, false);	// ws4
+				
+				NTM_MoveTo(me.areaid, 15118, 5051);				// safe: 15118, 5051 | centre: 15094, 5039 | orig(15112, 5068, 1, true)
+				NTM_MakeTP();
+			
+				if(_dollChk) {
+					if(d2B_dollsoulChk()) {
+					_dollSoul = true;
+					return;
+					}
+					Delay(100);
+					if(d2B_dollsoulChk()) {
+					_dollSoul = true;
+					return;
+					}
+				}
+				if(_dollSoul) break;
+				_dollSoul = false;
+				break;
+			}
+			// while in the Throne of Destroction: msg to bots
+			if(me.areaid == 131) {
+				NTM_MoveTo(me.areaid, 15118, 5046);
+				NTM_MakeTP();
+				Delay(200);
+				if(d2B_usingAFollower) d2B_msg("."); // "." for enabling follow bots to follow
+				break;
+			}
+			// while in the Worldstone Chamber: msg to bots
+			if(me.areaid == 132) {
+				NTM_MoveTo(me.areaid, 15193, 5930);
+				NTM_MakeTP();
+				Delay(200);
+				if(d2B_usingAFollower) d2B_msg("."); // "." for enabling follow bots to follow
+				break;
+			}
+			break;
+		//	____________________________________________
+		//
+		case 221:										// ] close bracket 
+			if(busy || _keyExtras) return Print(COLOR_1 + "Not now...");
+			
+			// msg to bots to head to town	
+			if(me.areaid == 131 || me.areaid == 132) {
+				if(d2B_usingAFollower) d2B_msg("'");
+				break;
+			}
+		//
+		// act i
+			// Bishibosh
+			if(me.areaid == 1) {	
+				Print(COLOR_2 + "going for bishibosh");
+				d2B_moveWP();
+				d2B_gotoWP(3);
+				NTP_DoPrecast(true);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 15, -15);	// 734: Bishibosh
+				if(d2B_usingAFollower) d2B_team(true);
+				//d2B_teamPro(true,2869,40,true,1,"n w",false);						// 2869: Bishibosh 
+				return;
+			}
+		//
+		// act ii
+			// Summoner
+			if(me.areaid == 40) {	
+				Print(COLOR_2 + "going for summoner");
+				d2B_moveWP();
+				d2B_gotoWP(74);
+				NTP_DoPrecast(true);
+				
+				var _object = GetPresetUnits(me.areaid);
+				for(var i = 0; i < _object.length; i++) {
+					if(_object[i].id == 357) {
+						if(_object[i].x == 11 && _object[i].y == 11) NTM_MoveTo(me.areaid,  25450, 5030);
+						else if(_object[i].x == 26 && _object[i].y == 11) NTM_MoveTo(me.areaid,  25863, 5449);
+						else if(_object[i].x == 11 && _object[i].y == 21) NTM_MoveTo(me.areaid,  25445, 5869);
+						else NTM_MoveTo(me.areaid,  25023, 5449);
+					}
+				}
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 357, 2, 2);		// 357: the journal stand beside Summoner
+				if(d2B_usingAFollower) d2B_team(true);
+				break;
+			}
+		//
+		// act iii
+			// Bremm Sparkfist
+			if(me.areaid == 75) {	
+				Print(COLOR_2 + "going for bremm sparkfist");
+				d2B_moveWP();
+				d2B_gotoWP(83);
+				NTP_DoPrecast(true);
+				
+				_waypoint = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(22526), 5);
+				_deltax = _waypoint.x - 5699;
+				_deltay = _waypoint.y - 1584;
+				NTM_MoveTo(me.areaid, 5780+_deltax, 1555+_deltay);
+				NTM_MoveTo(me.areaid, 5157, 1833);
+				
+				//NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 762, 10, -10);	//	762: Brem Sparkfist
+				if(d2B_usingAFollower) d2B_team(true);
+				break;
+			}
+		//
+		// act iv
+			// Izual
+			if(me.areaid == 103) {	
+				Print(COLOR_2 + "going for izual");
+				d2B_moveWP();
+				d2B_gotoWP(106);
+				NTP_DoPrecast(true);
+				
+				var _izzy = GetPresetUnits(105, NTC_UNIT_MONSTER, 256);
+				NTM_MoveTo(me.areaid, _izzy[0].roomx*5+_izzy[0].x, _izzy[0].roomy*5+_izzy[0].y);
+				
+				if(d2B_usingAFollower) d2B_team(true);
+				break;
+			}
+			break;
+		//	____________________________________________
+		//
+		case 220:										// \ backslash
+			if(busy || _keyExtras)
+				return Print(COLOR_1 + "Not now...");
+		//
+		// act i
+			// Griswold
+			if(me.areaid == 1) {	
+				Print(COLOR_2 + "going for griswold");
+				d2B_moveWP();
+				d2B_gotoWP(4);
+				NTP_DoPrecast(true);
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 10, 10);		// 737:	 Rakanishu
+				NTM_UsePortal("Portal", 38);										// 38:	 Cain Stones portal
+				Delay(Random(300,500));
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 739, 10, 10);		// 739:	 Griswold
+				if(d2B_usingAFollower) d2B_team(true);
+				//d2B_teamPro(true,2874,40,true,1,"n w",false);						// 2874: Griswold
+				break;
+			}
+		//
+		// act ii
+			// Duriel
+			if(me.areaid == 40) {	
+				Print(COLOR_2 + "going for duriel");
+				d2B_moveWP();
+				d2B_gotoWP(46);
+				NTP_DoPrecast(true);
+				_tombs = GetRoom();
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_TILE, _tombs.correcttomb-28);
+				_unit = NTC_FindUnit(NTC_UNIT_TILE, _tombs.correcttomb-28, 5);
+				NTM_TakeStair(_unit.subareaid);
+				Delay(Random(300,500));
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 152, -2, 2);
+				NTC_FindUnit(NTC_UNIT_OBJECT, 100, 10);
+				NTM_TakeUnit(NTC_UNIT_OBJECT, 100);
+				if(d2B_usingAFollower) d2B_team(true);
+				break;
+			}
+		//
+		// act iii
+			// Meph
+			if(me.areaid == 75) {	
+				Print(COLOR_2 + "going for meph");
+				d2B_moveWP();
+				d2B_gotoWP(101);
+				NTP_DoPrecast(true);
+				
+				d2B_moveToStair(me.areaid, 102);
+				d2B_takeStairs(102, false);
+				Delay(Random(300,500));
+				NTM_MoveTo(me.areaid, 17564, 8069);							// time for Mpeh
+				if(d2B_usingAFollower) d2B_team(true);
+				break;
+			}
+			// Chaos centre
+			if(me.areaid == 103) {	
+				Print(COLOR_2 + "going for chaos ctr");
+				d2B_moveWP();
+				d2B_gotoWP(107);
+				NTP_DoPrecast(true);
+				
+				NTM_MoveTo(108, 7794, 5292);	// tele to the ctr
+				if(d2B_usingAFollower) d2B_team(true);
+				break;
+			}
+		//
+		// act v
+			// throne room
+			if(me.areaid == 131) {
+				Print(COLOR_2 + "clearing throne");
+				d2B_throneWaves();
+				break;
+			}
+			break;
+		//	____________________________________________
+		//
+		case 222:										// ' single quote
+			if(busy || _keyExtras)
+				return Print(COLOR_1 + "Not now...");
+		//
+		// act i
+			// Countess
+			if(me.areaid == 1) {	
+				Print(COLOR_2 + "going for countess");
+				d2B_moveWP();
+				d2B_gotoWP(6);
+				NTP_DoPrecast(true);
+				for(var i = 0 ; i < 6 ; i++) {
+					d2B_moveToStair(me.areaid,20+i);	// go to the forgotten tower and do tower things
+					d2B_takeStairs(20+i, false);
+					Delay(Random(1000,1200));
+					if(i==5) {
+						d2B_countess();
+					}
+				}
+				break;
+			}
+			if(me.areaid == 40) {	//
+				Print(COLOR_2 + "nothing set for this in act II");
+				break;
+			}
+			if(me.areaid == 75) {	//
+				Print(COLOR_2 + "nothing set for this in act III");
+				break;
+			}
+			break;
+		//	____________________________________________
+		//
+		case 191:										// / forward slash
+			if(busy || _keyExtras)
+				return Print(COLOR_1 + "Not now...");
+		//
+		// act i
+			// Andarial
+			if(me.areaid == 1) {	
+				Print(COLOR_2 + "going for andy");
+				d2B_moveWP();
+				d2B_gotoWP(35);
+				NTP_DoPrecast(true);
+				for (i = 0; i < 2; i++) {
+					d2B_moveToStair(me.areaid, 36 + i);
+					d2B_takeStairs(36 + i, false);
+					Delay(Random(1000,1200));
+				}
+				NTM_MoveTo(me.areaid, 22545, 9517);						// walls  right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547 | 22545, 9517: towards the back where the rogues hang
+				if(d2B_usingAFollower) d2B_team(true);
+				//d2B_teamPro(true,3021,40,true,1,"n w", 22545, 9517);	// 3021: Andarial
+				break;
+			}
+			// for finding an exp shrine
+			if(!InTown(me)) {
+				Print(COLOR_2 + "Looking for exp shrine...");
+				Delay(500);
+				NTP_DoPrecast(true);
+				Delay(500);
+				d2B_LXPC_FindShrines();
+				break;
+			}	
+			break;
+		case Key_POI:		
+			if(busy)
+				return Print(COLOR_1 + "Other Features are running.");
+			else {
+				if(_Teleport == -1) {
+					_Teleport = 0;
+					Delay(300);
+					if(_Teleport != 0) break;
+				}
+				else if(_Teleport == 0) {_Teleport = 1; }
+				else{ _Teleport = -1; break; }
+				busy = true;
+				TelePoi();
+				_Teleport = -1;
+			}
+			busy = false;
+			break;
+		case Key_HiddenStats:
+			StackedRes();
+			FCRPlusPrint();
+			SorbPrint();
+			break;
+		case Key_Breakpoints:
+			T_BPsPrint();
+			break;
+		case Key_MyChicken:			// for stating x,y, and areaid parameters	
+			Print(COLOR_4 + me.x + "," + me.y + COLOR_1 + " - " + me.areaid);
+			//ChickenValues();
+			break;
+		case Key_CharStats:
+			NTU_CheckMyStats();
+			break;
+		case Key_HotKeyInfo:
+			Do_KeyHotList();
+			Print(COLOR_4 + "Hotkeys sent to manager Common Log!");
+			break;
+		case Key_ExitGame:
+			Print(COLOR_4 + "Calculating stats for game!");
+			MG_ComputeStats(false);
+			if(NTConfig_ChatRecording) ClosingChatRLogs();
+			if(ItemSInfo) ItemSInfo = false;
+			ExitGame();
+			break;
+		case Key_InvStashCheck:
+			MG_CheckFreeStashSpace(StashChecking);
+			MG_CheckFreeInventorySpace(InvChecking);
+			break;
+		case Key_DoPrecast:
+			NTP_DoPrecast(true);
+			break;
+		case Key_GoToTown:
+			HeadingHome();
+			break;
+		case Key_GameStats:
+			MGConfig_EstRun = false;
+			MG_ComputeStats(false);
+			Print(COLOR_4 + "Current Game Stats sent to Manager!");
+			MGConfig_EstRun = true;
+			break;
+		case Key_PickItems:
+			NTSI_PickItems();
+			break;
+		case Key_NextWaypoint:
+			MG_WaypointUp();
+			break;
+		case Key_CursoriLvL:
+			NTU_CursorILvl();
+			break;
+		case Key_Refresh:
+			MG_CheckBeltStuff();
+			break;
+		case Key_DevTools:
+			NTMG_DevelopementTools();
+			break;
+		case 101:
+			break;
+		default:
+			if(CheckKeyNumber)
+				Print(COLOR_2 + WhatHotKey(keycode) + " / " + keycode);
+			break;
+	}
+	return;
+}
 function _classid(i) {
 	switch(i) {
 		case 0:	return "Amazon";
@@ -1543,9 +1611,11 @@ function d2B_usePortal(a,b){
 	return;
 }
 function d2B_moveToStair(a,b) {
+	Delay(Random(300,1000));
 	if(!NTM_MoveToStair(a, b)) {
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToStair()");
 	}
+	Delay(Random(1200,2000));
 	return;
 }
 function d2B_takeStairs(a,b) {						// a: area stairs | b: engage clr lvl & open chests
@@ -1897,18 +1967,21 @@ function d2B_LXPC_FindShrines(a) {
 						//NTM_MakeTP(true);
 						Delay(500);
 						if(ThisShrine) {
-							while(!me.GetState(137) && !ThisShrine.mode) {
-								if(a) {
-									if(NTM_GetCloserIntS(ThisShrine)) NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, ThisShrine);
-								}
+							while(!me.GetState(137) && !ThisShrine.mode && a) {
+								NTC_CastSkill(43, NTC_HAND_RIGHT, ThisShrine);
 							}
 							NTC_Delay(100);
 						}
-						if(a) NTTM_CheckAct(5);
-						else if(!a) {
-							Town();
+						while(!me.GetState(137) && !ThisShrine.mode && !a) {
+							NTM_GetCloserIntS(ThisShrine);
+							Delay(100);
+							NTM_MakeTP();
+							Delay(700);
+							NTM_UsePortal("BluePortal", 1);
+							Delay(Random(1400,2000));
 							d2B_moveWP();
 						}
+						if(a) NTTM_CheckAct(5);
 					}
 				}
 			}while(shrine.GetNext());
