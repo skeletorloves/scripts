@@ -3959,7 +3959,31 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					d2B_peepsMe();
 					d2b_peepsMsgMe();
 					break;
+				default break;
 			}	
+			break;
+		case "nec":										// necro calls
+			if(me.classid != NTC_CHAR_CLASS_NECROMANCER) break;
+			switch(msg2) {
+				case "throne":
+					d2B_commonInitSetup(109);
+					Delay(500);
+					NTTM_TownMove("portalspot");
+					do{
+						NTM_UsePortal("BluePortal", 131); //	131: throne | 132: worldstone chamber
+						delay(Random(2000,3000));
+					} while(InTown()) 
+					d2B_throneWaves();
+					Delay(Random(2500,3000));
+					d2B_baal();
+					Delay(Random(3000,4000));
+					do{
+						NTM_UsePortal("BluePortal", 109); //	131: throne | 132: worldstone chamber
+						delay(Random(2000,3000));
+					} while(!InTown())
+					break;
+				default break;
+			}
 			break;
 		case "sa":						// sorc assisting me 
 			if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
