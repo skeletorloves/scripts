@@ -3916,6 +3916,13 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				case "townmgr":
 					d2B_townMgr();
 					break;
+				case "1":
+				case "2":
+				case "3":
+				case "4":
+				case "5":
+					d2B_charAct(msg2);
+					break;
 				case "solo":
 					NTConfig_SkipRegularMonsters = true;
 					d2B_SoloAct1();
@@ -3959,12 +3966,18 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					d2B_peepsMe();
 					d2b_peepsMsgMe();
 					break;
-				default break;
 			}	
 			break;
 		case "nec":										// necro calls
 			if(me.classid != NTC_CHAR_CLASS_NECROMANCER) break;
 			switch(msg2) {
+				case "1":
+				case "2":
+				case "3":
+				case "4":
+				case "5":
+					d2B_charAct(msg2);
+					break;
 				case "throne":
 					d2B_commonInitSetup(109);
 					Delay(500);
@@ -3982,7 +3995,6 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 						delay(Random(2000,3000));
 					} while(!InTown())
 					break;
-				default break;
 			}
 			break;
 		case "sa":						// sorc assisting me 
@@ -4052,6 +4064,15 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			return 0;
 	}
 	return 1;
+}
+function d2B_charAct(msg2) {
+	d2B_chkAct(Number(msg2));
+	Delay(Random(4000,6000));
+	if(NTC_InTown(me)) {
+		d2B_townMove("portalspot");
+		d2B_littleJMP();
+	}
+	return;
 }
 function d2B_dCmds(msg) {
 	switch(msg) {
@@ -7309,7 +7330,9 @@ function d2B_boBarbLeader(chaos,baal,countess) {
 			case 1: if(!chaos) break;
 				if(d2B_PP(_PPamount)) {			// are all the expected party peeps in game?
 					Print(COLOR_7 + "All of the expected # of peeps are in the game...");
-					d2B_msg("ummm 4");
+					d2B_msg("sorc 4");
+					Delay(Random(3000,4000));
+					d2B_msg("nec 4");
 					Delay(Random(20000,25000));
 					if(d2B_rPPinTown() && InTown(me)) {
 						Print(COLOR_7 + "All of the expected # of peeps are in town...");
