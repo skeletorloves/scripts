@@ -5,6 +5,7 @@ var _throneLeechers = false;
 var _dollChk = true;
 var _dollSoul;
 var _follow = false;
+var _barbHop = false
 
 var _keycodeMenu = 0;	// for switching through thru customized keycode menus
 
@@ -184,8 +185,8 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 2) _keycodeMenu = 0;
-					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "main customized keycode menu...");
+					if(_keycodeMenu > 3) _keycodeMenu = 0;
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "experimental hopping barbs menu...");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
 					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
@@ -486,14 +487,40 @@ function NT_KeyEvents(keycode) {
 					}
 			}
 			break;
-		case 3:						// this one is in-progress
+		case 3:						// this one is a experiment for hop barbs
 			switch(keycode) {
-				case Key_AntiIdle:
-					Print(COLOR_4 + "Changing customized key menu...");
-					Delay(500);
+				case 46:			// [del] button (orig: Key_ExitGame)
+					ExitGame();
+					break;
+				case 96:			// #pad 0: exit game (orig: Key_DoPrecast)
+					ExitGame();
+					break;
+				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 5) _keycodeMenu = 0;
-					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu);
+					if(_keycodeMenu > 3) _keycodeMenu = 0;
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "main control menu...");
+					break;
+				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
+					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
+					MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
+					Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+					Delay(Random(1000,1700));
+					Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+					break;
+				case 97:			// #pad 1: for throne hopping barb
+					Print(COLOR_2 + "enable/disable throne hopping barb");
+					if(InTown(me)) break;	
+					Delay(300);
+					_barbHop == true ? _barbHop = false : _barbHop = true;
+					if(!(NTM_MoveTo(131, 15095, 5022) || if(!NTC_PutSkill(132. NTC_HAND_RIGHT)) NTM_MoveTo(131, 15118, 5045);
+					else {
+						rBarbx = Random(0,5);
+						rBarby = Random(0,5);
+						while(_barbHop) {
+							NTC_CastSkill(132. NTC_HAND_RIGHT, 15095 + rBarbx, 5022 + rBarby)) {
+							Delay(Random(350, 750));
+						}
+					}
 					break;
 			}
 			break;
