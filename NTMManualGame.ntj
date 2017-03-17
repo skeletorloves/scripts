@@ -1,5 +1,5 @@
 var _keyExtras = false;
-var d2B_usingAFollower = true;
+var d2B_usingAFollower = false;
 var _quiet = true;
 var _throneLeechers = false;
 var _dollChk = true;
@@ -507,21 +507,33 @@ function NT_KeyEvents(keycode) {
 					Delay(Random(1000,1700));
 					Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
 					break;
-				case 97:			// #pad 1: for throne hopping barb
+				case 97:			// #pad 1: for throne hopping by stairs barb
+				case 98:			// #pad 2: for throne hopping in place barb
 					Print(COLOR_2 + "enable/disable throne hopping barb");
 					if(InTown(me)) break;	
 					Delay(300);
+					var meX = me.x;
+					var meY = me.y;
 					_barbHop == true ? _barbHop = false : _barbHop = true;
-					if(!(NTM_MoveTo(131, 15095, 5022) || if(!NTC_PutSkill(132. NTC_HAND_RIGHT)) NTM_MoveTo(131, 15118, 5045);
-					else {
+					if(keycode == 97) {
+						if(!NTM_MoveTo(131, 15095, 5022)) NTM_MoveTo(131, 15118, 5045); // if(!NTM_MoveTo(131, 15095, 5022) || !NTC_PutSkill(132, NTC_HAND_RIGHT)
+					}
+					while(_barbHop) {
+						NTC_CastSkill(132, NTC_HAND_RIGHT, meX + Random(0,5), meY + Random(0,5));
+						Delay(Random(100, 150));
+					}
+						
+					/*else {
 						rBarbx = Random(0,5);
 						rBarby = Random(0,5);
 						while(_barbHop) {
-							NTC_CastSkill(132. NTC_HAND_RIGHT, 15095 + rBarbx, 5022 + rBarby)) {
-							Delay(Random(350, 750));
+							NTC_CastSkill(132, NTC_HAND_RIGHT, 15095 + rBarbx, 5022 + rBarby);
+							Delay(Random(100, 150));
 						}
-					}
+					}*/
 					break;
+				//case 98:			// #pad 2: for throne hopping in place barb
+					
 			}
 			break;
 		case 4:						// this one is in-progress
