@@ -1,125 +1,87 @@
-//	v1.20170214a
+/*	v1.20170311a
+	
+	v1.20170311a
+	d2BareKnuckles.ntj
 
-// to do...
-// dollcheck: create a conditional norm/nm/hell check. If norm, do not do dollcheck
-
-/*	some thingies...
-		colours:
-			white:		Print(COLOR_0 +  "hi");
-			red:		Print(COLOR_1 +  "hi");
-			green:		Print(COLOR_2 +  "hi");
-			blue: 		Print(COLOR_3 +  "hi");
-			gold: 		Print(COLOR_4 +  "hi");
-			dark grey: 	Print(COLOR_5 +  "hi");
-			black:		Print(COLOR_6 +  "hi");
-			light gold: Print(COLOR_7 +  "hi");
-			orange: 	Print(COLOR_8 +  "hi");
-			yellow:		Print(COLOR_9 +  "hi");
 */
 
-// _newSorcNoTele : NTMove.ntl line 34 | used to impede teleing of new sorces
-
-//	d2BareKnuckles.ntj
 	
-	// var leader = NTConfig_Leader;	// store leader's name here
-	var myLeader = me.charname;			// for the d2B_retrievePause() thingy...
-	var _TeamMsgMyself = me.charname; 	// to msg to myself a list of peeps in game
-	var _teamSize = 8;					// size of team to check for
+/*	variables for d2BareKnuckles...
+*/
 	
-	var _PPamount = 4;					// size of party to check for; it does not include leader
+	// team test & team bo variables
+		
+		var _teamSize 			= 8;				// size of team to check for
+		var _PPamount 			= 8;				// size of party to check for; it does not include leader
 	
-	_centreMe = false;				// for sending leader to the centre of Chaos Sanctuary
-	_justSuperUniques = false;		// for only running super unique monsters
+		var _teamBO 			= true;				// send team to a safe wp and bo
+		var _noBoer 			= false;			// for impeding boer routines and the delays associated with those in throne
+		var _myName 			= "";				// peep to msg of what's a-happenin'
+		var _myBoBarb 			= "";				// bo barb name
+		var _myBarb 			= "noATKbobaba";	// for disabling atk for my barb
+		var _barbHop			= false;			// for (dis)(en)abling hop barbs
 	
+	// leader variables
+	
+		var _solo 				= false;				// for soloing
+		var _soloCountess 		= false;				// for leader not to msg followers nor to make tps while solo countessing
+		var _ldr 				= false;				// for msg'ing
+	
+	// chaos variables
+	
+		var _chaosCentreMe 		= false;			// for sending leader to the centre of Chaos Sanctuary
+		var _soloChaos 			= false;			// for leader not to msg followers nor to make tps in chaos
+		var _chaosHelpers 		= false;				// if no chaos helpers
+		var _whereRchaosSeals 	= false;			// to msg the location of the chaos seals
+	
+	// thone variables
+	
+		var _dollChk 			= false;				// true: if dolls break or do other things | false: no throne room doll check
+		var _dollSoul 			= false;			// global var for if there are dolls
+		var _throneLeechers 	= false;				// if stationary throne leechers are following in the throne
+		var _throneHelpers 		= false;				// if active fighters are following in the throne
+			
+	// extra variables
+	
+		var _justSuperUniques 	= false;			// for only running super unique monsters
+		var _boneWall 			= false;			// enable or disable msging for a bonewall
+		
+		var _myChantress = "";						// my chantress
+	
+	// team variables
+	
+		var _lowLvlPeeps 		= false;			// leveling really low level peeps | if enabled, will not engage d2B_team() function calls
+		var _nonTelePeeps 		= false;			// if followers cannot tele
+		var d2B_usingSorcFlwrs 	= false;				// using sorcies as followers
+		var d2B_usingAFollower 	= false; 			// using a follower therefore make townportals d2B_takeMyTP()
+		var d2B_refill 			= false;				// enable/disable NTTMGR_TownManager();
+		
+		var d2B_helpers 		= false;				// general helpers thang
+		
+		
+		var _peeps = [];						// d2B_Peeps()
+		var _peepsNum = 0;						// number of peeps (incl. leader)
+		var _peepsIn = false;					// d2B_peepsIn() for verifying if peeps are still in game
+		
+		var _teamPeepsName = [];
+		var _teamPeepsLevel = [];
+		var _teamPeepsClass = [];
+		var _teamPeepsQty;
+		
+		
 	var _test = false;
 	var _debug = false;						// for testing chaos w/o using followere
 	var _quiet = false;						// msg free silence
 	var _msgMe = false;						// for enabling whispering to _myName
-	var _whereRchaosSeals = false;			// to msg the location of the chaos seals
 	
-	var _dollChk = true;					// true: if dolls break or do other things | false: no throne room doll check
-	var _dollSoul = false;					// global var for if there are dolls
-	var _boneWall = false;					// enable or disable msging for a bonewall
+/*	_______________________________________________________________________________ */
 
-	var _lowLvlPeeps = false;				// leveling really low level peeps | if enabled, will not engage d2B_team() function calls
-	var _nonTelePeeps = false;				// if followers cannot tele
-	var _soloCountess = false;				// for leader not to msg followers nor to make tps while solo countessing
-	var _soloChaos = false;					// for leader not to msg followers nor to make tps in chaos
-	var _solo = true;						// for soloing
-	
-	var _chaosHelpers = true;				// if no chaos helpers
-	var _throneLeechers = true;				// if stationary throne leechers are following in the throne
-	var _throneHelpers = true;				// if active fighters are following in the throne
-	
-	var d2B_helpers = true;					// general helpers thang
-	var _ldr		= true;					// for msg'ing
-	
-	var d2B_usingSorcFlwrs = true;			// using sorcies as followers
-	var d2B_usingAFollower = true; 			// using a follower therefore make townportals d2B_takeMyTP()
-	var d2B_refill = true;					// enable/disable NTTMGR_TownManager();
-	
-	var _teamBO = true;							// send team to a safe wp and bo
-	
-	var _noBoer = false;						// for impeding boer routines and the delays associated with those in throne
-	var _myName = "";							// peep to msg of what's a-happenin'
-	var _myBoBarb = "";							// bo barb name
-	var _myBarb = "Z-kaBaba";					// for disabling atk for my barb
-	var _myChantress = "";						// my chantress
-
-/*	a collection of function calls
-		
-		d2B_storePause(a)				a: 1 as an initializer had been placed into: line 150 of LeaderStarter.ntj
-		d2B_retrievePause()				NT_File("logs/messagecommands/"+me.charname+"-pause.txt", 1, "1" + "/");
-		
-		d2B_checkTown(town, wp)			*not used* (a: which act to head to | b: which town wp to go to)
-		d2B_checkActOfPeep(peep)		*not used* (returns value of the main town of the act of peep: me or leader)	
-
-		d2B_takeMyTP(delayTF, bo, precast, clrlvlopenchests, rA, rB) 			(if rA = false, then no Delay(Random(rA, rB)))
-
-		d2B_team(teamTown, teamAct)		(teamTown: true - towns team, false - team follows | teamAct: false does nothing, 1-sends team to act 1 thru 5)
-
-		d2B_teamPro(teamTown, gLocStrng, clrPosDist, teamTown2, teamAct, dMsg, myOrig_X, myOrig_Y)	(d2B_team(teamTown, false) | GetLocaleString(gLocStrng) | NTA_ClearPosition(clrPosDist, true)
-																									d2B_team(teamTown2, teamAct) | if(dMsg) d2B_msg(dMsg) 
-																									myOrig_X, myOrig_Y : original x, y of where team tp was made)
-
-		d2B_boSafe(a,b,c,d)				(a: d2B_chkAct(a) | b: d2B_gotoWP(b) | c,d: d2B_isTeamInTown(c,d) ) 
-		d2B_isTeamInTown(a,b) 			(a: act | b: area of where the tp is open in and to go to | b = false then stay put and wait for instructions)
-
-		d2B_clrLvlOC()					clear level and open chests
-*/
-
-//
-//
 	var d2B_cases = 3;
 	var d2B_toggleHelper = "boBarbLeader";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
-	
-/*	d2B_toggleHelper choices...
-		helper: for engaging helper | testing: for testing 
-		helperSorc : for engaging helpers which are sorcies
-		solo : for running one continous run
-	
-		cBCountess: Chaos, Baal, and Countess
-	
-		grinding: for specific zone functions
-		leveling: Chaos & Throne | throne
-		leveling2: Chaos, Throne, & Countess | if _nonTelePeeps then chaos(false) for non teleing peeps
-		NecroRuns: for a sorc leader to run tightly with necro crew
-		Chaos: for chaos only
-		CBaalNoTele: for cbaaling with a non tele team
-		CBaalLow: for leveling a team of low lvls
-	*/
 
-// 		*** Global helper vars ***
 
-	var _peeps = [];						// d2B_Peeps()
-	var _peepsNum = 0;						// number of peeps (incl. leader)
-	var _peepsIn = false;					// d2B_peepsIn() for verifying if peeps are still in game
-	
-	var _teamPeepsName = [];
-	var _teamPeepsLevel = [];
-	var _teamPeepsClass = [];
-	var _teamPeepsQty;
+/*	*** Global helper vars *** */
 
 	var debug = false;
 
@@ -128,7 +90,7 @@
 	var isPaused = false;										// '	town & unfollow
 	var isFollowingEnabled = false;								// ,	in town move to portal area
 	var isAttackEnabled = false;
-	if(_myBarb != me.name) isAttackEnabled = true;
+	if(_myBarb != me.charname) isAttackEnabled = true;			// if a bo barb is used, that bo barb is not to attack monsters
 	var isAutoEnchantEnabled = false;
 	var leaderUnit;
 	var leaderPlayerUnit;
@@ -138,13 +100,6 @@
 
 	var d2B_myPause = "";				// a temp place for where retrieved bot pause string is stored
 	var d2B_myPauseValue = 1;			// the pause numerical value of: myPauseValue = Number(myPause)
-
-/*
-	
-*/
-
-// A goal: 	store and retrieve the names of the leader and followers
-//			msg these to _myName as a means to see if all are in
 
 
 function NTMain() {
@@ -156,72 +111,71 @@ function NTMain() {
 	NTTM_TownMove("waypoint");
 	Delay(700);
 	
-	switch(d2B_toggleHelper) {
-		case "helper": 	
-			d2H_helper();				// for enabling a follower
-			break;
-		case "helperSorc":
-			d2H_helperSorc();			// for enabling a follower which is a sorc
-			break;
-		case "boBaba":
-			if(!_debug) d2B_newGmDlyPeepChk();
-			d2B_boBaba();				// for running a bo baba leader
-			break;
-		case "boBaba2":
-			if(!_debug) d2B_newGmDlyPeepChk();
-			d2B_boBaba2();				// for running a bo baba leader
-			break;
-	}
+	if(d2B_toggleHelper != "testing") d2B_newGmDlyPeepChk();								// bypass the function for check if all peeps have entered game if in testing mode
 	
-	if(!_solo) d2B_newGmDlyPeepChk();							// bypass the function for check if all peeps have entered game
+	while(d2B_myPauseValue <= d2B_cases) {				// so long as the pause value is not greater than d2B_cases, then cycle through scripts 
+		Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
+		Delay(Random(4000,5000));
+		if(_msgMe) Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
+		Delay(Random(5000,6000));
 	
-	if(d2B_toggleHelper != "testing") {
-		
-		while(d2B_myPauseValue <= d2B_cases) { 
-			Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
-			Delay(Random(4000,5000));
-			if(_msgMe) Say("/msg *" + _myName + " Case mode # " + d2B_myPauseValue);
-			Delay(Random(5000,6000));
-			
-			// d2B_switchMainRuns(chaos, baal, countess)
-			
-			if(d2B_toggleHelper == "hmmm") d2B_hmmm(d2B_helpers);								// (1)
-			if(d2B_toggleHelper == "leveling") d2B_leveling(d2B_helpers);						// (1)
-			
-			if(d2B_toggleHelper == "solo") d2B_SoloAct1();										// (1)
-			if(d2B_toggleHelper == "mf") d2B_mf(d2B_helpers);									// (1)
-			
-			if(d2B_toggleHelper == "sorcLeader") d2B_sorcLeader(true, true, true);				// (3)
-			if(d2B_toggleHelper == "boBarbLeader") d2B_boBarbLeader(true, true, true);				// (3)
-			
-			if(d2B_toggleHelper == false) d2B_switchMainRuns(false, false, false);				// (31) for a list of action cases which are reasonably complete
-			if(d2B_toggleHelper == "cBCountess") d2B_switchMainRuns(true, true, true);			// (3) for a Chaos, Throne, & Countess leveling
-			if(d2B_toggleHelper == "Chaos") d2B_switchMainRuns(true, false, false);				// (3) for a Chaos only
-			if(d2B_toggleHelper == "Baal") d2B_switchMainRuns(false, true, false);				// (3) for a throne only
-			if(d2B_toggleHelper == "CBaal") d2B_switchMainRuns(true, true, false);				// (3) for a chaos amd throne run
-			if(d2B_toggleHelper == "BCountess") d2B_switchMainRuns(false, true, true);			// (3) for a throne and countess
-			if(d2B_toggleHelper == "Countess") d2B_switchMainRuns(false, false, true);			// (3) for a throne and countess
-			
-			if(d2B_toggleHelper == "grinding") d2B_switchGrinding();		// for a select list of action cases
-			if(d2B_toggleHelper == "NecroRuns") d2B_switchNecroRuns();		// for a sorc leader to run tightly with necro crew
-			if(d2B_toggleHelper == "CBaalNoTele") d2B_CBaalNoTele();		// for cbaaling with a non tele team
-			if(d2B_toggleHelper == "CBaalLow") d2B_CBaalLow();				// for cbaaling low levels
-			
-			d2B_msgIncPause();	
+		switch(d2B_toggleHelper) {
+			case "testing":			Print(COLOR_2 + "This is solely for testing a script...");
+									NTTM_TownMove("waypoint");
+									Delay(2700);
+									d2B_canyon();		
+									Print(COLOR_2 + "Another delay...");
+									Delay(Random(135000,140000));
+									break;
+			case "helper":			d2H_helper();									// for enabling a follower
+									break;
+			case "helperSorc":		d2H_helperSorc();								// for enabling a follower which is a sorc
+									break;
+			case "boBaba":			if(!_debug) d2B_newGmDlyPeepChk();				// for running a bo baba leader
+									d2B_boBaba();				
+									break;
+			case "boBaba2":			if(!_debug) d2B_newGmDlyPeepChk();				// for running a bo baba leader
+									d2B_boBaba2();				
+									break;
+			case "hmmm": 			d2B_hmmm(d2B_helpers);							// (1)
+									break;
+			case "leveling": 		d2B_leveling(d2B_helpers);						// (1)
+									break;
+			case "solo":			d2B_SoloAct1();									// (1)
+									break;
+			case "mf":				d2B_mf(d2B_helpers);							// (1)
+									break;
+			case "sorcLeader":		d2B_sorcLeader(true, true, true);				// (3)
+									break;
+			case "boBarbLeader":	d2B_boBarbLeader(true, true, true);				// (3)
+									break;
+			case false:				d2B_switchMainRuns(false, false, false);		// (31) for a list of action cases which are reasonably complete
+									break;
+			case "cBCountess":		d2B_switchMainRuns(true, true, true);			// (3) for a Chaos, Throne, & Countess leveling
+									break;
+			case "Chaos":			d2B_switchMainRuns(true, false, false);			// (3) for a Chaos only
+									break;
+			case "Baal":			d2B_switchMainRuns(false, true, false);			// (3) for a throne only
+									break;
+			case "CBaal":			d2B_switchMainRuns(true, true, false);			// (3) for a chaos amd throne run
+									break;
+			case "BCountess":		d2B_switchMainRuns(false, true, true);			// (3) for a throne and countess
+									break;
+			case "Countess":		d2B_switchMainRuns(false, false, true);			// (3) for a throne and countess
+									break;
+			case "grinding":		d2B_switchGrinding();							// for a select list of action cases
+									break;
+			case "NecroRuns":		d2B_switchNecroRuns();							// for a sorc leader to run tightly with necro crew
+									break;
+			case "CBaalNoTele":		d2B_CBaalNoTele();								// for cbaaling with a non tele team
+									break;
+			case "CBaalLow":		d2B_CBaalLow();									// for cbaaling low levels
+									break;
 		}
-		if(d2B_myPauseValue > d2B_cases) {
-			d2B_msgResetPauseEnd();	
-		}
-	}	
-	if(d2B_toggleHelper == "testing") {
-		NTTM_TownMove("waypoint");
-		Delay(2700);
-		
-		d2B_canyon();
-		
-		Print(COLOR_2 + "Another delay...");
-		Delay(Random(35000,40000));
+		d2B_msgIncPause();
 	}
+	if(d2B_myPauseValue > d2B_cases) d2B_msgResetPauseEnd();
+		
 	Delay(Random(15000,20000));
 	ExitGame();
 	//NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
@@ -1744,7 +1698,7 @@ function d2B_chaos(a){								// case: 31
 			}
 			if(a != "low") {							// if not leveling low peeps
 			
-				if(!_centreMe) {
+				if(!_chaosCentreMe) {
 					NTM_MoveTo(108, 7790, 5544);			// tele to just inside the enterance
 					
 					if(!_nonTelePeeps) {
@@ -1804,7 +1758,7 @@ function d2B_chaos(a){								// case: 31
 					d2B_boSafe(5,107,"justBO");
 				}
 			}
-			if(!_centreMe) {
+			if(!_chaosCentreMe) {
 				NTM_MoveTo(108, 7790, 5544);			// tele to just inside the enterance
 				
 				if(!_nonTelePeeps) {
@@ -1996,9 +1950,7 @@ function d2B_worldstonekeep() {
 	
 	d2B_team(true,5);
 }
-// ________________________________________________________
-//  goal team functions
-//
+/*	goal team functions */
 function d2B_peepsMe() {							// scan all the peeps in team & store them in arrays
 	var Player = GetPlayerUnit();
 	if(Player){
@@ -2067,10 +2019,10 @@ function d2B_Peeps() {								// store name of leader & followers in storePeeps.
 	}
 	return;
 }
-function d2B_rPeepsInGame() {						// return (true, _teamSize) : _teamSize accounts for all extra peeps minus that boer
+function d2B_rPeepsInGame() {						// return (true, _teamSize) : _teamSize accounts for all characters in game
 	Print(COLOR_3 + "Checking in on peeps");
-	Delay(1000);
-	if(_msgMe) Say("/msg *" + _myName + " Peep check-in");
+	Delay(Random(1000,3000));
+	d2B_msg("/f m " + " Peep check-in");
 	Delay(300);
 	// for checking if everyone is in game...
 	// if so, do continue
@@ -2082,14 +2034,15 @@ function d2B_rPeepsInGame() {						// return (true, _teamSize) : _teamSize accou
 	for(i=1; i < _peeps.length; i++) {
 		if(!NTC_InMyParty(_peeps[i])) {
 			_teamSize = _teamSize - 1;
-			if(_msgMe) Print(COLOR_2 + _peeps[i] + " is not the game.");
+			Print(COLOR_2 + _peeps[i] + " is not the game.");
 			allIn = false;
 			Delay(Random(3000,5000));
-			if(_msgMe) Say("/msg *" + _myName + " " + _peeps[i] + " missing.");
+			Say("/msg *" + _myName + " " + _peeps[i] + " missing.");
+			Delay(Random(2000,3000));
 		} else _teamSize = _teamSize + 1;
 	}
 	Delay(Random(3000,4000));
-	if(_msgMe) Say("/msg *" + _myName + " Of the " + (_peeps.length - 1) + " extra peeps, there are " + (_teamSize));
+	d2B_msg("/f m Of the " + (_peeps.length - 1) + " extra peeps, there are " + (_teamSize) + " in game.");
 	Delay(300);
 	if(!allIn) return false;
 	return true;
@@ -2238,9 +2191,7 @@ function d2B_rPPinTown() {							// is everyone in town?
 	if(!_InTown) return false; // false: 1 or more peeps are not in town
 	return true; // true: all peeps are in town
 }
-// ________________________________________________________
-// common functions
-//
+/*	common functions */
 function d2B_load() {
  	Include("libs/common/NTCommon.ntl");
 	NTC_IncludeLibs();
@@ -2248,8 +2199,18 @@ function d2B_load() {
 	NT_LoadConfig();
 	NTSI_LoadNIPFiles("NTBot/item_configs");
 	NTA_Initialize();
-  
   	return;
+}
+function classid(i) {
+	switch(i){
+		case 0:	return "Amazon";
+		case 1: return "Sorceress";
+		case 2: return "Necromancer";
+		case 3: return "Paladin";
+		case 4: return "Barbarian";
+		case 5: return "Druid";
+		case 6: return "Assassin";
+	} return;
 }
 function d2B_newGmDlyPeepChk() {
 	Print(COLOR_2 + "Taking an extended break, so as to give the peeps time to enter game...");
@@ -2671,10 +2632,13 @@ function d2B_safeBObyBOLeader(act, wp) {			// a safe bo function for when using 
 	d2B_littleJMP();
 	NTM_MakeTP();
 	Delay(300);
-	d2B_msg(".");
+	//d2B_msg(".");
+	d2B_msg("sorc " + wp);
+	Delay(Random(8000,12000));
+	d2B_msg("nec " + wp);
 	Delay(Random(8000,12000));
 	NTP_DoPrecast(true);
-	Delay(Delay(2000,3000));
+	Delay(Delay(3000,4000));
 	d2B_msg("'");
 	Delay(Delay(2000,3000));
 	while(!InTown()) {
@@ -2752,6 +2716,15 @@ function d2B_swapWeapons() {
 	Delay(Random(300,700));
 	me.SwapWeapons();
 	return;
+}
+function d2B_barbHop() {
+	if(!_barbHop || InTown() || me.classid != NTC_CHAR_CLASS_BARBARIAN) break;
+	var meX = me.x;
+	var meY = me.y;
+	while(_barbHop) {
+		NTC_CastSkill(132, NTC_HAND_RIGHT, meX, meY);
+		Delay(Random(100, 150));
+	}
 }
 // ________________________________________________________
 // ________________________________________________________
@@ -3839,6 +3812,18 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					break;
 			}
 			break;
+		case "hop":											// barb hopper calls
+			if(me.classid != NTC_CHAR_CLASS_BARBARIAN || InTown()) break;
+			switch(msg2) {
+				case "on":
+					_barbHop = true;
+					d2B_barbHop();
+					break;
+				case "off":
+					_barbHop = false;
+					break;
+			}
+			break;
 		case "c":											// sorceress calls
 			if(me.name != _myChantress) break;
 			switch(msg2) {									// for bo town barb only
@@ -3923,6 +3908,10 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				case "5":
 					d2B_charAct(msg2);
 					break;
+				case "107":	// river waypoint
+					d2B_gotoWP(msg2);
+					d2B_littleJMP();
+					break;
 				case "solo":
 					NTConfig_SkipRegularMonsters = true;
 					d2B_SoloAct1();
@@ -3978,14 +3967,20 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				case "5":
 					d2B_charAct(msg2);
 					break;
+				case "107":	// river waypoint
+					d2B_gotoWP(msg2);
+					d2B_littleJMP();
+					break;
 				case "throne":
-					d2B_commonInitSetup(109);
-					Delay(500);
 					NTTM_TownMove("portalspot");
 					do{
 						NTM_UsePortal("BluePortal", 131); //	131: throne | 132: worldstone chamber
-						delay(Random(2000,3000));
+						Delay(Random(2000,3000));
 					} while(InTown()) 
+					Delay(300);
+					NTM_MoveTo(131, 15094, 5039);
+					NTA_ClearPosition();
+					NT_ClearThroneInt();
 					d2B_throneWaves();
 					Delay(Random(2500,3000));
 					d2B_baal();
@@ -5999,37 +5994,28 @@ function LogActionPl0x(message) {
 	file.Close();
 }
 
-//
-//	******************************************************************************
-//	Write/Read functions...
-//	******************************************************************************
-//
-function d2B_storePause(a_d2B_myPauseValue) {
-	NT_File("logs/messagecomands/"+me.name+"-pause.txt", 1, a_d2B_myPauseValue + "/"); // for leader to print game/pw to txt
+/*	Write/Read functions... */
+function d2B_storePause(PausedValue) {
+	NT_File("logs/messagecomands/"+me.name+"-pause.txt", 1, PausedValue + "/"); // for leader to print game/pw to txt
 	return;
 }
 function d2B_retrievePause() { 				
-	// to retrieve where bot last paused at: (me.name)-pause.txt
-	//
-	// d2B_line 	= store the complete bot pause date string from the text file
-	// d2B_pause 	= temporary var for opening, verifying, and reading, text file
-	// d2B_myPause	= store solely the needed bot paused string from the text file 
-	
 	var d2B_line;
-	var d2B_pause = FileOpen("logs/messagecomands/" + myLeader + "-pause.txt", 0); // open file in read only
-	if(!d2B_pause){
-		var d2B_pause = FileOpen("logs/messagecomands/" + myLeader + "-pause.txt", 1); // No file? Create it
-	}
+	var d2B_pause = FileOpen("logs/messagecomands/" + me.charname + "-pause.txt", 0); 					// open file in read only
+	if(!d2B_pause) var d2B_pause = FileOpen("logs/messagecomands/" + me.charname + "-pause.txt", 1); 	// No file? Create it
 	if(d2B_pause){ 
-		d2B_line = d2B_pause.ReadLine(); 	//retrieve line & set the pause var to it so we can check it against the game we may want to join
+		d2B_line = d2B_pause.ReadLine(); 							//retrieve line & set the pause var to it so we can check it against the game we may want to join
 		d2B_myPause = d2B_line.substring(0, d2B_line.indexOf('/')); //extracting game name from beginning of line to the "/"
-		//gamepassword = grabLine.substring(grabLine.indexOf('/') + 1, grabLine.length); //Parse after symbol till end of line.	
 		d2B_pause.Close();	
 	}
-	return d2B_myPause;
+	return d2B_myPause;	// returns where we last left off from the series of scripts
+	
+	/* to retrieve where bot last paused at: (me.name)-pause.txt
+	d2B_line 	= store the complete bot pause date string from the text file
+	d2B_pause 	= temporary var for opening, verifying, and reading, text file
+	d2B_myPause	= store solely the needed bot paused string from the text file */
 }
-// modes 0 = read only, 1 = overwrite the file, 2 = add to file
-function NT_File(path, mode, msg, Delay) { //big thanks to all the koreans out there
+function NT_File(path, mode, msg, Delay) {	// modes 0 = read only, 1 = overwrite the file, 2 = add to file
     var _msg  = "";
     var _line = "";
     var _fileHandle;
@@ -6092,18 +6078,6 @@ function MyTime() {
 	TheTime = HR + ":" + MM + ":" + SS + " " + DT;
 	return TheTime;
 }
-function classid(i) {
-	switch(i){
-		case 0:	return "Amazon";
-		case 1: return "Sorceress";
-		case 2: return "Necromancer";
-		case 3: return "Paladin";
-		case 4: return "Barbarian";
-		case 5: return "Druid";
-		case 6: return "Assassin";
-	} return;
-}
-
 //
 //	******************************************************************************
 //	act iv functions
@@ -7351,11 +7325,17 @@ function d2B_boBarbLeader(chaos,baal,countess) {
 			case 2: if(!baal) break;
 				if(d2B_PP(_PPamount)) {			// are all the expected party peeps in game?
 					Print(COLOR_7 + "All of the expected # of peeps are in the game...");
-					d2B_msg("ummm 4");
+					d2B_msg("sorc 4");
+					Delay(Random(3000,4000));
+					d2B_msg("nec 4");
 					Delay(Random(20000,25000));
 					if(d2B_rPPinTown(_PPamount) && InTown(me)) {
 						d2B_safeBObyBOLeader(4,107);
+						d2B_msg("nec 5");
+						Delay(Random(2000,3000));
 						d2B_msg("sorc baal"); // if party is in town, then send them off to do chaos
+						Delay(Random(4000,5000));
+						d2B_msg("nec throne");
 					}
 				}
 				else {
@@ -7687,9 +7667,6 @@ function d2B_leveling(flwrs) {
 	}
 }
 function d2B_MainRuns() {
-	if(me.name != myLeader) {
-		if(!CheckLeader(NTConfig_Leader)) NTC_SendMsgToScript("NTBotGame.ntj", "SCRIPT_END");
-	}
 	switch(d2B_myPauseValue) {
 		case 1: d2B_msg("ummm 1");
 			Delay(Random(12000,16000));
@@ -8188,6 +8165,89 @@ function d2B_CBaalLow() {
 			break;
 	}
 }
+
+/*	all of my d2B_ functions...
+	
+	d2B_load();   										// initializing & loading needed scripts & variables
+	
+	d2B_storePause(PausedValue);						// for storing the value of the last paused action script
+	d2B_myPauseValue = Number(d2B_retrievePause());		// retrieve & convert to numerical value the paused action script value
+	NT_File(path, mode, msg, Delay);					// file reading/writing function
+	
+	MyTime();		// returns the time as TheTime = HR + ":" + MM + ":" + SS + " " + DT
+	
+	classid(i);		// for value i, returns a classid name as a variable, e.g., 0 returns Amazon 
+	
+	NTTMGR_TownManager();		// for refilling helpers
+	NTTM_TownMove("waypoint");	// while in-town, moving to various spots
+	Delay(x);					// x is in milliseconds
+	
+	d2B_newGmDlyPeepChk();		// creates a lenghty delay and then check to see if any peeps are in game
+	
+	Print(COLOR_3 + ...);		// for clientside output to scrn thingy
+	
+	
+*/
+/*	d2B_toggleHelper choices...
+		helper: for engaging helper | testing: for testing 
+		helperSorc : for engaging helpers which are sorcies
+		solo : for running one continous run
+	
+		cBCountess: Chaos, Baal, and Countess
+	
+		grinding: for specific zone functions
+		leveling: Chaos & Throne | throne
+		leveling2: Chaos, Throne, & Countess | if _nonTelePeeps then chaos(false) for non teleing peeps
+		NecroRuns: for a sorc leader to run tightly with necro crew
+		Chaos: for chaos only
+		CBaalNoTele: for cbaaling with a non tele team
+		CBaalLow: for leveling a team of low lvls
+*/
+/*	some colour coding thingies...
+		colours:
+			white:		Print(COLOR_0 +  "hi");
+			red:		Print(COLOR_1 +  "hi");
+			green:		Print(COLOR_2 +  "hi");
+			blue: 		Print(COLOR_3 +  "hi");
+			gold: 		Print(COLOR_4 +  "hi");
+			dark grey: 	Print(COLOR_5 +  "hi");
+			black:		Print(COLOR_6 +  "hi");
+			light gold: Print(COLOR_7 +  "hi");
+			orange: 	Print(COLOR_8 +  "hi");
+			yellow:		Print(COLOR_9 +  "hi");
+*/
+/*	a collection of function calls
+		
+		d2B_storePause(a)				a: 1 as an initializer had been placed into: line 150 of LeaderStarter.ntj
+		d2B_retrievePause()				NT_File("logs/messagecommands/"+me.charname+"-pause.txt", 1, "1" + "/");
+		
+		d2B_checkTown(town, wp)			*not used* (a: which act to head to | b: which town wp to go to)
+		d2B_checkActOfPeep(peep)		*not used* (returns value of the main town of the act of peep: me or leader)	
+
+		d2B_takeMyTP(delayTF, bo, precast, clrlvlopenchests, rA, rB) 			(if rA = false, then no Delay(Random(rA, rB)))
+
+		d2B_team(teamTown, teamAct)		(teamTown: true - towns team, false - team follows | teamAct: false does nothing, 1-sends team to act 1 thru 5)
+
+		d2B_teamPro(teamTown, gLocStrng, clrPosDist, teamTown2, teamAct, dMsg, myOrig_X, myOrig_Y)	(d2B_team(teamTown, false) | GetLocaleString(gLocStrng) | NTA_ClearPosition(clrPosDist, true)
+																									d2B_team(teamTown2, teamAct) | if(dMsg) d2B_msg(dMsg) 
+																									myOrig_X, myOrig_Y : original x, y of where team tp was made)
+
+		d2B_boSafe(a,b,c,d)				(a: d2B_chkAct(a) | b: d2B_gotoWP(b) | c,d: d2B_isTeamInTown(c,d) ) 
+		d2B_isTeamInTown(a,b) 			(a: act | b: area of where the tp is open in and to go to | b = false then stay put and wait for instructions)
+
+		d2B_clrLvlOC()					clear level and open chests
+*/
+/* 	wish list of things I wish to be able to do...
+	
+	dollcheck: create a conditional norm/nm/hell check. If norm, do not do dollcheck
+	store and retrieve the names of the leader and followers
+		msg these to _myName as a means to see if all are in
+
+*/
+/*	noteworthy & altered things:
+	_newSorcNoTele : NTMove.ntl line 34 | used to impede teleing of new sorces
+	NTConfig_Leader; stores leader's name here
+*/
 /*
 // Get the distance between our character and the leader
 	//	
