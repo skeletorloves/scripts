@@ -1,5 +1,5 @@
 var _keyExtras = false;
-var d2B_usingAFollower = false;
+var d2B_usingAFollower = true;
 var _quiet = true;
 var _throneLeechers = false;
 var _dollChk = true;
@@ -110,7 +110,7 @@ function NT_KeyEvents(keycode) {
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
 					if(_keycodeMenu > 2) _keycodeMenu = 0;
-					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "rushing customized manual key menu");
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "rushing customized manual key menu");
 					break;
 				case 103:			// #pad 7: grab exp shrine (orig:Key_MyChicken)
 					if(!InTown(me)) {
@@ -186,7 +186,7 @@ function NT_KeyEvents(keycode) {
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
 					if(_keycodeMenu > 3) _keycodeMenu = 0;
-					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "experimental hopping barbs menu...");
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "experimental hopping barbs menu...");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
 					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
@@ -512,28 +512,43 @@ function NT_KeyEvents(keycode) {
 					Print(COLOR_2 + "enable/disable throne hopping barb");
 					if(InTown(me)) break;	
 					Delay(300);
+					_barbHop == true ? _barbHop = false : _barbHop = true;
+					if(keycode == 97 && me.areaid == 131) {
+						if(!NTM_MoveTo(131, 15095, 5022)) {
+							NTM_MoveTo(131, 15118, 5051); // if(!NTM_MoveTo(131, 15095, 5022) || !NTC_PutSkill(132, NTC_HAND_RIGHT)
+						}
+					}
 					var meX = me.x;
 					var meY = me.y;
-					_barbHop == true ? _barbHop = false : _barbHop = true;
-					if(keycode == 97) {
-						if(!NTM_MoveTo(131, 15095, 5022)) NTM_MoveTo(131, 15118, 5045); // if(!NTM_MoveTo(131, 15095, 5022) || !NTC_PutSkill(132, NTC_HAND_RIGHT)
-					}
 					while(_barbHop) {
-						NTC_CastSkill(132, NTC_HAND_RIGHT, meX + Random(0,5), meY + Random(0,5));
+						NTC_CastSkill(132, NTC_HAND_RIGHT, meX, meY);
 						Delay(Random(100, 150));
 					}
-						
-					/*else {
-						rBarbx = Random(0,5);
-						rBarby = Random(0,5);
-						while(_barbHop) {
-							NTC_CastSkill(132, NTC_HAND_RIGHT, 15095 + rBarbx, 5022 + rBarby);
-							Delay(Random(100, 150));
-						}
-					}*/
 					break;
-				//case 98:			// #pad 2: for throne hopping in place barb
-					
+				case 99:			// #pad 3: msg to hop barb followers to start hopping
+					Print(COLOR_2 + "enable hopping barb followers");
+					if(InTown(me)) break;	
+					Delay(300);
+					if(d2B_usingAFollower) d2B_msg("hop on " + Random(1,134332));
+					break;
+				case 102:			// #pad 6: msg to hop barb followers to stop hopping
+					Print(COLOR_2 + "disable hopping barb followers");
+					if(InTown(me)) break;	
+					Delay(300);
+					if(d2B_usingAFollower) d2B_msg("hop off " + Random(1,134332));
+					break;
+				case 101:			// #pad 5: msg "'" to send peeps to town
+					Print(COLOR_2 + "send hopping barb followers to town");
+					if(InTown(me)) break;	
+					Delay(300);
+					if(d2B_usingAFollower) d2B_msg("' " + Random(1,134332));
+					break;
+				case 100:			// #pad 4: msg "." to send peeps to town
+					Print(COLOR_2 + "call hopping barb followers to come");
+					if(InTown(me)) break;	
+					Delay(300);
+					if(d2B_usingAFollower) d2B_msg(". " + Random(1,134332));
+					break;
 			}
 			break;
 		case 4:						// this one is in-progress
