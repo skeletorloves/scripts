@@ -111,7 +111,7 @@ function NTMain() {
 	NTTM_TownMove("waypoint");
 	Delay(700);
 	
-	if(d2B_toggleHelper != "testing") d2B_newGmDlyPeepChk();								// bypass the function for check if all peeps have entered game if in testing mode
+	if(d2B_toggleHelper != "testing" && d2B_toggleHelper != "helper") d2B_newGmDlyPeepChk();	// bypass the function for check if all peeps have entered game if in testing mode
 	
 	while(d2B_myPauseValue <= d2B_cases) {				// so long as the pause value is not greater than d2B_cases, then cycle through scripts 
 		Print(COLOR_3 + "Case mode # " + d2B_myPauseValue);
@@ -2718,7 +2718,7 @@ function d2B_swapWeapons() {
 	return;
 }
 function d2B_barbHop() {
-	if(!_barbHop || InTown() || me.classid != NTC_CHAR_CLASS_BARBARIAN) break;
+	if(!_barbHop || InTown() || me.classid != NTC_CHAR_CLASS_BARBARIAN) return;
 	var meX = me.x;
 	var meY = me.y;
 	while(_barbHop) {
