@@ -525,17 +525,37 @@ function NT_KeyEvents(keycode) {
 						Delay(Random(100, 150));
 					}
 					break;
-				case 99:			// #pad 3: msg to hop barb followers to start hopping
-					Print(COLOR_2 + "enable hopping barb followers");
-					if(InTown(me)) break;	
-					Delay(300);
-					if(d2B_usingAFollower) d2B_msg("hop on " + Random(1,134332));
+				case 99:			// #pad 3: 	if out of town:	msg to hop barb followers to start hopping
+									//			if in town: 	msg to hop barb followers to go to a5
+					if(InTown(me)) break;
+					if(!InTown()) {
+						Print(COLOR_2 + "enable hopping barb followers");	
+						Delay(300);
+						if(d2B_usingAFollower) d2B_msg("hop on " + Random(1,134332));
+						break;
+					}
+					if(InTown()) {
+						Print(COLOR_2 + "tell hoppers to go to a5");	
+						Delay(300);
+						if(d2B_usingAFollower) d2B_msg("ummmm 5 " + Random(1,134332));
+						break;
+					}
 					break;
-				case 102:			// #pad 6: msg to hop barb followers to stop hopping
-					Print(COLOR_2 + "disable hopping barb followers");
-					if(InTown(me)) break;	
-					Delay(300);
-					if(d2B_usingAFollower) d2B_msg("hop off " + Random(1,134332));
+				case 102:			// #pad 6: 	if out of town:	msg to hop barb followers tomsg to stop hopping
+									//			if in town: 	msg to hop barb followers to go to a4
+					if(InTown(me)) break;
+					if(!InTown()) {
+						Print(COLOR_2 + "disable hopping barb followers");	
+						Delay(300);
+						if(d2B_usingAFollower) d2B_msg("hop off " + Random(1,134332));
+						break;
+					}
+					if(InTown()) {
+						Print(COLOR_2 + "tell hoppers to go to a4");	
+						Delay(300);
+						if(d2B_usingAFollower) d2B_msg("ummmm 4 " + Random(1,134332));
+						break;
+					}
 					break;
 				case 101:			// #pad 5: msg "'" to send peeps to town
 					Print(COLOR_2 + "send hopping barb followers to town");
@@ -543,7 +563,7 @@ function NT_KeyEvents(keycode) {
 					Delay(300);
 					if(d2B_usingAFollower) d2B_msg("' " + Random(1,134332));
 					break;
-				case 100:			// #pad 4: msg "." to send peeps to town
+				case 100:			// #pad 4: msg "." to call peeps to me
 					Print(COLOR_2 + "call hopping barb followers to come");
 					if(InTown(me)) break;	
 					Delay(300);
