@@ -482,7 +482,7 @@ function d2B_SoloAct3() {							// Act 3
 		d2B_moveToStair(76,84, false);
 		d2B_takeStairs(84, true);
 		d2B_moveToStair(84,76, false);
-		d2B_takeStairs(76, true);						// go back out to the spider forest
+		d2B_takeStairs(76, false);						// go back out to the spider forest
 		
 		d2B_moveToStair(76,85, false);					// head to front of spider cavern as a starting point
 		d2B_takeStairs(85, true);
@@ -515,6 +515,74 @@ function d2B_SoloAct3() {							// Act 3
 		d2B_takeStairs(87, true);
 		d2B_moveToStair(87,90, false);
 		d2B_takeStairs(90, true);
+		d2B_chkAct();
+		
+	//	lower kurast
+	//
+		Print(COLOR_4 + "Running: " + COLOR_7 + "lower kurast");
+		d2B_commonInitSetup(79);
+		d2B_preCastClrLvlOC();
+		d2B_chkAct();
+		
+	//	kurast
+	//
+		Print(COLOR_4 + "Running: " + COLOR_7 + "kurast");
+		d2B_commonInitSetup(80);
+		d2B_preCastClrLvlOC();
+		
+		d2B_moveToStair(80,94, false);					// ruined temple
+		d2B_takeStairs(94, true);
+		d2B_moveToStair(94,80, false);
+		d2B_takeStairs(80, false);
+		d2B_moveToStair(80,95, false);					// dusused fane
+		d2B_takeStairs(95, true);
+		d2B_moveToStair(95,80, false);
+		d2B_takeStairs(80, false);
+		d2B_moveToStair(80,92, false);					// sewers
+		d2B_takeStairs(92, true);
+		d2B_moveToStair(92,93, false);					// sewers 2lvl
+		d2B_takeStairs(93, true);
+		d2B_chkAct();
+		
+	//	upper kurast
+	//
+		Print(COLOR_4 + "Running: " + COLOR_7 + "upper kurast");
+		d2B_commonInitSetup(81);
+		d2B_preCastClrLvlOC();
+		
+		d2B_moveToStair(81,97, false);					// forgotten temple
+		d2B_takeStairs(97, true);
+		d2B_moveToStair(97,81, false);
+		d2B_takeStairs(81, false);
+		d2B_moveToStair(81,96, false);					// forgotten reliquary
+		d2B_takeStairs(96, false);
+		d2B_chkAct();
+	
+	//	travincal
+	//
+		Print(COLOR_4 + "Running: " + COLOR_7 + "travincal");
+		d2B_commonInitSetup(83);
+		d2B_preCastClrLvlOC();
+		
+		d2B_moveToStair(82,98, false);					// ruined fane
+		d2B_takeStairs(97, true);
+		d2B_moveToStair(98,82, false);
+		d2B_takeStairs(82, false);
+		d2B_moveToStair(82,99, false);					// disused reliquary
+		d2B_takeStairs(99, true);
+		d2B_chkAct();
+		
+	//	durance
+	//
+		Print(COLOR_4 + "Running: " + COLOR_7 + "durance");
+		d2B_commonInitSetup(101);
+		d2B_preCastClrLvlOC();
+		d2B_moveToStair(101,100, false);					// head to durance 1lvl
+		d2B_takeStairs(100, true);
+		d2B_chkAct();
+		d2B_commonInitSetup(101);
+		d2B_moveToStair(101,102, false);					// head to durance 3lvl
+		d2B_takeStairs(102, true);
 		d2B_chkAct();
 		
 		if(_teamBO) d2B_soloBO();
