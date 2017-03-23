@@ -486,9 +486,35 @@ function d2B_SoloAct3() {							// Act 3
 		
 		d2B_moveToStair(76,85, false);					// head to front of spider cavern as a starting point
 		d2B_takeStairs(85, true);
-		/*NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 407);	// head to Sszark
-		NTA_KillMonster(GetLocaleString(2868));
-		NTSI_PickItems();*/
+		d2B_chkAct();
+	
+	//	great marsh
+	//
+		Print(COLOR_4 + "Running: " + COLOR_7 + "great marsh");
+		d2B_commonInitSetup(77);
+		d2B_preCastClrLvlOC();
+		
+	//	flayer jungle
+	//
+		Print(COLOR_4 + "Running: " + COLOR_7 + "flayer jungle");
+		d2B_commonInitSetup(78);
+		d2B_preCastClrLvlOC();
+		
+		d2B_moveToStair(78,88, false);					// flayer dungeon
+		d2B_takeStairs(88, true);
+		d2B_moveToStair(88,89, false);
+		d2B_takeStairs(89, true);
+		d2B_moveToStair(89,91, false);
+		d2B_takeStairs(91, true);
+		d2B_chkAct();
+		
+		d2B_commonInitSetup(78);
+		d2B_moveToStair(78,86, false);					// swampy pit
+		d2B_takeStairs(86, true);
+		d2B_moveToStair(86,87, false);
+		d2B_takeStairs(87, true);
+		d2B_moveToStair(87,90, false);
+		d2B_takeStairs(90, true);
 		d2B_chkAct();
 		
 		if(_teamBO) d2B_soloBO();
