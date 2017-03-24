@@ -4064,6 +4064,15 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				case "a1":
 					d2B_Solo_a1();
 					break;
+				case "mf1":
+					d2B_SoloAct1();
+					break;
+				case "mf2":
+					d2B_SoloAct2();
+					break;
+				case "mf3":
+					d2B_SoloAct3();
+					break;
 				case "corpsefire":
 					d2B_Solo_corpsefire();
 					break;
@@ -7439,6 +7448,27 @@ function d2B_commonVars() {
 	return;
 }
 //
+//	for monitoring helpers...
+//
+function d2B_rPeepsAllAtJail() {		// checking to see if all the helpers are parked at jail 1 wp
+	var _atWP = true;
+	for(i=0;i<=1;i++) {
+		var Player = GetPlayerUnit();
+		if(Player){
+			while(Player.GetNext()) {
+				if(player.name != me.charname) {
+					if(me.areaid != 29) {					// jail lvl 1 wp = 29
+						_atWP = false;
+						break;
+					}
+				}
+			}
+		}
+		
+	}
+	return _atWP;
+}
+//
 //	******************************************************************************
 // switchies for switching
 //	******************************************************************************
@@ -7591,23 +7621,26 @@ function d2B_boBaba2() {
 	d2B_townMgr();
 	d2B_boBabaPre();
 
-	d2B_msg("sorc chaos");
+	d2B_msg("sorc mf1");
+	Delay(750);
+	d2B_chkAct(1);
+	d2B_moveWP();
+	while(!d2B_rPeepsAllAtJail()) {	// if peeps are not all waiting at jail wp continue to test for that
+		Print(COLOR_3 + "Continuing to wait for all peeps to be at wp. " + COLOR_8 + Random(132,145444));
+		Delay(Random(5000,6000));
+	}
+	Print(COLOR_8 + "All peeps are waiting at wp. " + COLOR_3 + Random(132,145444));
+	d2B_boBabaPre();
+	
+	d2B_msg("sorc mf2");
 	Delay(750);
 	d2B_chkAct(1);
 	d2B_moveWP();
 	Delay(Random(230000,300000));
-
-	d2B_boBabaPre();
-	
-	d2B_msg("sorc baal");
-	Delay(750);
-	d2B_chkAct(1);
-	d2B_moveWP();
-	Delay(Random(230000,300000));
 	
 	d2B_boBabaPre();
 	
-	d2B_msg("sorc a1");
+	d2B_msg("sorc mf3");
 	Delay(750);
 	d2B_chkAct(1);
 	d2B_moveWP();
