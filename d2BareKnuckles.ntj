@@ -78,7 +78,7 @@
 /*	_______________________________________________________________________________ */
 
 	var d2B_cases = 1;
-	var d2B_toggleHelper = "solo";
+	var d2B_toggleHelper = "barbLdr";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 
 
@@ -132,15 +132,13 @@ function NTMain() {
 									break;
 			case "helperSorc":		d2H_helperSorc();								// for enabling a follower which is a sorc
 									break;
+			case "barbLdr":			d2B_barbLdr();
+									break;
 			case "boBaba":			if(!_debug) d2B_newGmDlyPeepChk();				// for running a bo baba leader
 									d2B_boBaba();				
 									break;
 			case "boBaba2":			if(!_debug) d2B_newGmDlyPeepChk();				// for running a bo baba leader
 									d2B_boBaba2();				
-									break;
-			case "hmmm": 			d2B_hmmm(d2B_helpers);							// (1)
-									break;
-			case "leveling": 		d2B_leveling(d2B_helpers);						// (1)
 									break;
 			case "solo":			d2B_chkAct(1);									// (1)
 									d2B_SoloAct1();									
@@ -170,14 +168,6 @@ function NTMain() {
 									break;
 			case "Countess":		d2B_switchMainRuns(false, false, true);			// (3) for a throne and countess
 									break;
-			case "grinding":		d2B_switchGrinding();							// for a select list of action cases
-									break;
-			case "NecroRuns":		d2B_switchNecroRuns();							// for a sorc leader to run tightly with necro crew
-									break;
-			case "CBaalNoTele":		d2B_CBaalNoTele();								// for cbaaling with a non tele team
-									break;
-			case "CBaalLow":		d2B_CBaalLow();									// for cbaaling low levels
-									break;
 		}
 		d2B_msgIncPause();
 	}
@@ -191,6 +181,427 @@ function NTMain() {
 // ________________________________________________________
 // main function scripts
 
+// acts as individual functions
+
+function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
+	NTConfig_SkipRegularMonsters = _skpRegMnstrs;
+	if(_teamBO) d2B_soloBO();
+	
+	switch(_loc) {
+		case("bloodMoor"):
+		//	blood moor
+		//
+			Print(COLOR_7 + "Running: " + COLOR_4 + "blood moor");
+			d2B_commonInitSetup(3);
+			d2B_moveToStair(2,8, true);					// head to front of den as a starting point (areaid, stairs, preCastClrLvlOC)
+			d2B_moveToStair(2,8, false);
+			d2B_takeStairs(8, true);
+			d2B_chkAct();
+			break;
+			
+		case("coldPlains"):
+		// cold plains
+		//
+			Print(COLOR_7 + "Running: " + COLOR_4 + "cold plains");
+			d2B_commonInitSetup(3);
+			d2B_preCastClrLvlOC();
+			d2B_moveToStair(3,9, false);
+			d2B_takeStairs(9, true);
+			d2B_moveToStair(9,13, false);
+			d2B_takeStairs(13, true);
+			d2B_chkAct();
+			break;
+		
+		case("burialGrounds"):	
+		// burial grounds
+		//
+			Print(COLOR_7 + "Running: " + COLOR_4 + "burial grounds");
+			d2B_commonInitSetup(3);
+			d2B_movePresetUnitTitle(17,7,8,15);			// move to burial grounds
+			d2B_preCastClrLvlOC();
+			d2B_moveToStair(me.areaid,19, false);		// enter the mausoleum
+			Delay(Random(4000,5000));
+			d2B_takeStairs(19, true);
+			d2B_moveToStair(me.areaid,17, false);
+			Delay(Random(4000,5000));
+			d2B_takeStairs(17, false);
+			d2B_moveToStair(me.areaid,18, false);		// enter the crypt
+			Delay(Random(4000,5000));
+			d2B_takeStairs(18, true);
+			d2B_chkAct();
+			break;
+		
+		case("stonyField"):		
+		// stony field
+		//
+			Print(COLOR_7 + "Running: " + COLOR_4 + "stony field");
+			d2B_commonInitSetup(4);
+			d2B_preCastClrLvlOC();
+			d2B_movePresetUnitMonster(737, 10, 10);
+			Delay(Random(6000,8000));
+			d2B_usePortal("Portal",38);					// use portal to enter tristram
+			Delay(Random(2000,4000));
+			d2B_preCastClrLvlOC();
+			d2B_chkAct();
+			break;
+		
+		case("undergroundPassage"):
+		// underground passage
+		//
+			Print(COLOR_7 + "Running: " + COLOR_4 + "underground passage");
+			d2B_commonInitSetup(4);
+			d2B_moveToStair(me.areaid,10, false);
+			d2B_takeStairs(10, true);
+			d2B_moveToStair(me.areaid,14, false);
+			Delay(Random(4000,5000));
+			d2B_takeStairs(14, true);
+			d2B_chkAct();
+			break;
+		
+		case("darkWoods"):
+		// dark woods
+		//
+			Print(COLOR_7 + "Running: " + COLOR_4 + "dark woods");
+			d2B_commonInitSetup(5);
+			d2B_preCastClrLvlOC();
+			d2B_chkAct();
+			break;
+		
+		case("blackMarsh"):
+		//	black marsh
+		//
+			Print(COLOR_7 + "Running: " + COLOR_4 + "black marsh");
+			d2B_commonInitSetup(6);
+			d2B_preCastClrLvlOC();
+			d2B_moveToStair(me.areaid,11, false);	// clear the hole
+			d2B_takeStairs(11, true);
+			d2B_moveToStair(me.areaid,15, false);	// clear the hole
+			d2B_takeStairs(15, true);
+			d2B_chkAct();
+			d2B_commonInitSetup(6);
+			for(var i = 0 ; i < 6 ; i++) {
+				d2B_moveToStair(me.areaid,20+i, false);	// go to the forgotten tower and do tower things
+				d2B_takeStairs(20+i, true);
+			}
+			d2B_chkAct();
+			break;
+		
+		case("tamoeHighland"):
+		//	tamoe highland
+		//
+			Print(COLOR_7 + "Running: " + COLOR_4 + "tamoe highland");
+			d2B_commonInitSetup(6);
+			d2B_moveToStair(7,12, false);			// go to the enterance of tamoe highland pit
+			d2B_preCastClrLvlOC();
+			d2B_moveToStair(7,12, false);			// go to the enterance of the tamoe highland pit
+			d2B_takeStairs(12, true);
+			d2B_moveToStair(me.areaid,16, false);	// go to the 2nd level of the tamoe highland pit
+			d2B_takeStairs(16, true);
+			d2B_chkAct();
+			break;
+		
+		case("outerCloister"):
+		// outer cloister
+		//
+			Print(COLOR_7 + "Running: " + COLOR_4 + "outer cloister");
+			d2B_commonInitSetup(27);
+			d2B_preCastClrLvlOC();
+			d2B_chkAct();
+			break;
+		
+		case("outerBarracks"):
+		// outer barracks
+		//
+			Print(COLOR_7 + "Running: " + COLOR_4 + "outer barracks");
+			d2B_commonInitSetup(27);
+			d2B_preCastClrLvlOC();
+			d2B_movePresetUnitMonster(28, 754, -5, 5);	// go to where main monster is in the malus dude
+			d2B_preCastClrLvlOC();
+			d2B_chkAct();
+			break;
+		
+		case("jail"):
+		// jail
+		//
+			Print(COLOR_7 + "Running: " + COLOR_4 + "jail");
+			d2B_commonInitSetup(29);
+			d2B_preCastClrLvlOC();
+			d2B_chkAct();
+			break;
+		
+		case("buriakGrounds"):
+		// inner cloister
+		//
+			Print(COLOR_7 + "Running: " + COLOR_4 + "inner cloister");
+			d2B_commonInitSetup(32);
+			d2B_preCastClrLvlOC();
+			d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
+			d2B_preCastClrLvlOC();
+			d2B_chkAct();
+			break;
+		
+		case("catacombs"):
+		//	catacombs
+		//
+			Print(COLOR_7 + "Running: " + COLOR_4 + "catacombs");
+			d2B_commonInitSetup(32);
+			// clear all catacombs...
+			d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
+			d2B_takeStairs(34);
+			d2B_preCastClrLvlOC();
+			for(var i = 35; i <= 37; i++) {
+				d2B_movePresetUnitTitle(me.areaid,18,0);
+				Delay(Random(400,500));
+				d2B_takeStairs(i, true);
+			}
+			Delay(Random(400,500));
+			NTM_MoveTo(me.areaid, 22594, 9622);
+			d2B_chkAct();
+			break;
+		
+		case("sewers"):
+		//	sewers
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "sewers");
+			NTTM_Act2SewerTrapDoor();					// begins at the stairs enterance
+			d2B_preCastClrLvlOC();
+			d2B_moveToStair(me.areaid,48, false);
+			d2B_takeStairs(48, true);
+			d2B_moveToStair(me.areaid,49, false);
+			d2B_takeStairs(49, true);
+			d2B_chkAct();
+			break;
+		
+		case("rockyWaste"):
+		// rocky waste
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "rocky waste");
+			d2B_commonInitSetup(42);
+			d2B_moveToStair(41,55, true);
+			d2B_moveToStair(me.areaid,55, false);
+			d2B_takeStairs(55, true);
+			d2B_moveToStair(me.areaid,59, false);
+			d2B_takeStairs(59, true);
+			d2B_chkAct();
+			break;
+		
+		case("dryHills"):
+		// dry hills
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "dry hills");
+			d2B_commonInitSetup(42);
+			d2B_moveToStair(me.areaid,56, true);
+			d2B_moveToStair(me.areaid,56, false);
+			d2B_takeStairs(56, true);
+			d2B_moveToStair(me.areaid,57, false);
+			d2B_takeStairs(57, true);
+			d2B_moveToStair(me.areaid,60, false);
+			d2B_takeStairs(60, true);
+			d2B_chkAct();
+			break;
+		
+		case("farOasis"):
+		// far oasis
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "far oasis");
+			d2B_commonInitSetup(43);
+			d2B_moveToStair(me.areaid,62, true);
+			for(var i = 0 ; i < 3 ; i++){
+				d2B_moveToStair(me.areaid, 62+i, false);
+				d2B_takeStairs(62+i, true);
+			}
+			d2B_chkAct();
+			break;
+		
+		case("lostCity"):
+		// lost city
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "claw viper temple");
+			d2B_commonInitSetup(44);
+			d2B_moveToStair(me.areaid,65, true);
+			d2B_moveToStair(me.areaid,65, false);
+			d2B_takeStairs(65, true);
+			d2B_chkAct();
+			break;
+		
+		case("clawViperTemple"):
+		// claw viper temple
+		//	
+			d2B_movePresetUnitTitle(45,37,0);
+			d2B_moveToStair(me.areaid,58, false);
+			d2B_takeStairs(58, true);
+			d2B_moveToStair(58,61, false);
+			d2B_takeStairs(61, true);
+			d2B_chkAct();
+			break;
+		
+		case("harem"):
+		// harem
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "harem");
+			d2B_commonInitSetup(52);
+			d2B_moveToStair(me.areaid,53, true);
+			d2B_moveToStair(me.areaid,53, false);
+			d2B_takeStairs(53, true);
+			d2B_moveToStair(me.areaid,54, false);
+			d2B_takeStairs(54, true);
+			d2B_chkAct();
+			break;
+		
+		case("arcane"):
+		// arcane
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "arcane");
+			d2B_commonInitSetup(74);
+			d2B_preCastClrLvlOC();
+			d2B_chkAct();
+			break;
+		
+		case("canyon"):
+		// canyon
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "canyon");
+			d2B_commonInitSetup(46);
+			d2B_moveToStair(me.areaid,69, true);
+			
+			var _stair = [69, 68, 67, 66, 70, 71, 72];
+			for(var i = 0; i < _stair.length; i++){
+				d2B_moveToStair(me.areaid,_stair[i], false);
+				d2B_takeStairs(_stair[i], true);
+				d2B_moveToStair(me.areaid,46, false);
+				d2B_takeStairs(46, false);
+			}	
+			d2B_chkAct();
+			break;
+		
+		case("spiderForest"):
+		//	spider forest
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "spider forest");
+			d2B_commonInitSetup(76);
+			d2B_moveToStair(76,84, true);					// head to front of arachnid lair as a starting point (areaid, stairs, preCastClrLvlOC)
+			d2B_moveToStair(76,84, false);
+			d2B_takeStairs(84, true);
+			d2B_moveToStair(84,76, false);
+			d2B_takeStairs(76, false);						// go back out to the spider forest
+			
+			d2B_moveToStair(76,85, false);					// head to front of spider cavern as a starting point
+			d2B_takeStairs(85, true);
+			d2B_chkAct();
+			break;
+		
+		case("greatMarsh"):
+		//	great marsh
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "great marsh");
+			d2B_commonInitSetup(77);
+			d2B_preCastClrLvlOC();
+		
+		case("flayerJungle"):
+		//	flayer jungle
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "flayer jungle");
+			d2B_commonInitSetup(78);
+			d2B_preCastClrLvlOC();
+			
+			d2B_moveToStair(78,88, false);					// flayer dungeon
+			d2B_takeStairs(88, true);
+			d2B_moveToStair(88,89, false);
+			d2B_takeStairs(89, true);
+			d2B_moveToStair(89,91, false);
+			d2B_takeStairs(91, true);
+			d2B_chkAct();
+			
+			d2B_commonInitSetup(78);
+			d2B_moveToStair(78,86, false);					// swampy pit
+			d2B_takeStairs(86, true);
+			d2B_moveToStair(86,87, false);
+			d2B_takeStairs(87, true);
+			d2B_moveToStair(87,90, false);
+			d2B_takeStairs(90, true);
+			d2B_chkAct();
+			break;
+		
+		case("lowerKurast"):
+		//	lower kurast
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "lower kurast");
+			d2B_commonInitSetup(79);
+			d2B_preCastClrLvlOC();
+			d2B_chkAct();
+			break;
+		
+		case("kurast"):
+		//	kurast
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "kurast");
+			d2B_commonInitSetup(80);
+			d2B_preCastClrLvlOC();
+			
+			d2B_moveToStair(80,94, false);					// ruined temple
+			d2B_takeStairs(94, true);
+			d2B_moveToStair(94,80, false);
+			d2B_takeStairs(80, false);
+			d2B_moveToStair(80,95, false);					// dusused fane
+			d2B_takeStairs(95, true);
+			d2B_moveToStair(95,80, false);
+			d2B_takeStairs(80, false);
+			d2B_moveToStair(80,92, false);					// sewers
+			d2B_takeStairs(92, true);
+			d2B_moveToStair(92,93, false);					// sewers 2lvl
+			d2B_takeStairs(93, true);
+			d2B_chkAct();
+			break;
+		
+		case("upperKurast"):
+		//	upper kurast
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "upper kurast");
+			d2B_commonInitSetup(81);
+			d2B_preCastClrLvlOC();
+			
+			d2B_moveToStair(81,97, false);					// forgotten temple
+			d2B_takeStairs(97, true);
+			d2B_moveToStair(97,81, false);
+			d2B_takeStairs(81, false);
+			d2B_moveToStair(81,96, false);					// forgotten reliquary
+			d2B_takeStairs(96, false);
+			d2B_chkAct();
+			break;
+		
+		case("travincal"):
+		//	travincal
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "travincal");
+			d2B_commonInitSetup(83);
+			d2B_preCastClrLvlOC();
+			
+			d2B_moveToStair(82,98, false);					// ruined fane
+			d2B_takeStairs(97, true);
+			d2B_moveToStair(98,82, false);
+			d2B_takeStairs(82, false);
+			d2B_moveToStair(82,99, false);					// disused reliquary
+			d2B_takeStairs(99, true);
+			d2B_chkAct();
+			break;
+		
+		case("durance"):
+		//	durance
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "durance");
+			d2B_commonInitSetup(101);
+			d2B_preCastClrLvlOC();
+			d2B_moveToStair(101,100, false);					// head to durance 1lvl
+			d2B_takeStairs(100, true);
+			d2B_chkAct();
+			d2B_commonInitSetup(101);
+			d2B_moveToStair(101,102, false);					// head to durance 3lvl
+			d2B_takeStairs(102, true);
+			d2B_chkAct();
+			break;
+	}	
+		return;
+}
 
 // Act I solo: complete
 
@@ -3915,6 +4326,9 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				}
 			}
 			break;
+		case "doAct":
+			if(msg2) d2B_doAct();
+			break;
 		case "b":											// barbarian calls
 			if(me.name != _myBoBarb) break;
 			switch(msg2) {									// for bo town barb only
@@ -5661,7 +6075,16 @@ function Imbue() {
 	NTA_ClearPosition(10);
 	Town();
 }
-
+/*	my chat functions */
+function d2B_doAct() {				// engages when "doAct" command is msg'd
+	if(!InTown()) d2B_chkAct();
+	d2B_townMgr();
+	NTTM_TownMove("waypoint");
+	
+	d2B_Act(msg2,false);			// d2B_Act(_loc,_skpRegMnstrs)
+	return;
+}
+	
 //
 //	******************************************************************************
 //	d2B_data(msg2) - exploring the NT functions:
@@ -7456,7 +7879,7 @@ function d2B_rPeepsAllAtJail() {		// checking to see if all the helpers are park
 		var Player = GetPlayerUnit();
 		if(Player){
 			while(Player.GetNext()) {
-				if(player.name != me.charname) {
+				if(Player.name != me.charname) {
 					if(me.areaid != 29) {					// jail lvl 1 wp = 29
 						_atWP = false;
 						break;
@@ -7473,6 +7896,46 @@ function d2B_rPeepsAllAtJail() {		// checking to see if all the helpers are park
 // switchies for switching
 //	******************************************************************************
 //
+
+function d2B_barbLdr() {
+	d2B_chkAct(1);
+	d2B_townMgr();
+	d2B_boBabaPre();
+	NTM_TakeWaypoint(1);
+	
+	var _locations = 	["bloodMoor", "coldPlains", "burialGrounds", "stonyField", "undergroundPassage", "darkWoods", "blackMarsh", "tamoeHighland", "outerCloister", "outerBarracks", "jail", "burialGrounds", "catacombs",
+						"sewers", "rockyWaste", "dryHills", "farOasis", "lostCity", "clawviperTemple", "harem", "arcane", "canyon",
+						"spiderForest", "greatMarsh", "flayerJungle", "lowerKurast", "kurast", "upperKurrast", "travincal", "durance"];
+	var _ignoreRegMonsters = 	[false, false, false, false, false, false, false, false, false, false, false, false, false,
+								 false, false, false, false, false, false, false, false, false,
+								 false, false, false, false, false, false, false, false];
+								 
+	for(i=0; i<_locations.length, i++) {
+	
+		d2B_msg("sorc " + _locations[i] + " " + _ignoreRegMonsters[i] + " " + Random(1322,132274));
+		Delay(Random(2000,3000));
+	}
+	
+	return true;
+}
+function d2B_boBabaPre() {
+	d2B_commonInitSetup(35);	// goto cata 2
+	d2B_littleJMP();
+	Delay(300);
+	NTM_MakeTP();
+	Delay(Random(3000,4000));
+	d2B_msg(".");
+	Delay(Random(30000,40000));
+	if(!NTC_InTown(me)) NTP_DoPrecast(true);
+	Delay(750);
+	d2B_msg("..");
+	Delay(Random(8000,10000));
+	if(!NTC_InTown(me)) NTP_DoPrecast(true);
+	Delay(750);
+	d2B_msg("-");
+	Delay(Random(8000,11000));
+	return;
+}
 function d2B_boBarbLeader(chaos,baal,countess) {
 	if(chaos != false || baal != false || countess != false) {
 		switch(d2B_myPauseValue) {
@@ -7549,88 +8012,25 @@ function d2B_sorcLeader(chaos,baal,countess) {
 	}
 	return 1;
 }
-function d2B_hmmm(flwrs) {
-	NTTMGR_TownManager();
-	switch(d2B_myPauseValue) {
-	// act 1	
-		case 1: 
-			d2B_msg("ummm 1");
-			Delay(Random(12000,16000));
-			
-			/*if(_teamBO) {
-				d2B_boSafe(1,35,1,false);
-				Delay(Random(4000,7000));
-			}*/
-			d2B_bloodmoor(false);				// blood moore thingy
-			break;
-		case 2: d2B_coldplains(false);			// cold plains thingy | true: for clearing all of the cold plains
-			break;
-		case 3: d2B_burialgrounds(false);		// burial grounds thingy
-			break;
-		case 4: d2B_stonyfield(false);			// stony field thiny
-			break;
-		case 5: //d2B_undergroundpassage();		// underground passage thingy
-			break;
-		case 6: d2B_darkwood(false);			// dark wood thingy
-			break;
-		case 7: d2B_blackmarsh();				// black marsh thingy
-			NTTMGR_TownManager();
-			break;
-		case 8: d2B_tamohighland();				// tamoe highland thingy
-			break;
-		case 9: d2B_outercloister();			// outer cloister thingy
-			break;
-		case 10: d2B_barracks(false);			// barracks thingy deeNotes: needs to be fixed
-			Delay(Random(8000,12000));
-			break;
-		case 11: //d2B_jail();							// jail thingy
-			break;
-		case 12: //d2B_innercloister();					// inner cloister thingy
-			break;
-		case 13: d2B_cata();							// catacombs thingy
-			//d2B_cata2(false);
-			NTTMGR_TownManager();
-			break;
-	// act 2
-		case 14: d2B_msg("ummm 2");
-			Delay(Random(12000,16000));
-			d2B_sewers(flwrs);					// sewers thingy
-			break;
-		case 15: d2B_rockywaste();						// rocky waste thingy
-			break;
-		case 16: d2B_dryhills();						// dry hills thingy
-			break;
-		case 17: d2B_faroasis(false);			// far oasis thingy
-			break;
-		case 18: d2B_lostcity(false);			// lost city thingy
-			break;
-		case 19: d2B_clawvipertemple();					// claw viper temple thingy
-			break;
-		case 20: d2B_haremtoceller();					// harem to celler thingy
-			break;
-		case 21: d2B_arcane(false);				// arcane thingy
-			break;
-		case 22: d2B_canyon(false);				// canyon thingy
-			NTTMGR_TownManager();
-			break;
-	}
-}
 function d2B_boBaba2() {
 
 	d2B_chkAct(1);
 	d2B_townMgr();
 	d2B_boBabaPre();
 
-	d2B_msg("sorc mf1");
+	d2B_msg("sorc mf1a");
 	Delay(750);
 	d2B_chkAct(1);
 	d2B_moveWP();
+	
 	while(!d2B_rPeepsAllAtJail()) {	// if peeps are not all waiting at jail wp continue to test for that
 		Print(COLOR_3 + "Continuing to wait for all peeps to be at wp. " + COLOR_8 + Random(132,145444));
 		Delay(Random(5000,6000));
 	}
 	Print(COLOR_8 + "All peeps are waiting at wp. " + COLOR_3 + Random(132,145444));
 	d2B_boBabaPre();
+	
+	Delay(Random(25000,26000));
 	
 	d2B_msg("sorc mf2");
 	Delay(750);
@@ -7713,212 +8113,6 @@ function d2B_boBaba() {			// for running a bo baba leader
 	
 	Delay(Random(10000,150000));
 	return;
-}
-function d2B_boBabaPre() {
-	d2B_commonInitSetup(35);	// goto cata 2
-	d2B_littleJMP();
-	Delay(300);
-	NTM_MakeTP();
-	Delay(Random(3000,4000));
-	d2B_msg(".");
-	Delay(Random(30000,40000));
-	if(!NTC_InTown(me)) NTP_DoPrecast(true);
-	Delay(750);
-	d2B_msg("..");
-	Delay(Random(8000,10000));
-	if(!NTC_InTown(me)) NTP_DoPrecast(true);
-	Delay(750);
-	d2B_msg("-");
-	Delay(Random(8000,11000));
-	return;
-}
-function d2B_mf(flwrs) {
-//Countess:
-	if(_teamBO) d2B_soloBO();
-	d2B_blackMarsh2(false);
-	Delay(Random(30000,60000));
-//Andarial
-	if(_teamBO) d2B_soloBO();
-	d2B_cata2();
-	Delay(Random(10000,15000));
-//Chaos
-	if(_teamBO) d2B_soloBO();
-	d2B_chkAct(4);
-	d2B_townMgr();
-	Delay(Random(10000,15000));
-	if(!_nonTelePeeps && _soloChaos) {
-		_quiet = true;
-		d2B_chaos(false);						// chaos thingy
-		_quiet = false;
-	}
-	else if(_nonTelePeeps && !_soloChaos) d2B_chaos(true);
-	else if(_soloChaos && !_nonTelePeeps) d2B_chaos(false);
-	//else if(_soloChaos && !_nonTelePeeps) d2B_chaos("seals");
-	d2B_chkAct(1);
-	Delay(Random(30000,60000));
-	return;
-}	
-function d2B_leveling(flwrs) {
-	switch(d2B_myPauseValue) {
-	// act 1	
-		case 1: 
-			d2B_msg("ummm 1");
-			Delay(Random(12000,16000));
-			
-			if(_teamBO) {
-				d2B_boSafe(1,35,1,false);
-				Delay(Random(4000,7000));
-			}
-			d2B_bloodmoor(_nonTelePeeps);				// blood moore thingy
-			break;
-		case 2: d2B_coldplains(_nonTelePeeps);			// cold plains thingy | true: for clearing all of the cold plains
-			break;
-		case 3: d2B_burialgrounds(_nonTelePeeps);		// burial grounds thingy
-			break;
-		case 4: d2B_stonyfield(_nonTelePeeps);			// stony field thiny
-			break;
-		case 5: //d2B_undergroundpassage();				// underground passage thingy
-			break;
-		case 6: d2B_darkwood(_nonTelePeeps);			// dark wood thingy
-			break;
-		case 7: //d2B_blackmarsh();						// black marsh thingy
-			break;
-		case 8: //d2B_tamohighland();						// tamoe highland thingy
-			break;
-		case 9: d2B_outercloister();					// outer cloister thingy
-			break;
-		case 10: d2B_barracks(_nonTelePeeps);			// barracks thingy deeNotes: needs to be fixed
-			Delay(Random(8000,12000));
-			break;
-		case 11: //d2B_jail();							// jail thingy
-			break;
-		case 12: //d2B_innercloister();					// inner cloister thingy
-			break;
-		case 13: //d2B_cata();							// catacombs thingy
-			//d2B_cata2(_nonTelePeeps);
-			break;
-	// act 2
-		case 14: d2B_msg("ummm 2");
-			Delay(Random(12000,16000));
-			d2B_sewers(_nonTelePeeps);					// sewers thingy
-			break;
-		case 15: d2B_rockywaste();						// rocky waste thingy
-			break;
-		case 16: d2B_dryhills();						// dry hills thingy
-			break;
-		case 17: d2B_faroasis(_nonTelePeeps);			// far oasis thingy
-			break;
-		case 18: d2B_lostcity(_nonTelePeeps);			// lost city thingy
-			break;
-		case 19: d2B_clawvipertemple();					// claw viper temple thingy
-			break;
-		case 20: d2B_haremtoceller();					// harem to celler thingy
-			break;
-		case 21: d2B_arcane(_nonTelePeeps);				// arcane thingy
-			break;
-		case 22: d2B_canyon(_nonTelePeeps);				// canyon thingy
-			break;/*
-	// act 3
-		case 23: d2B_msg("ummm 3");
-			Delay(Random(12000,16000));
-			d2B_spiderForest();							// canyon thingy
-			break;
-		case 24: d2B_greatMarsh();						// canyon thingy
-			break;
-		case 25: d2B_flayerJungle();					// canyon thingy
-			break;
-		case 26: d2B_lowerKurast();						// canyon thingy
-			break;
-		case 27: d2B_Kurast();							// canyon thingy
-			break;
-		case 28: d2B_upperKurast();						// canyon thingy
-			break;
-		case 29: d2B_Travincal();						// canyon thingy
-			break;
-		case 30: d2B_Meph();							// canyon thingy
-			break;
-	// act 4
-		case 31: d2B_msg("ummm 4");
-			Delay(Random(12000,16000));
-			d2B_chaos(_nonTelePeeps);					// chaos thingy
-			break;*/
-	}
-}
-function d2B_MainRuns() {
-	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 1");
-			Delay(Random(12000,16000));
-			d2B_bloodmoor(_nonTelePeeps);				// blood moore thingy
-			break;
-		case 2: d2B_coldplains(_nonTelePeeps);			// cold plains thingy | true: for clearing all of the cold plains
-			break;
-		case 3: d2B_burialgrounds(_nonTelePeeps);		// burial grounds thingy
-			break;
-		case 4: d2B_stonyfield(_nonTelePeeps);			// stony field thiny
-			break;
-		case 5: d2B_undergroundpassage();				// underground passage thingy
-			break;
-		case 6: d2B_darkwood(_nonTelePeeps);			// dark wood thingy
-			break;
-		case 7: d2B_blackmarsh();						// black marsh thingy
-			break;
-		case 8: d2B_tamohighland();						// tamoe highland thingy
-			break;
-		case 9: d2B_outercloister();					// outer cloister thingy
-			break;
-		case 10: d2B_barracks(_nonTelePeeps);			// barracks thingy deeNotes: needs to be fixed
-			Delay(Random(8000,12000));
-			break;
-		case 11: d2B_jail();							// jail thingy
-			break;
-		case 12: d2B_innercloister();					// inner cloister thingy
-			break;
-		case 13: d2B_cata();							// catacombs thingy
-			//d2B_cata2(_nonTelePeeps);
-			break;
-		case 14: d2B_msg("ummm 2");
-			Delay(Random(12000,16000));
-			d2B_sewers(_nonTelePeeps);					// sewers thingy
-			break;
-		case 15: d2B_rockywaste();						// rocky waste thingy
-			break;
-		case 16: d2B_dryhills();						// dry hills thingy
-			break;
-		case 17: d2B_faroasis(_nonTelePeeps);			// far oasis thingy
-			break;
-		case 18: d2B_lostcity(_nonTelePeeps);			// lost city thingy
-			break;
-		case 19: d2B_clawvipertemple();					// claw viper temple thingy
-			break;
-		case 20: d2B_haremtoceller();					// harem to celler thingy
-			break;
-		case 21: d2B_arcane(_nonTelePeeps);				// arcane thingy
-			break;
-		case 22: d2B_canyon(_nonTelePeeps);				// canyon thingy
-			break;
-		case 23: d2B_msg("ummm 3");
-			Delay(Random(12000,16000));
-			d2B_spiderForest();							// canyon thingy
-			break;
-		case 24: d2B_greatMarsh();						// canyon thingy
-			break;
-		case 25: d2B_flayerJungle();					// canyon thingy
-			break;
-		case 26: d2B_lowerKurast();						// canyon thingy
-			break;
-		case 27: d2B_Kurast();							// canyon thingy
-			break;
-		case 28: d2B_upperKurast();						// canyon thingy
-			break;
-		case 29: d2B_Travincal();						// canyon thingy
-			break;
-		case 30: d2B_Meph();							// canyon thingy
-			break;
-		case 31: d2B_msg("ummm 4");
-			Delay(Random(12000,16000));
-			d2B_chaos(_nonTelePeeps);					// chaos thingy
-			break;
-	}
 }
 function d2B_switchMainRuns(chaos,baal,countess) {
 	if(!chaos && !baal && !countess) {
@@ -8090,259 +8284,7 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 	return 1;
 }
 
-function d2B_switchGrinding() {
-	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 1");
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(1);
-			Delay(Random(20000,25000));
-			d2B_blackmarsh();					// black marsh thingy
-			break;
-		case 2: d2B_msg("ummm 4");
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(4);
-			Delay(Random(20000,25000));
-			d2B_chaos();						// chaos thingy
-			break;
-		case 3: d2B_msg("ummm 5");
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(5);
-			Delay(Random(20000,25000));
-			d2B_bloodyfoothills();				// bloody foothills thingy
-			break;
-		case 4: d2B_msg("ummm 5");	
-			NTConfig_SkipRegularMonsters = false; 
-			d2B_chkAct(5);
-			d2B_frigidhighlands();				// figid highland thingy
-			break;
-		case 5: d2B_msg("ummm 5"); 
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(5);
-			d2B_worldstonekeep();				// world stone keep thingy
-			break;
-	}
-}
-function d2B_switchChaosThrone() {
-	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 4");
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(4);
-			Delay(Random(20000,25000));
-			if(!_nonTelePeeps) d2B_chaos(true);						// chaos thingy
-			else if(_nonTelePeeps) d2B_chaos(false);
-			break;
-		case 2: d2B_msg("ummm 5"); 
-			Delay(Random(15000,20000));
-			d2B_chkAct(5);
-			//d2B_makeSkellies();
-			//Delay(Random(4000,5000));
-			//d2B_chkAct(5);
-			d2B_worldstonekeep();				// world stone keep thingy
-			if(_dollSoul) {
-				d2B_msg("Dolls and/or souls, so going to do countess as a filler...");
-				Delay(4000);
-				d2B_msg("ummm 1");
-				Delay(Random(25000,30000));
-				d2B_blackMarsh2();
-			}
-			_dollSoul = false;
-			Delay(Random(10000,12000));
-			d2B_msg("ummm 4");
-			Delay(Random(25000,30000));
-			break;
-	}
-}
-function d2B_switchcBaalCountess() {
-	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 4");
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(4);
-			Delay(Random(20000,25000));
-			d2B_chaos();						// chaos thingy
-			break;
-	case 2: d2B_msg("ummm 5"); 
-			Delay(Random(10000,12000));
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(5);			
-			d2B_worldstonekeep();				// world stone keep thingy
-			if(_dollSoul) {
-				d2B_msg("Dolls and/or souls, so going to do a delay...");
-				Delay(Random(80000,100000));
-				_dollSoul = false;
-			}
-			Delay(Random(8000,14000));
-			d2B_msg("ummm 4");
-			Delay(Random(10000,12000));
-			d2B_chkAct(4);
-			Delay(Random(10000,12000));
-			break;
-	case 3: d2B_msg("ummm 1"); 
-			Delay(Random(10000,12000));
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(1);
-			d2B_blackMarsh2();
-			Delay(Random(8000,14000));
-			d2B_msg("ummm 4");
-			Delay(Random(10000,12000));
-			d2B_chkAct(4);
-			Delay(Random(10000,12000));
-			break;
-	}
-}
-function d2B_switchThrone() {
-	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 5"); 
-			Delay(Random(10000,12000));
-			NTConfig_SkipRegularMonsters = false;
-			d2B_chkAct(5);			
-			d2B_worldstonekeep();				// world stone keep thingy
-			if(_dollSoul) {
-				d2B_msg("Dolls and/or souls, so going to do chaos...");
-				Delay(Random(7000,9000));
-				if(_msgMe) Say("/msg *" + _myName + " Dolls and/or souls, so going to do chaos...");
-				Delay(3300);
-				d2B_msg("ummmm 4");
-				NTConfig_SkipRegularMonsters = false;
-				d2B_chkAct(4);
-				Delay(Random(15000,24000));
-				d2B_chaos();						// chaos thingy
-				d2B_msg("ummmm 5");
-				Delay(Random(25000,34000));
-				d2B_chkAct(5);
-			}
-			_dollSoul = false;
-			Delay(Random(10000,12000));
-			break;
-	}
-}
-function d2B_switchNecroRuns() {
-	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 1");
-			Delay(Random(15000,20000));
-			d2B_chkAct(1);
-			d2B_coldplains(_nonTelePeeps);				// true: for Bishibosh
-			Delay(Random(8000,14000));
-			break;
-		case 2: d2B_chkAct(1);
-			d2B_bloodmoor(_nonTelePeeps);				// true: for Corpsefire
-			Delay(Random(8000,14000));
-			break;
-		case 3: d2B_chkAct(1);					
-			d2B_burialgrounds(_nonTelePeeps);			// true: for Blood Raven		
-			Delay(Random(8000,14000));
-			break;
-		case 4: d2B_chkAct(1);					
-			d2B_stonyfield(_nonTelePeeps);				// true: for Blood Raven		
-			Delay(Random(8000,14000));
-			break;
-		case 5: d2B_chkAct(1);
-			d2B_darkwood(_nonTelePeeps);				// true: for Treehead Woodfist
-			Delay(Random(8000,14000));
-			break;
-		case 6: d2B_chkAct(1);
-			d2B_barracks(_nonTelePeeps);				// true: for the Smith
-			Delay(Random(8000,14000));
-			break;
-		case 7: d2B_chkAct(1);
-			d2B_cata2(_nonTelePeeps);					// true: for Andariel
-			Delay(Random(8000,14000));
-			break;
-		case 8: d2B_chkAct(2);
-			d2B_sewers(_nonTelePeeps);					// true: for Radament
-			Delay(Random(8000,14000));
-			break;
-		case 9: d2B_chkAct(2);
-			d2B_faroasis(_nonTelePeeps);				// true: for Creeping Feature
-			Delay(Random(8000,14000));
-			break;
-		case 10: d2B_chkAct(2);
-			d2B_lostcity(_nonTelePeeps);				// true: for Dark Elder
-			Delay(Random(8000,14000));
-			break;
-		case 11: d2B_chkAct(2);
-			d2B_arcane(_nonTelePeeps);					// true: for Summoner
-			Delay(Random(8000,14000));
-			break;
-		case 12: d2B_chkAct(2);
-			d2B_canyon(_nonTelePeeps);					// true: for Duriel
-			Delay(Random(8000,14000));
-			break;
-		case 13: d2B_msg("ummm 4");
-			Delay(Random(25000,30000));
-			d2B_chkAct(4);
-			d2B_chaos(_nonTelePeeps);					// true: for using non tele team
-			Delay(Random(8000,14000));
-			d2B_msg("ummm 4");
-			Delay(Random(25000,30000));
-			d2B_chkAct(4);
-			Delay(Random(15000,18000));
-			break;
-	}
-}
-function d2B_switchChaos() {
-	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 4");
-			Delay(Random(25000,30000));
-			d2B_chkAct(4);
-			d2B_chaos(false);					// false: for using non tele team
-			break;
-		case 2: d2B_msg("ummm 1");
-			Delay(Random(25000,30000));
-			d2B_chkAct(1);
-			d2B_cata2();
-			Delay(Random(8000,14000));
-			d2B_msg("ummm 4");
-			Delay(Random(25000,30000));
-			d2B_chkAct(4);
-			Delay(Random(15000,18000));
-			break;
-	}
-}
-function d2B_CBaalNoTele() {
-	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 4");
-			Delay(Random(25000,30000));
-			d2B_chkAct(4);
-			d2B_chaos(_nonTelePeeps);					// false: for using non tele team
-			break;
-		case 2: d2B_msg("ummm 5");
-			Delay(Random(15000,20000));
-			d2B_chkAct(5);
-			/*if(_nonTelePeeps) {
-				d2B_makeSkellies();
-				Delay(Random(4000,5000));
-				d2B_chkAct(5);
-			}*/
-			d2B_worldstonekeep();				// world stone keep thingy
-			if(_dollSoul) {
-				d2B_msg("Dolls and/or souls, so going to do countess as a filler...");
-				Delay(4000);
-				d2B_msg("ummm 1");
-				Delay(Random(25000,30000));
-				d2B_blackMarsh2();
-			}
-			_dollSoul = false;
-			Delay(Random(10000,12000));
-			d2B_msg("ummm 4");
-			Delay(Random(25000,30000));
-			NTM_TakeWaypoint(103);
-			d2B_chkAct(4);
-			break;
-	}
-}
-function d2B_CBaalLow() {
-	switch(d2B_myPauseValue) {
-		case 1: d2B_msg("ummm 4");
-			Delay(Random(25000,30000));
-			d2B_chkAct(4);
-			d2B_chaos("low");					// false: for using non tele team
-			Delay(Random(20000,22000));
-			d2B_msg("ummm 4");
-			Delay(Random(25000,30000));
-			d2B_chkAct(4);
-			break;
-	}
-}
+
 
 /*	all of my d2B_ functions...
 	
