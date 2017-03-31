@@ -188,7 +188,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 	if(_teamBO) d2B_soloBO();
 	
 	switch(_loc) {
-		case("bloodMoor"):
+		case("bloodmoor"):
 		//	blood moor
 		//
 			Print(COLOR_7 + "Running: " + COLOR_4 + "blood moor");
@@ -199,7 +199,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 			
-		case("coldPlains"):
+		case("coldplains"):
 		// cold plains
 		//
 			Print(COLOR_7 + "Running: " + COLOR_4 + "cold plains");
@@ -212,7 +212,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 		
-		case("burialGrounds"):	
+		case("burialgrounds"):	
 		// burial grounds
 		//
 			Print(COLOR_7 + "Running: " + COLOR_4 + "burial grounds");
@@ -231,7 +231,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 		
-		case("stonyField"):		
+		case("stonyfield"):		
 		// stony field
 		//
 			Print(COLOR_7 + "Running: " + COLOR_4 + "stony field");
@@ -245,7 +245,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 		
-		case("undergroundPassage"):
+		case("undergroundpassage"):
 		// underground passage
 		//
 			Print(COLOR_7 + "Running: " + COLOR_4 + "underground passage");
@@ -258,7 +258,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 		
-		case("darkWoods"):
+		case("darkwoods"):
 		// dark woods
 		//
 			Print(COLOR_7 + "Running: " + COLOR_4 + "dark woods");
@@ -267,7 +267,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 		
-		case("blackMarsh"):
+		case("blackmarsh"):
 		//	black marsh
 		//
 			Print(COLOR_7 + "Running: " + COLOR_4 + "black marsh");
@@ -286,7 +286,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 		
-		case("tamoeHighland"):
+		case("tamoehighland"):
 		//	tamoe highland
 		//
 			Print(COLOR_7 + "Running: " + COLOR_4 + "tamoe highland");
@@ -300,7 +300,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 		
-		case("outerCloister"):
+		case("outercloister"):
 		// outer cloister
 		//
 			Print(COLOR_7 + "Running: " + COLOR_4 + "outer cloister");
@@ -309,7 +309,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 		
-		case("outerBarracks"):
+		case("outerbarracks"):
 		// outer barracks
 		//
 			Print(COLOR_7 + "Running: " + COLOR_4 + "outer barracks");
@@ -329,7 +329,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 		
-		case("buriakGrounds"):
+		case("buriakgrounds"):
 		// inner cloister
 		//
 			Print(COLOR_7 + "Running: " + COLOR_4 + "inner cloister");
@@ -372,7 +372,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 		
-		case("rockyWaste"):
+		case("rockywaste"):
 		// rocky waste
 		//
 			Print(COLOR_4 + "Running: " + COLOR_7 + "rocky waste");
@@ -385,7 +385,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 		
-		case("dryHills"):
+		case("dryhills"):
 		// dry hills
 		//
 			Print(COLOR_4 + "Running: " + COLOR_7 + "dry hills");
@@ -400,7 +400,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 		
-		case("farOasis"):
+		case("faroasis"):
 		// far oasis
 		//
 			Print(COLOR_4 + "Running: " + COLOR_7 + "far oasis");
@@ -413,7 +413,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 		
-		case("lostCity"):
+		case("lostcity"):
 		// lost city
 		//
 			Print(COLOR_4 + "Running: " + COLOR_7 + "claw viper temple");
@@ -424,7 +424,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 		
-		case("clawViperTemple"):
+		case("clawvipertemple"):
 		// claw viper temple
 		//	
 			d2B_movePresetUnitTitle(45,37,0);
@@ -474,7 +474,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 		
-		case("spiderForest"):
+		case("spiderforest"):
 		//	spider forest
 		//
 			Print(COLOR_4 + "Running: " + COLOR_7 + "spider forest");
@@ -490,14 +490,14 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 		
-		case("greatMarsh"):
+		case("greatmarsh"):
 		//	great marsh
 		//
 			Print(COLOR_4 + "Running: " + COLOR_7 + "great marsh");
 			d2B_commonInitSetup(77);
 			d2B_preCastClrLvlOC();
 		
-		case("flayerJungle"):
+		case("flayerjungle"):
 		//	flayer jungle
 		//
 			Print(COLOR_4 + "Running: " + COLOR_7 + "flayer jungle");
@@ -522,7 +522,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 		
-		case("lowerKurast"):
+		case("lowerkurast"):
 		//	lower kurast
 		//
 			Print(COLOR_4 + "Running: " + COLOR_7 + "lower kurast");
@@ -553,7 +553,7 @@ function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
 			d2B_chkAct();
 			break;
 		
-		case("upperKurast"):
+		case("upperkurast"):
 		//	upper kurast
 		//
 			Print(COLOR_4 + "Running: " + COLOR_7 + "upper kurast");
@@ -4326,8 +4326,11 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				}
 			}
 			break;
-		case "doAct":
-			if(msg2) d2B_doAct();
+		case "doact":
+			if(msg2) {
+				Print(COLOR_3 + "Doing "+ COLOR_2 + msg2);
+				d2B_doAct(msg2);
+			}
 			break;
 		case "b":											// barbarian calls
 			if(me.name != _myBoBarb) break;
@@ -6076,7 +6079,7 @@ function Imbue() {
 	Town();
 }
 /*	my chat functions */
-function d2B_doAct() {				// engages when "doAct" command is msg'd
+function d2B_doAct(msg2) {				// engages when "doact" command is msg'd
 	if(!InTown()) d2B_chkAct();
 	d2B_townMgr();
 	NTTM_TownMove("waypoint");
@@ -7910,9 +7913,13 @@ function d2B_barbLdr() {
 								 false, false, false, false, false, false, false, false, false,
 								 false, false, false, false, false, false, false, false];
 								 
-	for(i=0; i<_locations.length, i++) {
+	d2B_peepsMe();	// scan party & store names of team in array _teamPeepsName[]
 	
-		d2B_msg("sorc " + _locations[i] + " " + _ignoreRegMonsters[i] + " " + Random(1322,132274));
+	for(i=0; i<_locations.length; i++) {
+	
+		d2B_msg("doact" + _locations[i] + " " + _ignoreRegMonsters[i] + " " + Random(1322,132274));
+		
+		
 		Delay(Random(2000,3000));
 	}
 	
