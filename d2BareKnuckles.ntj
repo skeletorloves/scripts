@@ -4328,8 +4328,8 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			break;
 		case "doact":
 			if(msg2) {
-				Print(COLOR_3 + "Doing "+ COLOR_2 + msg2);
-				d2B_doAct(msg2);
+				Print(COLOR_3 + "Doing "+ COLOR_2 + msg2 + " " + COLOR_5 + msg2);
+				d2B_doAct(msg2, msg3);
 			}
 			break;
 		case "b":											// barbarian calls
@@ -6079,12 +6079,17 @@ function Imbue() {
 	Town();
 }
 /*	my chat functions */
-function d2B_doAct(msg2) {				// engages when "doact" command is msg'd
+function d2B_doAct(msg2,msg3) {				// engages when "doact" command is msg'd
 	if(!InTown()) d2B_chkAct();
 	d2B_townMgr();
 	NTTM_TownMove("waypoint");
 	
-	d2B_Act(msg2,false);			// d2B_Act(_loc,_skpRegMnstrs)
+	d2B_Act(msg2,msg3);			// d2B_Act(_loc,_skpRegMnstrs)
+	
+	if(!InTown()) d2B_chkAct();
+	d2B_townMgr();
+	NTTM_TownMove("waypoint");
+	NTM_TakeWaypoint(107);		// after towning and char management, go to river of flame wp to get bo'd
 	return;
 }
 	
@@ -7915,13 +7920,24 @@ function d2B_barbLdr() {
 								 
 	d2B_peepsMe();	// scan party & store names of team in array _teamPeepsName[]
 	
-	for(i=0; i<_locations.length; i++) {
+	d2B_msg("doact" + _locations[0] + " " + _ignoreRegMonsters[0] + " " + Random(1322,132274));
+	
+	for{j=0; j<10000; j++) {
+		for(i=0; i<_teamPeepsName.length; i++) {
+			if(_teamPeepsName[i] != me.charname) {
+				Print(COLOR_3 + _teamPeepsName[i] + COLOR_2 + " is in location " + COLOR_5 + _teamPeepsName[i].areaid);
+			}
+		}
+		Delay(Random(2000,3000));
+	}
+	
+	/*for(i=0; i<_locations.length; i++) {
 	
 		d2B_msg("doact" + _locations[i] + " " + _ignoreRegMonsters[i] + " " + Random(1322,132274));
 		
 		
 		Delay(Random(2000,3000));
-	}
+	}*/
 	
 	return true;
 }
