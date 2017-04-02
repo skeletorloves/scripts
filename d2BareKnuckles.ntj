@@ -183,7 +183,7 @@ function NTMain() {
 
 // acts as individual functions
 
-function d2B_Act(_loc,_skpRegMnstrs) {							// Act scripts
+function d2B_Act(_loc, _skpRegMnstrs) {							// Act scripts
 	NTConfig_SkipRegularMonsters = _skpRegMnstrs;
 	if(_teamBO) d2B_soloBO();
 	
@@ -4326,9 +4326,23 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				}
 			}
 			break;
+		case "rWP":								// sends peep to town and then to river wp for a bo
+			if((me.name == _myBoBarb) || (me.name == _myChantress || me.areaid == 107)) break;
+			isFollowingEnabled = false;
+			if(!Intown() && !TakeLeaderTP() && me.areaid != 107)
+				Town();
+			isFollowingEnabled = false;
+			_barbHop = false;
+			Print(COLOR_4 + "Follow off");
+			Delay(700);
+			NTTM_TownMove("waypoint");
+			NTM_TakeWaypoint(107);
+			d2B_littleJMP();
+			Delay(300);
+			break;
 		case "doact":
 			if(msg2) {
-				Print(COLOR_3 + "Doing "+ COLOR_2 + msg2 + " " + COLOR_5 + msg2);
+				Print(COLOR_3 + "Doing "+ COLOR_2 + msg2 + " " + COLOR_7 + msg3);
 				d2B_doAct(msg2, msg3);
 			}
 			break;
@@ -7920,24 +7934,45 @@ function d2B_barbLdr() {
 								 
 	d2B_peepsMe();	// scan party & store names of team in array _teamPeepsName[]
 	
-	d2B_msg("doact" + _locations[0] + " " + _ignoreRegMonsters[0] + " " + Random(1322,132274));
+	var _i = _locations.length;
+	var _j = 0;
 	
-	for{j=0; j<10000; j++) {
-		for(i=0; i<_teamPeepsName.length; i++) {
-			if(_teamPeepsName[i] != me.charname) {
-				Print(COLOR_3 + _teamPeepsName[i] + COLOR_2 + " is in location " + COLOR_5 + _teamPeepsName[i].areaid);
+	do {
+		d2B_msg("doact " + _locations[_j] + " " + _ignoreRegMonsters[_j] + " " + Random(1322,132274));
+		Delay(Random(8000,9000));
+		NTM_TakeWaypoint(107);
+		d2B_littleJMP();
+		Delay(300);
+		NTM_MakeTP();
+	
+		var _waiting4team = false;
+		
+		do {
+			var _player = GetPlayerUnit();
+			if(_player) {
+				do {
+					Print(Color_3 + _player + Color_5 + " is in area " + Color_2 + _player.areaid);
+					if(_player.areaid == me.areaid) {
+						Print(Color_7 + "We are in the same area...");
+						Delay(Random(4000,6700));
+						d2B_msg("rWP");
+						Delay(Random(18000,19000));
+						d2B_msg(".");
+						Delay(Random(14000,17000));
+						NTP_DoPrecast(true);
+						Delay(Random(3000,5000));
+						_j = _j + 1;
+						Print(Color_5 + "_j = " + Color_2 + _j);
+						_waiting4team = true;
+					}
+					Delay(Random(4000,5000));
+				} while(_player.GetNext() && !_waiting4team)
 			}
-		}
-		Delay(Random(2000,3000));
-	}
+		} while(!_waiting4team)
+	} while(_j < _i);
 	
-	/*for(i=0; i<_locations.length; i++) {
-	
-		d2B_msg("doact" + _locations[i] + " " + _ignoreRegMonsters[i] + " " + Random(1322,132274));
-		
-		
-		Delay(Random(2000,3000));
-	}*/
+	Print(COLOR_3 + "Out of the check thang...");
+	Delay(Ranodm(104000,200000));
 	
 	return true;
 }
