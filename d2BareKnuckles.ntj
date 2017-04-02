@@ -4326,10 +4326,11 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				}
 			}
 			break;
-		case "rWP":								// sends peep to town and then to river wp for a bo
-			if((me.name == _myBoBarb) || (me.name == _myChantress || me.areaid == 107)) break;
+		case "rwp":								// sends peep to town and then to river wp for a bo
+			Print(COLOR_3 + "Going to river wp for a bo...");
+			if(me.name == _myBoBarb || me.name == _myChantress || me.areaid == 107) break;
 			isFollowingEnabled = false;
-			if(!Intown() && !TakeLeaderTP() && me.areaid != 107)
+			if(!InTown() && !TakeLeaderTP() && me.areaid != 107)
 				Town();
 			isFollowingEnabled = false;
 			_barbHop = false;
@@ -7951,9 +7952,9 @@ function d2B_barbLdr() {
 			var _player = GetPlayerUnit();
 			if(_player) {
 				do {
-					Print(Color_3 + _player + Color_5 + " is in area " + Color_2 + _player.areaid);
+					Print(COLOR_3 + _player + COLOR_5 + " is in area " + COLOR_2 + _player.areaid);
 					if(_player.areaid == me.areaid) {
-						Print(Color_7 + "We are in the same area...");
+						Print(COLOR_7 + "We are in the same area...");
 						Delay(Random(4000,6700));
 						d2B_msg("rWP");
 						Delay(Random(18000,19000));
@@ -7962,7 +7963,7 @@ function d2B_barbLdr() {
 						NTP_DoPrecast(true);
 						Delay(Random(3000,5000));
 						_j = _j + 1;
-						Print(Color_5 + "_j = " + Color_2 + _j);
+						Print(COLOR_ + "_j = " + COLOR_ + _j);
 						_waiting4team = true;
 					}
 					Delay(Random(4000,5000));
