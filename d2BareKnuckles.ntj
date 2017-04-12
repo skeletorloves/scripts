@@ -4369,15 +4369,20 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				d2B_doAct(msg2, msg3);
 			}
 			break;
-		case "cTP":
+		case "ctp":
 			if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
+			isFollowingEnabled = false;
 			Print(COLOR_3 + "Heading to chaos enterance to make a tp...");
+			
 			Delay(300);
+			d2B_commonInitSetup(107);
 			NTM_MoveTo(108,7788,5555); 						// chaos enterance left
 			Town();
+			isFollowingEnabled = false;
 			break;
-		case "tTP":
+		case "ttp":
 			if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
+			isFollowingEnabled = false;
 			Print(COLOR_3 + "Heading to throne to make a tp...");
 			Delay(300);
 			
@@ -4387,20 +4392,8 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			d2B_moveToStair(me.areaid, 131, false);
 			NTM_TakeStair(131);
 			NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
-			
-			if(_dollChk) {
-				if(d2B_dollsoulChk()) {
-				_dollSoul = true;
-				break;
-				}
-				Delay(100);
-				if(d2B_dollsoulChk()) {
-				_dollSoul = true;
-				break;
-				}
-			}
-			Print(COLOR_3 + "There may not be dolls nor souls...");
 			Town();
+			isFollowingEnabled = false;
 			break;
 		case "b":											// barbarian calls
 			if(me.name != _myBoBarb) break;
@@ -5726,79 +5719,64 @@ function Quest( msg ) { 							// Done (needs testing)
 
 function Town() { 									// Done
 
-	if(!NTC_InTown(me))
-	{
+	if(!NTC_InTown(me)) {
 		// Try to take our own tp or the leader's tp
 		TP("");
 		Delay(500);
 		var _portal = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3226), 10);
 		var _prearea = me.areaid;
-		if(_portal)
-		{
-			do 
-			{
-				if(NTC_CheckOwner(_portal, me.charname) || NTC_CheckOwner(_portal, leaderName))
-				{
-					if(GetDistance(me, _portal) < 15)
-					{
+		if(_portal) {
+			do {
+				if(NTC_CheckOwner(_portal, me.charname) || NTC_CheckOwner(_portal, leaderName)) {
+					if(GetDistance(me, _portal) < 15) {
 						NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
 						Delay(1500);
+						if(InTown()) break;
 					}
 				}
 				
-				while(me.areaid === 0)
-					NTC_Delay(100);
+				while(me.areaid === 0) NTC_Delay(100);
 				
-				if(me.areaid !== _prearea)
-				{
+				if(me.areaid !== _prearea) {
 					d2B_townMgr();
 					break;
 				}
 					
-			}while(_portal.GetNext());
+			} while(_portal.GetNext());
 			Delay(500);
 		}
-		
-		if(me.areaid == _prearea && !NTC_InTown(me)) // If we failed, we need to make our own tp and try again
-		{
-			TP("");
-			Delay(500);
-			_portal = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3226), 10);
-			var _prearea = me.areaid;
-			
-			if(_portal)
-			{
-				do 
-				{
-					if(NTC_CheckOwner(_portal, me.charname)) 
-						if(GetDistance(me, _portal) < 10)
-							NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
-					
-					if(me.areaid !== _prearea)
-					{
-						d2B_townMgr();
-						break;
-					}
-					
-					while(me.areaid == 0)
-						NTC_Delay(100);
-					
-				}while(_portal.GetNext());
+		if(!InTown()) {
+			if(me.areaid == _prearea && !NTC_InTown(me)) { // If we failed, we need to make our own tp and try again
+				TP("");
 				Delay(500);
+				_portal = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3226), 10);
+				var _prearea = me.areaid;
+				
+				if(_portal) {
+					do {
+						if(NTC_CheckOwner(_portal, me.charname)) {
+							if(GetDistance(me, _portal) < 10) {
+								NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
+								Delay(1500);
+								if(InTown()) break;
+							}
+						}
+						if(me.areaid !== _prearea) {
+							d2B_townMgr();
+							break;
+						}
+						
+						while(me.areaid == 0) NTC_Delay(100);
+						
+					} while(_portal.GetNext());
+					Delay(500);
+				}
 			}
 		}
-		
-		if(me.areaid !== _prearea)
-		{	
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		if(me.areaid !== _prearea) return true; 
+		else return false;
 	}
-	else
-	{
+	else {
 		d2B_townMgr();
 		return true;
 	}
