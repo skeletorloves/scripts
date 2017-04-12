@@ -1,4 +1,4 @@
-/*	v1.20170320a
+/*	v1.20170412a
 	
 	v1.20170320a
 	d2BareKnuckles.ntj
@@ -63,6 +63,7 @@
 		var _peepsNum = 0;						// number of peeps (incl. leader)
 		var _peepsIn = false;					// d2B_peepsIn() for verifying if peeps are still in game
 		
+		var _teamPeeps = [];
 		var _teamPeepsName = [];
 		var _teamPeepsLevel = [];
 		var _teamPeepsClass = [];
@@ -603,6 +604,27 @@ function d2B_Act(_loc, _skpRegMnstrs) {							// Act scripts
 		return;
 }
 
+function d2B_mfSpots(_spots, _skpRegMnstrs) {
+	NTConfig_SkipRegularMonsters = _skpRegMnstrs;
+	
+	switch(_spots) {
+		case("corpsefire"):
+		//	corpsefire
+		//
+			Print(COLOR_7 + "Running: " + COLOR_4 + "going for corpsefire");
+			if(InTown) d2B_moveWP();
+			d2B_gotoWP(3);
+			NTP_DoPrecast(true);
+			d2B_moveToStair(2,8, false);					// head to front of den as a starting point
+			d2B_takeStairs(8, false);
+			NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 15, -15);	// 774: Corpsefire
+			if(d2B_usingAFollower) d2B_team(true);
+			//d2B_teamPro(true,3319,40,true,1,"n w",false);						// 3319: Corpsefire
+			break;
+				
+	}
+	return;		
+}
 // Act I solo: complete
 
 function d2B_SoloAct1() {							// Act 1 complete
@@ -2571,7 +2593,7 @@ function d2B_Peeps() {								// store name of leader & followers in storePeeps.
 	_peepsNum = _peeps.length;
 	
 	for(i=1; i < _peeps.length; i++) {
-		if(_msgMe) Say("/msg *" + _myName + " " + i + ". " + _peeps[i]);
+		if(_msgMe) d2B_msg(i + ". " + _peeps[i]);
 		Delay(Random(5000,7000));
 	}
 	return;
@@ -2579,7 +2601,7 @@ function d2B_Peeps() {								// store name of leader & followers in storePeeps.
 function d2B_rPeepsInGame() {						// return (true, _teamSize) : _teamSize accounts for all characters in game
 	Print(COLOR_3 + "Checking in on peeps");
 	Delay(Random(1000,3000));
-	d2B_msg("/f m " + " Peep check-in");
+	d2B_msg("Peep check-in");
 	Delay(300);
 	// for checking if everyone is in game...
 	// if so, do continue
@@ -2599,7 +2621,7 @@ function d2B_rPeepsInGame() {						// return (true, _teamSize) : _teamSize accou
 		} else _teamSize = _teamSize + 1;
 	}
 	Delay(Random(3000,4000));
-	d2B_msg("/f m Of the " + (_peeps.length - 1) + " extra peeps, there are " + (_teamSize) + " in game.");
+	d2B_msg("Of the " + (_peeps.length - 1) + " extra peeps, there are " + (_teamSize) + " in game.");
 	Delay(300);
 	if(!allIn) return false;
 	return true;
@@ -2781,7 +2803,7 @@ function d2B_newGmDlyPeepChk() {
 	if(d2B_rPeepsInGame(true)) {
 		Print(COLOR_7 + "All peeps are in the game.");
 		Delay(1000);
-		if(_msgMe) Say("/msg *" + _myName + " All peeps in!");
+		if(_msgMe) Say("All peeps in!");
 	}
 	return;
 }
@@ -4346,6 +4368,39 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				Print(COLOR_3 + "Doing "+ COLOR_2 + msg2 + " " + COLOR_7 + msg3);
 				d2B_doAct(msg2, msg3);
 			}
+			break;
+		case "cTP":
+			if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
+			Print(COLOR_3 + "Heading to chaos enterance to make a tp...");
+			Delay(300);
+			NTM_MoveTo(108,7788,5555); 						// chaos enterance left
+			Town();
+			break;
+		case "tTP":
+			if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
+			Print(COLOR_3 + "Heading to throne to make a tp...");
+			Delay(300);
+			
+			d2B_commonInitSetup(129);	
+			d2B_moveToStair(me.areaid, 130, false);
+			NTM_TakeStair(130);
+			d2B_moveToStair(me.areaid, 131, false);
+			NTM_TakeStair(131);
+			NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
+			
+			if(_dollChk) {
+				if(d2B_dollsoulChk()) {
+				_dollSoul = true;
+				break;
+				}
+				Delay(100);
+				if(d2B_dollsoulChk()) {
+				_dollSoul = true;
+				break;
+				}
+			}
+			Print(COLOR_3 + "There may not be dolls nor souls...");
+			Town();
 			break;
 		case "b":											// barbarian calls
 			if(me.name != _myBoBarb) break;
@@ -7926,12 +7981,20 @@ function d2B_barbLdr() {
 	d2B_boBabaPre();
 	NTM_TakeWaypoint(1);
 	
-	var _locations = 	["bloodMoor", "coldPlains", "burialGrounds", "stonyField", "undergroundPassage", "darkWoods", "blackMarsh", "tamoeHighland", "outerCloister", "outerBarracks", "jail", "burialGrounds", "catacombs",
+	var _locations = 	["coldPlains", "burialGrounds", "undergroundPassage", "blackMarsh", "tamoeHighland", "catacombs",
+						"lostCity", "clawviperTemple", "arcane", "canyon",
+						"flayerJungle", "lowerKurast", "kurast", "upperKurrast"];
+	var _ignoreRegMonsters = 	[false, false, false, false, false, false,
+								 false, false, false, false,
+								 false, false, false, false];
+	
+/*	var _locations = 	["bloodMoor", "coldPlains", "burialGrounds", "stonyField", "undergroundPassage", "darkWoods", "blackMarsh", "tamoeHighland", "outerCloister", "outerBarracks", "jail", "catacombs",
 						"sewers", "rockyWaste", "dryHills", "farOasis", "lostCity", "clawviperTemple", "harem", "arcane", "canyon",
 						"spiderForest", "greatMarsh", "flayerJungle", "lowerKurast", "kurast", "upperKurrast", "travincal", "durance"];
-	var _ignoreRegMonsters = 	[false, false, false, false, false, false, false, false, false, false, false, false, false,
+	var _ignoreRegMonsters = 	[false, false, false, false, false, false, false, false, false, false, false, false,
 								 false, false, false, false, false, false, false, false, false,
-								 false, false, false, false, false, false, false, false];
+								 false, false, false, false, false, false, false, false]; 
+	*/
 								 
 	d2B_peepsMe();	// scan party & store names of team in array _teamPeepsName[]
 	
@@ -7941,10 +8004,13 @@ function d2B_barbLdr() {
 	do {
 		d2B_msg("doact " + _locations[_j] + " " + _ignoreRegMonsters[_j] + " " + Random(1322,132274));
 		Delay(Random(8000,9000));
-		NTM_TakeWaypoint(107);
-		d2B_littleJMP();
+		if(InTown()) {
+			NTM_TakeWaypoint(107);
+			d2B_littleJMP();
+			Delay(300);
+			NTM_MakeTP();
+		}
 		Delay(300);
-		NTM_MakeTP();
 	
 		var _waiting4team = false;
 		
