@@ -7,6 +7,10 @@ var _dollSoul;
 var _follow = false;
 var _barbHop = false
 
+var tpSorc = "myMOOstash";
+var _SkeletonArmy = 11;
+var _Revives = 23;
+
 var _keycodeMenu = 0;	// for switching through thru customized keycode menus
 
 var Rev = "1.1.3";
@@ -109,7 +113,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 2) _keycodeMenu = 0;
+					if(_keycodeMenu > 4) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "rushing customized manual key menu");
 					break;
 				case 103:			// #pad 7: grab exp shrine (orig:Key_MyChicken)
@@ -185,7 +189,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 3) _keycodeMenu = 0;
+					if(_keycodeMenu > 4) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "experimental hopping barbs menu...");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
@@ -497,8 +501,8 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 3) _keycodeMenu = 0;
-					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "main control menu...");
+					if(_keycodeMenu > 4) _keycodeMenu = 0;
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "quick lvling of flwrs in chaos & throne...");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
 					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
@@ -527,7 +531,6 @@ function NT_KeyEvents(keycode) {
 					break;
 				case 99:			// #pad 3: 	if out of town:	msg to hop barb followers to start hopping
 									//			if in town: 	msg to hop barb followers to go to a5
-					if(InTown(me)) break;
 					if(!InTown()) {
 						Print(COLOR_2 + "enable hopping barb followers");	
 						Delay(300);
@@ -537,13 +540,12 @@ function NT_KeyEvents(keycode) {
 					if(InTown()) {
 						Print(COLOR_2 + "tell hoppers to go to a5");	
 						Delay(300);
-						if(d2B_usingAFollower) d2B_msg("ummmm 5 " + Random(1,134332));
+						if(d2B_usingAFollower) d2B_msg("ummm 5 " + Random(1,134332));
 						break;
 					}
 					break;
 				case 102:			// #pad 6: 	if out of town:	msg to hop barb followers tomsg to stop hopping
 									//			if in town: 	msg to hop barb followers to go to a4
-					if(InTown(me)) break;
 					if(!InTown()) {
 						Print(COLOR_2 + "disable hopping barb followers");	
 						Delay(300);
@@ -553,7 +555,7 @@ function NT_KeyEvents(keycode) {
 					if(InTown()) {
 						Print(COLOR_2 + "tell hoppers to go to a4");	
 						Delay(300);
-						if(d2B_usingAFollower) d2B_msg("ummmm 4 " + Random(1,134332));
+						if(d2B_usingAFollower) d2B_msg("ummm 4 " + Random(1,134332));
 						break;
 					}
 					break;
@@ -571,14 +573,60 @@ function NT_KeyEvents(keycode) {
 					break;
 			}
 			break;
-		case 4:						// this one is in-progress
+		case 4:						// this one is for quick leveling of followers in chaos & throne
 			switch(keycode) {
-				case Key_AntiIdle:
-					Print(COLOR_4 + "Changing customized key menu...");
-					Delay(500);
+				ccase Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 5) _keycodeMenu = 0;
-					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu);
+					if(_keycodeMenu > 4) _keycodeMenu = 0;
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "main control menu...");
+					break;
+				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
+					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
+					MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
+					Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+					Delay(Random(1000,1700));
+					Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+					break;
+				case 103:			// #pad 7: sending followers to a5 or a4 depending on leader's area
+					Print(COLOR_2 + "sending followers to a5 or a4...");
+					Delay(500);
+					if(d2B_usingAFollower && (me.areaid == 108 || me.areaid == 103)) d2B_msg("ummm 5 " + Random(1,134332));
+					if(d2B_usingAFollower && (me.areaid == 132 || me.areaid == 131 || me.areaid == 109)) d2B_msg("ummm 4 " + Random(1,134332));
+					break;
+				case 97:			// #pad 1: msg "." call peeps to follow
+					Print(COLOR_2 + "calling followers...");
+					if(InTown(me)) break;	
+					NTM_MakeTP();
+					Delay(500);
+					if(d2B_usingAFollower) d2B_msg(". " + Random(1,134332));
+					break;
+				case 98:			// #pad 2: msg "." sending peeps to town
+					Print(COLOR_2 + "sending followers to town...");
+					if(InTown(me)) break;	
+					NTM_MakeTP();
+					Delay(500);
+					if(d2B_usingAFollower) d2B_msg("' " + Random(1,134332));
+					break;
+				case 99:			// #pad 3: signal team to do a little jump, if leader is stuck by the team's closeness
+					Print(COLOR_2 + "signalling team to jump away...");
+					Delay(500);
+					if(d2B_usingAFollower) d2B_msg("j " + Random(1,134332));
+					break;
+				case 100:			// #pad 4: sending tpSorc to chaos enterance, to make a tp, and return to town
+					Print(COLOR_2 + "sending " + tpSorc + " to chaos to tp...");
+					Delay(500);
+					if(d2B_usingAFollower) d2B_msg(tpSorc + " cTP " + Random(1,134332));
+					break;
+				case 101:			// #pad 5: sending tpSorc to throne enterance, to make a tp, and return to town
+					Print(COLOR_2 + "sending " + tpSorc + " to throne to tp...");
+					Delay(500);
+					if(d2B_usingAFollower) d2B_msg(tpSorc + " tTP " + Random(1,134332));
+					break;
+				case 102:			// #pad 6: if I am a necro, make skellies and revives
+					Print(COLOR_2 + "signalling team to jump away...");
+					Delay(500);
+					NTA_SkeletonArmy(_SkeletonArmy);
+					NTA_ReviveArmy(_Revives);
 					break;
 			}
 			break;
@@ -2054,6 +2102,7 @@ function d2B_LXPC_FindShrines(a) {
 							NTM_UsePortal("BluePortal", 1);
 							Delay(Random(1400,2000));
 							d2B_moveWP();
+							break;
 						}
 						if(a) NTTM_CheckAct(5);
 					}
