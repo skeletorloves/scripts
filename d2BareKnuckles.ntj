@@ -54,7 +54,7 @@
 		var _nonTelePeeps 		= false;			// if followers cannot tele
 		var d2B_usingSorcFlwrs 	= false;				// using sorcies as followers
 		var d2B_usingAFollower 	= false; 			// using a follower therefore make townportals d2B_takeMyTP()
-		var d2B_refill 			= false;				// enable/disable NTTMGR_TownManager();
+		var d2B_refill 			= true;				// enable/disable NTTMGR_TownManager();
 		
 		var d2B_helpers 		= false;				// general helpers thang
 		
@@ -79,7 +79,7 @@
 /*	_______________________________________________________________________________ */
 
 	var d2B_cases = 1;
-	var d2B_toggleHelper = "barbLdr";
+	var d2B_toggleHelper = "helper";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 
 
@@ -4394,6 +4394,19 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
 			Town();
 			isFollowingEnabled = false;
+			break;
+		case "zonjavs":
+			if(me.classid != NTC_CHAR_CLASS_AMAZON) break;
+			var _intown = true;
+			if(!InTown()) _intown = false;
+			isFollowingEnabled = false;
+			NTTMGR_VisitTown();
+			if(!_intown) {
+				isFollowingEnabled = true;
+				return;
+			isFollowingEnabled = false;
+			d2B_townMove("portalspot");
+			d2B_littleJMP();
 			break;
 		case "b":											// barbarian calls
 			if(me.name != _myBoBarb) break;
