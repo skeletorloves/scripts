@@ -100,10 +100,91 @@ function CheckMap() {
 
 function NT_KeyEvents(keycode) {
 	switch(_keycodeMenu) {
-		case 0:						// main customized keycode menu
+		case 0:						// this one is for quick leveling of followers in chaos & throne
+			Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "for quick leveling of followers in chaos & throne...");
+			switch(keycode) {
+				case 46:			// [del] button (orig: Key_ExitGame)
+					ExitGame();
+					break;
+				case 96:			// #pad 0: exit game (orig: Key_DoPrecast)
+					ExitGame();
+					break;
+				case Key_AntiIdle: // [pause/break] button
+					_keycodeMenu = _keycodeMenu + 1;
+					if(_keycodeMenu > 4) _keycodeMenu = 0;
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "main control menu...");
+					break;
+				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
+					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
+					MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
+					Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+					Delay(Random(1000,1700));
+					Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+					break;
+				case 103:			// #pad 7: sending followers to a5 or a4 depending on leader's area
+					Print(COLOR_2 + "sending followers to a5 or a4...");
+					Delay(500);
+					if(d2B_usingAFollower && (me.areaid == 108 || me.areaid == 103)) d2B_msg("ummm 5 " + Random(1,134332));
+					if(d2B_usingAFollower && (me.areaid == 132 || me.areaid == 131 || me.areaid == 109)) d2B_msg("ummm 4 " + Random(1,134332));
+					break;
+				case 97:			// #pad 1: msg "." call peeps to follow
+					Print(COLOR_2 + "calling followers...");
+					if(InTown(me)) break;	
+					NTM_MakeTP();
+					Delay(500);
+					if(d2B_usingAFollower) d2B_msg(". " + Random(1,134332));
+					break;
+				case 98:			// #pad 2: msg "." sending peeps to town
+					Print(COLOR_2 + "sending followers to town...");
+					if(InTown(me)) break;	
+					NTM_MakeTP();
+					Delay(500);
+					if(d2B_usingAFollower) d2B_msg("' " + Random(1,134332));
+					break;
+				case 99:			// #pad 3: signal team to do a little jump, if leader is stuck by the team's closeness
+					Print(COLOR_2 + "signalling team to jump away...");
+					Delay(500);
+					if(d2B_usingAFollower) d2B_msg("j " + Random(1,134332));
+					break;
+				case 100:			// #pad 4: sending tpSorc to chaos enterance, to make a tp, and return to town
+					Print(COLOR_2 + "sending " + tpSorc + " to chaos to tp...");
+					Delay(500);
+					if(d2B_usingAFollower) d2B_msg(tpSorc + " cTP " + Random(1,134332));
+					break;
+				case 101:			// #pad 5: sending tpSorc to throne enterance, to make a tp, and return to town
+					Print(COLOR_2 + "sending " + tpSorc + " to throne to tp...");
+					Delay(500);
+					if(d2B_usingAFollower) d2B_msg(tpSorc + " tTP " + Random(1,134332));
+					break;
+				case 102:			// #pad 6: if I am a necro, make skellies and revives
+					Print(COLOR_2 + "making dah skellies & dah revives...");
+					Delay(500);
+					NTA_SkeletonArmy(_SkeletonArmy);
+					NTA_ReviveArmy(_Revives);
+					break;
+				case 105:			// #pad 9: buffing
+					Print(COLOR_2 + "making dah buff...");
+					Delay(500);
+					NTP_DoPrecast(true);
+					Delay(500);
+					if(d2B_usingAFollower && !InTown()) d2B_msg("buff " + Random(1,134332));
+					break;
+				case 220: 			// "\": in case team has boxed me in, instruct team to jump away for a moment
+					Print(COLOR_2 + "making team jump away...");
+					Delay(500);
+					if(d2B_usingAFollower && !InTown()) d2B_msg("j " + Random(1,134332));
+					break;
+				case 222:			// "'": send the zon to replenish her javs
+					Print(COLOR_2 + "making team jump away...");
+					Delay(500);
+					if(d2B_usingAFollower && !InTown()) d2B_msg("zonjavs " + Random(1,134332));
+					break;
+			}
+			break;
+		case 1:						// main customized keycode menu
 			d2B_KeyCodeMain(keycode);
 			break;
-		case 1:						// baal customized manual key menu
+		case 2:						// baal customized manual key menu
 			switch(keycode) {
 				case 46:			// [del] button (orig: Key_ExitGame)
 					ExitGame();
@@ -179,7 +260,7 @@ function NT_KeyEvents(keycode) {
 					break;
 			}
 			break;
-		case 2:						// rushing customized manual key menu
+		case 3:						// rushing customized manual key menu
 			switch(keycode) {
 				case 46:			// [del] button (orig: Key_ExitGame)
 					ExitGame();
@@ -491,7 +572,7 @@ function NT_KeyEvents(keycode) {
 					}
 			}
 			break;
-		case 3:						// this one is a experiment for hop barbs
+		case 4:						// this one is a experiment for hop barbs
 			switch(keycode) {
 				case 46:			// [del] button (orig: Key_ExitGame)
 					ExitGame();
@@ -502,7 +583,7 @@ function NT_KeyEvents(keycode) {
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
 					if(_keycodeMenu > 4) _keycodeMenu = 0;
-					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "quick lvling of flwrs in chaos & throne...");
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "quick lvling of flwrs in chaos & throne...");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
 					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
@@ -570,63 +651,6 @@ function NT_KeyEvents(keycode) {
 					if(InTown(me)) break;	
 					Delay(300);
 					if(d2B_usingAFollower) d2B_msg(". " + Random(1,134332));
-					break;
-			}
-			break;
-		case 4:						// this one is for quick leveling of followers in chaos & throne
-			switch(keycode) {
-				ccase Key_AntiIdle: // [pause/break] button
-					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 4) _keycodeMenu = 0;
-					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "main control menu...");
-					break;
-				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
-					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
-					MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
-					Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
-					Delay(Random(1000,1700));
-					Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
-					break;
-				case 103:			// #pad 7: sending followers to a5 or a4 depending on leader's area
-					Print(COLOR_2 + "sending followers to a5 or a4...");
-					Delay(500);
-					if(d2B_usingAFollower && (me.areaid == 108 || me.areaid == 103)) d2B_msg("ummm 5 " + Random(1,134332));
-					if(d2B_usingAFollower && (me.areaid == 132 || me.areaid == 131 || me.areaid == 109)) d2B_msg("ummm 4 " + Random(1,134332));
-					break;
-				case 97:			// #pad 1: msg "." call peeps to follow
-					Print(COLOR_2 + "calling followers...");
-					if(InTown(me)) break;	
-					NTM_MakeTP();
-					Delay(500);
-					if(d2B_usingAFollower) d2B_msg(". " + Random(1,134332));
-					break;
-				case 98:			// #pad 2: msg "." sending peeps to town
-					Print(COLOR_2 + "sending followers to town...");
-					if(InTown(me)) break;	
-					NTM_MakeTP();
-					Delay(500);
-					if(d2B_usingAFollower) d2B_msg("' " + Random(1,134332));
-					break;
-				case 99:			// #pad 3: signal team to do a little jump, if leader is stuck by the team's closeness
-					Print(COLOR_2 + "signalling team to jump away...");
-					Delay(500);
-					if(d2B_usingAFollower) d2B_msg("j " + Random(1,134332));
-					break;
-				case 100:			// #pad 4: sending tpSorc to chaos enterance, to make a tp, and return to town
-					Print(COLOR_2 + "sending " + tpSorc + " to chaos to tp...");
-					Delay(500);
-					if(d2B_usingAFollower) d2B_msg(tpSorc + " cTP " + Random(1,134332));
-					break;
-				case 101:			// #pad 5: sending tpSorc to throne enterance, to make a tp, and return to town
-					Print(COLOR_2 + "sending " + tpSorc + " to throne to tp...");
-					Delay(500);
-					if(d2B_usingAFollower) d2B_msg(tpSorc + " tTP " + Random(1,134332));
-					break;
-				case 102:			// #pad 6: if I am a necro, make skellies and revives
-					Print(COLOR_2 + "signalling team to jump away...");
-					Delay(500);
-					NTA_SkeletonArmy(_SkeletonArmy);
-					NTA_ReviveArmy(_Revives);
 					break;
 			}
 			break;
