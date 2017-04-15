@@ -4404,10 +4404,32 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			if(!_intown) {
 				isFollowingEnabled = true;
 				return;
+			}
 			isFollowingEnabled = false;
 			d2B_townMove("portalspot");
 			d2B_littleJMP();
 			break;
+		case "leechbaal":
+			if(me.areaid == 131) {
+				NTM_MoveTo(131, 15092, 5010);			// moves to entrance to worldstone chamber
+				NTP_DoPrecast(true);
+				for(var i = 0; i < 60; i++) {			// wait for baal to enter chamber
+					Delay(500);
+					if(!NTC_FindUnit(NTC_UNIT_MONSTER, 543)) break;
+				}
+				_portal = NTC_FindUnit(NTC_UNIT_OBJECT, 563, 1);
+				NTM_UsePortal("Portal", 132, null, _portal);	// enter into worldstone chamber
+				Delay(500);
+				NTM_MoveTo(me.areaid, 15193, 5913);				// moves to safe spot for leeching Baal exp
+				//NTM_MoveTo(me.areaid, 15138, 5899);				// tele to safe leeching spot baal (orig: 15138, 5916)
+			}
+			break;
+		case "leechdiablo":
+			if(me.areaid == 108) {
+				NTM_MoveTo(108, 7756, 5267);				// moves to safe diablo leeching spot
+				NTP_DoPrecast(true);
+			}
+			break;	
 		case "b":											// barbarian calls
 			if(me.name != _myBoBarb) break;
 			switch(msg2) {									// for bo town barb only
