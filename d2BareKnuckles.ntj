@@ -1,6 +1,6 @@
-/*	v1.20170412a
+/*	v1.20170416a
 	
-	v1.20170320a
+	v1.20170416a
 	d2BareKnuckles.ntj
 
 */
@@ -79,7 +79,7 @@
 /*	_______________________________________________________________________________ */
 
 	var d2B_cases = 1;
-	var d2B_toggleHelper = "helper";
+	var d2B_toggleHelper = "solo";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 
 
@@ -142,11 +142,11 @@ function NTMain() {
 									d2B_boBaba2();				
 									break;
 			case "solo":			d2B_chkAct(1);									// (1)
-									d2B_SoloAct1();									
+									d2B_SoloAct1(true);									
 									d2B_chkAct(2);
-									d2B_SoloAct2();
+									d2B_SoloAct2(true);
 									d2B_chkAct(3);
-									d2B_SoloAct3();
+									d2B_SoloAct3(true);
 									d2B_chkAct(1);
 									break;
 			case "mf":				d2B_mf(d2B_helpers);							// (1)
@@ -627,8 +627,8 @@ function d2B_mfSpots(_spots, _skpRegMnstrs) {
 }
 // Act I solo: complete
 
-function d2B_SoloAct1() {							// Act 1 complete
-	
+function d2B_SoloAct1(_skip) {							// Act 1 complete
+		NTConfig_SkipRegularMonsters = _skip
 		if(_teamBO) d2B_soloBO();
 	
 	//	blood moor
@@ -804,8 +804,9 @@ function d2B_SoloAct1() {							// Act 1 complete
 		
 		return;
 }
-function d2B_SoloAct2() {							// Act 2 complete
-	
+function d2B_SoloAct2(_skip) {							// Act 2 complete
+		NTConfig_SkipRegularMonsters = _skip
+		
 	//	sewers
 	//
 		Print(COLOR_4 + "Running: " + COLOR_7 + "sewers");
@@ -903,8 +904,8 @@ function d2B_SoloAct2() {							// Act 2 complete
 			
 		d2B_chkAct();	
 }
-function d2B_SoloAct3() {							// Act 3
-	
+function d2B_SoloAct3(_skip) {							// Act 3
+		NTConfig_SkipRegularMonsters = _skip
 		if(_teamBO) d2B_soloBO();
 	
 	//	spider forest
@@ -4410,6 +4411,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 			d2B_littleJMP();
 			break;
 		case "leechbaal":
+			isFollowingEnabled = false;
 			if(me.areaid == 131) {
 				NTM_MoveTo(131, 15092, 5010);			// moves to entrance to worldstone chamber
 				NTP_DoPrecast(true);
@@ -4420,15 +4422,19 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 				_portal = NTC_FindUnit(NTC_UNIT_OBJECT, 563, 1);
 				NTM_UsePortal("Portal", 132, null, _portal);	// enter into worldstone chamber
 				Delay(500);
-				NTM_MoveTo(me.areaid, 15193, 5913);				// moves to safe spot for leeching Baal exp
+				NTM_MoveTo(me.areaid, 15193, 5933);				// moves to safe spot for leeching Baal exp
 				//NTM_MoveTo(me.areaid, 15138, 5899);				// tele to safe leeching spot baal (orig: 15138, 5916)
 			}
+			isFollowingEnabled = false;
 			break;
 		case "leechdiablo":
+			isFollowingEnabled = false;
 			if(me.areaid == 108) {
-				NTM_MoveTo(108, 7756, 5267);				// moves to safe diablo leeching spot
+				_i = Random(0,1);
+				(_i == 1) ? NTM_MoveTo(108, 7763, 5267) : NTM_MoveTo(108, 7767, 5263);				// moves to safe diablo leeching spot (7763,5267) (7767,5263)
 				NTP_DoPrecast(true);
 			}
+			isFollowingEnabled = false;
 			break;	
 		case "b":											// barbarian calls
 			if(me.name != _myBoBarb) break;
