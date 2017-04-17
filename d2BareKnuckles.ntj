@@ -629,7 +629,6 @@ function d2B_mfSpots(_spots, _skpRegMnstrs) {
 
 function d2B_SoloAct1(_skip) {							// Act 1 complete
 		NTConfig_SkipRegularMonsters = _skip
-		if(_teamBO) d2B_soloBO();
 	
 	//	blood moor
 	//
@@ -637,163 +636,137 @@ function d2B_SoloAct1(_skip) {							// Act 1 complete
 		d2B_commonInitSetup(3);
 		d2B_moveToStair(2,8, true);					// head to front of den as a starting point (areaid, stairs, preCastClrLvlOC)
 		d2B_moveToStair(2,8, false);
-		d2B_takeStairs(8, true);
+		d2B_takeStairs(8, true);					// enter den
+		d2B_moveToStair(8,2, false);				// back to enterance before towning
 		d2B_chkAct();
-		
-		if(_teamBO) d2B_soloBO();
 		
 	// cold plains
 	//
 		Print(COLOR_7 + "Running: " + COLOR_4 + "cold plains");
-		d2B_commonInitSetup(3);
+		d2B_commonInitSetup(3);						// cold plains
 		d2B_preCastClrLvlOC();
-		d2B_moveToStair(3,9, false);
+		d2B_moveToStair(3,9, false);				// cave level 1
 		d2B_takeStairs(9, true);
-		d2B_moveToStair(9,13, false);
+		d2B_moveToStair(9,13, false);				// cave level 2
 		d2B_takeStairs(13, true);
-		d2B_moveToStair(13,9, false);
+		d2B_moveToStair(13,9, false);				// back to enterance before towning
 		d2B_chkAct();
-		
-		if(_teamBO) d2B_soloBO();
 		
 	// burial grounds
 	//
 		Print(COLOR_7 + "Running: " + COLOR_4 + "burial grounds");
-		d2B_commonInitSetup(3);
+		d2B_commonInitSetup(3);						// cold plains
 		d2B_movePresetUnitTitle(17,7,8,15);			// move to burial grounds
 		d2B_preCastClrLvlOC();
-		d2B_moveToStair(17,19, false);		// enter the mausoleum
-		Delay(Random(4000,5000));
+		d2B_moveToStair(17,19, false);				// enter the mausoleum
 		d2B_takeStairs(19, true);
 		d2B_moveToStair(19,17, false);
-		Delay(Random(4000,5000));
-		d2B_takeStairs(17, false);
-		d2B_moveToStair(17,18, false);		// enter the crypt
-		Delay(Random(4000,5000));
-		d2B_takeStairs(18, true);
+		d2B_takeStairs(17, false);					// exit the mausoleum
+		d2B_moveToStair(17,18, false);				// enter the crypt
+		d2B_takeStairs(18, true);					// back to enterance before towning
 		d2B_chkAct();
-		
-		if(_teamBO) d2B_soloBO();
 		
 	// stony field
 	//
 		Print(COLOR_7 + "Running: " + COLOR_4 + "stony field");
-		d2B_commonInitSetup(4);
+		d2B_commonInitSetup(4);						// stony field
 		d2B_preCastClrLvlOC();
-		d2B_movePresetUnitMonster(737, 10, 10);
-		Delay(Random(6000,8000));
+		d2B_movePresetUnitMonster(737, 10, 10);		// head to rakanishu
 		d2B_usePortal("Portal",38);					// use portal to enter tristram
-		Delay(Random(2000,4000));
 		d2B_preCastClrLvlOC();
 		d2B_chkAct();
-		
-		if(_teamBO) d2B_soloBO();
 		
 	// underground passage
 	//
 		Print(COLOR_7 + "Running: " + COLOR_4 + "underground passage");
-		d2B_commonInitSetup(4);
-		d2B_moveToStair(me.areaid,10, false);
-		d2B_takeStairs(10, true);
-		d2B_moveToStair(me.areaid,14, false);
-		Delay(Random(4000,5000));
-		d2B_takeStairs(14, true);
+		d2B_commonInitSetup(4);						// stony field
+		d2B_moveToStair(4,10, false);
+		d2B_takeStairs(10, true);					// enter the underground passage
+		d2B_moveToStair(10,14, false);
+		d2B_takeStairs(14, true);					// enter 2nd lvl
+		d2B_moveToStair(14,10, false);				// back to enterance before towning
 		d2B_chkAct();
-	
-		if(_teamBO) d2B_soloBO();
 	
 	// dark woods
 	//
 		Print(COLOR_7 + "Running: " + COLOR_4 + "dark woods");
-		d2B_commonInitSetup(5);
+		d2B_commonInitSetup(5);						// dark woods
 		d2B_preCastClrLvlOC();
 		d2B_chkAct();
-		
-		if(_teamBO) d2B_soloBO();
 		
 	//	black marsh
 	//
 		Print(COLOR_7 + "Running: " + COLOR_4 + "black marsh");
-		d2B_commonInitSetup(6);
+		d2B_commonInitSetup(6);						// black marsh
 		d2B_preCastClrLvlOC();
-		d2B_moveToStair(6,11, false);	// clear the hole
-		d2B_takeStairs(11, true);
-		d2B_moveToStair(11,15, false);	// clear the hole
-		d2B_takeStairs(15, true);
-		d2B_moveToStair(15,11, false);
+		d2B_moveToStair(6,11, false);
+		d2B_takeStairs(11, true);					// enter the hole
+		d2B_moveToStair(11,15, false);				
+		d2B_takeStairs(15, true);					// enter 2nd lvl
+		d2B_moveToStair(15,11, false);				// back to enterance before towning
 		d2B_chkAct();
-		d2B_commonInitSetup(6);
+		
+		d2B_commonInitSetup(6);						// black marsh
 		for(var i = 0 ; i < 6 ; i++) {
 			d2B_moveToStair(me.areaid,20+i, false);	// go to the forgotten tower and do tower things
 			d2B_takeStairs(20+i, true);
 		}
-		d2B_moveToStair(20+i,20+i-1, false);
+		d2B_moveToStair(20+i,20+i-1, false);		// back to enterance before towning
 		d2B_chkAct();
-		
-		if(_teamBO) d2B_soloBO();
 	
 	//	tamoe highland
 	//
 		Print(COLOR_7 + "Running: " + COLOR_4 + "tamoe highland");
-		d2B_commonInitSetup(6);
+		d2B_commonInitSetup(6);					// black marsh
 		d2B_moveToStair(7,12, false);			// go to the enterance of tamoe highland pit
 		d2B_preCastClrLvlOC();
-		d2B_moveToStair(7,12, false);			// go to the enterance of the tamoe highland pit
-		d2B_takeStairs(12, true);
-		d2B_moveToStair(12,16, false);	// go to the 2nd level of the tamoe highland pit
-		d2B_takeStairs(16, true);
-		d2B_moveToStair(16,12, false);
+		d2B_moveToStair(7,12, false);			// go back to the enterance of the tamoe highland pit
+		d2B_takeStairs(12, true);				// enter pit
+		d2B_moveToStair(12,16, false);
+		d2B_takeStairs(16, true);				// enter 2nd lvl
+		d2B_moveToStair(16,12, false);			// back to enterance before towning
 		d2B_chkAct();
-		
-		if(_teamBO) d2B_soloBO();
 	
 	// outer cloister
 	//
 		Print(COLOR_7 + "Running: " + COLOR_4 + "outer cloister");
-		d2B_commonInitSetup(27);
+		d2B_commonInitSetup(27);				// outer cloister
 		d2B_preCastClrLvlOC();
 		d2B_chkAct();
-		
-		if(_teamBO) d2B_soloBO();
 	
 	// outer barracks
 	//
 		Print(COLOR_7 + "Running: " + COLOR_4 + "outer barracks");
-		d2B_commonInitSetup(27);
+		d2B_commonInitSetup(27);					// outer cloister
 		d2B_preCastClrLvlOC();
 		d2B_movePresetUnitMonster(28, 754, -5, 5);	// go to where main monster is in the malus dude
 		d2B_preCastClrLvlOC();
 		d2B_chkAct();
-		
-		if(_teamBO) d2B_soloBO();
 	
 	// jail
 	//
 		Print(COLOR_7 + "Running: " + COLOR_4 + "jail");
-		d2B_commonInitSetup(29);
+		d2B_commonInitSetup(29);					// jail lvl 1
 		d2B_preCastClrLvlOC();
 		d2B_chkAct();
-		
-		if(_teamBO) d2B_soloBO();
 	
 	// inner cloister
 	//
 		Print(COLOR_7 + "Running: " + COLOR_4 + "inner cloister");
-		d2B_commonInitSetup(32);
+		d2B_commonInitSetup(32);				// inner cloister
 		d2B_preCastClrLvlOC();
 		d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
 		d2B_preCastClrLvlOC();
+		d2B_movePresetUnitTitle(33,15,0);		// go back to the enterance of cata before towning
 		d2B_chkAct();
-		
-		if(_teamBO) d2B_soloBO();
 	
 	//	cata
 	//
 		Print(COLOR_7 + "Running: " + COLOR_4 + "catacombs");
-		d2B_commonInitSetup(32);
+		d2B_commonInitSetup(32);				// inner cloister
 		// clear all catacombs...
 		d2B_movePresetUnitTitle(33,15,0);		// go to the enterance of the catacombs
-		d2B_takeStairs(34);
+		d2B_takeStairs(34);						// enter to cata lvl 1
 		d2B_preCastClrLvlOC();
 		for(var i = 35; i <= 37; i++) {
 			d2B_movePresetUnitTitle(me.areaid,18,0);
@@ -801,10 +774,8 @@ function d2B_SoloAct1(_skip) {							// Act 1 complete
 			d2B_takeStairs(i, true);
 		}
 		Delay(Random(400,500));
-		NTM_MoveTo(me.areaid, 22594, 9622);
+		NTM_MoveTo(me.areaid, 22594, 9622);		// back to cata 4 enterance before towning
 		d2B_chkAct();
-		
-		if(_teamBO) d2B_soloBO();
 		
 		return;
 }
@@ -814,47 +785,47 @@ function d2B_SoloAct2(_skip) {							// Act 2 complete
 	//	sewers
 	//
 		Print(COLOR_4 + "Running: " + COLOR_7 + "sewers");
-		NTTM_Act2SewerTrapDoor();					// begins at the stairs enterance
+		NTTM_Act2SewerTrapDoor();				// begins at the stairs enterance
 		d2B_preCastClrLvlOC();
 		d2B_moveToStair(47,48, false);
-		d2B_takeStairs(48, true);
+		d2B_takeStairs(48, true);				// sewers lvl 2			
 		d2B_moveToStair(48,49, false);
-		d2B_takeStairs(49, true);
-		d2B_moveToStair(49,48, false);
+		d2B_takeStairs(49, true);				// sewers lvl 3
+		d2B_moveToStair(49,48, false);			// back to enterance before towning
 		d2B_chkAct();
 		
 	// rocky waste
 	//
 		Print(COLOR_4 + "Running: " + COLOR_7 + "rocky waste");
-		d2B_commonInitSetup(42);
-		d2B_moveToStair(41,55, true);
+		d2B_commonInitSetup(42);				// dry hills
+		d2B_moveToStair(41,55, true);			// begin in rocky waste by the stony tomb enterance
 		d2B_moveToStair(41,55, false);
-		d2B_takeStairs(55, true);
+		d2B_takeStairs(55, true);				// stony tomb lvl 1
 		d2B_moveToStair(55,59, false);
-		d2B_takeStairs(59, true);
-		d2B_moveToStair(59,55, false);
+		d2B_takeStairs(59, true);				// stony tomb lvl 2			
+		d2B_moveToStair(59,55, false);			// back to enterance before towning
 		d2B_chkAct();
 	
 	// dry hills
 	//
 		Print(COLOR_4 + "Running: " + COLOR_7 + "dry hills");
-		d2B_commonInitSetup(42);
-		d2B_moveToStair(42,56, true);
+		d2B_commonInitSetup(42);				// dry hills
+		d2B_moveToStair(42,56, true);			// begin at the halls of the dead enterance
 		d2B_moveToStair(42,56, false);
-		d2B_takeStairs(56, true);
+		d2B_takeStairs(56, true);				// halls of the dead lvl 1
 		d2B_moveToStair(56,57, false);
-		d2B_takeStairs(57, true);
+		d2B_takeStairs(57, true);				// halls of the dead lvl 2
 		d2B_moveToStair(57,60, false);
-		d2B_takeStairs(60, true);
-		d2B_moveToStair(60,57, false);
+		d2B_takeStairs(60, true);				// halls of the dead lvl 3
+		d2B_moveToStair(60,57, false);			// back to enterance before towning
 		
 		d2B_chkAct();
 	
 	// far oasis
 	//
 		Print(COLOR_4 + "Running: " + COLOR_7 + "far oasis");
-		d2B_commonInitSetup(43);
-		d2B_moveToStair(43,62, true);
+		d2B_commonInitSetup(43);				// far oasis
+		d2B_moveToStair(43,62, true);			
 		for(var i = 0 ; i < 3 ; i++){
 			d2B_moveToStair(me.areaid, 62+i, false);
 			d2B_takeStairs(62+i, true);
@@ -874,36 +845,36 @@ function d2B_SoloAct2(_skip) {							// Act 2 complete
 		
 		d2B_movePresetUnitTitle(45,37,0);	// head to the enterance of the viper temple
 		d2B_moveToStair(45,58, false);
-		d2B_takeStairs(58, true);
+		d2B_takeStairs(58, true);			// claw viper lvl 1
 		d2B_moveToStair(58,61, false);
-		d2B_takeStairs(61, true);
-		d2B_moveToStair(61,58, false);
+		d2B_takeStairs(61, true);			// claw viper lvl 2
+		d2B_moveToStair(61,58, false);		// back to enterance before towning
 		d2B_chkAct();
 	
 	// harem
 	//
 		Print(COLOR_4 + "Running: " + COLOR_7 + "harem");
-		d2B_commonInitSetup(52);
+		d2B_commonInitSetup(52);			// palace lvl 1	
 		d2B_moveToStair(52,53, true);
 		d2B_moveToStair(52,53, false);
-		d2B_takeStairs(53, true);
+		d2B_takeStairs(53, true);			// palace lvl 2
 		d2B_moveToStair(53,54, false);
-		d2B_takeStairs(54, true);
-		d2B_moveToStair(54,53, false);
+		d2B_takeStairs(54, true);			// palace lvl 2
+		d2B_moveToStair(54,53, false);		// back to enterance before towning
 		d2B_chkAct();
 	
 	// arcane
 	//
 		Print(COLOR_4 + "Running: " + COLOR_7 + "arcane");
-		d2B_commonInitSetup(74);
+		d2B_commonInitSetup(74);			// arcane
 		d2B_preCastClrLvlOC();
 		d2B_chkAct();
 	
 	// canyon
 	//
 		Print(COLOR_4 + "Running: " + COLOR_7 + "canyon");
-		d2B_commonInitSetup(46);
-		d2B_moveToStair(46,69, true);
+		d2B_commonInitSetup(46);			// canyon of magi
+		d2B_moveToStair(46,69, true);		// begin at tomb 4 enterance		
 		
 		var _stair = [69, 68, 67, 66, 70, 71, 72];
 		for(var i = 0; i < _stair.length; i++){
@@ -911,13 +882,11 @@ function d2B_SoloAct2(_skip) {							// Act 2 complete
 			d2B_takeStairs(_stair[i], true);
 			d2B_moveToStair(me.areaid,46, false);
 			d2B_takeStairs(46, false);
-		}	
-			
+		}
 		d2B_chkAct();	
 }
 function d2B_SoloAct3(_skip) {							// Act 3
 		NTConfig_SkipRegularMonsters = _skip
-		if(_teamBO) d2B_soloBO();
 	
 	//	spider forest
 	//
@@ -925,119 +894,119 @@ function d2B_SoloAct3(_skip) {							// Act 3
 		d2B_commonInitSetup(76);
 		d2B_moveToStair(76,84, true);					// head to front of arachnid lair as a starting point (areaid, stairs, preCastClrLvlOC)
 		d2B_moveToStair(76,84, false);
-		d2B_takeStairs(84, true);
+		d2B_takeStairs(84, true);						// spider cave
 		d2B_moveToStair(84,76, false);
 		d2B_takeStairs(76, false);						// go back out to the spider forest
 		
 		d2B_moveToStair(76,85, false);					// head to front of spider cavern as a starting point
-		d2B_takeStairs(85, true);
-		d2B_moveToStair(85,76, false);
+		d2B_takeStairs(85, true);						// spider cavern
+		d2B_moveToStair(85,76, false);					// back to enterance before towning
 		d2B_chkAct();
 	
 	//	great marsh
 	//
 		Print(COLOR_4 + "Running: " + COLOR_7 + "great marsh");
-		d2B_commonInitSetup(77);
+		d2B_commonInitSetup(77);						// great marsh
 		d2B_preCastClrLvlOC();
 		
 	//	flayer jungle
 	//
 		Print(COLOR_4 + "Running: " + COLOR_7 + "flayer jungle");
-		d2B_commonInitSetup(78);
+		d2B_commonInitSetup(78);						// flayer jungle
 		d2B_preCastClrLvlOC();
 		
 		d2B_moveToStair(78,88, false);					// flayer dungeon
-		d2B_takeStairs(88, true);
-		d2B_moveToStair(88,89, false);
-		d2B_takeStairs(89, true);
+		d2B_takeStairs(88, true);						// flayer dungeon lvl 1
+		d2B_moveToStair(88,89, false);					
+		d2B_takeStairs(89, true);						// flayer dungeon lvl 2
 		d2B_moveToStair(89,91, false);
-		d2B_takeStairs(91, true);
-		d2B_moveToStair(91,89, false);
+		d2B_takeStairs(91, true);						// flayer dungeon lvl 3
+		d2B_moveToStair(91,89, false);					// back to enterance before towning				
 		d2B_chkAct();
 		
-		d2B_commonInitSetup(78);
+		d2B_commonInitSetup(78);						// flayer jungle
 		d2B_moveToStair(78,86, false);					// swampy pit
-		d2B_takeStairs(86, true);
+		d2B_takeStairs(86, true);						// pit lvl 1
 		d2B_moveToStair(86,87, false);
-		d2B_takeStairs(87, true);
+		d2B_takeStairs(87, true);						// pit lvl 2
 		d2B_moveToStair(87,90, false);
-		d2B_takeStairs(90, true);
-		d2B_moveToStair(90,87, false);
+		d2B_takeStairs(90, true);						// pit lvl 3
+		d2B_moveToStair(90,87, false);					// back to enterance before towning	
 		d2B_chkAct();
 		
 	//	lower kurast
 	//
 		Print(COLOR_4 + "Running: " + COLOR_7 + "lower kurast");
-		d2B_commonInitSetup(79);
+		d2B_commonInitSetup(79);						// lower kurast
 		d2B_preCastClrLvlOC();
 		d2B_chkAct();
 		
 	//	kurast
 	//
 		Print(COLOR_4 + "Running: " + COLOR_7 + "kurast");
-		d2B_commonInitSetup(80);
+		d2B_commonInitSetup(80);						// kurast bazaar
 		d2B_preCastClrLvlOC();
 		
-		d2B_moveToStair(80,94, false);					// ruined temple
-		d2B_takeStairs(94, true);
+		d2B_moveToStair(80,94, false);					
+		d2B_takeStairs(94, true);						// ruined temple
 		d2B_moveToStair(94,80, false);
 		d2B_takeStairs(80, false);
-		d2B_moveToStair(80,95, false);					// dusused fane
-		d2B_takeStairs(95, true);
+		d2B_moveToStair(80,95, false);					
+		d2B_takeStairs(95, true);						// dusused fane
 		d2B_moveToStair(95,80, false);
 		d2B_takeStairs(80, false);
-		d2B_moveToStair(80,92, false);					// sewers
-		d2B_takeStairs(92, true);
-		d2B_moveToStair(92,93, false);					// sewers 2lvl
-		d2B_takeStairs(93, true);
-		d2B_moveToStair(93,92, false);
+		d2B_moveToStair(80,92, false);					
+		d2B_takeStairs(92, true);						// sewers
+		d2B_moveToStair(92,93, false);					
+		d2B_takeStairs(93, true);						// sewers lvl 2
+		d2B_moveToStair(93,92, false);					// back to enterance before towning	
 		d2B_chkAct();
 		
 	//	upper kurast
 	//
 		Print(COLOR_4 + "Running: " + COLOR_7 + "upper kurast");
-		d2B_commonInitSetup(81);
+		d2B_commonInitSetup(81);						// upper kurast
 		d2B_preCastClrLvlOC();
 		
-		d2B_moveToStair(81,97, false);					// forgotten temple
-		d2B_takeStairs(97, true);
+		d2B_moveToStair(81,97, false);					
+		d2B_takeStairs(97, true);						// forgotten temple
 		d2B_moveToStair(97,81, false);
 		d2B_takeStairs(81, false);
-		d2B_moveToStair(81,96, false);					// forgotten reliquary
-		d2B_takeStairs(96, false);
+		d2B_moveToStair(81,96, false);					
+		d2B_takeStairs(96, false);						// forgotten reliquary
+		d2B_moveToStair(96,81, false);					// back to enterance before towning
 		d2B_chkAct();
 	
 	//	travincal
 	//
 		Print(COLOR_4 + "Running: " + COLOR_7 + "travincal");
-		d2B_commonInitSetup(83);
+		d2B_commonInitSetup(83);						// travincal
 		d2B_preCastClrLvlOC();
 		
-		d2B_moveToStair(82,98, false);					// ruined fane
-		d2B_takeStairs(97, true);
+		d2B_moveToStair(82,98, false);					
+		d2B_takeStairs(97, true);						// ruined fane
 		d2B_moveToStair(98,82, false);
 		d2B_takeStairs(82, false);
-		d2B_moveToStair(82,99, false);					// disused reliquary
-		d2B_takeStairs(99, true);
-		d2B_moveToStair(99,82, false);
+		d2B_moveToStair(82,99, false);					
+		d2B_takeStairs(99, true);						// disused reliquary
+		d2B_moveToStair(99,82, false);					// back to enterance before towning
 		d2B_chkAct();
 		
 	//	durance
 	//
 		Print(COLOR_4 + "Running: " + COLOR_7 + "durance");
-		d2B_commonInitSetup(101);
+		d2B_commonInitSetup(101);						// durance 2
 		d2B_preCastClrLvlOC();
-		d2B_moveToStair(101,100, false);					// head to durance 1lvl
-		d2B_takeStairs(100, true);
-		d2B_moveToStair(100,101, false);
+		d2B_moveToStair(101,100, false);				
+		d2B_takeStairs(100, true);						// dur 1
+		d2B_moveToStair(100,101, false);				// back to enterance before towning
 		d2B_chkAct();
 		
-		d2B_commonInitSetup(101);
-		d2B_moveToStair(101,102, false);					// head to durance 3lvl
-		d2B_takeStairs(102, true);
-		d2B_moveToStair(102,101, false);
+		d2B_commonInitSetup(101);						// durance 2
+		d2B_moveToStair(101,102, false);				
+		d2B_takeStairs(102, true);						// dur 3
+		d2B_moveToStair(102,101, false);				// back to enterance before towning
 		d2B_chkAct();
-		if(_teamBO) d2B_soloBO();
 		return true;
 }
 function d2B_actions(CIS,MTSa,MTSb,PCL,TSa,TSb,CA)	{
