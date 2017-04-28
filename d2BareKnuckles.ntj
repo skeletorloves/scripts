@@ -604,41 +604,44 @@ function d2B_Act(_loc, _skpRegMnstrs) {							// Act scripts
 		//	chaos
 		//
 			Print(COLOR_4 + "Running: " + COLOR_7 + "chaos");
+			isFollowingEnabled = false;
+			NTConfig_SkipRegularMonsters = false;
+			
 			if(me.areaid !=107) d2B_commonInitSetup(107);
 			
 			NTConfig_FastChaos = false;
 			NTConfig_LeechSupport = false;
 			NTConfig_IdInField = false;
 			
-			if(!_chaosCentreMe) {
-				NTM_MoveTo(108, 7790, 5544);			// tele to just inside the enterance
-				
-				if(_chaosHelpers) {
-					NTM_MakeTP();
-					Delay(700);
-					d2B_msg(".");
-				}
-				NTCS_ClearPosition(30, EntranceSort);
-				Delay(Random(2000.3000));
-				if(_chaosHelpers) d2B_msg(".");
-				var FrontToStarX = [7792,7794,7791,7777,7813,7769,7782,7802,7819,7768,7770,7791,7819, 7804, 7831,7857, 7807,7794, 7762,7736];
-				var FrontToStarY = [5564,5529,5495,5486,5486,5445,5421,5421,5446,5390,5355,5355,5376, 5340, 5289,5292, 5265,5247, 5281,5291];
-				for (var i = 0; i < FrontToStarX.length; i += 1) {
-					NTM_MoveTo(108, FrontToStarX[i], FrontToStarY[i]);
-					NTCS_ClearPosition(35, EntranceSort);
-				}
+			NTM_MoveTo(108, 7790, 5544);			// tele to just inside the enterance			
+			if(_chaosHelpers) NTM_MakeTP();
+
+			NTCS_ClearPosition(30, true);
+			Delay(Random(2000.3000));
+			if(_chaosHelpers) d2B_msg(".");
+			var FrontToStarX = [7792,7794,7791,7777,7813,7769,7782,7802,7819,7768,7770,7791,7819, 7804, 7831,7857, 7807,7794, 7762,7736];
+			var FrontToStarY = [5564,5529,5495,5486,5486,5445,5421,5421,5446,5390,5355,5355,5376, 5340, 5289,5292, 5265,5247, 5281,5291];
+			for (var i = 0; i < FrontToStarX.length; i += 1) {
+				NTM_MoveTo(108, FrontToStarX[i], FrontToStarY[i]);
+				NTCS_ClearPosition(35, true);
 			}
 			
 			NTM_MoveTo(108, 7794, 5292);						// tele to the centre of chaos
-			if(_chaosHelpers) {
-				NTM_MakeTP();
-				Delay(300);
-				d2B_msg(".");
-			}
-			if (!NT_OpenSealsInt(a)) {							// a: "low" for leveling low peeps
+			if(_chaosHelpers) NTM_MakeTP();
+
+			if (!NT_OpenSealsInt(false)) {							// a: "low" for leveling low peeps
 				NTC_SendMsgToScript("NTBotGame.ntj", "NT_OpenSealsInt()");
 			}
 			
+			NTM_MoveTo(108, 7795, 5295);
+			for(i = 0; i < 80; i += 1) {
+				if(GetUnit(NTC_UNIT_MONSTER, 243)) break;
+				NTCS_DiaSpam();
+			}
+			NTA_KillMonster(243);
+			NTSI_PickItems();
+			Delay(1000);
+			d2B_chkAct();
 			break;
 	}	
 		return;
