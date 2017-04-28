@@ -607,7 +607,7 @@ function d2B_Act(_loc, _skpRegMnstrs) {							// Act scripts
 			isFollowingEnabled = false;
 			NTConfig_SkipRegularMonsters = false;
 			
-			if(me.areaid !=107) d2B_commonInitSetup(107);
+			if(me.areaid != 107) d2B_commonInitSetup(107);
 			
 			NTConfig_FastChaos = false;
 			NTConfig_LeechSupport = false;
@@ -616,14 +616,14 @@ function d2B_Act(_loc, _skpRegMnstrs) {							// Act scripts
 			NTM_MoveTo(108, 7790, 5544);			// tele to just inside the enterance			
 			if(_chaosHelpers) NTM_MakeTP();
 
-			NTCS_ClearPosition(30, true);
+			NTCS_ClearPosition(30, EntranceSort);
 			Delay(Random(2000.3000));
 			if(_chaosHelpers) d2B_msg(".");
 			var FrontToStarX = [7792,7794,7791,7777,7813,7769,7782,7802,7819,7768,7770,7791,7819, 7804, 7831,7857, 7807,7794, 7762,7736];
 			var FrontToStarY = [5564,5529,5495,5486,5486,5445,5421,5421,5446,5390,5355,5355,5376, 5340, 5289,5292, 5265,5247, 5281,5291];
 			for (var i = 0; i < FrontToStarX.length; i += 1) {
 				NTM_MoveTo(108, FrontToStarX[i], FrontToStarY[i]);
-				NTCS_ClearPosition(35, true);
+				NTCS_ClearPosition(35, EntranceSort);
 			}
 			
 			NTM_MoveTo(108, 7794, 5292);						// tele to the centre of chaos
@@ -641,6 +641,54 @@ function d2B_Act(_loc, _skpRegMnstrs) {							// Act scripts
 			NTA_KillMonster(243);
 			NTSI_PickItems();
 			Delay(1000);
+			d2B_chkAct();
+			break;
+		case("baal"):
+		//	baal
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "baal");
+			isFollowingEnabled = false;
+			NTConfig_SkipRegularMonsters = false;
+			
+			if(me.areaid != 129) d2B_commonInitSetup(129);
+			prewavespot = [15092, 5040];	// from: D2Etal/scripts/NTRush/rush_configs/Sorceress.ntl 
+			
+			d2B_moveToStair(me.areaid, 130, false);
+			NTM_TakeStair(130);
+			d2B_moveToStair(me.areaid, 131, false);
+			NTM_TakeStair(131);
+			
+			NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
+			
+			if(_dollChk) {
+				if(d2B_dollsoulChk()) {
+				_dollSoul = true;
+				return;
+				}
+				Delay(100);
+				if(d2B_dollsoulChk()) {
+				_dollSoul = true;
+				return;
+				}
+			}
+			if(_throneLeechers || _throneHelpers || _ldr) NTM_MakeTP();
+			_dollSoul = false;
+			
+			NTM_MoveTo(me.areaid, 15094, 5039);				// safe: 15118, 5051 | centre: 15094, 5039 | orig(15112, 5068, 1, true)
+			if(_throneLeechers || _throneHelpers) {
+				NTM_MakeTP();
+				d2B_msg(".");
+			}
+			NTA_ClearPosition();
+			NT_ClearThroneInt();
+			
+			NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
+			
+			d2B_throneWaves();
+			Delay(300);
+			
+			d2B_baal();
+			Delay(Random(3000,4000));
 			d2B_chkAct();
 			break;
 	}	
