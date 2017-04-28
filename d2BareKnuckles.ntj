@@ -600,6 +600,13 @@ function d2B_Act(_loc, _skpRegMnstrs) {							// Act scripts
 			d2B_takeStairs(102, true);
 			d2B_chkAct();
 			break;
+		case("chaos"):
+		//	chaos
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "chaos");
+			d2B_commonInitSetup(107);
+			d2B_chaos(false);
+			break;
 	}	
 		return;
 }
@@ -2208,10 +2215,10 @@ function d2B_chaos(a){								// case: 31
 													// a = true for when using _nonTelePeeps
 													// a = false for when solo chaosing
 													// a = seals for when soloing chaos, hitting only seals, and killing d 
-	d2B_chkAct(4);									// if not Pandemonium Fortress, then go to Pandemonium Fortress
+	if(me.areaid != 107) d2B_chkAct(4);				// if not Pandemonium Fortress, then go to Pandemonium Fortress
 	if(_chaosHelpers) d2B_msg("ummm 4");			// saying this again as a precaution
 	if(!_debug || !_ldr) Delay(Random(30000,35000));
-	d2B_commonInitSetup(107);
+	if(me.areaid != 107) d2B_commonInitSetup(107);
 	
 	switch(a) {
 		case true:
