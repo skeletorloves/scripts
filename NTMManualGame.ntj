@@ -623,7 +623,7 @@ function NT_KeyEvents(keycode) {
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
 					if(_keycodeMenu > 4) _keycodeMenu = 0;
-					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "quick lvling of flwrs in chaos & throne...");
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "cntrling manual bots for rushing..");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
 					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
@@ -694,25 +694,18 @@ function NT_KeyEvents(keycode) {
 					break;
 			}
 			break;
-		case 5:						// this one is in-progress
-			switch(keycode) {
-				case Key_AntiIdle:
-					Print(COLOR_4 + "Changing customized key menu...");
-					Delay(500);
-					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 5) _keycodeMenu = 0;
-					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu);
-					break;
-			}
+		case 5:						// this one is for rushing new characters. Pressing assigned keys sends manual bots to interact with NPCs
+									// as well as to grab quests, move to the following acts, grab wps, and other thingies
+			d2B_noobRushCtrls(keycode);
 			break;
 	}
 }
 
-function d2B_KeyCodeMain(keycode){
+function d2B_KeyCodeMain(keycode) {
 	switch(keycode) {
 		case 19:									// 19: Key_AntiIdle | scrolling thru keypad menus
 			_keycodeMenu = _keycodeMenu + 1;
-			if(_keycodeMenu > 2) _keycodeMenu = 0;
+			if(_keycodeMenu > 5) _keycodeMenu = 0;
 			Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "Baal customized keypad...");
 			Delay(Random(1000,1200));
 			break;
@@ -1295,6 +1288,67 @@ function d2B_KeyCodeMain(keycode){
 			break;
 	}
 	return;
+}
+function d2B_noobRushCtrls(keycode) {
+	switch(keycode) {
+		case 46:			// [del] button (orig: Key_ExitGame)
+			ExitGame();
+			break;
+		case 96:			// #pad 0: exit game (orig: Key_DoPrecast)
+			ExitGame();
+			break;
+		case 19:			// 19: Key_AntiIdle | scrolling thru keypad menus
+			_keycodeMenu = _keycodeMenu + 1;
+			if(_keycodeMenu > 5) _keycodeMenu = 0;
+			Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "quick lvling of flwrs in chaos & throne...");
+			Delay(Random(1000,1200));
+			break;
+		case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
+			MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
+			MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
+			Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+			Delay(Random(1000,1700));
+			Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+			break;
+		
+		case 97:			// #pad 1: head to tree, grab scroll, town, and talk to Akara
+			Print(COLOR_5 + "Doing: " + COLOR_2 + "tree, scroll, talking to Akara...");
+			if(me.areaid == 1) {
+				NTTM_TownMove("portalspot");
+				if(!TakeLeaderTP()) break;
+				if(me.GetQuest(4, 0)) {
+					Print(COLOR_2 + "The The Search For Cain Quest Is Already Completed");
+					if(!TakeLeaderTP()) Town();
+					break;
+				}
+				d2B_NTV_ActivateQuestChest(30);	// click on tree of inifuss
+				d2B_NTV_PickQuestItems(524);	// pick up the scroll of inifuss
+				if(!TakeLeaderTP()) Town();
+				d2B_NPCinteract(msg, 2892);
+				NTTM_TownMove("portalspot");
+			}	
+			break;
+		case 98:			// #pad 2: head to tree, grab scroll, town, and talk to Akara
+			Print(COLOR_5 + "Doing: " + COLOR_2 + "activating cairn stones...");
+			if(me.areaid == 1) {
+				NTTM_TownMove("portalspot");
+				if(!TakeLeaderTP()) break;
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 2, 2)
+				d2B_NTV_ActivateCairnStones(me.x, me.y);
+				if(!TakeLeaderTP()) Town();
+				NTTM_TownMove("portalspot");
+			}
+			break;
+		case 99:			// #pad 3: save cain
+			Print(COLOR_5 + "Doing: " + COLOR_2 + "saving cain...");
+			if(me.areaid == 1) {
+				NTTM_TownMove("portalspot");
+				if(!TakeLeaderTP()) break;
+				d2B_NTV_ActivateQuestChest(26, true);	// click on Cain's wooden cell to release him
+				if(!TakeLeaderTP()) Town();
+				NTTM_TownMove("portalspot");
+			break;
+	}
 }
 function _classid(i) {
 	switch(i) {
@@ -1989,6 +2043,107 @@ function d2B_usePortal() {
 function d2B_NTTM_CheckAct(area) {
 	if(!NTM_UsePortal("BluePortal", area)) {
 		NTTM_CheckAct();
+	}
+	return;
+}
+function d2B_NTV_ActivateQuestChest(id, TK, disX, disY) { // objectId, UseTelek(bool)
+	if (arguments.length < 2) TK = false;
+	if (arguments.length < 3) {
+		disX = 10;
+		disY = 10;
+	}
+	var _tkFailed = false;
+	var _isTelekinesis = NTC_GetSkillLevel(43); // may want to move these to the top and add a config option to it
+	var _object = NTC_FindUnit(NTC_UNIT_OBJECT, id, 5);
+	if(TK){
+		if(_object){
+			if(NTC_CHAR_CLASS_SORCERESS && _isTelekinesis && _object){
+				NTM_MoveCloseInt(_object, 20)
+					NTC_CastSkill(43, NTC_HAND_RIGHT, _object);
+			}
+		}
+		else if(!_object){
+			NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, id, disX, disY) // disX, disY for fine tunning distance from object
+			var _object = NTC_FindUnit(NTC_UNIT_OBJECT, id, 10);
+			if(_object){
+				NTC_CastSkill(43, NTC_HAND_RIGHT, _object);
+			}
+		}
+		if(!_object || !_object.mode) _tkFailed = true;
+		else if(_object.mode) return true;
+	}
+	
+	if(!TK || _tkFailed) {
+		NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, id)
+		var _object = NTC_FindUnit(NTC_UNIT_OBJECT, id, 10);
+		while(!_object.mode){ // might want to make this a for loop so we don't get stuck here in an endless loop
+			if(GetDistance(me, _object) > 3)
+				NTM_MoveTo(_object.areaid, _object.x+2, _object.y);
+			NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _object);
+			NTC_PingDelay(500);
+		}
+		if(_object.mode) return true;
+	}
+	return false;
+}
+function d2B_NTV_PickQuestItems(_item) {
+	var _alreadyHave = me.GetItems(_item);
+	if(_alreadyHave.length > 0){
+		return true;
+	}
+	var _grounditem = NTC_FindUnit(NTC_UNIT_ITEM, _item);
+	if(_grounditem){
+		if(_grounditem.mode == 3 || _grounditem.mode == 5){
+			if(NTSI_PickUpItemInt(_grounditem)){
+				Print(COLOR_4 + "Picked Quest Item " + COLOR_17 + _grounditem.name.split("\n")[0]);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+function d2B_NPCinteract(NPCname, GLS) {
+	NTTM_TownMove(NPCname);
+	_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(GLS), 5);
+	if(!_npc) return false;
+	
+	if(_npc) {
+		NTM_MoveTo(me.areaid, _npc.x, _npc.y);
+		if(NTT_DoInteract(_npc)) {
+			Delay(Random(2000,4000));
+			me.Cancel(1);
+			return true;
+		}
+	}
+	return false;
+}
+function d2B_NTV_ActivateCairnStones(cenX, cenY){
+
+	var _isTelekinesis = NTC_GetSkillLevel(43);
+	var _cairnStoneIds = [17, 18, 19, 20, 21]; // cairn stone id's
+
+	if(NTC_CHAR_CLASS_SORCERESS && _isTelekinesis){
+		NTM_MoveTo(me.areaid, cenX, cenY);
+	}
+	while(_cairnStoneIds.length){
+		for(var i = 0; i <  _cairnStoneIds.length ; i++){
+			var _toBeClicked = NTC_FindUnit(NTC_UNIT_OBJECT, _cairnStoneIds[i], 5);
+			if(_toBeClicked){
+				if(NTC_CHAR_CLASS_SORCERESS && _isTelekinesis){
+					NTC_CastSkill(43, NTC_HAND_RIGHT, _toBeClicked);
+				}
+				else{
+					if(NTM_GetCloserIntS(_toBeClicked)){
+						NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _toBeClicked);
+					}
+				}
+				NTC_Delay(100);
+				if(_toBeClicked.mode){
+					Print(COLOR_2 + _cairnStoneIds[i]);
+					_cairnStoneIds.splice(i--, 1);
+				}
+			}
+		}
 	}
 	return;
 }
