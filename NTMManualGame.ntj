@@ -131,7 +131,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle:	// [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 4) _keycodeMenu = 0;
+					if(_keycodeMenu > 5) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "main control menu...");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
@@ -234,7 +234,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 4) _keycodeMenu = 0;
+					if(_keycodeMenu > 5) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "rushing customized manual key menu");
 					break;
 				case 103:			// #pad 7: grab exp shrine (orig:Key_MyChicken)
@@ -310,7 +310,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 4) _keycodeMenu = 0;
+					if(_keycodeMenu > 5) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "experimental hopping barbs menu...");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
@@ -622,7 +622,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 4) _keycodeMenu = 0;
+					if(_keycodeMenu > 5) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "cntrling manual bots for rushing..");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
@@ -1315,27 +1315,28 @@ function d2B_noobRushCtrls(keycode) {
 			Print(COLOR_5 + "Doing: " + COLOR_2 + "tree, scroll, talking to Akara...");
 			if(me.areaid == 1) {
 				NTTM_TownMove("portalspot");
-				if(!TakeLeaderTP()) break;
+				if(!NTM_UsePortal("BluePortal", 5) break;
 				if(me.GetQuest(4, 0)) {
 					Print(COLOR_2 + "The The Search For Cain Quest Is Already Completed");
-					if(!TakeLeaderTP()) Town();
+					if(!NTM_UsePortal("BluePortal", 1) Town();
 					break;
 				}
 				d2B_NTV_ActivateQuestChest(30);	// click on tree of inifuss
 				d2B_NTV_PickQuestItems(524);	// pick up the scroll of inifuss
-				if(!TakeLeaderTP()) Town();
-				d2B_NPCinteract(msg, 2892);
+				if(!NTM_UsePortal("BluePortal", 1) Town();
+				d2B_NPCinteract("akara", 2892);
 				NTTM_TownMove("portalspot");
 			}	
 			break;
-		case 98:			// #pad 2: head to tree, grab scroll, town, and talk to Akara
+		case 98:			// #pad 2: engage the Cairn stones
 			Print(COLOR_5 + "Doing: " + COLOR_2 + "activating cairn stones...");
 			if(me.areaid == 1) {
 				NTTM_TownMove("portalspot");
-				if(!TakeLeaderTP()) break;
+				if(!NTM_UsePortal("BluePortal", 4) break;
 				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 2, 2)
 				d2B_NTV_ActivateCairnStones(me.x, me.y);
-				if(!TakeLeaderTP()) Town();
+				Delay(Random(5000,6000));
+				if(!NTM_UsePortal("BluePortal", 1) Town();
 				NTTM_TownMove("portalspot");
 			}
 			break;
@@ -1343,10 +1344,13 @@ function d2B_noobRushCtrls(keycode) {
 			Print(COLOR_5 + "Doing: " + COLOR_2 + "saving cain...");
 			if(me.areaid == 1) {
 				NTTM_TownMove("portalspot");
-				if(!TakeLeaderTP()) break;
+				if(!NTM_UsePortal("BluePortal", 38) break;
 				d2B_NTV_ActivateQuestChest(26, true);	// click on Cain's wooden cell to release him
-				if(!TakeLeaderTP()) Town();
+				if(!NTM_UsePortal("BluePortal", 1) Town();
 				NTTM_TownMove("portalspot");
+			}
+			break;
+		case 100:			// #pad 4: andy
 			break;
 	}
 }
