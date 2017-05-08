@@ -1,3 +1,9 @@
+/*
+	
+	20170508a NTMManualGame.ntj
+	
+*/
+
 var _keyExtras = false;
 var d2B_usingAFollower = true;
 var _quiet = true;
@@ -1315,16 +1321,11 @@ function d2B_noobRushCtrls(keycode) {
 			Print(COLOR_5 + "Doing: " + COLOR_2 + "tree, scroll, talking to Akara...");
 			if(me.areaid == 1) {
 				NTTM_TownMove("portalspot");
-				if(!NTM_UsePortal("BluePortal", 5) break;
-				if(me.GetQuest(4, 0)) {
-					Print(COLOR_2 + "The The Search For Cain Quest Is Already Completed");
-					if(!NTM_UsePortal("BluePortal", 1) Town();
-					break;
-				}
-				d2B_NTV_ActivateQuestChest(30);	// click on tree of inifuss
-				d2B_NTV_PickQuestItems(524);	// pick up the scroll of inifuss
-				if(!NTM_UsePortal("BluePortal", 1) Town();
-				d2B_NPCinteract("akara", 2892);
+				if(!NTM_UsePortal("BluePortal", 5) break;	// use dark wood portal
+				d2B_NTV_ActivateQuestChest(30);				// click on tree of inifuss
+				d2B_NTV_PickQuestItems(524);				// pick up the scroll of inifuss
+				if(!NTM_UsePortal("BluePortal", 1) Town();	// return to town
+				d2B_NPCinteract("akara", 2892);				// interact with Akara			
 				NTTM_TownMove("portalspot");
 			}	
 			break;
@@ -1332,11 +1333,11 @@ function d2B_noobRushCtrls(keycode) {
 			Print(COLOR_5 + "Doing: " + COLOR_2 + "activating cairn stones...");
 			if(me.areaid == 1) {
 				NTTM_TownMove("portalspot");
-				if(!NTM_UsePortal("BluePortal", 4) break;
-				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 2, 2)
-				d2B_NTV_ActivateCairnStones(me.x, me.y);
-				Delay(Random(5000,6000));
-				if(!NTM_UsePortal("BluePortal", 1) Town();
+				if(!NTM_UsePortal("BluePortal", 4) break;	// use stony wood portal
+				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 2, 2);	// go to cairn stones
+				d2B_NTV_ActivateCairnStones(me.x, me.y);	// activates the stones
+				Delay(Random(5000,6000));					// wait for red portal to open b4 towning
+				if(!NTM_UsePortal("BluePortal", 1) Town();`	// return to town
 				NTTM_TownMove("portalspot");
 			}
 			break;
@@ -1344,14 +1345,37 @@ function d2B_noobRushCtrls(keycode) {
 			Print(COLOR_5 + "Doing: " + COLOR_2 + "saving cain...");
 			if(me.areaid == 1) {
 				NTTM_TownMove("portalspot");
-				if(!NTM_UsePortal("BluePortal", 38) break;
-				d2B_NTV_ActivateQuestChest(26, true);	// click on Cain's wooden cell to release him
-				if(!NTM_UsePortal("BluePortal", 1) Town();
+				if(!NTM_UsePortal("BluePortal", 38) break;``// use trisran portal
+				d2B_NTV_ActivateQuestChest(26, true);		// click on Cain's wooden cell to release him
+				if(!NTM_UsePortal("BluePortal", 1) Town();	// return to town
 				NTTM_TownMove("portalspot");
 			}
 			break;
 		case 100:			// #pad 4: andy
+			Print(COLOR_5 + "going to | returning from: " + COLOR_2 + "safe andy spot...");
+			if(me.areaid == 1) {
+				NTTM_TownMove("portalspot");
+				if(!NTM_UsePortal("BluePortal", 37) break;``// use cata 4 portal
+				break;
+			}
+			else if(me.areaid == 37) {
+				if(!NTM_UsePortal("BluePortal", 1) Town();``// return to town
+				d2B_warriv();								// interact with warriv, head to a2
+				NTTM_TownMove("portalspot");
+			}
 			break;
+		case 101:			// #pad 5: grab rada scroll
+			Print(COLOR_5 + "retrieving: " + COLOR_2 + "rada's scroll...");
+			if(me.areaid == 1) {
+				NTTM_TownMove("portalspot");
+				if(!NTM_UsePortal("BluePortal", 49) break;``// use safe sewers lvl3 portal
+				break;
+			}
+			if(me.areaid == 49) {
+				d2B_rada();									// head to rada's chest to pick up scroll
+				if(!NTM_UsePortal("BluePortal", 1) Town();	// return to town
+				NTTM_TownMove("portalspot");
+			}
 	}
 }
 function _classid(i) {
@@ -2106,6 +2130,24 @@ function d2B_NTV_PickQuestItems(_item) {
 	}
 	return false;
 }
+function d2B_NTV_ClickQuestItem(item){ // for clicking items in invenetory/stash, book of skill, anya scroll etc
+    var _items = me.GetItems(item);
+    if (_items && _items.length > 0){
+		if(_items[0].mode == 0 && _items[0].itemloc == 0){
+			SetUIState(0x01, true);
+			me.ClickItem(1, _items[0]);
+			NTC_PingDelay(800);
+			NTC_CancelMenus();
+		}
+		else if(_items[0].mode == 0 && _items[0].itemloc == 4){
+			NTU_MoveToStash();
+			me.ClickItem(1, _items[0]);
+			NTC_PingDelay(800);
+			NTC_CancelMenus();
+		}
+    }
+    return;
+}
 function d2B_NPCinteract(NPCname, GLS) {
 	NTTM_TownMove(NPCname);
 	_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(GLS), 5);
@@ -2150,6 +2192,41 @@ function d2B_NTV_ActivateCairnStones(cenX, cenY){
 		}
 	}
 	return;
+}
+function d2B_warriv() {	// for interacting w/ warriv and heading to a2 or a1
+	NTTM_TownMove(msg);
+	_npc = NTC_FindUnit(NTC_UNIT_NPC, GetLocaleString(2895), 5);
+	if(!_npc) return false;
+	
+	if(_npc) {
+		NTM_MoveTo(me.areaid, _npc.x, _npc.y);
+		if(NTT_DoInteract(_npc)) {
+			for(var i = 0 ; i < 4 ; i++){
+				if((i % 4) == 0) {
+					if(me.act == 1) me.SelectNPCMenu(0x0D36);
+					if(me.act == 2) me.SelectNPCMenu(0x0D37);
+				}
+				NTC_Delay(250);
+			}	
+		}
+		me.Cancel(1);
+	}
+	return 1;
+}
+function d2B_rada() {	// for retrieving the rada scroll
+	_chest = GetPresetUnits(me.areaid, NTC_UNIT_OBJECT, 355);
+	_chestx = _chest[0].roomx*5 + _chest[0].x;
+	_chesty = _chest[0].roomy*5 + _chest[0].y;		
+	NTM_MoveTo(me.areaid, _chestx, _chesty);
+	
+	d2B_NTV_PickQuestItems(552);
+	
+	/*var _skillBook = me.GetItems(552);
+	if(_skillBook){
+		NTTM_CheckAct(2);
+		NTV_ClickQuestItem(552);
+	}*/
+	return 1;
 }
 //
 function d2B_Peeps() {								// store name of leader & followers in storePeeps.txt
@@ -2666,4 +2743,11 @@ function achmel() {
 		}
 	} while (_company && _company.GetNext());
 }
-	
+/*	Extra shtuff...
+
+	if(me.GetQuest(4, 0)) {
+		Print(COLOR_2 + "The The Search For Cain Quest Is Already Completed");
+		if(!NTM_UsePortal("BluePortal", 1) Town();
+		break;
+	}
+*/	
