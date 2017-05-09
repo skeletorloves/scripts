@@ -184,6 +184,13 @@ function NT_KeyEvents(keycode) {
 						Print(COLOR_2 + "sending team to safely leech in hiding area...");
 						Delay(500);
 						if(d2B_usingAFollower) d2B_msg("leechdiablo " + Random(1,134332));
+						Delay(500);
+						NTM_MoveTo(108, 7799, 5286);	// move to star
+						MGConfig_PickItems = true;
+						MGConfig_PickAuto = true;
+						Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+						Delay(Random(1000,1700));
+						Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
 						break;
 					}
 					break;
@@ -199,6 +206,7 @@ function NT_KeyEvents(keycode) {
 						Print(COLOR_2 + "sending team to safely leech in worldstone chamber...");
 						Delay(500);
 						if(d2B_usingAFollower) d2B_msg("leechbaal " + Random(1,134332));
+						d2B_manualBaal();
 						break;
 					}
 					break;
@@ -1337,7 +1345,7 @@ function d2B_noobRushCtrls(keycode) {
 				NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 2, 2);	// go to cairn stones
 				d2B_NTV_ActivateCairnStones(me.x, me.y);		// activates the stones
 				Delay(Random(5000,6000));						// wait for red portal to open b4 towning
-				if(!NTM_UsePortal("BluePortal", 1)) Town();`	// return to town
+				if(!NTM_UsePortal("BluePortal", 1)) Town();		// return to town
 				NTTM_TownMove("portalspot");
 			}
 			break;
@@ -2241,7 +2249,7 @@ function d2B_rada() {	// for retrieving the rada scroll
 	Delay(Random(1500,1700));
 	return 1;
 }
-function d2B_cube {		// open chest and then grab the cube
+function d2B_cube() {		// open chest and then grab the cube
 	_chest= NTC_FindUnit(NTC_UNIT_OBJECT, 354);
 	if (_chest) {	
 		if(NTM_MoveTo(me.areaid, _chest.x+3, _chest.y)) {
@@ -2767,6 +2775,28 @@ function achmel() {
 			}
 		}
 	} while (_company && _company.GetNext());
+}
+function d2B_manualBaal() {
+	var _portal;
+	NTM_MoveTo(me.areaid, 15089, 5006);
+	NTP_DoPrecast(true);
+	Delay(300)
+	
+	for(var i = 0; i < 60; i++) {
+		Delay(500);
+		if(!NTC_FindUnit(NTC_UNIT_MONSTER, 543)) break;
+	}
+	
+	_portal = NTC_FindUnit(NTC_UNIT_OBJECT, 563, 1);
+	if(!_portal) return;
+	if(!NTM_UsePortal("Portal", 132, null, _portal)) return; 
+	
+	NTM_MoveTo(me.areaid, 15138, 5916);
+    MGConfig_PickItems = true;
+	MGConfig_PickAuto = true;
+	Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+	Delay(Random(1000,1700));
+	Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
 }
 /*	Extra shtuff...
 
