@@ -1,6 +1,6 @@
 /*
 	
-	20170508a NTMManualGame.ntj
+	20170510a NTMManualGame.ntj
 	
 */
 
@@ -24,6 +24,16 @@ var warncount;
 var _AreaName;
 var busy = false;
 var _Teleport = -1;
+
+var array_myTeam;
+var array_myTeamCompare;
+
+/*	notes on edits...
+		Utilizing (D2Etal/D2Etal/scripts/NTManual/Manual_Game/Variables.ntl) to add a handful of new variables:
+			array_myTeam: used for storying the names of all the peeps who are in the game
+			array_myTeamCompare: used for verifying that everyone in array_myTeam is still in game
+
+*/
 
 function NTMain() {
 	Include("libs/common/NTCommon.ntl");
@@ -137,7 +147,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle:	// [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 5) _keycodeMenu = 0;
+					if(_keycodeMenu > 6) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "main control menu...");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
@@ -248,7 +258,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 5) _keycodeMenu = 0;
+					if(_keycodeMenu > 6) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "rushing customized manual key menu");
 					break;
 				case 103:			// #pad 7: grab exp shrine (orig:Key_MyChicken)
@@ -324,7 +334,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 5) _keycodeMenu = 0;
+					if(_keycodeMenu > 6) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "experimental hopping barbs menu...");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
@@ -636,7 +646,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 5) _keycodeMenu = 0;
+					if(_keycodeMenu > 6) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "cntrling manual bots for rushing..");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
@@ -712,6 +722,24 @@ function NT_KeyEvents(keycode) {
 									// as well as to grab quests, move to the following acts, grab wps, and other thingies
 			d2B_noobRushCtrls(keycode);
 			break;
+		case 6:						// this is for exploring and testing team arrays and their usage
+			switch(keycode) {
+				case 46:			// [del] button (orig: Key_ExitGame)
+					ExitGame();
+					break;
+				case 96:			// #pad 0: exit game (orig: Key_DoPrecast)
+					ExitGame();
+					break;
+				case Key_AntiIdle: // [pause/break] button
+					_keycodeMenu = _keycodeMenu + 1;
+					if(_keycodeMenu > 6) _keycodeMenu = 0;
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "cntrling manual bots for rushing..");
+					break;
+				case 97:			// #pad 1: store and then display the list of players in game
+					d2B_storePlayerNames();
+					break;
+			}
+			break;
 	}
 }
 
@@ -719,7 +747,7 @@ function d2B_KeyCodeMain(keycode) {
 	switch(keycode) {
 		case 19:									// 19: Key_AntiIdle | scrolling thru keypad menus
 			_keycodeMenu = _keycodeMenu + 1;
-			if(_keycodeMenu > 5) _keycodeMenu = 0;
+			if(_keycodeMenu > 6) _keycodeMenu = 0;
 			Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "Baal customized keypad...");
 			Delay(Random(1000,1200));
 			break;
@@ -1313,7 +1341,7 @@ function d2B_noobRushCtrls(keycode) {
 			break;
 		case 19:			// 19: Key_AntiIdle | scrolling thru keypad menus
 			_keycodeMenu = _keycodeMenu + 1;
-			if(_keycodeMenu > 5) _keycodeMenu = 0;
+			if(_keycodeMenu > 6) _keycodeMenu = 0;
 			Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "quick lvling of flwrs in chaos & throne...");
 			Delay(Random(1000,1200));
 			break;
@@ -1488,8 +1516,7 @@ function My_DrinkPotion(type){
 	} return false;
 }
 
-function ChickenValues()
-{
+function ChickenValues() {
 	HealthThresh = parseInt(me.hpmax * MGConfig_LifeChicken,10) / 100;
 	ManaThresh = parseInt(me.mpmax * MGConfig_ManaChicken,10) / 100;
 	if(MGConfig_LifeChicken > 0)
@@ -1714,7 +1741,7 @@ function MG_LogToOOG(type, logString) {
 	return SendCopyData("D2NT Manager", null, 9<<16|type, logString);
 }
 
-// ________________________________________________________
+//
 // common functions
 //
 function d2B_load() {
@@ -2258,6 +2285,25 @@ function d2B_cube() {		// open chest and then grab the cube
 		if (NTC_OpenChest(_chest)) {
 			if(d2B_NTV_PickQuestItems(552)) Delay(Random(500,1000));	// pick up the cube
 		}
+	}
+	return 1;
+}
+//
+//	player checking functions
+//
+function d2B_storePlayerNames() {
+	var Player = GetPlayerUnit();
+	if(Player){
+		do{
+			if(array_myTeam.indexOf(Player.name) == -1){
+				if(Player.name != me.name) array_myTeam.push(Player.name);	
+			}
+		} while(Player.GetNext())
+	}
+
+	_L = array_myTeam.length;
+	for(i=1; i < _L; i++) {
+		Print(COLOR_2 + "Player #" + COLOR_5 + i + " " + COLOR_7 + array_myTeam[i]);
 	}
 	return 1;
 }
