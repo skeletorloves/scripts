@@ -25,8 +25,8 @@ var _AreaName;
 var busy = false;
 var _Teleport = -1;
 
-var array_myTeam;
-var array_myTeamCompare;
+var array_myTeam = [];
+var array_myTeamCompare = [];
 
 /*	notes on edits...
 		Utilizing (D2Etal/D2Etal/scripts/NTManual/Manual_Game/Variables.ntl) to add a handful of new variables:
@@ -66,7 +66,7 @@ function NTMain() {
 	var _count = 0;
 	me.maxgametime = 0;
 	Delay(Random(100,200));
-	Print(COLOR_2 + "Customized key menu: 0" + COLOR_5 + "for quick leveling of followers in chaos & throne...");
+	Print(COLOR_2 + "Customized key menu: 0 " + COLOR_5 + "for quick leveling of followers in chaos & throne...");
 			
 	while(1) {	
 		ChickenStuff(); MG_Resists(); MG_AntiIdle();
@@ -2295,15 +2295,30 @@ function d2B_storePlayerNames() {
 	var Player = GetPlayerUnit();
 	if(Player){
 		do{
-			if(array_myTeam.indexOf(Player.name) == -1){
-				if(Player.name != me.name) array_myTeam.push(Player.name);	
-			}
+			if(array_myTeam.indexOf(Player.name) == -1) array_myTeam.push(Player.name);
 		} while(Player.GetNext())
 	}
 
 	_L = array_myTeam.length;
+	Print(COLOR_7 + "# of peeps stored in array_myTeam is " + COLOR_6 + array_myTeam.length);
 	for(i=1; i < _L; i++) {
-		Print(COLOR_2 + "Player #" + COLOR_5 + i + " " + COLOR_7 + array_myTeam[i]);
+		Print(COLOR_2 + "Player #" + COLOR_6 + i + " " + COLOR_7 + array_myTeam[i]);
+	}
+	return 1;
+}
+function d2B_comparePlayerNames() {
+	var Player = GetPlayerUnit();
+	if(Player){
+		do{
+			if(array_myTeam.indexOf(Player.name) == -1) array_myTeamCompare.push(Player.name);
+		} while(Player.GetNext())
+	}
+	_LOrig = array_myTeam.length;
+	_LCompare = array_myTeamCompare.length;
+	
+	if(_LOrig == _LCompare) Print(COLOR_7 + "All in!");
+	else if((_LOrig != _LCompare) {
+		Print(COLOR_7 + (_LOrig - _LCompare) + COLOR_6 + " are missing from the original group.";
 	}
 	return 1;
 }
