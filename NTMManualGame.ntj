@@ -738,6 +738,12 @@ function NT_KeyEvents(keycode) {
 				case 97:			// #pad 1: store and then display the list of players in game
 					d2B_storePlayerNames();
 					break;
+				case 98:			// #pad 2: compare present team members with those from start of game	
+					d2B_comparePlayerNames();
+					break;
+				case 99:			// #pad 3: individually instruct the sorcs to complete 
+					d2B_teamInstructions();
+					break;
 			}
 			break;
 	}
@@ -2302,23 +2308,38 @@ function d2B_storePlayerNames() {
 	_L = array_myTeam.length;
 	Print(COLOR_7 + "# of peeps stored in array_myTeam is " + COLOR_6 + array_myTeam.length);
 	for(i=1; i < _L; i++) {
-		Print(COLOR_2 + "Player #" + COLOR_6 + i + " " + COLOR_7 + array_myTeam[i]);
+		Print(COLOR_2 + "Player #" + COLOR_3 + i + " " + COLOR_7 + array_myTeam[i]);
 	}
 	return 1;
 }
 function d2B_comparePlayerNames() {
+	array_myTeamCompare.length = 0;	// clears this temp team array
+	
 	var Player = GetPlayerUnit();
 	if(Player){
 		do{
-			if(array_myTeam.indexOf(Player.name) == -1) array_myTeamCompare.push(Player.name);
+			if(array_myTeamCompare.indexOf(Player.name) == -1) array_myTeamCompare.push(Player.name);
 		} while(Player.GetNext())
 	}
 	_LOrig = array_myTeam.length;
 	_LCompare = array_myTeamCompare.length;
+	Print(COLOR_7 + "_LOrig = " + COLOR_3 + _LOrig + COLOR_7 + " _LCompare = " + COLOR_3 + _LCompare);
+	
 	
 	if(_LOrig == _LCompare) Print(COLOR_7 + "All in!");
-	else if((_LOrig != _LCompare) {
-		Print(COLOR_7 + (_LOrig - _LCompare) + COLOR_6 + " are missing from the original group.";
+	else if(_LOrig != _LCompare) {
+		Print(COLOR_7 + (_LOrig - _LCompare) + COLOR_6 + " are missing from the original group.");
+		return 0;
+	}
+	return 1;
+}
+function d2B_teamInstructions() {
+	var _locations = 	["coldPlains", "burialGrounds", "undergroundPassage", "blackMarsh"];
+	var _ignoreRegMonsters = 	[false, false, false, false];
+	
+	for(i=1; i<_locations.length; i++) {
+		d2B_msg(array_myTeam[i] + " doact " + _locations[i] + " " + _ignoreRegMonsters[i] + " " + Random(1322,132274));
+		Delay(Random(2000,3400));
 	}
 	return 1;
 }
