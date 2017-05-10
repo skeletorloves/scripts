@@ -79,7 +79,7 @@
 /*	_______________________________________________________________________________ */
 
 	var d2B_cases = 1;
-	var d2B_toggleHelper = "solo";
+	var d2B_toggleHelper = "helper";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 
 
@@ -186,7 +186,7 @@ function NTMain() {
 
 function d2B_Act(_loc, _skpRegMnstrs) {							// Act scripts
 	if(_skpRegMnstrs = true) NTConfig_SkipRegularMonsters = true;
-	else NTConfig_SkipRegularMonsters = false;
+	else (_skpRegMnstrs != true) NTConfig_SkipRegularMonsters = false;
 	if(_teamBO) d2B_soloBO();
 	
 	switch(_loc) {
@@ -280,6 +280,12 @@ function d2B_Act(_loc, _skpRegMnstrs) {							// Act scripts
 			d2B_moveToStair(me.areaid,15, false);	// clear the hole
 			d2B_takeStairs(15, true);
 			d2B_chkAct();
+			break;
+		
+		case("countess"):
+		//	countess
+		//
+			Print(COLOR_7 + "Running: " + COLOR_4 + "countess");
 			d2B_commonInitSetup(6);
 			for(var i = 0 ; i < 6 ; i++) {
 				d2B_moveToStair(me.areaid,20+i, false);	// go to the forgotten tower and do tower things
