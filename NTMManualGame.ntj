@@ -733,7 +733,7 @@ function NT_KeyEvents(keycode) {
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
 					if(_keycodeMenu > 6) _keycodeMenu = 0;
-					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "cntrling manual bots for rushing..");
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "quick lvling of flwrs in chaos & throne...");
 					break;
 				case 97:			// #pad 1: store and then display the list of players in game
 					d2B_storePlayerNames();
@@ -1342,7 +1342,7 @@ function d2B_noobRushCtrls(keycode) {
 		case 19:			// 19: Key_AntiIdle | scrolling thru keypad menus
 			_keycodeMenu = _keycodeMenu + 1;
 			if(_keycodeMenu > 6) _keycodeMenu = 0;
-			Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "quick lvling of flwrs in chaos & throne...");
+			Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "exploring and testing team arrays and their usage...");
 			Delay(Random(1000,1200));
 			break;
 		case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
