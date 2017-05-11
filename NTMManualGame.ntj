@@ -27,6 +27,7 @@ var _Teleport = -1;
 
 var array_myTeam = [];
 var array_myTeamCompare = [];
+var array_myTeamArea = [];
 
 /*	notes on edits...
 		Utilizing (D2Etal/D2Etal/scripts/NTManual/Manual_Game/Variables.ntl) to add a handful of new variables:
@@ -2312,6 +2313,19 @@ function d2B_storePlayerNames() {
 	}
 	return 1;
 }
+function d2B_storeTeamData() {
+	array_myTeamArea
+	var Player = GetPlayerUnit();
+	if(Player){
+		do{
+			if(array_myTeamArea.indexOf(Player.name) == -1) array_myTeamArea.push(Player.areaid);
+		} while(Player.GetNext())
+	}
+	for(i=1; i<=array_myTeamArea.length; i++) {
+		Print(COLOR_6 + "area: " + COLOR_7 + array_myTeamArea[i]);
+	}
+	return 1;
+}
 function d2B_comparePlayerNames() {
 	array_myTeamCompare.length = 0;	// clears this temp team array
 	
@@ -2337,10 +2351,23 @@ function d2B_teamInstructions() {
 	var _locations = 	["coldPlains", "burialGrounds", "undergroundPassage", "blackMarsh"];
 	var _ignoreRegMonsters = 	[false, false, false, false];
 	
-	for(i=1; i<_locations.length; i++) {
-		d2B_msg(array_myTeam[i] + " doact " + _locations[i] + " " + _ignoreRegMonsters[i] + " " + Random(1322,132274));
-		Delay(Random(2000,3400));
+	for(i=1; i<=_locations.length; i++) {
+		d2B_msg(array_myTeam[i] + " doact " + _locations[i-1] + " " + _ignoreRegMonsters[i-1] + " " + Random(1322,132274));
+		Delay(Random(3000,4400));
 	}
+	d2B_teamCheckForRiver();
+	
+	return 1;
+}
+function d2B_teamCheckForRiver() {
+	d2B_teamStoreDataArray();	// scan players and store into an array the relative data
+	
+	var _allAtRiver = true;
+	/*Print(COLOR_7 + "Waiting for team to all be at river...");
+	do{
+		for(i2=1; i2<=
+	}while(!_allAtRiver)
+	*/
 	return 1;
 }
 //
