@@ -2314,7 +2314,7 @@ function d2B_storePlayerNames() {
 	return 1;
 }
 function d2B_storeTeamData() {
-	array_myTeamArea
+	array_myTeamAre.length = 0;	// reset the array
 	var Player = GetPlayerUnit();
 	if(Player){
 		do{
@@ -2360,14 +2360,21 @@ function d2B_teamInstructions() {
 	return 1;
 }
 function d2B_teamCheckForRiver() {
-	d2B_teamStoreDataArray();	// scan players and store into an array the relative data
-	
 	var _allAtRiver = true;
-	/*Print(COLOR_7 + "Waiting for team to all be at river...");
+	var _all2		= 0;
 	do{
-		for(i2=1; i2<=
-	}while(!_allAtRiver)
-	*/
+		d2B_storeTeamData();	// scan players and store into an array the relative data
+		for(i=1; i<=array_myTeamArea.length; i++) {
+			//if (me.areaid != array_myTeamArea[i]) _all2 = _all2 + 1;
+			Print(COLOR_6 + "area: " + COLOR_7 + array_myTeamArea[i]);
+		}
+		/*(_all2 > 0) ? _allAtRiver = false : _allAtRiver = true;
+		_all2 = 0;*/
+		_allAtRiver = true;
+	}While(_allAtRiver = false);
+	
+	Print(COLOR_7 + "Finally, everyone is at the river wp...")
+	
 	return 1;
 }
 //
