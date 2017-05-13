@@ -1230,7 +1230,9 @@ function d2B_KeyCodeMain(keycode) {
 		//
 		// act i
 			// Andarial
-			if(me.areaid == 1) {	
+			var _andy = false;
+			if(me.areaid == 1 || me.areaid == 35) {	
+				if(me.areaid == 1) _andy = true;
 				Print(COLOR_2 + "going for andy");
 				d2B_moveWP();
 				d2B_gotoWP(35);
@@ -1240,7 +1242,12 @@ function d2B_KeyCodeMain(keycode) {
 					d2B_takeStairs(36 + i, false);
 					Delay(Random(1000,1200));
 				}
-				NTM_MoveTo(me.areaid, 22545, 9517);						// walls  right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547 | 22545, 9517: towards the back where the rogues hang
+				if(_andy) NTM_MoveTo(me.areaid, 22545, 9517);						// walls  right: 22563, 9556 | left: 22532, 9553 | very close: 22547, 9547 | 22545, 9517: towards the back where the rogues hang
+				else if(!_andy) {
+					NTM_MoveTo(me.areaid, 22590, 9596);					// as a helper will kill Andy, make a tp on the other side of the wall
+					Delay(300);
+					Town();
+				}
 				if(d2B_usingAFollower) d2B_team(true);
 				//d2B_teamPro(true,3021,40,true,1,"n w", 22545, 9517);	// 3021: Andarial
 				break;
@@ -2303,26 +2310,22 @@ function d2B_storePlayerNames() {
 	if(Player){
 		do{
 			if(array_myTeam.indexOf(Player.name) == -1) array_myTeam.push(Player.name);
+			Print(COLOR_2 + "Player #" + COLOR_3 + i + " " + COLOR_7 + Player.name) +
+				COLOR_5 + " in area: " + COLOR_8 + Player.areaid);
+			Delay(750);
 		} while(Player.GetNext())
 	}
 
-	_L = array_myTeam.length;
-	Print(COLOR_7 + "# of peeps stored in array_myTeam is " + COLOR_6 + array_myTeam.length);
-	for(i=1; i < _L; i++) {
-		Print(COLOR_2 + "Player #" + COLOR_3 + i + " " + COLOR_7 + array_myTeam[i]);
-	}
+	Print(COLOR_7 + "# of peeps stored in array_myTeam is " + COLOR_5 + array_myTeam.length);
 	return 1;
 }
 function d2B_storeTeamData() {
-	array_myTeamAre.length = 0;	// reset the array
+	array_myTeamArea.length = 0;	// reset the array
 	var Player = GetPlayerUnit();
 	if(Player){
 		do{
 			if(array_myTeamArea.indexOf(Player.name) == -1) array_myTeamArea.push(Player.areaid);
-		} while(Player.GetNext())
-	}
-	for(i=1; i<=array_myTeamArea.length; i++) {
-		Print(COLOR_6 + "area: " + COLOR_7 + array_myTeamArea[i]);
+		}while(Player.GetNext())
 	}
 	return 1;
 }
@@ -2360,21 +2363,22 @@ function d2B_teamInstructions() {
 	return 1;
 }
 function d2B_teamCheckForRiver() {
-	var _allAtRiver = true;
+	var _allAtRiver = false;
 	var _all2		= 0;
+		
 	do{
 		d2B_storeTeamData();	// scan players and store into an array the relative data
-		for(i=1; i<=array_myTeamArea.length; i++) {
-			//if (me.areaid != array_myTeamArea[i]) _all2 = _all2 + 1;
-			Print(COLOR_6 + "area: " + COLOR_7 + array_myTeamArea[i]);
+		Delay(Random(1400,2400));
+		
+		for(i = 1; i < array_myTeamArea.length; i++) {
+			if (array_myTeamArea[i] != me.areaid]) _all2 = _all2 + 1;
 		}
-		/*(_all2 > 0) ? _allAtRiver = false : _allAtRiver = true;
-		_all2 = 0;*/
-		_allAtRiver = true;
-	}While(_allAtRiver = false);
+		Delay(Random(2000,3000));
+		Print(COLOR_7 + "Waiting fror peeps ti all be at the river wp...");
+		(_all2 > 0) ? _all2 = 0 : _allAtRiver = true;
+	}while(!_allAtRiver);
 	
-	Print(COLOR_7 + "Finally, everyone is at the river wp...")
-	
+	Print(COLOR_7 + "Finally, everyone is at the river wp...");
 	return 1;
 }
 //
