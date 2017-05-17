@@ -5,7 +5,7 @@
 */
 
 var _keyExtras = false;
-var d2B_usingAFollower = true;
+var d2B_usingAFollower = false;
 var _quiet = true;
 var _throneLeechers = false;
 var _dollChk = true;
@@ -133,15 +133,15 @@ function NT_KeyEvents(keycode) {
 			case 100:			// #pad 4: sending tpSorc to chaos enterance, to make a tp, and return to town
 			case 101:			// #pad 5: sending tpSorc to throne enterance, to make a tp, and return to town
 			case 102:			// #pad 6: if I am a necro, make skellies and revives
+			case 103:			// #pad 7: sending followers to a5 or a4 depending on leader's area
 			case 105:			// #pad 9: buffing
 			case 220: 			// "\": in case team has boxed me in, instruct team to jump away for a moment
 			case 222:			// "'": send the zon to replenish her javs
 			
 			*/
 			switch(keycode) {
-				
-				case 46:			// [del] button (orig: Key_ExitGame)
-					ExitGame();
+				case 46:			// [del] button (orig: Key_ExitGame) for listing key settings
+					d2B_keySettings(0);
 					break;
 				case 96:			// #pad 0: exit game (orig: Key_DoPrecast)
 					ExitGame();
@@ -157,12 +157,6 @@ function NT_KeyEvents(keycode) {
 					Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
 					Delay(Random(1000,1700));
 					Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
-					break;
-				case 103:			// #pad 7: sending followers to a5 or a4 depending on leader's area
-					Print(COLOR_2 + "sending followers to a5 or a4...");
-					Delay(500);
-					if(d2B_usingAFollower && (me.areaid == 108 || me.areaid == 103)) d2B_msg("ummm 5 " + Random(1,134332));
-					if(d2B_usingAFollower && (me.areaid == 132 || me.areaid == 131 || me.areaid == 109)) d2B_msg("ummm 4 " + Random(1,134332));
 					break;
 				case 97:			// #pad 1: msg "." call peeps to follow
 					Print(COLOR_2 + "calling followers...");
@@ -226,6 +220,12 @@ function NT_KeyEvents(keycode) {
 					Delay(500);
 					NTA_SkeletonArmy(_SkeletonArmy);
 					NTA_ReviveArmy(_Revives);
+					break;
+				case 103:			// #pad 7: sending followers to a5 or a4 depending on leader's area
+					Print(COLOR_2 + "sending followers to a5 or a4...");
+					Delay(500);
+					if(d2B_usingAFollower && (me.areaid == 108 || me.areaid == 103)) d2B_msg("ummm 5 " + Random(1,134332));
+					if(d2B_usingAFollower && (me.areaid == 132 || me.areaid == 131 || me.areaid == 109)) d2B_msg("ummm 4 " + Random(1,134332));
 					break;
 				case 105:			// #pad 9: buffing
 					Print(COLOR_2 + "making dah buff...");
@@ -372,17 +372,22 @@ function NT_KeyEvents(keycode) {
 					}
 					
 			// act i
-				case 97:			// #pad 1: den of evil
-					Print(COLOR_2 + "going for corpsefire");
-					if(!InTown(me)) d2B_NTTM_CheckAct(1);
-					d2B_moveWP();
-					d2B_gotoWP(3);
-					NTP_DoPrecast(true);
-					Delay(300);
-					d2B_moveToStair(2,8);							// head to front of den as a starting point
-					Delay(750);
-					NTM_TakeStair(8);
-					NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 15, -15);	// 774: Corpsefire
+				case 97:			// #pad 1: den of evil, clearing worldstone levels
+					if(me.areaid == 1 || me.areaid == 2) Print(COLOR_2 + "going for corpsefire") {
+						if(me.areaid == 1) {
+							d2B_moveWP();
+							d2B_gotoWP(3);
+						}
+						NTP_DoPrecast(true);
+						Delay(300);
+						d2B_moveToStair(2,8);							// head to front of den as a starting point
+						Delay(750);
+						NTM_TakeStair(8);
+						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 15, -15);	// 774: Corpsefire
+					}
+					if(me.areaid >= 128 && me.areaid <= 130) {			// if at ws1, ws2, or ws3, clear level
+						d2B_clrLevel();
+					}
 					break;
 				case 98:			// #pad 2: cain
 					if(InTown(me)) {						// from town going for treehead
@@ -1232,10 +1237,12 @@ function d2B_KeyCodeMain(keycode) {
 			// Andarial
 			var _andy = false;
 			if(me.areaid == 1 || me.areaid == 35) {	
-				if(me.areaid == 1) _andy = true;
 				Print(COLOR_2 + "going for andy");
-				d2B_moveWP();
-				d2B_gotoWP(35);
+				if(me.areaid == 1) {
+					_andy = true;
+					d2B_moveWP();
+					d2B_gotoWP(35);
+				}
 				NTP_DoPrecast(true);
 				for (i = 0; i < 2; i++) {
 					d2B_moveToStair(me.areaid, 36 + i);
@@ -1246,7 +1253,9 @@ function d2B_KeyCodeMain(keycode) {
 				else if(!_andy) {
 					NTM_MoveTo(me.areaid, 22590, 9596);					// as a helper will kill Andy, make a tp on the other side of the wall
 					Delay(300);
-					Town();
+					NTM_Make(TP);
+					Delay(200);
+					If(!NTM_UsePortal("BluePortal",1)) Town();
 				}
 				if(d2B_usingAFollower) d2B_team(true);
 				//d2B_teamPro(true,3021,40,true,1,"n w", 22545, 9517);	// 3021: Andarial
@@ -1457,6 +1466,26 @@ function MG_Resists() {
 }
 
 var _NTLW_timerLastDrink = new Array(5);
+
+function d2B_keySettings(menu) {
+	switch(menu) {
+		case 0:						// menu: 0 - main
+				Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "quick lvling of flwrs in chaos & throne...");
+				Print(COLOR_5 + "Keypad:");
+				Print(COLOR_4 + "1: " + COLOR_7 + ". follow");
+				Print(COLOR_4 + "2: " + COLOR_7 + "' town");
+				Print(COLOR_4 + "3: " + COLOR_7 + "j jump/move a bit");
+				Print(COLOR_4 + "4: " + COLOR_7 + "if ldr in town: tpSorc cTP | if ldr is in chaos: leechdiablo");
+				Print(COLOR_4 + "5: " + COLOR_7 + "if ldr in town: tpSorc tTP | is ldr is in throne: send peeps to safe leech baal, send ldr to baal");
+				Print(COLOR_4 + "6: " + COLOR_7 + "if ldr is a necro, revive skellies & revives");
+				Print(COLOR_4 + "7: " + COLOR_7 + "find exp shrine");
+				Print(COLOR_4 + "8: " + COLOR_7 + "sending followers to a5 or a4 depending on leader's area");
+				Print(COLOR_4 + "9: " + COLOR_7 + "ldr & team precast");
+				Print(COLOR_4 + "' "+ COLOR_7 + "direct zon to replenish her javs");
+				break;
+	}
+	return 1;
+}
 
 function ChickenStuff() {
 	for(var i = 0 ; i < 5 ; i++)
@@ -2310,7 +2339,7 @@ function d2B_storePlayerNames() {
 	if(Player){
 		do{
 			if(array_myTeam.indexOf(Player.name) == -1) array_myTeam.push(Player.name);
-			Print(COLOR_2 + "Player #" + COLOR_3 + i + " " + COLOR_7 + Player.name) +
+			Print(COLOR_2 + "Player #" + COLOR_3 + i + " " + COLOR_7 + Player.name +
 				COLOR_5 + " in area: " + COLOR_8 + Player.areaid);
 			Delay(750);
 		} while(Player.GetNext())
@@ -2371,7 +2400,7 @@ function d2B_teamCheckForRiver() {
 		Delay(Random(1400,2400));
 		
 		for(i = 1; i < array_myTeamArea.length; i++) {
-			if (array_myTeamArea[i] != me.areaid]) _all2 = _all2 + 1;
+			if(array_myTeamArea[i] != me.areaid) _all2 = _all2 + 1;
 		}
 		Delay(Random(2000,3000));
 		Print(COLOR_7 + "Waiting fror peeps ti all be at the river wp...");
