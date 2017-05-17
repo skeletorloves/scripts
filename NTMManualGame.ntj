@@ -373,7 +373,8 @@ function NT_KeyEvents(keycode) {
 					
 			// act i
 				case 97:			// #pad 1: den of evil, clearing worldstone levels
-					if(me.areaid == 1 || me.areaid == 2) Print(COLOR_2 + "going for corpsefire") {
+					if(me.areaid == 1 || me.areaid == 2) {
+						Print(COLOR_2 + "going for corpsefire");
 						if(me.areaid == 1) {
 							d2B_moveWP();
 							d2B_gotoWP(3);
@@ -385,8 +386,23 @@ function NT_KeyEvents(keycode) {
 						NTM_TakeStair(8);
 						NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 774, 15, -15);	// 774: Corpsefire
 					}
-					if(me.areaid >= 128 && me.areaid <= 130) {			// if at ws1, ws2, or ws3, clear level
-						d2B_clrLevel();
+					if(me.areaid >= 128 && me.areaid <= 131) {			// if at ws1, ws2, ws3, or throne clear level
+						clearpath = true;
+						if(me.areaid == 128) {
+							NTM_MoveToStair(me.areaid, 129,0,0,clearpath);
+							NTM_TakeStair(129);
+							Delay(Random(1000,1500));
+						}
+						if(me.areaid == 129) {
+							NTM_MoveToStair(me.areaid, 130,0,0,clearpath);
+							NTM_TakeStair(130);
+							Delay(Random(1000,1500));
+						}
+						if(me.areaid == 130) {
+							NTM_MoveToStair(me.areaid, 131,0,0,clearpath);
+							NTM_TakeStair(131);
+							Delay(Random(1000,1500));
+						}	
 					}
 					break;
 				case 98:			// #pad 2: cain
@@ -1255,7 +1271,7 @@ function d2B_KeyCodeMain(keycode) {
 					Delay(300);
 					NTM_Make(TP);
 					Delay(200);
-					If(!NTM_UsePortal("BluePortal",1)) Town();
+					if(!NTM_UsePortal("BluePortal",1)) Town();
 				}
 				if(d2B_usingAFollower) d2B_team(true);
 				//d2B_teamPro(true,3021,40,true,1,"n w", 22545, 9517);	// 3021: Andarial
