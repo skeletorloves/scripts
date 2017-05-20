@@ -50,6 +50,8 @@ function NTMain() {
 	MG_InitializeStats();
 	MG_CheckBeltStuff(true);
 
+	d2B_initCharVars();
+	
 	if(NTConfig_HostileHandler)
 		Load("NTBot/tools/NTHostHandler.ntj");
 		
@@ -390,15 +392,21 @@ function NT_KeyEvents(keycode) {
 						clearpath = true;
 						if(me.areaid == 128) {
 							NTM_MoveToStair(me.areaid, 129,0,0,clearpath);
+							NTM_MoveToStair(me.areaid, 120,0,0,clearpath);
+							NTM_MoveToStair(me.areaid, 129,0,0,clearpath);
 							NTM_TakeStair(129);
 							Delay(Random(1000,1500));
 						}
 						if(me.areaid == 129) {
 							NTM_MoveToStair(me.areaid, 130,0,0,clearpath);
+							NTM_MoveToStair(me.areaid, 128,0,0,clearpath);
+							NTM_MoveToStair(me.areaid, 130,0,0,clearpath);
 							NTM_TakeStair(130);
 							Delay(Random(1000,1500));
 						}
 						if(me.areaid == 130) {
+							NTM_MoveToStair(me.areaid, 131,0,0,clearpath);
+							NTM_MoveToStair(me.areaid, 129,0,0,clearpath);
 							NTM_MoveToStair(me.areaid, 131,0,0,clearpath);
 							NTM_TakeStair(131);
 							Delay(Random(1000,1500));
@@ -2962,6 +2970,62 @@ function d2B_manualBaal() {
 	Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
 	Delay(Random(1000,1700));
 	Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+}
+function d2B_initCharVars() {
+	NTConfig_SkipRegularMonsters = false;
+	NTConfig_ShareExpShrine = false;				// Cleare around exp shrines and TP? (Will not grab experience shrines if true.)
+	NTConfig_Shrines = [0,0,0,0,0];
+	
+	if(me.classid == NTC_CHAR_CLASS_SORCERESS) {
+		NTConfig_AttackSkill[0]  = -1; 	// First skill. Maybe slow missiles
+		NTConfig_AttackSkill[1]  = 53; 	// Primary skill to super unique/champion.
+		NTConfig_AttackSkill[2]  = -1; 	// Primary untimed skill to super unique/champion.
+		NTConfig_AttackSkill[3]  = 53; 	// Primary skill to others.
+		NTConfig_AttackSkill[4]  = -1; 	// Primary untimed skill to others.
+		NTConfig_AttackSkill[5]  = 53; 	// Secondary skill in case monster is immune to primary skill.
+		NTConfig_AttackSkill[6]  = -1; 	// Secondary untimed skill.
+		NTConfig_AttackSkill[7]  = 53; 	// Tertiary skill to everything else in case monster is immune to both primary and secondary.
+		NTConfig_AttackSkill[8]  = -1; 	// Tertiary untimed skill.
+		NTConfig_AttackSkill[9]  = 49; 	// Primary skill to boss (diablo/meph/Duriel/andy)
+		NTConfig_AttackSkill[10] = 49; 	// Primary skill to baal this MUST be set if you do baal charged bolt works well here
+
+		NTConfig_ChainLightOnLightImmunes = false;			// Set true to use Chain Lighning automatically on light immune mobs.
+		NTConfig_EnchantSelf = false;						// Set true to chant self during Precasts
+		NTConfig_DancingSorc = false;						// Periodically teleport between attacks, settings below.
+		NTConfig_AttackJump = 5;							// # of attacks before teleporting.
+		NTConfig_BounceRange = 9;							// Range away from mob to keep when teleporting.
+		NTConfig_DanceStartHp = 78;  						// Auto dance if below this % health? (Set -1 to disable, 101 to always.)
+		NTConfig_DanceStartMp = -1;							// Auto dance if below this % mana? (Set -1 to disable, 101 to always.)
+
+		NTConfig_DiaSpam = 0;			// Skill to spam before Diablo Spawns
+		NTConfig_SetDiablo = 0;			// leechers (only) stop attacking Diablo after x% - valid values 0 to 100
+		NTConfig_SetBaal = 0;			// leechers (only) stop attacking Baal after x% - valid values 0 to 100
+
+		prewavespot = [15092, 5040];							// Pre-Wave standing (X,Y) coordinates. (For Baal Scripts.)
+		NTConfig_PreWaveSpam = 0;								// Attack skill to spam between waves.  Set "0" to disable.
+		KBLSpamPos = [15090, 5028, 15099, 5028, 15093, 5028];	// (X,Y) coordinates to attack with NTConfig_PreWaveSpam.
+
+
+		NTconfig_HighMaxAttack = false;						// Use HighMaxAttacks? (False = LowMaxAttacks.) High/Low are below.
+		NTConfig_HighMaxAttackAreas = [131];				// If above is set false (you're using LowMaxAttacks), add areas to bypass LowMaxAttacks and use HighMaxAttacks instead. (Recommended in Baal's Throne Room.)
+
+		NTConfig_HighMaxAttacks = 300;						// Maximum number of attacks (HIGH) before skipping.
+		NTConfig_LowMaxAttacks = 20;						// Maximum number of attacks (LOW) before skipping.
+
+		MonstersToAttackFirst = 							// Monster ID's to attack first. (Monsters which resurrect / spawn others are good choices.)
+		[58,59,60,61,62,101,102,103,104,190,191,
+		192,193,194,206,207,208,209,228,239,240,
+		241,278,279,280,281,282,283,303,312,480,
+		481,482,483,484,485,486,529];
+
+		NTConfig_AttackingThis = false; // Used to say target monsters ID/Name - Primarily for Dev purposes
+		NTConfig_CheckSelfSafe = ['01'];
+		NTConfig_CheckMercSafe = ['01'];
+		NTConfig_CastStatic = 100;
+		
+		return 1;
+	}
+	return 1;
 }
 /*	Extra shtuff...
 
