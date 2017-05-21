@@ -79,7 +79,7 @@
 /*	_______________________________________________________________________________ */
 
 	var d2B_cases = 1;
-	var d2B_toggleHelper = "helper";
+	var d2B_toggleHelper = "solo2";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 
 
@@ -147,6 +147,10 @@ function NTMain() {
 									d2B_SoloAct2(true);
 									d2B_chkAct(3);
 									d2B_SoloAct3(true);
+									d2B_chkAct(1);
+									break;
+			case "solo2":			d2B_chkAct(4);
+									d2B_mySolo2();
 									d2B_chkAct(1);
 									break;
 			case "mf":				d2B_mf(d2B_helpers);							// (1)
@@ -7959,7 +7963,25 @@ function d2B_rPeepsAllAtJail() {		// checking to see if all the helpers are park
 // switchies for switching
 //	******************************************************************************
 //
-
+function d2B_mySolo2() {
+	d2B_townMgr();
+	var _locations = 	["chaos", "baal","coldPlains", "burialGrounds", "undergroundPassage", "blackMarsh", "tamoeHighland", "catacombs",
+						"lostCity", "clawviperTemple", "arcane", "canyon",
+						"flayerJungle", "lowerKurast", "kurast", "upperKurrast"];
+	var _ignoreRegMonsters = 	[false, false,true, true, true, true, true, true,
+								 true, true, true, true,
+								 true, true, true, true];
+								 
+	var _i = _locations.length;
+	var _j = 0;
+	
+	do {
+		d2B_Act(_locations[_j], _ignoreRegMonsters[_j]);
+		d2B_townMgr();
+		_j = _j + 1;
+	}while(_j < _i)
+	return 1;
+}
 function d2B_barbLdr() {
 	d2B_chkAct(1);
 	d2B_townMgr();
