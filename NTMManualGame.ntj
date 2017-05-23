@@ -1227,7 +1227,9 @@ function d2B_KeyCodeMain(keycode) {
 		//
 		// act i
 			// Countess
-			if(me.areaid == 1) {	
+			if(me.areaid == 1 || me.areaid == 5) {
+				int _cnt = true;
+				if(me.areaid == 5) _cnt = false;
 				Print(COLOR_2 + "going for countess");
 				d2B_moveWP();
 				d2B_gotoWP(6);
@@ -1237,7 +1239,7 @@ function d2B_KeyCodeMain(keycode) {
 					d2B_takeStairs(20+i, false);
 					Delay(Random(1000,1200));
 					if(i==5) {
-						d2B_countess();
+						_cnt ? d2B_countess(true) : d2B_countess(false);
 					}
 				}
 				break;
@@ -2620,7 +2622,7 @@ function d2B_LXPC_FindShrines(a) {
 	NTTM_CheckAct();
 }
 //
-function d2B_countess() {
+function d2B_countess(_cnt) {
 	if(me.y > 11060 && me.y <= 11078){
 		NTM_MoveTo(me.areaid, 12544, 11066);
 	}
@@ -2672,6 +2674,10 @@ function d2B_countess() {
 				NTM_MoveTo(me.areaid, 12578, 11057);
 				NTM_MoveTo(me.areaid, 12582, 11043);
 			}
+		}
+		if(!_cnt) {	// if false, just make a tp and town 
+			Town();
+			return;
 		}
 		d2B_team(true);
 	}	
