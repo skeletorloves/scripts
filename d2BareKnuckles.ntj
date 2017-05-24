@@ -34,7 +34,7 @@
 		var _chaosHelpers 		= false;				// if no chaos helpers
 		var _whereRchaosSeals 	= false;			// to msg the location of the chaos seals
 	
-	// thone variables
+	// throne variables
 	
 		var _dollChk 			= false;				// true: if dolls break or do other things | false: no throne room doll check
 		var _dollSoul 			= false;			// global var for if there are dolls
@@ -188,9 +188,7 @@ function NTMain() {
 
 // acts as individual functions
 
-function d2B_Act(_loc, _skpRegMnstrs) {							// Act scripts
-	if(_skpRegMnstrs = true) NTConfig_SkipRegularMonsters = true;
-	else (_skpRegMnstrs != true) NTConfig_SkipRegularMonsters = false;
+function d2B_Act(_loc) {							// Act scripts
 	if(_teamBO) d2B_soloBO();
 	
 	switch(_loc) {
@@ -6931,6 +6929,7 @@ function NT_OpenDeSeisSealInt(type) {
 	if (!NT_OpenSealInt(394)) {
 		return false;
 	}
+	NTA_ClearPosition(40, true);
 	if (type == 1) {
 		NTM_MoveTo(108, 7797, 5201);
 		for (i = 0; i < 3; i += 1) {
@@ -6987,6 +6986,7 @@ function NT_OpenVenomSealInt(type) {
 	NTA_ClearPosition(40, true);
 	
 	if (!NT_OpenSealInt(393)) return false;
+	NTA_ClearPosition(40, true);
 	if (!NT_OpenSealInt(392)) return false;
 	
 	if (type === 1) {
@@ -7965,18 +7965,17 @@ function d2B_rPeepsAllAtJail() {		// checking to see if all the helpers are park
 //
 function d2B_mySolo2() {
 	d2B_townMgr();
-	var _locations = 	["chaos", "baal","coldPlains", "burialGrounds", "undergroundPassage", "blackMarsh", "tamoeHighland", "catacombs",
+	var _locations = 	["chaos", "baal", "coldPlains", "burialGrounds", "undergroundPassage", "blackMarsh", "tamoeHighland", "catacombs",
 						"lostCity", "clawviperTemple", "arcane", "canyon",
 						"flayerJungle", "lowerKurast", "kurast", "upperKurrast"];
-	var _ignoreRegMonsters = 	[false, false,true, true, true, true, true, true,
-								 true, true, true, true,
-								 true, true, true, true];
+	var _ignoreRegMonsters = 	[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false];
 								 
 	var _i = _locations.length;
 	var _j = 0;
 	
 	do {
-		d2B_Act(_locations[_j], _ignoreRegMonsters[_j]);
+		NTConfig_SkipRegularMonsters = _ignoreRegMonsters[_j];
+		d2B_Act(_locations[_j]);
 		d2B_townMgr();
 		_j = _j + 1;
 	}while(_j < _i)
