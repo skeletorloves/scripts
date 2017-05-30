@@ -184,10 +184,11 @@ function NTMain() {
 }
 
 // ________________________________________________________
+//
 // main function scripts
-
+//
 // acts as individual functions
-
+//
 function d2B_Act(_loc) {							// Act scripts
 	if(_teamBO) d2B_soloBO();
 	
@@ -772,8 +773,9 @@ function d2B_mfSpots(_spots, _skpRegMnstrs) {
 	}
 	return;		
 }
+//
 // Act I solo: complete
-
+//
 function d2B_SoloAct1(_skip) {							// Act 1 complete
 		NTConfig_SkipRegularMonsters = _skip
 	
@@ -1181,7 +1183,7 @@ function d2B_soloBO() {
 }
 //
 // Act I: complete
-
+//
 function d2B_Act1(noTele) {							// Act 1 complete | noTele = var _nonTelePeeps = true;
 	
 	//	blood moor
@@ -1412,7 +1414,8 @@ function d2B_Solo_a1() {
 }
 
 //
-//	Act I	
+//	Act I
+//	
 function d2B_Solo_corpsefire() {
 	if(InTown(me)) d2B_moveWP();
 	d2B_gotoWP(3);
@@ -1533,6 +1536,7 @@ function d2B_cata4() {
 }
 //
 // regular Act I functions:
+//
 function d2B_bloodmoor(a) {							// case: 1
 	if(InTown(me)) d2B_moveWP();
 	d2B_gotoWP(3);
@@ -1911,6 +1915,7 @@ function d2B_cata2() {								// case: 13
 }
 //
 //	Act II
+//
 function d2B_sewers(a) {							// case: 14
 	d2B_chkAct(2);					// if not Lut Golein, then go to Lut Golein
 	
@@ -2176,6 +2181,7 @@ function d2B_canyon(a) {							// case: 22
 }
 //
 //	Act III
+//
 function d2B_spiderForest() {						// case: 23
 	d2B_moveWP();
 	d2B_gotoWP(75);
@@ -2351,6 +2357,7 @@ function d2B_Meph(a) {								// case: 30
 }
 //
 //	Act VI
+//
 function d2B_chaos(a){								// case: 31
 													// a = true for when using _nonTelePeeps
 													// a = false for when solo chaosing
@@ -2542,6 +2549,7 @@ function d2B_chaosCtrl() {
 
 //
 //	Act V
+//
 function d2B_bloodyfoothills() {
 	d2B_commonInitSetup(111);
 	d2B_takeMyTP(true, true, true, false, false);
@@ -2664,7 +2672,9 @@ function d2B_worldstonekeep() {
 	
 	d2B_team(true,5);
 }
-/*	goal team functions */
+//
+//	goal team functions
+//
 function d2B_peepsMe() {							// scan all the peeps in team & store them in arrays
 	var Player = GetPlayerUnit();
 	if(Player){
@@ -2905,7 +2915,9 @@ function d2B_rPPinTown() {							// is everyone in town?
 	if(!_InTown) return false; // false: 1 or more peeps are not in town
 	return true; // true: all peeps are in town
 }
-/*	common functions */
+//
+//	common functions 
+//
 function d2B_load() {
  	Include("libs/common/NTCommon.ntl");
 	NTC_IncludeLibs();
@@ -3471,7 +3483,7 @@ function ActionSorc() {
 		if(isFollowingEnabled)	{FollowSorc();}
 	}
 	if(NTC_InTown(me)) {
-		if(NTTMGR_CheckScrolls(1) < 8) d2B_townMgr();
+		if(NTTMGR_CheckScrolls(1) < 8 && d2B_refill) d2B_townMgr();
 	}
 }
 function FollowSorc(target) {
@@ -4209,13 +4221,13 @@ function d2H_actOnLeader() {
 
 // ________________________________________________________
 // common functions
-
+//
 function Action() {
 	if(NTC_InMyParty(leaderName)) {
 		if(isFollowingEnabled)	{Follow();}
 	}
 	if(NTC_InTown(me)) {
-		if(NTTMGR_CheckScrolls(1) < 8) {
+		if(NTTMGR_CheckScrolls(1) < 8 && d2B_refill) {
 			d2B_townMgr();
 		}
 	}
@@ -4369,6 +4381,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					msg2 = leaderPlayerUnit.areaid;
 					msg3 = leaderPlayerUnit.x;
 					msg4 = leaderPlayerUnit.y;
+					break;
 		case "goto":
 					if(msg2 == 'trist') {
 						if(!d2B_chkAct(1)) {
@@ -4409,7 +4422,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 						NTTM_TownMove("portalspot");
 						TakeLeaderTP();
 					}
-			break;
+					break;
 		case "my":
 					if(msg2 == "tp" && NTC_InTown(me)) {
 						NTTM_TownMove("portalspot");
@@ -4441,7 +4454,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 						isFollowingEnabled = true;
 						Print(COLOR_4 + "Follow on");
 					}
-			break;
+					break;
 		case "..":				// unfollow
 					if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
 					isFollowingEnabled = false;
@@ -4506,7 +4519,8 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 					if(msg2) {
 						Print(COLOR_3 + "Doing "+ COLOR_2 + msg2 + " " + COLOR_7 + msg3);
-						d2B_doAct(msg2, msg3);
+						if(msg3) ? NTConfig_SkipRegularMonsters = true : NTConfig_SkipRegularMonsters = false;
+						d2B_doAct(msg2);
 					}
 					break;
 		case "ctp":
@@ -5537,7 +5551,7 @@ function TakeLeaderTP(toArea) { 					// Done
 		
 		if(NTC_InTown(me) && d2B_refill)
 		{
-			if(NTTMGR_CheckScrolls(1) < 4)
+			if(NTTMGR_CheckScrolls(1) < 4 && d2B_refill)
 			{
 				Whisper(leaderPlayerUnit.name, "Buying scrolls");
 				d2B_townMgr();
@@ -5594,7 +5608,7 @@ function TakeLeaderTPFromTown(toArea) { 					// Done
 		Delay(250);
 		
 		if(NTC_InTown(me) && d2B_refill) {
-			if(NTTMGR_CheckScrolls(1) < 8) d2B_townMgr();
+			if(NTTMGR_CheckScrolls(1) < 8 && d2B_refill) d2B_townMgr();
 		}
 		
 		if(_prearea !== me.areaid) _ret = true;
@@ -5928,7 +5942,7 @@ function TP(msg) { 									// Done
 				if(wpID != -1)
 				{
 					Town();
-					if((NTTMGR_CheckScrolls(1) <= 4) && d2B_refill)
+					if(NTTMGR_CheckScrolls(1) <= 4 && d2B_refill)
 					{
 						d2B_msg("Buying scrolls first!");
 						d2B_townMgr();
@@ -5957,7 +5971,7 @@ function TP(msg) { 									// Done
 			{
 				if(wpID != -1)
 				{
-					if(NTTMGR_CheckScrolls(1) <= 4)
+					if(NTTMGR_CheckScrolls(1) <= 4 && d2B_refill)
 					{
 						d2B_msg("Buying scrolls first!");
 						d2B_townMgr();
@@ -6126,13 +6140,15 @@ function Imbue() {
 	NTA_ClearPosition(10);
 	Town();
 }
-/*	my chat functions */
-function d2B_doAct(msg2,msg3) {				// engages when "doact" command is msg'd
+//
+//	my chat functions
+//
+function d2B_doAct(msg2) {				// engages when "doact" command is msg'd
 	if(!InTown()) d2B_chkAct();
 	d2B_townMgr();
 	NTTM_TownMove("waypoint");
 	
-	d2B_Act(msg2,msg3);			// d2B_Act(_loc,_skpRegMnstrs)
+	d2B_Act(msg2);			// d2B_Act(_loc,_skpRegMnstrs)
 	
 	if(!InTown()) d2B_chkAct();
 	d2B_townMgr();
@@ -7987,19 +8003,17 @@ function d2B_barbLdr() {
 	d2B_boBabaPre();
 	NTM_TakeWaypoint(1);
 	
-	var _locations = 	["coldPlains", "burialGrounds", "undergroundPassage", "blackMarsh", "tamoeHighland", "catacombs",
-						"lostCity", "clawviperTemple", "arcane", "canyon",
-						"flayerJungle", "lowerKurast", "kurast", "upperKurrast"];
-	var _ignoreRegMonsters = 	[false, false, false, false, false, false,
-								 false, false, false, false,
-								 false, false, false, false];
+	var _locations = 			["travincal", "durance", "chaos", "baal"];
+	var _ignoreRegMonsters = 	[false,false,false,false];
 	
 /*	var _locations = 	["bloodMoor", "coldPlains", "burialGrounds", "stonyField", "undergroundPassage", "darkWoods", "blackMarsh", "tamoeHighland", "outerCloister", "outerBarracks", "jail", "catacombs",
 						"sewers", "rockyWaste", "dryHills", "farOasis", "lostCity", "clawviperTemple", "harem", "arcane", "canyon",
-						"spiderForest", "greatMarsh", "flayerJungle", "lowerKurast", "kurast", "upperKurrast", "travincal", "durance"];
+						"spiderForest", "greatMarsh", "flayerJungle", "lowerKurast", "kurast", "upperKurrast", "travincal", "durance",
+						"chaos", "baal"];
 	var _ignoreRegMonsters = 	[false, false, false, false, false, false, false, false, false, false, false, false,
 								 false, false, false, false, false, false, false, false, false,
-								 false, false, false, false, false, false, false, false]; 
+								 false, false, false, false, false, false, false, false,
+								 false, false]; 
 	*/
 								 
 	d2B_peepsMe();	// scan party & store names of team in array _teamPeepsName[]
@@ -8417,6 +8431,11 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 
 
 
+//
+// 
+//
+//
+//
 /*	all of my d2B_ functions...
 	
 	d2B_load();   										// initializing & loading needed scripts & variables
