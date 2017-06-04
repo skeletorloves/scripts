@@ -246,6 +246,13 @@ function NT_KeyEvents(keycode) {
 					Delay(500);
 					if(d2B_usingAFollower && !InTown()) d2B_msg("zonjavs " + Random(1,134332));
 					break;
+				case 221:			// "]": chant team 
+					int t;
+					Print(COLOR_2 + "chanting team...");	
+					Delay(500);
+					(InTown()) ? t = true : t = false;
+					d2B_chant(t);
+					break;
 			}
 			break;
 		case 1:						// main customized keycode menu
@@ -1227,9 +1234,7 @@ function d2B_KeyCodeMain(keycode) {
 		//
 		// act i
 			// Countess
-			if(me.areaid == 1 || me.areaid == 5) {
-				int _cnt = true;
-				if(me.areaid == 5) _cnt = false;
+			if(me.areaid == 1) {	
 				Print(COLOR_2 + "going for countess");
 				d2B_moveWP();
 				d2B_gotoWP(6);
@@ -1239,7 +1244,7 @@ function d2B_KeyCodeMain(keycode) {
 					d2B_takeStairs(20+i, false);
 					Delay(Random(1000,1200));
 					if(i==5) {
-						_cnt ? d2B_countess(true) : d2B_countess(false);
+						d2B_countess();
 					}
 				}
 				break;
@@ -2357,6 +2362,31 @@ function d2B_cube() {		// open chest and then grab the cube
 	}
 	return 1;
 }
+function d2B_chant(t) {
+	if(NTC_GetSkillLevel(52)) {
+		// Enchant player
+		var _player = NTC_FindUnit(NTC_UNIT_PLAYER);
+		//var _merc = NTC_FindUnit(NTC_UNIT_MERC);
+		if(!_player) return;
+		do {
+			if(_player.name !== me.name && GetDistance(me, _player) <= 20 && NTC_InMyParty(_player.name) && !t) {	
+				NTC_Delay(1250);
+				NTC_CastSkill(52, NTC_HAND_RIGHT, _player);
+			}
+			// Enchant merc
+			var _merc = NTC_FindUnit(NTC_UNIT_MERC);
+			if(_merc) {
+				do {
+					if(NTC_CheckOwner(_merc, _player.name) && GetDistance(me, _merc) < 20 && _merc.hp > 0 && _player.name !== me.name) {
+						NTC_Delay(1250);
+						NTC_CastSkill(52, NTC_HAND_RIGHT, _merc);
+					}
+				} while (_merc.GetNext());
+			}
+		} while( _player.GetNext() )
+	}
+	return;
+}
 //
 //	player checking functions
 //
@@ -2622,7 +2652,7 @@ function d2B_LXPC_FindShrines(a) {
 	NTTM_CheckAct();
 }
 //
-function d2B_countess(_cnt) {
+function d2B_countess() {
 	if(me.y > 11060 && me.y <= 11078){
 		NTM_MoveTo(me.areaid, 12544, 11066);
 	}
@@ -2674,10 +2704,6 @@ function d2B_countess(_cnt) {
 				NTM_MoveTo(me.areaid, 12578, 11057);
 				NTM_MoveTo(me.areaid, 12582, 11043);
 			}
-		}
-		if(!_cnt) {	// if false, just make a tp and town 
-			Town();
-			return;
 		}
 		d2B_team(true);
 	}	
@@ -3040,4 +3066,4 @@ function d2B_initCharVars() {
 		if(!NTM_UsePortal("BluePortal", 1) Town();
 		break;
 	}
-*/	
+*/
