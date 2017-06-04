@@ -1,6 +1,6 @@
 /*
 	
-	20170604a NTMManualGame.ntj
+	20170510a NTMManualGame.ntj
 	
 */
 
@@ -245,13 +245,6 @@ function NT_KeyEvents(keycode) {
 					Print(COLOR_2 + "making team jump away...");
 					Delay(500);
 					if(d2B_usingAFollower && !InTown()) d2B_msg("zonjavs " + Random(1,134332));
-					break;
-				case 221:			// "]": chant team 
-					var t;
-					Print(COLOR_2 + "chanting team...");	
-					Delay(500);
-					(InTown()) ? t = true : t = false;
-					d2B_chant(t);
 					break;
 			}
 			break;
