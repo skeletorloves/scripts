@@ -1,6 +1,6 @@
 /*
 	
-	20170510a NTMManualGame.ntj
+	20170604a NTMManualGame.ntj
 	
 */
 
@@ -139,6 +139,7 @@ function NT_KeyEvents(keycode) {
 			case 105:			// #pad 9: buffing
 			case 220: 			// "\": in case team has boxed me in, instruct team to jump away for a moment
 			case 222:			// "'": send the zon to replenish her javs
+			case 221:			// "]": chant team
 			
 			*/
 			switch(keycode) {
@@ -245,6 +246,13 @@ function NT_KeyEvents(keycode) {
 					Print(COLOR_2 + "making team jump away...");
 					Delay(500);
 					if(d2B_usingAFollower && !InTown()) d2B_msg("zonjavs " + Random(1,134332));
+					break;
+				case 221:			// "]": chant team 
+					var t;
+					Print(COLOR_2 + "chanting team...");	
+					Delay(500);
+					(InTown()) ? t = true : t = false;
+					d2B_chant(t);
 					break;
 			}
 			break;
@@ -2356,6 +2364,34 @@ function d2B_cube() {		// open chest and then grab the cube
 		}
 	}
 	return 1;
+}
+function d2B_chant(t) {
+	if(NTC_GetSkillLevel(52)) {
+		// Enchant player
+		var _player = NTC_FindUnit(NTC_UNIT_PLAYER);
+		//var _merc = NTC_FindUnit(NTC_UNIT_MERC);
+		if(!_player)
+			return;
+		do
+		{
+			if(_player.name !== me.name && GetDistance(me, _player) <= 20 && NTC_InMyParty(_player.name) && !t) {	
+				NTC_Delay(1250);
+				NTC_CastSkill(52, NTC_HAND_RIGHT, _player);
+			}
+			// Enchant merc
+			var _merc = NTC_FindUnit(NTC_UNIT_MERC);
+			if(_merc) {
+				do {
+					if(NTC_CheckOwner(_merc, _player.name) && GetDistance(me, _merc) < 20 && _merc.hp > 0 && _player.name !== me.name) {
+						NTC_Delay(1250);
+						NTC_CastSkill(52, NTC_HAND_RIGHT, _merc);
+					}
+				} while (_merc.GetNext());
+			}
+		} while( _player.GetNext() )
+	}
+	
+	return;
 }
 //
 //	player checking functions
