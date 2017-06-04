@@ -1516,6 +1516,7 @@ function d2B_keySettings(menu) {
 				Print(COLOR_4 + "8: " + COLOR_7 + "sending followers to a5 or a4 depending on leader's area");
 				Print(COLOR_4 + "9: " + COLOR_7 + "ldr & team precast");
 				Print(COLOR_4 + "' "+ COLOR_7 + "direct zon to replenish her javs");
+				Print(COLOR_4 + "]: " + COLOR_7 + "] chant everyone if out of town, chant only mercs in town");
 				break;
 	}
 	return 1;
