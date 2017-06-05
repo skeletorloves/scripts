@@ -79,7 +79,7 @@
 /*	_______________________________________________________________________________ */
 
 	var d2B_cases = 1;
-	var d2B_toggleHelper = "solo2";
+	var d2B_toggleHelper = "helper";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 
 
@@ -3483,7 +3483,7 @@ function ActionSorc() {
 		if(isFollowingEnabled)	{FollowSorc();}
 	}
 	if(NTC_InTown(me)) {
-		if(NTTMGR_CheckScrolls(1) < 8 && d2B_refill) d2B_townMgr();
+		if((NTTMGR_CheckScrolls(1) < 8) && d2B_refill) d2B_townMgr();
 	}
 }
 function FollowSorc(target) {
@@ -4227,7 +4227,7 @@ function Action() {
 		if(isFollowingEnabled)	{Follow();}
 	}
 	if(NTC_InTown(me)) {
-		if(NTTMGR_CheckScrolls(1) < 8 && d2B_refill) {
+		if((NTTMGR_CheckScrolls(1) < 8) && d2B_refill) {
 			d2B_townMgr();
 		}
 	}
@@ -4519,7 +4519,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 					if(msg2) {
 						Print(COLOR_3 + "Doing "+ COLOR_2 + msg2 + " " + COLOR_7 + msg3);
-						if(msg3) ? NTConfig_SkipRegularMonsters = true : NTConfig_SkipRegularMonsters = false;
+						(msg3) ? NTConfig_SkipRegularMonsters = true : NTConfig_SkipRegularMonsters = false;
 						d2B_doAct(msg2);
 					}
 					break;
@@ -4688,6 +4688,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					}
 					break;
 		case "c2":
+					if(me.classid != NTC_CHAR_CLASS_SORCERESS && !NTC_GetSkillLevel(52)) break;
 					Delay(300);
 					d2B_swapWeapons();
 					Delay(300);
@@ -4841,7 +4842,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					Rush( msg2 );				// Rush functions.
 					break;
 		case "chant":
-					if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
+					if(me.classid != NTC_CHAR_CLASS_SORCERESS && me.name != _myChantress) break;
 					Chant( msg2 );				// Chant functions.
 					break;
 		case "'":
@@ -4881,6 +4882,13 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					break;
 		case "data":					// time to explore the NT functions
 					if(msg2) d2B_data(msg2,msg3,msg4); //	msg2: my, leader | msg3: stats | msg4: 
+					break;
+		case "restock":
+					if(!InTown()) break;
+					isFollowingEnabled = false;
+					NTTMGR_TownManager();
+					NTTM_TownMove("portalspot");
+					d2B_littleJMP();
 					break;
 		default:						// Say this when you receive an invalid command.
 					//Say("!Invalid command: " + msg1 + " " + msg2 + " " + msg3 + "." );
@@ -5551,7 +5559,7 @@ function TakeLeaderTP(toArea) { 					// Done
 		
 		if(NTC_InTown(me) && d2B_refill)
 		{
-			if(NTTMGR_CheckScrolls(1) < 4 && d2B_refill)
+			if((NTTMGR_CheckScrolls(1) < 4) && d2B_refill)
 			{
 				Whisper(leaderPlayerUnit.name, "Buying scrolls");
 				d2B_townMgr();
@@ -5608,7 +5616,7 @@ function TakeLeaderTPFromTown(toArea) { 					// Done
 		Delay(250);
 		
 		if(NTC_InTown(me) && d2B_refill) {
-			if(NTTMGR_CheckScrolls(1) < 8 && d2B_refill) d2B_townMgr();
+			if((NTTMGR_CheckScrolls(1) < 8) && d2B_refill) d2B_townMgr();
 		}
 		
 		if(_prearea !== me.areaid) _ret = true;
@@ -5797,40 +5805,31 @@ function Town() { 									// Done
 }
 
 function Chant2() { 								// for chantress helper
-	if(me.name != _myChantress) return;
-	
-	if(!NTC_InTown(me) && NTC_GetSkillLevel(52))
-	{
+	if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
+	if(!NTC_InTown(me) && NTC_GetSkillLevel(52)) {
 		// Enchant player
 		var _player = NTC_FindUnit(NTC_UNIT_PLAYER);
 		//var _merc = NTC_FindUnit(NTC_UNIT_MERC);
-		if(!_player)
-			return;
-		do
-		{
-			if(_player.name !== me.name && GetDistance(me, _player) <= 20 && NTC_InMyParty(_player.name))
-			{	
-				NTC_Delay(250);
+		if(!_player) return;
+		do {
+			if(_player.name !== me.name && GetDistance(me, _player) <= 20 && NTC_InMyParty(_player.name)) {	
+				NTC_Delay(1250);
 				NTC_CastSkill(52, NTC_HAND_RIGHT, _player);
 			}
 			
 			// Enchant merc
 			var _merc = NTC_FindUnit(NTC_UNIT_MERC);
-			if (_merc)
-			{
-				do
-				{
-					if(NTC_CheckOwner(_merc, _player.name) && GetDistance(me, _merc) < 20 && _merc.hp > 0 && _player.name !== me.name)
-					{
-						NTC_Delay(250);
+			if (_merc) {
+				do {
+					if(NTC_CheckOwner(_merc, _player.name) && GetDistance(me, _merc) < 20 && _merc.hp > 0 && _player.name !== me.name) {
+						NTC_Delay(1250);
 						NTC_CastSkill(52, NTC_HAND_RIGHT, _merc);
 					}
 				} while (_merc.GetNext());
 			}
 		} while( _player.GetNext() )
 	}
-	else
-	{
+	else {
 		_tmp = Random(0,1);
 		if(_tmp) d2B_msg("No");
 		else if(!_tmp) d2B_msg("way");
@@ -5942,7 +5941,7 @@ function TP(msg) { 									// Done
 				if(wpID != -1)
 				{
 					Town();
-					if(NTTMGR_CheckScrolls(1) <= 4 && d2B_refill)
+					if((NTTMGR_CheckScrolls(1) <= 4) && d2B_refill)
 					{
 						d2B_msg("Buying scrolls first!");
 						d2B_townMgr();
@@ -5971,7 +5970,7 @@ function TP(msg) { 									// Done
 			{
 				if(wpID != -1)
 				{
-					if(NTTMGR_CheckScrolls(1) <= 4 && d2B_refill)
+					if((NTTMGR_CheckScrolls(1) <= 4) && d2B_refill)
 					{
 						d2B_msg("Buying scrolls first!");
 						d2B_townMgr();
