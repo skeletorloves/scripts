@@ -3423,7 +3423,7 @@ function d2B_safeTeam(a,b,c,d) {
 	NTCS_ClearPosition(d);
 	return;
 }
-function d2B_usePortal() {
+function d2B_usePortal2() {
 	var _portal;
 	var _portalname;
 	
@@ -4523,6 +4523,23 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 						d2B_doAct(msg2);
 					}
 					break;
+		case "counttp":													// Heading to just inside where Countess is
+					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
+					isFollowingEnabled = false;
+					Print(COLOR_3 + "Heading to just inside where Countess is...");
+					
+					Delay(300);
+					dd2B_commonInitSetup(6);
+					for(var i = 0 ; i < 6 ; i++) {
+						d2B_moveToStair(me.areaid,20+i, false);	// go to the forgotten tower and do tower things
+						d2B_takeStairs(20+i, false);
+					}
+
+					NTM_MakeTP();
+					d2B_usePortal2();
+					Town();
+					isFollowingEnabled = false;
+					break;
 		case "atp":													// Heading to just inside where Andy is
 					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 					isFollowingEnabled = false;
@@ -4536,9 +4553,50 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 						d2B_takeStairs(i, false);
 					}
 					Delay(Random(400,500));
-					NTM_MoveTo(me.areaid, 22594, 9622);
+					NTM_MoveTo(me.areaid, 22589, 9596);
+					NTM_MakeTP();
+					d2B_usePortal2();
 					Town();
 					isFollowingEnabled = false;
+					break;
+		case "dtp":													// Heading to just inside where Duriel is
+					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
+					isFollowingEnabled = false;
+					Print(COLOR_3 + "Heading to just inside where Duriel is...");
+					
+					Delay(300);
+					d2B_commonInitSetup(46);
+					
+					_tombs = GetRoom();
+					NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_TILE, _tombs.correcttomb-28);
+					_unit = NTC_FindUnit(NTC_UNIT_TILE, _tombs.correcttomb-28, 5);
+					NTM_TakeStair(_unit.subareaid);
+					Delay(Random(300,500));
+					NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 152, -2, 2);
+					NTC_FindUnit(NTC_UNIT_OBJECT, 100, 10);
+					NTM_TakeUnit(NTC_UNIT_OBJECT, 100);
+					
+					NTM_MakeTP();
+					d2B_usePortal2();
+					Town();
+					isFollowingEnabled = false;
+					break;
+		case "mtp":													// Heading to dur of hate 3
+					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
+					isFollowingEnabled = false;
+					Print(COLOR_3 + "Heading to to dur of hate 3...");
+					
+					Delay(300);
+					d2B_commonInitSetup(101);
+					
+					d2B_moveToStair(101, 102, false);					// head to durance 3lvl
+					d2B_takeStairs(102, false);
+					
+					NTM_MakeTP();
+					d2B_usePortal2();
+					Town();
+					isFollowingEnabled = false;
+				
 					break;
 		case "ctp":													// Heading to chaos enterance to make a tp
 					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
@@ -4548,7 +4606,17 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					Delay(300);
 					d2B_commonInitSetup(107);
 					NTM_MoveTo(108,7788,5555); 						// chaos enterance left
+					NTM_MakeTP();
+					d2B_usePortal2();
 					Town();
+					isFollowingEnabled = false;
+					break;
+		case "ctr":													// send team to the centre of chaos
+					isFollowingEnabled = false;
+					Print(COLOR_3 + "Heading to the ctr of chaos...");
+					Delay(300);
+					NTM_MoveTo(108,7793,5287); 						// chaos ctr
+					NTP_DoPrecast(true);
 					isFollowingEnabled = false;
 					break;
 		case "ttp":													// Heading to throne to make a tp
@@ -4563,6 +4631,8 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					d2B_moveToStair(me.areaid, 131, false);
 					NTM_TakeStair(131);
 					NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
+					NTM_MakeTP();
+					d2B_usePortal2();
 					Town();
 					isFollowingEnabled = false;
 					break;
@@ -4714,7 +4784,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					Delay(300);
 					d2B_swapWeapons();
 					break;
-		case "c2":
+		case "c3":
 					if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 					if(!NTC_GetSkillLevel(52)) break;
 					Delay(300);
