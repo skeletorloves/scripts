@@ -4634,12 +4634,46 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					Town();
 					isFollowingEnabled = false;
 					break;
+		case "cctp":													// Heading to chaos centre to make a tp
+					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
+					isFollowingEnabled = false;
+					Print(COLOR_3 + "Heading to chaos centre to make a tp...");
+					
+					Delay(300);
+					d2B_commonInitSetup(107);
+					NTM_MoveTo(108,7793,5287); 						// chaos enterance left
+					NTM_MakeTP();
+					d2B_usePortal2();
+					Town();
+					isFollowingEnabled = false;
+					break;
 		case "ctr":													// send team to the centre of chaos
+					if(me.areaid != 108) break;
 					isFollowingEnabled = false;
 					Print(COLOR_3 + "Heading to the ctr of chaos...");
 					Delay(300);
 					NTM_MoveTo(108,7793,5287); 						// chaos ctr
 					NTP_DoPrecast(true);
+					isFollowingEnabled = false;
+					break;
+		case "ntp":													// Heading to Nihlathak
+					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
+					isFollowingEnabled = false;
+					Print(COLOR_3 + "Heading to Nihlathak to make a tp...");
+					
+					Delay(300);
+					d2B_commonInitSetup(123);
+					
+					d2B_moveToStair(123, 124. false);
+					d2B_takeStairs(124, false);
+					
+					_location = NT_FindNihlathakInt();
+					NTM_MoveTo(124, _NTNihlathak_Locations[_location][2], _NTNihlathak_Locations[_location][3]);
+					if(NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(2956))) Print(COLOR_8 + "Tomb vipers...");
+					
+					NTM_MakeTP();
+					d2B_usePortal2();
+					Town();
 					isFollowingEnabled = false;
 					break;
 		case "ttp":													// Heading to throne to make a tp
