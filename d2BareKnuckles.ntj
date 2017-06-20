@@ -4559,6 +4559,29 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					Town();
 					isFollowingEnabled = false;
 					break;
+		case "stp": 
+																	// heading to summoner
+					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
+					isFollowingEnabled = false;
+					Print(COLOR_3 + "Heading to Summoner...");
+					
+					Delay(300);
+					d2B_commonInitSetup(74);
+					
+					var _object = GetPresetUnits(me.areaid);
+					for(var i = 0; i < _object.length; i++) {
+						if(_object[i].id == 357) {
+							if(_object[i].x == 11 && _object[i].y == 11) NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 357, 2, 2); //Top Right Summoner
+							else if (_object[i].x == 26 && _object[i].y == 11) NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 357, 2, 2); //Bottom Right Summoner
+							else if (_object[i].x == 11 && _object[i].y == 21) NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 357, 2, 2); //Bottom Left Summoner
+							else NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 357, 2, 2); //Top Left Summoner
+						}
+					}
+					NTM_MakeTP();
+					d2B_usePortal2();
+					Town();
+					isFollowingEnabled = false;
+					break;
 		case "dtp":													// Heading to just inside where Duriel is
 					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 					isFollowingEnabled = false;
@@ -5913,6 +5936,7 @@ function Chant2() { 								// for chantress helper
 			if(_player.name !== me.name && GetDistance(me, _player) <= 20 && NTC_InMyParty(_player.name)) {	
 				NTC_Delay(Random(100,250));
 				NTC_CastSkill(52, NTC_HAND_RIGHT, _player);
+				Print(Color_0 + "chanting: " + Color_8 + _player.name);
 			}
 			
 			// Enchant merc
