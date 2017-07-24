@@ -1,6 +1,6 @@
-/*	v1.20170416a
+/*	v1.20170724a
 	
-	v1.20170416a
+	v1.20170724a
 	d2BareKnuckles.ntj
 
 */
@@ -14,16 +14,18 @@
 		var _teamSize 			= 8;				// size of team to check for
 		var _PPamount 			= 8;				// size of party to check for; it does not include leader
 	
-		var _teamBO 			= false;				// send team to a safe wp and bo
-		var _noBoer 			= true;			// for impeding boer routines and the delays associated with those in throne
+		var _teamBO 			= false;			// send team to a safe wp and bo
+		var _noBoer 			= true;				// for impeding boer routines and the delays associated with those in throne
 		var _myName 			= "";				// peep to msg of what's a-happenin'
+		var _boB				= false;			// using a bo barb 
 		var _myBoBarb 			= "";				// bo barb name
 		var _myBarb 			= "noATKbobaba";	// for disabling atk for my barb
 		var _barbHop			= false;			// for (dis)(en)abling hop barbs
+		var _barbLdr			= false;			// for sorc followers to wait go to river wp and wait for bo
 	
 	// leader variables
 	
-		var _solo 				= true;				// for soloing
+		var _solo 				= true;					// for soloing
 		var _soloCountess 		= false;				// for leader not to msg followers nor to make tps while solo countessing
 		var _ldr 				= false;				// for msg'ing
 	
@@ -31,13 +33,13 @@
 	
 		var _chaosCentreMe 		= false;			// for sending leader to the centre of Chaos Sanctuary
 		var _soloChaos 			= false;			// for leader not to msg followers nor to make tps in chaos
-		var _chaosHelpers 		= false;				// if no chaos helpers
+		var _chaosHelpers 		= false;			// if no chaos helpers
 		var _whereRchaosSeals 	= false;			// to msg the location of the chaos seals
 	
 	// throne variables
 	
 		var _dollChk 			= false;				// true: if dolls break or do other things | false: no throne room doll check
-		var _dollSoul 			= false;			// global var for if there are dolls
+		var _dollSoul 			= false;				// global var for if there are dolls
 		var _throneLeechers 	= false;				// if stationary throne leechers are following in the throne
 		var _throneHelpers 		= false;				// if active fighters are following in the throne
 			
@@ -52,11 +54,11 @@
 	
 		var _lowLvlPeeps 		= false;			// leveling really low level peeps | if enabled, will not engage d2B_team() function calls
 		var _nonTelePeeps 		= false;			// if followers cannot tele
-		var d2B_usingSorcFlwrs 	= false;				// using sorcies as followers
+		var d2B_usingSorcFlwrs 	= false;			// using sorcies as followers
 		var d2B_usingAFollower 	= false; 			// using a follower therefore make townportals d2B_takeMyTP()
 		var d2B_refill 			= true;				// enable/disable NTTMGR_TownManager();
 		
-		var d2B_helpers 		= false;				// general helpers thang
+		var d2B_helpers 		= false;			// general helpers thang
 		
 		
 		var _peeps = [];						// d2B_Peeps()
@@ -75,6 +77,18 @@
 	var _debug = false;						// for testing chaos w/o using followere
 	var _quiet = false;						// msg free silence
 	var _msgMe = false;						// for enabling whispering to _myName
+	
+	var _NTNihlathak_Locations = new Array(8, 4);
+
+	_NTNihlathak_Locations[0] = [12519, 5203, 12522, 5227]; // Top Left
+	_NTNihlathak_Locations[1] = [12704, 5019, 12692, 5022]; // Top Right
+	_NTNihlathak_Locations[2] = [12705, 5391, 12723, 5413]; // Bottom Right
+	_NTNihlathak_Locations[3] = [12889, 5206, 12898, 5228]; // Bottom Left
+	_NTNihlathak_Locations[4] = [12519, 5203, 12522, 5196]; // Top Left
+	_NTNihlathak_Locations[5] = [12704, 5019, 12692, 5413]; // Top Right
+	_NTNihlathak_Locations[6] = [12705, 5391, 12727, 5022]; // Bottom Right
+	_NTNihlathak_Locations[7] = [12889, 5206, 12898, 5192]; // Bottom Left
+	
 	
 /*	_______________________________________________________________________________ */
 
@@ -132,6 +146,8 @@ function NTMain() {
 			case "helper":			d2H_helper();									// for enabling a follower
 									break;
 			case "helperSorc":		d2H_helperSorc();								// for enabling a follower which is a sorc
+									break;
+			case "sorcLder":		d2B_sorcLdr(_boB);								// for running a sorc leader w or w/o bo baba
 									break;
 			case "barbLdr":			d2B_barbLdr();
 									break;
@@ -4529,7 +4545,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					Print(COLOR_3 + "Heading to just inside where Countess is...");
 					
 					Delay(300);
-					dd2B_commonInitSetup(6);
+					d2B_commonInitSetup(6);
 					for(var i = 0 ; i < 6 ; i++) {
 						d2B_moveToStair(me.areaid,20+i, false);	// go to the forgotten tower and do tower things
 						d2B_takeStairs(20+i, false);
@@ -4664,7 +4680,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					Delay(300);
 					d2B_commonInitSetup(123);
 					
-					d2B_moveToStair(123, 124. false);
+					d2B_moveToStair(123, 124, false);
 					d2B_takeStairs(124, false);
 					
 					_location = NT_FindNihlathakInt();
@@ -5970,7 +5986,7 @@ function Chant2() { 								// for chantress helper
 			if(_player.name !== me.name && GetDistance(me, _player) <= 20 && NTC_InMyParty(_player.name)) {	
 				NTC_Delay(Random(100,250));
 				NTC_CastSkill(52, NTC_HAND_RIGHT, _player);
-				Print(Color_0 + "chanting: " + Color_8 + _player.name);
+				Print(COLOR_3 + "chanting: " + COLOR_8 + _player.name);
 			}
 			
 			// Enchant merc
@@ -5984,6 +6000,7 @@ function Chant2() { 								// for chantress helper
 				} while (_merc.GetNext());
 			}
 		} while( _player.GetNext() )
+		Print(COLOR_8 + "I'n done chanting y'all...");
 		return;
 	}
 	if(NTC_InTown(me) && NTC_GetSkillLevel(52)) {
@@ -6003,6 +6020,7 @@ function Chant2() { 								// for chantress helper
 				} while (_merc.GetNext());
 			}
 		} while( _player.GetNext() )
+		Print(COLOR_8 + "I'n done chanting the mercs...");
 		return;
 	}
 	else {
@@ -6353,10 +6371,13 @@ function d2B_doAct(msg2) {				// engages when "doact" command is msg'd
 	
 	d2B_Act(msg2);			// d2B_Act(_loc,_skpRegMnstrs)
 	
+	isFollowingEnabled = false;
 	if(!InTown()) d2B_chkAct();
 	d2B_townMgr();
-	NTTM_TownMove("waypoint");
-	NTM_TakeWaypoint(107);		// after towning and char management, go to river of flame wp to get bo'd
+	if(_barbLdr) {
+		NTTM_TownMove("waypoint");
+		NTM_TakeWaypoint(107);		// after towning and char management, go to river of flame wp to get bo'd
+	}
 	return;
 }
 	
@@ -7688,6 +7709,29 @@ function OutOfBounds(Monst){
 // 	act v functions
 //	******************************************************************************
 //
+function NT_FindNihlathakInt() {
+		
+	var i, x, y;
+	var _nihlathak;
+	var _mindist = 999999;
+	var _currdist;
+	var _location = -1;
+	_nihlathak = GetPresetUnits(me.areaid, NTC_UNIT_OBJECT, 462);
+
+	if(!_nihlathak || _nihlathak.length < 1)
+		return _location;
+
+	x = _nihlathak[0].roomx*5 + _nihlathak[0].x;
+	y = _nihlathak[0].roomy*5 + _nihlathak[0].y;
+
+	for(i = 0 ; i < 8 ; i++) {
+		_currdist = GetDistance(_NTNihlathak_Locations[i][0], _NTNihlathak_Locations[i][1], x, y);
+		if(_currdist < _mindist) {
+			_mindist = _currdist;
+			_location = i;
+		}
+	} return _location;
+}
 function NT_ClearThroneInt(){
 	var _attackpos = [15112, 5068, 15075, 5065, 15114, 5045, 15114, 5012, 15095, 5024, 15078, 5013, 15092, 5040];
 	for(var i = 0 ; i < _attackpos.length ; i += 2){
@@ -8182,6 +8226,42 @@ function d2B_rPeepsAllAtJail() {		// checking to see if all the helpers are park
 // switchies for switching
 //	******************************************************************************
 //
+function d2B_sorcLdr(_boB) {
+	d2B_chkAct(4);
+	d2B_townMgr();
+	if(_boB) {
+		Print(COLOR_2 + "Sorc leader is heading to River wp...");
+		d2B_sorcLdrBoBabaPre();	// ldr sorc to river wp, calls followers, then initiates bo baba
+		Print(COLOR_2 + "Sorc leader & team is now ready to rumble...");
+		Delay(Random(30000,40000));
+		return;
+	}
+	return;
+}
+function d2B_sorcLdrBoBabaPre() {
+	d2B_commonInitSetup(107);		// goto river
+	d2B_littleJMP();
+	Delay(300);
+	NTM_MakeTP();
+	Delay(Random(3000,4000));
+	d2B_msg(".");					// call team
+	Delay(Random(30000,40000));
+	d2B_msg("..");
+	Delay(Random(2000,3000));
+	if(!NTC_InTown(me)) {
+		d2B_msg(_myBoBarb + " ;");	// tell bo barb to bo
+		Delay(Random(6000,8000));
+		NTP_DoPrecast(true);
+		d2B_msg(_myBoBarb + " '");	// send bo barb to town
+		Delay(Random(3000,5000));
+	}
+	Delay(750);
+	d2B_msg("..");
+	Delay(Random(2000,3000));
+	d2B_msg("-");
+	Delay(Random(8000,11000));
+	return;
+}
 function d2B_mySolo2() {
 	d2B_townMgr();
 	var _locations = 	["chaos", "baal", "coldPlains", "burialGrounds", "undergroundPassage", "blackMarsh", "tamoeHighland", "catacombs",
