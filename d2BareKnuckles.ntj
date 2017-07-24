@@ -3556,15 +3556,17 @@ function FollowSorc(target) {
 	else _distance = -1;
 	
 	//
-	// if we're both in town, but diff towns... go to the wp of leader's town
+	// (chk1) if we're both in town, but diff towns... go to the wp of leader's town
 	if(CheckAct(me) !== CheckAct(leaderPlayerUnit) && NTC_InTown(me) && NTC_InTown(leaderPlayerUnit)) {
+		Print(COLOR_2 + "chk1");
 		NTM_TakeWaypoint(GetPlayerActWaypointID(leaderPlayerUnit));
 		NTTM_TownMove("portalspot");
 	}
 	
 	//
-	// valid distance, we're within follow range, and we just need to attack
+	// (chk2) valid distance, we're within follow range, and we just need to attack
 	if(_distance <= followRange && _distance !== -1 && me.areaid == leaderPlayerUnit.areaid && !NTC_InTown(me)) {
+		Print(COLOR_2 + "chk2");
 		if(isAttackEnabled){
 			var _atk = true;
 			if(NTConfig_DoNotAttackAreas.length >= 1) {
@@ -3584,8 +3586,9 @@ function FollowSorc(target) {
 	}
 	
 	//
-	// if leader is in town & I am not
+	// (chk3) if leader is in town & I am not
 	if(!NTC_InTown(me) && NTC_InTown(leaderPlayerUnit)) {
+		Print(COLOR_2 + "chk3");
 		if(!TakeLeaderTP()) {
 			if(!NTM_TakeWaypoint(leaderPlayerUnit.areaid)) {
 				Town("");
@@ -3595,8 +3598,9 @@ function FollowSorc(target) {
 	}
 	
 	//
-	// valid distance, yet we're outside of follow range and 
+	// (chk4) valid distance, yet we're outside of follow range and 
 	if(_distance >= followRange && _distance !== -1 && me.areaid == leaderPlayerUnit.areaid) {
+		Print(COLOR_2 + "chk4");
 		if(!NTC_InTown(me)) {
 			if(leaderUnit) {
 				if(me.areaid === 131) {
@@ -3632,15 +3636,17 @@ function FollowSorc(target) {
 	}
 	
 	//
-	// invalid distance, yet in the same area...attempt to move to the leader
+	// (chk5) invalid distance, yet in the same area...attempt to move to the leader
 	if(_distance === -1 && me.areaid === leaderPlayerUnit.areaid && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {
+		Print(COLOR_2 + "chk5");
 		NTM_MoveTo(leaderPlayerUnit.areaid, leaderPlayerUnit.x, leaderPlayerUnit.y);
 		return;
 	}
 	
 	//
-	// if I am outside & in a different act, go to town and head to leader's act
+	// (chk6) if I am outside & in a different act, go to town and head to leader's act
 	if(_distance === -1 && CheckAct(me) !== CheckAct(leaderPlayerUnit) && !NTC_InTown(me)) {
+		Print(COLOR_2 + "chk6");
 		Town();
 		NTM_TakeWaypoint(leaderPlayerUnit.areaid);
 		NTTM_TownMove("portalspot");
@@ -3648,8 +3654,9 @@ function FollowSorc(target) {
 	}
 	
 	//
-	// if I in town & leader is not
+	// (chk7) if I in town & leader is not
 	if(!NTC_InTown(leaderPlayerUnit) && NTC_InTown(me)) {
+		Print(COLOR_2 + "chk7");
 		//
 		// Get the distance between our character and the leader
 		if(leaderUnit) _distance = GetDistance(me, leaderUnit);
@@ -3703,8 +3710,9 @@ function FollowSorc(target) {
 	}
 	
 	//
-	// if we are both outside but in different areas
+	// (chk8) if we are both outside but in different areas
 	if(me.areaid !== leaderPlayerUnit.areaid && !NTC_InTown(leaderPlayerUnit) && !NTC_InTown(me)) {
+		Print(COLOR_2 + "chk8");
 		//
 		// Get the distance between our character and the leader
 		if(leaderUnit) _distance = GetDistance(me, leaderUnit);
@@ -3785,8 +3793,9 @@ function FollowSorc(target) {
 	
 	
 	//
-	// if we are both outside but in different areas
+	// (chk9) if we are both outside but in different areas
 	if(me.areaid === leaderPlayerUnit.areaid && !NTC_InTown(me) && !NTC_InTown(leaderPlayerUnit)) {
+		Print(COLOR_2 + "chk9");
 		//
 		// Get the distance between our character and the leader
 		if(leaderUnit) _distance = GetDistance(me, leaderUnit);
@@ -8291,7 +8300,6 @@ function d2B_sorcLdrBoBabaPre() {
 	//d2B_msg(".. " + Random(10,100321));
 	//Delay(Random(2000,3000));
 	if(me.areaid == 35) {
-		
 		d2B_msg(_myBoBarb + " ; " + Random(10,100321));	// tell bo barb to bo
 		Delay(Random(6000,8000));
 		NTP_DoPrecast(true);
