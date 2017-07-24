@@ -25,7 +25,7 @@
 	
 	// leader variables
 	
-		var _solo 				= true;					// for soloing
+		var _solo 				= false;					// for soloing
 		var _soloCountess 		= false;				// for leader not to msg followers nor to make tps while solo countessing
 		var _ldr 				= false;				// for msg'ing
 	
@@ -33,7 +33,7 @@
 	
 		var _chaosCentreMe 		= false;			// for sending leader to the centre of Chaos Sanctuary
 		var _soloChaos 			= false;			// for leader not to msg followers nor to make tps in chaos
-		var _chaosHelpers 		= false;			// if no chaos helpers
+		var _chaosHelpers 		= true;				// if no chaos helpers
 		var _whereRchaosSeals 	= false;			// to msg the location of the chaos seals
 	
 	// throne variables
@@ -41,7 +41,7 @@
 		var _dollChk 			= false;				// true: if dolls break or do other things | false: no throne room doll check
 		var _dollSoul 			= false;				// global var for if there are dolls
 		var _throneLeechers 	= false;				// if stationary throne leechers are following in the throne
-		var _throneHelpers 		= false;				// if active fighters are following in the throne
+		var _throneHelpers 		= true;					// if active fighters are following in the throne
 			
 	// extra variables
 	
@@ -55,10 +55,10 @@
 		var _lowLvlPeeps 		= false;			// leveling really low level peeps | if enabled, will not engage d2B_team() function calls
 		var _nonTelePeeps 		= false;			// if followers cannot tele
 		var d2B_usingSorcFlwrs 	= false;			// using sorcies as followers
-		var d2B_usingAFollower 	= false; 			// using a follower therefore make townportals d2B_takeMyTP()
+		var d2B_usingAFollower 	= true; 			// using a follower therefore make townportals d2B_takeMyTP()
 		var d2B_refill 			= true;				// enable/disable NTTMGR_TownManager();
 		
-		var d2B_helpers 		= false;			// general helpers thang
+		var d2B_helpers 		= true;			// general helpers thang
 		
 		
 		var _peeps = [];						// d2B_Peeps()
@@ -72,7 +72,7 @@
 		var _teamPeepsQty;
 		
 	
-	var _noCheck = true;					// for skipping the players who've joined check	
+	var _noCheck = false;					// for skipping the players who've joined check	
 	var _test = false;
 	var _debug = false;						// for testing chaos w/o using followere
 	var _quiet = false;						// msg free silence
@@ -104,9 +104,9 @@
 	var pathRushBots = "NTRush/rushbots/";						// . .. follow, unfollow
 	var isBusy = false;											// ;	precast, buff
 	var isPaused = false;										// '	town & unfollow
-	var isFollowingEnabled = false;								// ,	in town move to portal area
-	var isAttackEnabled = false;
-	if(_myBarb != me.charname) isAttackEnabled = true;			// if a bo barb is used, that bo barb is not to attack monsters
+	var isFollowingEnabled = true;								// ,	in town move to portal area
+	var isAttackEnabled = true;
+	if(_myBarb == me.charname) isAttackEnabled = false;			// if a bo barb is used, that bo barb is not to attack monsters
 	var isAutoEnchantEnabled = false;
 	var leaderUnit;
 	var leaderPlayerUnit;
@@ -147,7 +147,7 @@ function NTMain() {
 									break;
 			case "helperSorc":		d2H_helperSorc();								// for enabling a follower which is a sorc
 									break;
-			case "sorcLder":		d2B_sorcLdr(_boB);								// for running a sorc leader w or w/o bo baba
+			case "sorcLdr":			d2B_sorcLdr(_boB);								// for running a sorc leader w or w/o bo baba
 									break;
 			case "barbLdr":			d2B_barbLdr();
 									break;
@@ -656,6 +656,49 @@ function d2B_Act(_loc) {							// Act scripts
 			
 			NTM_MoveTo(108, 7794, 5292);						// tele to the centre of chaos
 			if(_chaosHelpers) NTM_MakeTP();
+
+			if (!NT_OpenSealsInt(false)) {							// a: "low" for leveling low peeps
+				NTC_SendMsgToScript("NTBotGame.ntj", "NT_OpenSealsInt()");
+			}
+			
+			NTM_MoveTo(108, 7795, 5295);
+			for(i = 0; i < 80; i += 1) {
+				if(GetUnit(NTC_UNIT_MONSTER, 243)) break;
+				NTCS_DiaSpam();
+			}
+			NTA_KillMonster(243);
+			NTSI_PickItems();
+			Delay(1000);
+			d2B_chkAct();
+			break;
+		case("chaosSorcLdr"):
+		//	chaos
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "chaos");
+			isFollowingEnabled = false;
+			NTConfig_SkipRegularMonsters = false;
+			
+			if(me.areaid != 107) d2B_commonInitSetup(107);
+			
+			NTConfig_FastChaos = false;
+			NTConfig_LeechSupport = false;
+			NTConfig_IdInField = false;
+			
+			NTM_MoveTo(108, 7790, 5544);			// tele to just inside the enterance			
+			NTM_MakeTP();
+
+			NTCS_ClearPosition(30, EntranceSort);
+			/*Delay(Random(2000.3000));
+			if(_chaosHelpers) d2B_msg(".");*/
+			var FrontToStarX = [7792,7794,7791,7777,7813,7769,7782,7802,7819,7768,7770,7791,7819, 7804, 7831,7857, 7807,7794, 7762,7736];
+			var FrontToStarY = [5564,5529,5495,5486,5486,5445,5421,5421,5446,5390,5355,5355,5376, 5340, 5289,5292, 5265,5247, 5281,5291];
+			for (var i = 0; i < FrontToStarX.length; i += 1) {
+				NTM_MoveTo(108, FrontToStarX[i], FrontToStarY[i]);
+				NTCS_ClearPosition(35, EntranceSort);
+			}
+			
+			NTM_MoveTo(108, 7794, 5292);						// tele to the centre of chaos
+			NTM_MakeTP();
 
 			if (!NT_OpenSealsInt(false)) {							// a: "low" for leveling low peeps
 				NTC_SendMsgToScript("NTBotGame.ntj", "NT_OpenSealsInt()");
@@ -4127,7 +4170,7 @@ function d2H_load() {
     	NTSI_LoadNIPFiles("NTBot/item_configs");
 	NTA_Initialize();
 	
-	NTConfig_DoNotFollowAreas = [0];		// Won't take a WP or TP to these areas
+	NTConfig_DoNotFollowAreas = [107,129];	// Won't take a WP or TP to these areas
 	NTConfig_DoNotAttackAreas = [0];		// Won't attack in these areas
 	NTConfig_AllowCommands = true;									// Allows leader to issue commands such as 'exit', 'town', 'follow', etc.  'follow' is ON by default.
 	NTConfig_PortalAtLeechersCorpses = false;						// Make a TP at players corpses when they die near you
@@ -4147,7 +4190,7 @@ function d2H_load() {
 	NTConfig_Quest_Baal		= true;						// true/false to do quests when using rush commands
 	NTConfig_TpHarem		= true;						// true/false to tp at harem after duriel
 	NTConfig_KillCouncils	= true;						// true/false to kill all counsel members
-	NTConfig_ClearCS 		= false;						// true/false to clear CS when doing diablo quest
+	NTConfig_ClearCS 		= false;					// true/false to clear CS when doing diablo quest
 	NTConfig_CSDodge 		= true;						// dodge in CS
 	
 	Scripts.Command = false; // Overrides all other scripts set here
@@ -7243,24 +7286,24 @@ function NT_OpenVenomSealInt(type) {
 		NTCS_ClearPosition(40, DistanceSort, NTConfig_FastChaos && !NTConfig_LeechSupport ? 0x10 : null, NTConfig_FastChaos && !NTConfig_LeechSupport ? 362 : null);
 	}
 	
-	if(_nonTelePeeps) {
+	if(_nonTelePeeps && !_boB) {
 		d2B_team(true, false);
 		NTCS_ClearPosition(30);
 		NTSI_PickItems();
 		Delay(Random(2000,4000));
 	}
 	
-	if(!_lowLvlPeeps && !_soloChaos) d2B_takeMyTP(false, true, true, false, 2000, 4000);
+	if(!_lowLvlPeeps && !_soloChaos && !_boB) d2B_takeMyTP(false, true, true, false, 2000, 4000);
 	
-	if(_nonTelePeeps && !_soloChaos) {
+	if(_nonTelePeeps && !_soloChaos && !_boB) {
 		d2B_team(false, false);
 		Delay(Random(2000,4000));
 		d2B_isTeamInTown(4,108);
 	}
-	if(_lowLvlPeeps && !_soloChaos) d2B_msg("'");
+	if(_lowLvlPeeps && !_soloChaos  && !_boB) d2B_msg("'");
 
 	Delay(300);
-	if(_lowLvlPeeps && !_soloChaos) {
+	if(_lowLvlPeeps && !_soloChaos  && !_boB) {
 		NTM_MoveTo(108, 7763,5268,5);
 		NTM_MakeTP();
 		Delay(300);
@@ -8230,36 +8273,32 @@ function d2B_sorcLdr(_boB) {
 	d2B_chkAct(4);
 	d2B_townMgr();
 	if(_boB) {
-		Print(COLOR_2 + "Sorc leader is heading to River wp...");
-		d2B_sorcLdrBoBabaPre();	// ldr sorc to river wp, calls followers, then initiates bo baba
-		Print(COLOR_2 + "Sorc leader & team is now ready to rumble...");
-		Delay(Random(30000,40000));
-		return;
+		d2B_sorcLdrBoBabaPre();	// ldr sorc to cata 2 wp, calls followers, then initiates bo baba
+		Delay(Random(4000,6000));
+		d2B_Act("chaosSorcLdr");
+		Delay(Random(30000,40000));	
 	}
 	return;
 }
 function d2B_sorcLdrBoBabaPre() {
-	d2B_commonInitSetup(107);		// goto river
+	d2B_commonInitSetup(35);		// goto cata 2 wp
 	d2B_littleJMP();
 	Delay(300);
 	NTM_MakeTP();
-	Delay(Random(3000,4000));
-	d2B_msg(".");					// call team
-	Delay(Random(30000,40000));
-	d2B_msg("..");
-	Delay(Random(2000,3000));
-	if(!NTC_InTown(me)) {
-		d2B_msg(_myBoBarb + " ;");	// tell bo barb to bo
+	Delay(Random(30000,40000));		// wait enough time for all to come
+	//d2B_msg(". " + Random(10,100321));					// call team
+	//Delay(Random(30000,40000));
+	//d2B_msg(".. " + Random(10,100321));
+	//Delay(Random(2000,3000));
+	if(me.areaid == 35) {
+		
+		d2B_msg(_myBoBarb + " ; " + Random(10,100321));	// tell bo barb to bo
 		Delay(Random(6000,8000));
 		NTP_DoPrecast(true);
-		d2B_msg(_myBoBarb + " '");	// send bo barb to town
+		Delay(Random(1000,2000));
+		d2B_msg(_myBoBarb + " .. " + Random(10,100321));	// send bo barb to town
 		Delay(Random(3000,5000));
 	}
-	Delay(750);
-	d2B_msg("..");
-	Delay(Random(2000,3000));
-	d2B_msg("-");
-	Delay(Random(8000,11000));
 	return;
 }
 function d2B_mySolo2() {
