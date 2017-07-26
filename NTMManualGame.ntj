@@ -1,6 +1,6 @@
 /*
 	
-	20170510a NTMManualGame.ntj
+	20170726a NTMManualGame.ntj
 	
 */
 
@@ -13,7 +13,7 @@ var _dollSoul;
 var _follow = false;
 var _barbHop = false
 
-var tpSorc = "myMOOstash";
+var tpSorc = "aaa";
 var _SkeletonArmy = 11;
 var _Revives = 23;
 
@@ -139,6 +139,7 @@ function NT_KeyEvents(keycode) {
 			case 105:			// #pad 9: buffing
 			case 220: 			// "\": in case team has boxed me in, instruct team to jump away for a moment
 			case 222:			// "'": send the zon to replenish her javs
+			case 221:			// "]": chant team
 			
 			*/
 			switch(keycode) {
@@ -150,7 +151,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle:	// [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 6) _keycodeMenu = 0;
+					if(_keycodeMenu > 7) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "main control menu...");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
@@ -247,7 +248,7 @@ function NT_KeyEvents(keycode) {
 					if(d2B_usingAFollower && !InTown()) d2B_msg("zonjavs " + Random(1,134332));
 					break;
 				case 221:			// "]": chant team 
-					int t;
+					var t;
 					Print(COLOR_2 + "chanting team...");	
 					Delay(500);
 					(InTown()) ? t = true : t = false;
@@ -268,7 +269,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 6) _keycodeMenu = 0;
+					if(_keycodeMenu > 7) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "rushing customized manual key menu");
 					break;
 				case 103:			// #pad 7: grab exp shrine (orig:Key_MyChicken)
@@ -344,7 +345,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 6) _keycodeMenu = 0;
+					if(_keycodeMenu > 7) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "experimental hopping barbs menu...");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
@@ -683,7 +684,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 6) _keycodeMenu = 0;
+					if(_keycodeMenu > 7) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "cntrling manual bots for rushing..");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
@@ -769,7 +770,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 6) _keycodeMenu = 0;
+					if(_keycodeMenu > 7) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "quick lvling of flwrs in chaos & throne...");
 					break;
 				case 97:			// #pad 1: store and then display the list of players in game
@@ -783,6 +784,57 @@ function NT_KeyEvents(keycode) {
 					break;
 			}
 			break;
+		case 7:						// this is for hi-lvl toon control
+			switch(keycode) {
+				case 46:			// [del] button (orig: Key_ExitGame) for listing key settings
+					d2B_keySettings(7);
+					break;
+				case 96:			// #pad 0: exit game (orig: Key_DoPrecast)
+					ExitGame();
+					break;
+				case Key_AntiIdle:	// [pause/break] button
+					_keycodeMenu = _keycodeMenu + 1;
+					if(_keycodeMenu > 7) _keycodeMenu = 0;
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "main control menu...");
+					break;
+				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
+					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
+					MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
+					Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+					Delay(Random(1000,1700));
+					Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+					break;
+				
+				case 97:			// #pad 1: refill, goto river wp, make a tp and wait for team
+					Print(COLOR_2 + "refill, goto river wp, make a tp and wait for team...");
+					if(InTown()) {	
+						NTTMGR_TownManager();			// refill
+						NTTM_TownMove("portalspot");
+						d2B_commonInitSetup(107);		// river wp
+					}
+					if(me.areaid == 107) {
+						var x_tmp = Random(0,6) - 3;
+						var y_tmp = Random(0,6) - 3;
+						NTM_MoveTo(me.areaid, 7813 + x_tmp, 5918 + y_tmp);
+					}
+					NTM_MakeTP();
+					Delay(Random(750,1500));
+					Say(". " + Random(1,134332));
+					break;
+				case 98:			// #pad 2: msg "." sending peeps to town
+					Print(COLOR_2 + "sending followers to town...");
+					if(InTown(me)) break;	
+					NTM_MakeTP();
+					Delay(Random(750,1500));
+					Say("' " + Random(1,134332));
+					break;
+				case 99:			// #pad 3: signal team to do a little jump, if leader is stuck by the team's closeness
+					Print(COLOR_2 + "signalling team to jump away...");
+					Delay(500);
+					Say("j " + Random(1,134332));
+					break;
+			}
+			break;
 	}
 }
 
@@ -790,7 +842,7 @@ function d2B_KeyCodeMain(keycode) {
 	switch(keycode) {
 		case 19:									// 19: Key_AntiIdle | scrolling thru keypad menus
 			_keycodeMenu = _keycodeMenu + 1;
-			if(_keycodeMenu > 6) _keycodeMenu = 0;
+			if(_keycodeMenu > 7) _keycodeMenu = 0;
 			Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "Baal customized keypad...");
 			Delay(Random(1000,1200));
 			break;
@@ -1234,7 +1286,9 @@ function d2B_KeyCodeMain(keycode) {
 		//
 		// act i
 			// Countess
-			if(me.areaid == 1) {	
+			if(me.areaid == 1 || me.areaid == 5) {
+				int _cnt = true;
+				if(me.areaid == 5) _cnt = false;
 				Print(COLOR_2 + "going for countess");
 				d2B_moveWP();
 				d2B_gotoWP(6);
@@ -1244,7 +1298,7 @@ function d2B_KeyCodeMain(keycode) {
 					d2B_takeStairs(20+i, false);
 					Delay(Random(1000,1200));
 					if(i==5) {
-						d2B_countess();
+						_cnt ? d2B_countess(true) : d2B_countess(false);
 					}
 				}
 				break;
@@ -1395,7 +1449,7 @@ function d2B_noobRushCtrls(keycode) {
 			break;
 		case 19:			// 19: Key_AntiIdle | scrolling thru keypad menus
 			_keycodeMenu = _keycodeMenu + 1;
-			if(_keycodeMenu > 6) _keycodeMenu = 0;
+			if(_keycodeMenu > 7) _keycodeMenu = 0;
 			Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "exploring and testing team arrays and their usage...");
 			Delay(Random(1000,1200));
 			break;
@@ -1500,7 +1554,7 @@ var _NTLW_timerLastDrink = new Array(5);
 
 function d2B_keySettings(menu) {
 	switch(menu) {
-		case 0:						// menu: 0 - main
+		case 0:						// menu: 0 - quick lvling of flwrs in chaos & throne
 				Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "quick lvling of flwrs in chaos & throne...");
 				Print(COLOR_5 + "Keypad:");
 				Print(COLOR_4 + "1: " + COLOR_7 + ". follow");
@@ -1513,8 +1567,40 @@ function d2B_keySettings(menu) {
 				Print(COLOR_4 + "8: " + COLOR_7 + "sending followers to a5 or a4 depending on leader's area");
 				Print(COLOR_4 + "9: " + COLOR_7 + "ldr & team precast");
 				Print(COLOR_4 + "' "+ COLOR_7 + "direct zon to replenish her javs");
+				Print(COLOR_4 + "]: " + COLOR_7 + "] chant everyone if out of town, chant only mercs in town");
 				break;
-	}
+		case 1:						// menu: 1 - main customized keycode menu
+				Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "main customized keycode menu...");
+				Print(COLOR_5 + "Keypad:");
+				Print(COLOR_4 + "1: " + COLOR_7 + ". follow");
+				Print(COLOR_4 + "2: " + COLOR_7 + "' town");
+				Print(COLOR_4 + "3: " + COLOR_7 + "j jump/move a bit");
+				Print(COLOR_4 + "4: " + COLOR_7 + "if ldr in town: tpSorc cTP | if ldr is in chaos: leechdiablo");
+				Print(COLOR_4 + "5: " + COLOR_7 + "if ldr in town: tpSorc tTP | is ldr is in throne: send peeps to safe leech baal, send ldr to baal");
+				Print(COLOR_4 + "6: " + COLOR_7 + "if ldr is a necro, revive skellies & revives");
+				Print(COLOR_4 + "7: " + COLOR_7 + "find exp shrine");
+				Print(COLOR_4 + "8: " + COLOR_7 + "sending followers to a5 or a4 depending on leader's area");
+				Print(COLOR_4 + "9: " + COLOR_7 + "ldr & team precast");
+				Print(COLOR_4 + "' "+ COLOR_7 + "direct zon to replenish her javs");
+				Print(COLOR_4 + "[: " + COLOR_7 + "corpsefire|treehead|cairn stones|malus||");
+				Print(COLOR_4 + "]: " + COLOR_7 + "] chant everyone if out of town, chant only mercs in town");
+				break;
+		case 7:						// menu: 7 - this is for hi-lvl toon control
+				Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "this is for hi-lvl toon control...");
+				Print(COLOR_5 + "Keypad:");
+				Print(COLOR_4 + "1: " + COLOR_7 + "river wp, move a bit | make a tp & call team");
+				Print(COLOR_4 + "2: " + COLOR_7 + "' town");
+				Print(COLOR_4 + "3: " + COLOR_7 + "j jump/move a bit");
+				Print(COLOR_4 + "4: " + COLOR_7 + "if ldr in town: tpSorc cTP | if ldr is in chaos: leechdiablo");
+				Print(COLOR_4 + "5: " + COLOR_7 + "if ldr in town: tpSorc tTP | is ldr is in throne: send peeps to safe leech baal, send ldr to baal");
+				Print(COLOR_4 + "6: " + COLOR_7 + "if ldr is a necro, revive skellies & revives");
+				Print(COLOR_4 + "7: " + COLOR_7 + "find exp shrine");
+				Print(COLOR_4 + "8: " + COLOR_7 + "sending followers to a5 or a4 depending on leader's area");
+				Print(COLOR_4 + "9: " + COLOR_7 + "ldr & team precast");
+				Print(COLOR_4 + "' "+ COLOR_7 + "direct zon to replenish her javs");
+				Print(COLOR_4 + "]: " + COLOR_7 + "] chant everyone if out of town, chant only mercs in town");
+				break;
+	}	
 	return 1;
 }
 
@@ -2367,8 +2453,10 @@ function d2B_chant(t) {
 		// Enchant player
 		var _player = NTC_FindUnit(NTC_UNIT_PLAYER);
 		//var _merc = NTC_FindUnit(NTC_UNIT_MERC);
-		if(!_player) return;
-		do {
+		if(!_player)
+			return;
+		do
+		{
 			if(_player.name !== me.name && GetDistance(me, _player) <= 20 && NTC_InMyParty(_player.name) && !t) {	
 				NTC_Delay(1250);
 				NTC_CastSkill(52, NTC_HAND_RIGHT, _player);
@@ -2385,6 +2473,7 @@ function d2B_chant(t) {
 			}
 		} while( _player.GetNext() )
 	}
+	
 	return;
 }
 //
@@ -2652,7 +2741,7 @@ function d2B_LXPC_FindShrines(a) {
 	NTTM_CheckAct();
 }
 //
-function d2B_countess() {
+function d2B_countess(_cnt) {
 	if(me.y > 11060 && me.y <= 11078){
 		NTM_MoveTo(me.areaid, 12544, 11066);
 	}
@@ -2704,6 +2793,10 @@ function d2B_countess() {
 				NTM_MoveTo(me.areaid, 12578, 11057);
 				NTM_MoveTo(me.areaid, 12582, 11043);
 			}
+		}
+		if(!_cnt) {	// if false, just make a tp and town 
+			Town();
+			return;
 		}
 		d2B_team(true);
 	}	
@@ -3066,4 +3159,4 @@ function d2B_initCharVars() {
 		if(!NTM_UsePortal("BluePortal", 1) Town();
 		break;
 	}
-*/
+*/	
