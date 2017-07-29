@@ -683,6 +683,9 @@ function d2B_Act(_loc) {							// Act scripts
 			isFollowingEnabled = false;
 			NTConfig_SkipRegularMonsters = false;
 			
+			//Say(".. " + Random(132,46355221));
+			//Delay(Random(3000,4000));
+			
 			if(me.areaid != 107) d2B_commonInitSetup(107);
 			
 			NTConfig_FastChaos = false;
@@ -721,7 +724,7 @@ function d2B_Act(_loc) {							// Act scripts
 			NTA_KillMonster(243);
 			NTSI_PickItems();
 			Delay(Random(8000,14000));
-			d2B_chkAct();
+			Town2();
 			break;
 		case("baal"):
 		//	baal
@@ -2863,7 +2866,7 @@ function d2B_Peeps() {								// store name of leader & followers in storePeeps.
 function d2B_rPeepsInGame() {						// return (true, _teamSize) : _teamSize accounts for all characters in game
 	Print(COLOR_3 + "Checking in on peeps");
 	Delay(Random(1000,3000));
-	d2B_msg("Peep check-in");
+	Print(COLOR_2 + "Peep check-in");
 	Delay(300);
 	// for checking if everyone is in game...
 	// if so, do continue
@@ -2878,12 +2881,12 @@ function d2B_rPeepsInGame() {						// return (true, _teamSize) : _teamSize accou
 			Print(COLOR_2 + _peeps[i] + " is not the game.");
 			allIn = false;
 			Delay(Random(3000,5000));
-			Say("/msg *" + _myName + " " + _peeps[i] + " missing.");
+			Print(COLOR_2 + _myName + " " + _peeps[i] + " missing.");
 			Delay(Random(2000,3000));
 		} else _teamSize = _teamSize + 1;
 	}
 	Delay(Random(3000,4000));
-	d2B_msg("Of the " + (_peeps.length - 1) + " extra peeps, there are " + (_teamSize) + " in game.");
+	Print(COLOR_2 + "Of the " + (_peeps.length - 1) + " extra peeps, there are " + (_teamSize) + " in game.");
 	Delay(300);
 	if(!allIn) return false;
 	return true;
@@ -3101,8 +3104,10 @@ function d2B_chkAct(act) {
 				_townid = NTC_AREA_ID_ACT_5;
 				break;
 		}
-		Town(); 
-		//if(!NTM_MakeTP(_townid)) return false;
+		NTM_MakeTp();
+		Delay(Random(2000,3000));
+		
+		if(!NTM_MakeTP(_townid)) return false;
 	}
 
 	if(arguments.length < 1) return true;
@@ -6099,6 +6104,66 @@ function Town() { 									// Done
 		return true;
 	}
 }
+function Town2() { 									// Done
+
+	if(!NTC_InTown(me)) {
+		// Try to take our own tp or the leader's tp
+		TP("");
+		Delay(500);
+		var _portal = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3226), 10);
+		var _prearea = me.areaid;
+		if(_portal) {
+			do {
+				if(GetDistance(me, _portal) < 15) {
+					NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
+					Delay(1500);
+					if(InTown()) break;
+				}
+				
+				while(me.areaid === 0) NTC_Delay(100);
+				
+				if(me.areaid !== _prearea) {
+					d2B_townMgr();
+					break;
+				}
+					
+			} while(_portal.GetNext());
+			Delay(500);
+		}
+		if(!InTown()) {
+			if(me.areaid == _prearea && !NTC_InTown(me)) { // If we failed, we need to make our own tp and try again
+				TP("");
+				Delay(500);
+				_portal = NTC_FindUnit(NTC_UNIT_OBJECT, GetLocaleString(3226), 10);
+				var _prearea = me.areaid;
+				
+				if(_portal) {
+					do {
+						if(GetDistance(me, _portal) < 10) {
+							NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
+							Delay(1500);
+							if(InTown()) break;
+						}
+						if(me.areaid !== _prearea) {
+							d2B_townMgr();
+							break;
+						}
+						
+						while(me.areaid == 0) NTC_Delay(100);
+						
+					} while(_portal.GetNext());
+					Delay(500);
+				}
+			}
+		}
+		if(me.areaid !== _prearea) return true; 
+		else return false;
+	}
+	else {
+		d2B_townMgr();
+		return true;
+	}
+}
 
 function Chant2() { 								// for chantress helper
 	if(me.classid != NTC_CHAR_CLASS_SORCERESS) return;
@@ -8477,16 +8542,19 @@ function d2B_sorcLdr(_boB) {
 	d2B_townMgr();
 	if(_boB) {
 		d2B_sorcLdrBoBabaPre(107);			// ldr sorc to river, calls followers, then initiates bo baba
-		Delay(Random(4000,6000));
+		Say("ummm 5 " + Random(10,100321));	// send team to A5 town
+		Print(COLOR_0 + "Gettin' goin' to zee throne...");
+		Delay(Random(6000,8000));
 		d2B_Act("baalSorcLdr");
 		Delay(Random(4000,6000));
-		d2B_commonInitSetup(103);			// goto A4 town
-		Print(COLOR_1 + "Done. Just a waitin' ... ");
-		Delay(Random(15000,20000));
-		Say("ummmm 4 " + Random(120,1463666));
+		d2B_sorcLdrBoBabaPre(107);			// ldr sorc to river, calls followers, then initiates bo baba
+		Say("ummm 4 " + Random(120,1463666));
 		Delay(Random(14000,16000));
 		d2B_Act("chaosSorcLdr");
-		Delay(Random(44000,66000));
+		for(i=9; i>=1; i--) {
+			Print(COLOR_2 + i + COLOR_0 + " left...");
+			Delay(Random(20000,26000));
+		}
 	}
 	return;
 }
@@ -8506,9 +8574,6 @@ function d2B_sorcLdrBoBabaPre(a) {
 		Delay(Random(3000,4000));
 		Say("' " + Random(10,100321));	// send team to town
 		Delay(Random(9000,12000));
-		Say("ummm 5 " + Random(10,100321));	// send team to A5 town
-		Print(COLOR_0 + "Gettin' goin' to zee throne...");
-		Delay(Random(1000,2000));
 	}
 	return;
 }
@@ -9050,6 +9115,7 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 /*	noteworthy & altered things:
 	_newSorcNoTele : NTMove.ntl line 34 | used to impede teleing of new sorces
 	NTConfig_Leader; stores leader's name here
+	NTConfig_StopIfStashInventoryFull variable msg to change: D2Etal/scripts/libs/common/NTTownManager.ntl
 */
 /*
 // Get the distance between our character and the leader
