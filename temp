@@ -728,7 +728,7 @@ function d2B_Act(_loc) {							// Act scripts
 			d2B_moveToStair(me.areaid, 131, false);
 			NTM_TakeStair(131);
 			
-			NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
+			NTM_MoveTo(me.areaid, 15118, 5051);				// safe: 15118, 5051 | centre: 15094, 5039 | orig(15112, 5068, 1, true)
 			NTM_MakeTP();
 			if(_dollChk) {
 				if(d2B_dollsoulChk()) {
@@ -741,14 +741,12 @@ function d2B_Act(_loc) {							// Act scripts
 				return;
 				}
 			}
-			if(_throneLeechers || _throneHelpers || _ldr) NTM_MakeTP();
 			_dollSoul = false;
 			
 			NTM_MoveTo(me.areaid, 15094, 5039);				// safe: 15118, 5051 | centre: 15094, 5039 | orig(15112, 5068, 1, true)
-			if(_throneLeechers || _throneHelpers) {
-				NTM_MakeTP();
-				d2B_msg(".");
-			}
+			NTM_MakeTP();
+			Say("." + Random(123,1234432));
+			
 			NTA_ClearPosition();
 			NT_ClearThroneInt();
 			
@@ -758,6 +756,53 @@ function d2B_Act(_loc) {							// Act scripts
 			Delay(300);
 			
 			d2B_baal();
+			Delay(Random(3000,4000));
+			d2B_chkAct();
+			break;
+		case("baalSorcLdr"):
+		//	baal
+		//
+			Print(COLOR_4 + "Running: " + COLOR_7 + "baal");
+			isFollowingEnabled = false;
+			NTConfig_SkipRegularMonsters = false;
+			
+			if(me.areaid != 129) d2B_commonInitSetup(129);
+			prewavespot = [15092, 5040];	// from: D2Etal/scripts/NTRush/rush_configs/Sorceress.ntl 
+			
+			d2B_moveToStair(me.areaid, 130, false);
+			NTM_TakeStair(130);
+			d2B_moveToStair(me.areaid, 131, false);
+			NTM_TakeStair(131);
+			
+			NTM_MoveTo(me.areaid, 15118, 5051);				// safe: 15118, 5051 | centre: 15094, 5039 | orig(15112, 5068, 1, true)
+			NTM_MakeTP();
+			if(_dollChk) {
+				if(d2B_dollsoulChk()) {
+				_dollSoul = true;
+				return;
+				}
+				Delay(100);
+				if(d2B_dollsoulChk()) {
+				_dollSoul = true;
+				return;
+				}
+			}
+			_dollSoul = false;
+			
+			NTM_MoveTo(me.areaid, 15094, 5039);				// safe: 15118, 5051 | centre: 15094, 5039 | orig(15112, 5068, 1, true)
+			NTM_MakeTP();
+			Say("." + Random(123,1234432));
+			
+			NTA_ClearPosition();
+			NT_ClearThroneInt();
+			
+			NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
+			
+			d2B_throneWavesSorcLdr();
+			Delay(300);
+			Say("' " + Random(123,1234432));
+			
+			d2B_baalSorcLdr();
 			Delay(Random(3000,4000));
 			d2B_chkAct();
 			break;
@@ -7898,6 +7943,89 @@ function d2B_throneWaves() {
 			break;
 	}
 	return;
+}
+function d2B_throneWavesSorcLdr() {
+	Delay(100);
+	while(1){
+		NTC_Delay(100);
+		NTM_MoveTo(me.areaid, prewavespot[0], prewavespot[1]);
+		if(me.GetState(2))
+			NTC_PutSkill(109, NTC_HAND_RIGHT);
+		for(i = 0 ; i < 6 ; i++){
+			_wave = NT_ThroneCheckInt();
+			if(_wave > 0)
+				break;
+			NTC_Delay(500);
+		}
+		_starttick = GetTickCount();
+		while(_wave == 0){
+			if(!NT_ThronePreAttackInt())
+				NTC_Delay(200);
+			if(GetTickCount()-_starttick > 17000){
+				NT_ClearThroneInt();
+				_starttick = GetTickCount();
+			}
+			_wave = NT_ThroneCheckInt();
+		}
+		switch(_wave){
+			case 1:
+				if(NTConfig_PreWaveTele){
+					NTM_TeleportTo(me.x+1, me.y+3);
+                }
+				NTA_ClearPosition(40, true, 2);
+				NTP_DoPrecast(true);
+				break;
+			case 2:
+				if(NTConfig_PreWaveTele){
+					NTM_TeleportTo(me.x+1, me.y+3);
+                }
+				if(NTConfig_HolyBoltBaal){
+					if (me.classid == NTC_CHAR_CLASS_PALADIN && NTConfig_AttackSkill[5] == 101)
+						achmel();
+				}
+				NTA_ClearPosition(40, true, 2);
+				if(NTConfig_Wave2PSNCheck && me.GetState(2) != -1){
+					NTTMGR_VisitTown();
+				}
+				Delay(700);
+				break;
+			case 3:
+			    d2B_msg(".");
+			    Delay(100);
+				if(NTConfig_PreWaveTele){
+					NTM_TeleportTo(me.x+1, me.y+3);
+                }
+				NTA_ClearPosition(40, true, 2);
+				if(NTConfig_Wave3Move > 0){
+					NT_CheckHydraInt();
+				}
+				break;
+			case 4:
+			   Delay(100);
+				if(NTConfig_PreWaveTele){
+					NTM_TeleportTo(me.x+1, me.y+3);
+                }
+				NTA_ClearPosition(40, true, 2);
+				break;
+			case 5:
+				if(NTConfig_PreWaveTele){
+					NTM_TeleportTo(me.x+1, me.y+3);
+                }
+				NTA_ClearPosition(40, true, 2);
+				break;
+			default:
+				if(NTConfig_PreWaveTele){
+					NTM_TeleportTo(me.x+1, me.y+3);
+                }
+				NTA_ClearPosition(40, true, 2);
+				break;
+		}
+		if(_wave != 0) // Need to force a one time cast/wave Assassin only
+			_trapsPreCasted = false;
+		if(_wave >= 5)
+			break;
+	}
+	return;
 }	
 function d2B_baal() {
 	var _portal;
@@ -7926,6 +8054,45 @@ function d2B_baal() {
 	}
 	NTM_MoveTo(me.areaid, 15138, 5916);
     if(d2B_usingAFollower || d2B_usingSorcFlwrs) d2B_team2(true);
+	
+	if(!d2B_killBaal(544)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTA_KillMonster()");
+		return;
+	}
+	NTSI_PickItems();
+	Delay(Random(2000,4000));
+	
+	return;
+}
+function d2B_baalSorcLdr() {
+	var _portal;
+	NTM_MoveTo(me.areaid, 15089, 5006);
+	NTP_DoPrecast(true);
+	Delay(300)
+	
+	for(var i = 0; i < 60; i++) {
+		Delay(500);
+		if(!NTC_FindUnit(NTC_UNIT_MONSTER, 543)) {
+			break;
+		}
+		if(i >= 58) {
+			d2B_msg("looks like baal is bugged");
+		}
+	}
+	
+	_portal = NTC_FindUnit(NTC_UNIT_OBJECT, 563, 1);
+	if(!_portal){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTC_FindUnit()");
+		return;
+	}
+	if(!NTM_UsePortal("Portal", 132, null, _portal)){
+		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_UsePortal()");
+		return;
+	}
+	NTM_MoveTo(me.areaid, 15138, 5916);
+    NTM_MakeTP();
+	Delay(300);
+	Say(". " + Random(1333,123322));
 	
 	if(!d2B_killBaal(544)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTA_KillMonster()");
@@ -8298,27 +8465,30 @@ function d2B_sorcLdr(_boB) {
 	if(_boB) {
 		d2B_sorcLdrBoBabaPre(107);		// ldr sorc to river, calls followers, then initiates bo baba
 		Delay(Random(4000,6000));
-		//d2B_Act("chaosSorcLdr");
+		d2B_Act("baalSorcLdr");
 		Delay(Random(30000,40000));	
 	}
 	return;
 }
 function d2B_sorcLdrBoBabaPre(a) {
 	d2B_commonInitSetup(107);			// goto river wp
-	NTM_MoveTo(em.areaid, (7813 + Random(0,6) - 3), (5918 + Random(0,6) - 3));	// tele to a spot where bo is not impeded by river wp area
+	NTM_MoveTo(me.areaid, (7813 + Random(0,6) - 3), (5918 + Random(0,6) - 3));	// tele to a spot where bo is not impeded by river wp area
 	Delay(300);
 	NTM_MakeTP();
 	
-	Say("." + Random(10,100321));		// call peeps
+	Say(". " + Random(10,100321));		// call peeps
 	Delay(Random(30000,40000));			// wait enough time for all to come
 	
 	if(me.areaid == 107) {
 		Say("; " + Random(10,100321));	// precast all including bo baba
 		Delay(Random(6000,8000));
 		NTP_DoPrecast(true);
+		Delay(Random(3000,4000));
+		Say("' " + Random(10,100321));	// send team to town
+		Delay(Random(9000,12000));
+		Say("ummm 5 " + Random(10,100321));	// send team to A5 town
+		Print(COLOR_0 + "Gettin' goin' to zee throne...");
 		Delay(Random(1000,2000));
-		Say("ummm 5" + Random(10,100321));	// send team to act 5
-		Delay(Random(3000,5000));
 	}
 	return;
 }
