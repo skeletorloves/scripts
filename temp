@@ -13,6 +13,11 @@
 		
 		var _teamSize 			= 8;				// size of team to check for
 		var _PPamount 			= 8;				// size of party to check for; it does not include leader
+		
+		/*														// project to work on
+		var _sorcTeam			= ["a", "b", "c"];				// sorc follower names
+		var _Sorcies			= _sorcTeam.length;				// number of sorc followers
+		*/
 	
 		var _teamBO 			= false;			// send team to a safe wp and bo
 		var _noBoer 			= false;			// for impeding boer routines and the delays associated with those in throne
@@ -686,6 +691,11 @@ function d2B_Act(_loc) {							// Act scripts
 			
 			NTM_MoveTo(108, 7790, 5544);			// tele to just inside the enterance			
 			NTM_MakeTP();
+			Delay(300);
+			Say("sorc yo " + Random(756,87757747));	// call follower sorcies to follow
+			Delay(300);
+			
+			//d2B_callSorcies(_Sorcies);			// new project: to work on
 
 			NTCS_ClearPosition(30, EntranceSort);
 			
@@ -710,7 +720,7 @@ function d2B_Act(_loc) {							// Act scripts
 			}
 			NTA_KillMonster(243);
 			NTSI_PickItems();
-			Delay(1000);
+			Delay(Random(8000,14000));
 			d2B_chkAct();
 			break;
 		case("baal"):
@@ -791,7 +801,7 @@ function d2B_Act(_loc) {							// Act scripts
 			
 			NTM_MoveTo(me.areaid, 15094, 5039);				// safe: 15118, 5051 | centre: 15094, 5039 | orig(15112, 5068, 1, true)
 			NTM_MakeTP();
-			Say("." + Random(123,1234432));
+			Say(". " + Random(123,1234432));
 			
 			NTA_ClearPosition();
 			NT_ClearThroneInt();
@@ -800,10 +810,14 @@ function d2B_Act(_loc) {							// Act scripts
 			
 			d2B_throneWavesSorcLdr();
 			Delay(300);
+			Say("; " + Random(124,14663665));
+			Delay(Random(7000,10000));
 			Say("' " + Random(123,1234432));
+			Delay(Random(7000,10000));
 			
 			d2B_baalSorcLdr();
-			Delay(Random(3000,4000));
+			Say("; " + Random(123,1234432));
+			Delay(Random(6000,9000));
 			d2B_chkAct();
 			break;
 	}	
@@ -3044,16 +3058,12 @@ function classid(i) {
 function d2B_newGmDlyPeepChk() {
 	Print(COLOR_2 + "Taking an extended break, so as to give the peeps time to enter game...");
 	Delay(Random(50000,60000));
-	d2B_msg(",");
-	Delay(Random(9300,15000));
 		
 	// check to see if peeps have arrived...
 		
 	d2B_Peeps();
 	if(d2B_rPeepsInGame(true)) {
 		Print(COLOR_7 + "All peeps are in the game.");
-		Delay(1000);
-		if(_msgMe) Say("All peeps in!");
 	}
 	return;
 }
@@ -5065,6 +5075,9 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 						case "team":
 									d2B_peepsMe();
 									d2b_peepsMsgMe();
+									break;
+						case "yo":
+									isFollowingEnabled = true;
 									break;
 					}	
 					break;
@@ -7990,7 +8003,7 @@ function d2B_throneWavesSorcLdr() {
 				Delay(700);
 				break;
 			case 3:
-			    d2B_msg(".");
+			    Say(". " + Random(300,10238888));
 			    Delay(100);
 				if(NTConfig_PreWaveTele){
 					NTM_TeleportTo(me.x+1, me.y+3);
@@ -8099,7 +8112,7 @@ function d2B_baalSorcLdr() {
 		return;
 	}
 	NTSI_PickItems();
-	Delay(Random(2000,4000));
+	Delay(Random(8000,14000));
 	
 	return;
 }
@@ -8463,10 +8476,17 @@ function d2B_sorcLdr(_boB) {
 	d2B_chkAct(4);
 	d2B_townMgr();
 	if(_boB) {
-		d2B_sorcLdrBoBabaPre(107);		// ldr sorc to river, calls followers, then initiates bo baba
+		d2B_sorcLdrBoBabaPre(107);			// ldr sorc to river, calls followers, then initiates bo baba
 		Delay(Random(4000,6000));
 		d2B_Act("baalSorcLdr");
-		Delay(Random(30000,40000));	
+		Delay(Random(4000,6000));
+		d2B_commonInitSetup(103);			// goto A4 town
+		Print(COLOR_1 + "Done. Just a waitin' ... ");
+		Delay(Random(15000,20000));
+		Say("ummmm 4 " + Random(120,1463666));
+		Delay(Random(14000,16000));
+		d2B_Act("chaosSorcLdr");
+		Delay(Random(44000,66000));
 	}
 	return;
 }
