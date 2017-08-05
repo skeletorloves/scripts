@@ -13,7 +13,7 @@ var _dollSoul;
 var _follow = false;
 var _barbHop = false
 
-var tpSorc = "aaa";
+var _tpSorc = "aaa";
 var _SkeletonArmy = 11;
 var _Revives = 23;
 
@@ -132,8 +132,8 @@ function NT_KeyEvents(keycode) {
 			case 97:			// #pad 1: msg "." call peeps to follow
 			case 98:			// #pad 2: msg "." sending peeps to town
 			case 99:			// #pad 3: signal team to do a little jump, if leader is stuck by the team's closeness
-			case 100:			// #pad 4: sending tpSorc to chaos enterance, to make a tp, and return to town
-			case 101:			// #pad 5: sending tpSorc to throne enterance, to make a tp, and return to town
+			case 100:			// #pad 4: sending _tpSorc to chaos enterance, to make a tp, and return to town
+			case 101:			// #pad 5: sending _tpSorc to throne enterance, to make a tp, and return to town
 			case 102:			// #pad 6: if I am a necro, make skellies and revives
 			case 103:			// #pad 7: sending followers to a5 or a4 depending on leader's area
 			case 105:			// #pad 9: buffing
@@ -150,7 +150,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle:	// [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 6) _keycodeMenu = 0;
+					if(_keycodeMenu > 7) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "main control menu...");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
@@ -179,12 +179,12 @@ function NT_KeyEvents(keycode) {
 					Delay(500);
 					if(d2B_usingAFollower) d2B_msg("j " + Random(1,134332));
 					break;
-				case 100:			// #pad 4:	sending tpSorc to chaos enterance, to make a tp, and return to town
+				case 100:			// #pad 4:	sending _tpSorc to chaos enterance, to make a tp, and return to town
 									//			if in Chaos, sends team to hide & leech diablo exp
 					if(me.areaid == 103) {
-						Print(COLOR_2 + "sending " + tpSorc + " to chaos to tp...");
+						Print(COLOR_2 + "sending " + _tpSorc + " to chaos to tp...");
 						Delay(500);
-						if(d2B_usingAFollower) d2B_msg(tpSorc + " cTP " + Random(1,134332));
+						if(d2B_usingAFollower) d2B_msg(_tpSorc + " cTP " + Random(1,134332));
 						break;
 					}
 					if(me.areaid == 108) {
@@ -201,12 +201,12 @@ function NT_KeyEvents(keycode) {
 						break;
 					}
 					break;
-				case 101:			// #pad 5:	sending tpSorc to throne enterance, to make a tp, and return to town
+				case 101:			// #pad 5:	sending _tpSorc to throne enterance, to make a tp, and return to town
 									//			if in throne, sends team to safely leech baal in wordlstone chamber
 					if(me.areaid == 103) {
-						Print(COLOR_2 + "sending " + tpSorc + " to throne to tp...");
+						Print(COLOR_2 + "sending " + _tpSorc + " to throne to tp...");
 						Delay(500);
-						if(d2B_usingAFollower) d2B_msg(tpSorc + " tTP " + Random(1,134332));
+						if(d2B_usingAFollower) d2B_msg(_tpSorc + " tTP " + Random(1,134332));
 						break;
 					}
 					if(me.areaid == 131) {
@@ -244,26 +244,31 @@ function NT_KeyEvents(keycode) {
 					NTP_DoPrecast();
 					NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 10, 10); // head to cairn stones
 					NTM_UsePortal("Portal", 38);	// use the portal to Tristram
+					Delay(Random(500,1000));
+					NTM_MoveTo(me.areaid, (25049 + Random(0,10) - 5), (5176 + Random(0,10) - 5)); // move close to where wirt's body is
+					Delay(200);
 					_wirtbody = NTC_FindUnit(NTC_UNIT_OBJECT, 268);
-					NTM_MoveTo(_wirtbody.areaid, _wirtbody.x+3, _wirtbody.y);
-					NTC_OpenChest(_wirtbody);
-					NTC_PingDelay(500);
-					for (i = 0; i < 10; i++){
-						_leg = NTC_FindUnit(NTC_UNIT_ITEM, 88);
-						if(_leg) break;
-					}
-					for (i = 0; i < 20; i++){
-						if ((i % 5) == 0){
-							if (_leg.mode == 3 || _leg.mode == 5){
-								if (NTC_ClearCursor())
-								NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _leg);
-							}
+					if(_wirtbody) {	
+						NTM_MoveTo(_wirtbody.areaid, _wirtbody.x+3, _wirtbody.y);
+						NTC_OpenChest(_wirtbody);
+						NTC_PingDelay(500);
+						for (i = 0; i < 10; i++){
+							_leg = NTC_FindUnit(NTC_UNIT_ITEM, 88);
+							if(_leg) break;
 						}
-						NTC_PingDelay(100);
-						if (_leg.mode != 3 && _leg.mode != 5){
-							Print(COLOR_4 + "Zee leg is on me...");
-							NTC_PingDelay(200);
-							break;
+						for (i = 0; i < 20; i++){
+							if ((i % 5) == 0){
+								if (_leg.mode == 3 || _leg.mode == 5){
+									if (NTC_ClearCursor())
+									NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _leg);
+								}
+							}
+							NTC_PingDelay(100);
+							if (_leg.mode != 3 && _leg.mode != 5){
+								Print(COLOR_4 + "Zee leg is on me...");
+								NTC_PingDelay(200);
+								break;
+							}
 						}
 					}
 					NTM_MakeTP(1);
@@ -295,7 +300,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 6) _keycodeMenu = 0;
+					if(_keycodeMenu > 7) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "rushing customized manual key menu");
 					break;
 				case 103:			// #pad 7: grab exp shrine (orig:Key_MyChicken)
@@ -371,7 +376,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 6) _keycodeMenu = 0;
+					if(_keycodeMenu > 7) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "experimental hopping barbs menu...");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
@@ -710,7 +715,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 6) _keycodeMenu = 0;
+					if(_keycodeMenu > 7) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "cntrling manual bots for rushing..");
 					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
@@ -796,7 +801,7 @@ function NT_KeyEvents(keycode) {
 					break;
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
-					if(_keycodeMenu > 6) _keycodeMenu = 0;
+					if(_keycodeMenu > 7) _keycodeMenu = 0;
 					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "quick lvling of flwrs in chaos & throne...");
 					break;
 				case 97:			// #pad 1: store and then display the list of players in game
@@ -810,6 +815,75 @@ function NT_KeyEvents(keycode) {
 					break;
 			}
 			break;
+		case 7:						// this is for cowing, then ctrl'ing sorc to make tps
+			switch(keycode) {
+				case 46:			// [del] button (orig: Key_ExitGame) for listing key settings
+					d2B_keySettings(0);
+					break;
+				case 96:			// #pad 0: exit game (orig: Key_DoPrecast)
+					ExitGame();
+					break;
+				case Key_AntiIdle:	// [pause/break] button
+					_keycodeMenu = _keycodeMenu + 1;
+					if(_keycodeMenu > 7) _keycodeMenu = 0;
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "main control menu...");
+					break;
+				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
+					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
+					MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
+					Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+					Delay(Random(1000,1700));
+					Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+					break;
+				case 97:			// #pad 1: msg "." call peeps to follow
+					Print(COLOR_2 + "calling followers...");
+					if(InTown(me)) {
+						if(d2B_usingAFollower) d2B_msg(". " + Random(1,134332));
+						break;
+					}
+					NTM_MakeTP();
+					Delay(500);
+					if(d2B_usingAFollower) d2B_msg(". " + Random(1,134332));
+					break;
+				case 98:			// #pad 2: msg "." sending peeps to town
+					Print(COLOR_2 + "sending followers to town...");
+					if(InTown(me)) {
+						if(d2B_usingAFollower) d2B_msg("' " + Random(1,134332));
+						break;	
+					}
+					NTM_MakeTP();
+					Delay(500);
+					if(d2B_usingAFollower) d2B_msg("' " + Random(1,134332));
+					break;
+				// _________________________________________________________
+				case 99:			// #pad 3: ctrl'ing sorc
+					Print(COLOR_2 + "ctrl'ing sorc...");
+					Delay(500);
+					switch(me.areaid) {
+						case 1: 	Say(_tpSorcC + " counttp " + Random(1,134332));
+									break;
+						case 40:	Say(_tpSorcC + " dtp " + Random(1,134332));
+									break;
+						case 75:	Say(_tpSorcC + " mtp " + Random(1,134332));
+									break;
+						case 103:	Say(_tpSorcC + " ctp " + Random(1,134332));
+									break;
+						case 109:	Say(_tpSorcC + " ttp " + Random(1,134332));
+									break;
+					}
+					break;
+				case 100:			// #pad 4: ctrl'ing sorc
+					Print(COLOR_2 + "ctrl'ing sorc...");
+					Delay(500);
+					switch(me.areaid) {
+						case 1: 	Say(_tpSorcC + " atp " + Random(1,134332));
+									break;
+						case 75:	Say(_tpSorcC + " cctp " + Random(1,134332));
+									break;
+					}
+					break;
+			}
+			break;
 	}
 }
 
@@ -817,7 +891,7 @@ function d2B_KeyCodeMain(keycode) {
 	switch(keycode) {
 		case 19:									// 19: Key_AntiIdle | scrolling thru keypad menus
 			_keycodeMenu = _keycodeMenu + 1;
-			if(_keycodeMenu > 6) _keycodeMenu = 0;
+			if(_keycodeMenu > 7) _keycodeMenu = 0;
 			Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "Baal customized keypad...");
 			Delay(Random(1000,1200));
 			break;
@@ -1422,7 +1496,7 @@ function d2B_noobRushCtrls(keycode) {
 			break;
 		case 19:			// 19: Key_AntiIdle | scrolling thru keypad menus
 			_keycodeMenu = _keycodeMenu + 1;
-			if(_keycodeMenu > 6) _keycodeMenu = 0;
+			if(_keycodeMenu > 7) _keycodeMenu = 0;
 			Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "exploring and testing team arrays and their usage...");
 			Delay(Random(1000,1200));
 			break;
@@ -1533,13 +1607,34 @@ function d2B_keySettings(menu) {
 				Print(COLOR_4 + "1: " + COLOR_7 + ". follow");
 				Print(COLOR_4 + "2: " + COLOR_7 + "' town");
 				Print(COLOR_4 + "3: " + COLOR_7 + "j jump/move a bit");
-				Print(COLOR_4 + "4: " + COLOR_7 + "if ldr in town: tpSorc cTP | if ldr is in chaos: leechdiablo");
-				Print(COLOR_4 + "5: " + COLOR_7 + "if ldr in town: tpSorc tTP | is ldr is in throne: send peeps to safe leech baal, send ldr to baal");
+				Print(COLOR_4 + "4: " + COLOR_7 + "if ldr in town: _tpSorc cTP | if ldr is in chaos: leechdiablo");
+				Print(COLOR_4 + "5: " + COLOR_7 + "if ldr in town: _tpSorc tTP | is ldr is in throne: send peeps to safe leech baal, send ldr to baal");
 				Print(COLOR_4 + "6: " + COLOR_7 + "if ldr is a necro, revive skellies & revives");
 				Print(COLOR_4 + "7: " + COLOR_7 + "find exp shrine");
-				Print(COLOR_4 + "8: " + COLOR_7 + "sending followers to a5 or a4 depending on leader's area");
+				Print(COLOR_4 + "8: " + COLOR_7 + "enable or disable pickit");
 				Print(COLOR_4 + "9: " + COLOR_7 + "ldr & team precast");
 				Print(COLOR_4 + "' "+ COLOR_7 + "direct zon to replenish her javs");
+				break;
+		case 7:						// meun: 7 - for cowing and ctrl'ing sorc
+				Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "for cowing and ctrl'ing sorc");
+				Print(COLOR_5 + "Keypad:");
+				Print(COLOR_4 + "1: " + COLOR_7 + ". follow");
+				Print(COLOR_4 + "2: " + COLOR_7 + "' town");
+				// ________________________________________
+				Print(COLOR_4 + "3: " + COLOR_7 + "if a1 - sorc: " + COLOR_2 + _tpSorc + COLOR_7 + " counttp");
+				Print(COLOR_4 + "3: " + COLOR_7 + "if a2 - sorc: " + COLOR_2 + _tpSorc + COLOR_7 + " dtp");
+				Print(COLOR_4 + "3: " + COLOR_7 + "if a3 - sorc: " + COLOR_2 + _tpSorc + COLOR_7 + " mtp");
+				Print(COLOR_4 + "3: " + COLOR_7 + "if a4 - sorc: " + COLOR_2 + _tpSorc + COLOR_7 + " ctp");
+				Print(COLOR_4 + "3: " + COLOR_7 + "if a5 - sorc: " + COLOR_2 + _tpSorc + COLOR_7 + " ttp");
+				Print(COLOR_4 + "4: " + COLOR_7 + "if a1 - sorc: " + COLOR_2 + _tpSorc + COLOR_7 + " atp");
+				Print(COLOR_4 + "4: " + COLOR_7 + "if a4 - sorc: " + COLOR_2 + _tpSorc + COLOR_7 + " cctp");
+				// ________________________________________
+			/*	Print(COLOR_4 + "5: " + COLOR_7 + "if a5 - sorc: " + COLOR_2 + _tpSorc + COLOR_7 + " dtp");
+				Print(COLOR_4 + "6: " + COLOR_7 + "sorc: " + COLOR_2 + _tpSorc + COLOR_7 + " mtp");
+				Print(COLOR_4 + "7: " + COLOR_7 + "sorc: " + COLOR_2 + _tpSorc + COLOR_7 + " ctp");*/
+				Print(COLOR_4 + "8: " + COLOR_7 + "enable or disable pickit");
+			/*	Print(COLOR_4 + "9: " + COLOR_7 + "sorc: " + COLOR_2 + _tpSorc + COLOR_7 + " cctp");
+				Print(COLOR_4 + "' "+ COLOR_7 + "direct zon to replenish her javs");*/
 				break;
 	}
 	return 1;
