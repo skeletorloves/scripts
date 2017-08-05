@@ -1,6 +1,6 @@
 /*
 	
-	20170510a NTMManualGame.ntj
+	20170805a NTMManualGame.ntj
 	
 */
 
@@ -802,7 +802,7 @@ function NT_KeyEvents(keycode) {
 				case Key_AntiIdle: // [pause/break] button
 					_keycodeMenu = _keycodeMenu + 1;
 					if(_keycodeMenu > 7) _keycodeMenu = 0;
-					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "quick lvling of flwrs in chaos & throne...");
+					Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "for cowing, then ctrl'ing sorc to make tps...");
 					break;
 				case 97:			// #pad 1: store and then display the list of players in game
 					d2B_storePlayerNames();
@@ -838,37 +838,37 @@ function NT_KeyEvents(keycode) {
 				case 97:			// #pad 1: msg "." call peeps to follow
 					Print(COLOR_2 + "calling followers...");
 					if(InTown(me)) {
-						if(d2B_usingAFollower) d2B_msg(". " + Random(1,134332));
+						if(d2B_usingAFollower) Say(". " + Random(1,134332));
 						break;
 					}
 					NTM_MakeTP();
 					Delay(500);
-					if(d2B_usingAFollower) d2B_msg(". " + Random(1,134332));
+					if(d2B_usingAFollower) Say(". " + Random(1,134332));
 					break;
 				case 98:			// #pad 2: msg "." sending peeps to town
 					Print(COLOR_2 + "sending followers to town...");
 					if(InTown(me)) {
-						if(d2B_usingAFollower) d2B_msg("' " + Random(1,134332));
+						if(d2B_usingAFollower) Say("' " + Random(1,134332));
 						break;	
 					}
 					NTM_MakeTP();
 					Delay(500);
-					if(d2B_usingAFollower) d2B_msg("' " + Random(1,134332));
+					if(d2B_usingAFollower) Say("' " + Random(1,134332));
 					break;
 				// _________________________________________________________
 				case 99:			// #pad 3: ctrl'ing sorc
 					Print(COLOR_2 + "ctrl'ing sorc...");
 					Delay(500);
 					switch(me.areaid) {
-						case 1: 	Say(_tpSorcC + " counttp " + Random(1,134332));
+						case 1: 	Say(_tpSorc + " counttp " + Random(1,134332));
 									break;
-						case 40:	Say(_tpSorcC + " dtp " + Random(1,134332));
+						case 40:	Say(_tpSorc + " dtp " + Random(1,134332));
 									break;
-						case 75:	Say(_tpSorcC + " mtp " + Random(1,134332));
+						case 75:	Say(_tpSorc + " mtp " + Random(1,134332));
 									break;
-						case 103:	Say(_tpSorcC + " ctp " + Random(1,134332));
+						case 103:	Say(_tpSorc + " ctp " + Random(1,134332));
 									break;
-						case 109:	Say(_tpSorcC + " ttp " + Random(1,134332));
+						case 109:	Say(_tpSorc + " ttp " + Random(1,134332));
 									break;
 					}
 					break;
@@ -876,11 +876,49 @@ function NT_KeyEvents(keycode) {
 					Print(COLOR_2 + "ctrl'ing sorc...");
 					Delay(500);
 					switch(me.areaid) {
-						case 1: 	Say(_tpSorcC + " atp " + Random(1,134332));
+						case 1: 	Say(_tpSorc + " atp " + Random(1,134332));
 									break;
-						case 75:	Say(_tpSorcC + " cctp " + Random(1,134332));
+						case 75:	Say(_tpSorc + " cctp " + Random(1,134332));
 									break;
 					}
+					break;
+				// _________________________________________________________
+				case 220: 			// "\": grabbing wirt's leg
+					Print(COLOR_2 + "grabbing wirt's leg...");
+					Delay(500);
+					NTTM_TownMove("waypoint");
+					NTM_TakeWaypoint(4);
+					NTP_DoPrecast();
+					NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 10, 10); // head to cairn stones
+					NTM_UsePortal("Portal", 38);	// use the portal to Tristram
+					Delay(Random(500,1000));
+					NTM_MoveTo(me.areaid, (25049 + Random(0,10) - 5), (5176 + Random(0,10) - 5)); // move close to where wirt's body is
+					Delay(200);
+					_wirtbody = NTC_FindUnit(NTC_UNIT_OBJECT, 268);
+					if(_wirtbody) {	
+						NTM_MoveTo(_wirtbody.areaid, _wirtbody.x+3, _wirtbody.y);
+						NTC_OpenChest(_wirtbody);
+						NTC_PingDelay(500);
+						for (i = 0; i < 10; i++){
+							_leg = NTC_FindUnit(NTC_UNIT_ITEM, 88);
+							if(_leg) break;
+						}
+						for (i = 0; i < 20; i++){
+							if ((i % 5) == 0){
+								if (_leg.mode == 3 || _leg.mode == 5){
+									if (NTC_ClearCursor())
+									NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _leg);
+								}
+							}
+							NTC_PingDelay(100);
+							if (_leg.mode != 3 && _leg.mode != 5){
+								Print(COLOR_4 + "Zee leg is on me...");
+								NTC_PingDelay(200);
+								break;
+							}
+						}
+					}
+					NTM_MakeTP(1);
 					break;
 			}
 			break;
@@ -1635,6 +1673,7 @@ function d2B_keySettings(menu) {
 				Print(COLOR_4 + "8: " + COLOR_7 + "enable or disable pickit");
 			/*	Print(COLOR_4 + "9: " + COLOR_7 + "sorc: " + COLOR_2 + _tpSorc + COLOR_7 + " cctp");
 				Print(COLOR_4 + "' "+ COLOR_7 + "direct zon to replenish her javs");*/
+				Print(COLOR_4 + "\\ "+ COLOR_7 + "grab Wirt's leg");
 				break;
 	}
 	return 1;
