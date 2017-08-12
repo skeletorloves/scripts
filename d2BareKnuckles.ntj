@@ -85,7 +85,7 @@
 	var _test = false;
 	var _debug = false;						// for testing chaos w/o using followere
 	var _quiet = true;						// msg free silence
-	var _msgMe = true;						// for enabling whispering to _myName
+	var _msgMe = false;						// for enabling whispering to _myName
 	
 	var _NTNihlathak_Locations = new Array(8, 4);
 
@@ -817,13 +817,13 @@ function d2B_Act(_loc) {							// Act scripts
 			
 			d2B_throneWavesSorcLdr();
 			Delay(300);
-			if(_msgMe) Say("; " + Random(124,14663665));
+			Say("; " + Random(124,14663665));
 			Delay(Random(7000,10000));
 			if(_msgMe) Say("' " + Random(123,1234432));
 			Delay(Random(7000,10000));
 			
 			d2B_baalSorcLdr();
-			if(_msgMe) Say("; " + Random(123,1234432));
+			Say("; " + Random(123,1234432));
 			Delay(Random(6000,9000));
 			d2B_chkAct();
 			break;
@@ -884,7 +884,8 @@ function d2B_mfSpots(_spots, _skpRegMnstrs) {
 		//	corpsefire
 		//
 			Print(COLOR_7 + "Running: " + COLOR_4 + "going for corpsefire");
-			if(InTown) d2B_moveWP();
+			InTown();
+			d2B_moveWP();
 			d2B_gotoWP(3);
 			NTP_DoPrecast(true);
 			d2B_moveToStair(2,8, false);					// head to front of den as a starting point
@@ -893,7 +894,77 @@ function d2B_mfSpots(_spots, _skpRegMnstrs) {
 			if(d2B_usingAFollower) d2B_team(true);
 			//d2B_teamPro(true,3319,40,true,1,"n w",false);						// 3319: Corpsefire
 			break;
-				
+		case("countess"):
+		//	countess
+		//
+			Print(COLOR_7 + "Running: " + COLOR_4 + "going for Countess");
+			InTown();
+			NTTMGR_TownManager();
+			d2B_moveWP();
+			d2B_gotoWP(6);
+			
+			NTP_DoPrecast(true);
+			
+			for(var i = 0 ; i < 6 ; i++) {
+				d2B_moveToStair(me.areaid,20+i, false);	// go to the forgotten tower and do tower things
+				d2B_takeStairs(20+i, false);
+			}
+			NTP_DoPrecast(true);
+			
+			_countess = NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(2875), 5);
+			_x = _countess.x + (Random(0,20) - 10);
+			_y = _countess.y + (Random(0,20) - 10);
+			NTM_MoveTo(me.areaid, _x, _y);
+			
+			NTM_MakeTP();
+			Delay(300);
+			NTA_ClearPosition(5,true)
+			
+			NTA_KillMonster(GetLocaleString(2875));
+			NTSI_PickItems();
+			Delay(Random(500,1200);
+			NTSI_PickItems();
+			Delay(700);
+			
+			NTM_MoveTo(me.areaid, _x, _y);
+			NTM_UsePortal("BluePortal", 1, me.charname);
+			d2B_moveWP();
+			break;
+		case("andy"):
+		//	andy
+		//
+			Print(COLOR_7 + "Running: " + COLOR_4 + "going for Andariel");
+			InTown();
+			NTTMGR_TownManager();
+			d2B_moveWP();
+			d2B_gotoWP(35);
+			
+			NTP_DoPrecast(true);
+
+			for(i = 0; i < 2; i++) {
+				NTM_MoveToStair(me.areaid, 36 + i);
+				NTM_TakeStair(36 + i);
+			}
+
+			NTC_PingDelay(100);
+			
+			NTM_MoveTo(me.areaid, 22589, 9596);
+			NTM_MakeTP();
+			Delay(700);
+			
+			NTP_DoPrecast(true);
+			NTM_MoveTo(me.areaid, 22532, 9553);
+
+			NTA_KillMonster(156);
+			NTSI_PickItems();
+			Delay(Random(500,1200);
+			NTSI_PickItems();
+			Delay(700);
+
+			NTM_MoveTo(me.areaid, 22589, 9596);
+			NTM_UsePortal("BluePortal", 1, me.charname);
+			d2B_moveWP();
+			break;	
 	}
 	return;		
 }
@@ -4243,8 +4314,12 @@ function d2H_load() {
     	NTSI_LoadNIPFiles("NTBot/item_configs");
 	NTA_Initialize();
 	
-	NTConfig_DoNotFollowAreas = [0];	// Won't take a WP or TP to these areas 107,129
-	NTConfig_DoNotAttackAreas = [0];		// Won't attack in these areas
+	NTConfig_DoNotFollowAreas = [0];
+	NTConfig_DoNotAttackAreas = [0];
+	
+	if(me.classid == NTC_CHAR_CLASS_SORCERESS) NTConfig_DoNotFollowAreas = [6,20,35,107,129,130];							// Won't take a WP or TP to these areas 107,129
+	if(me.classid != NTC_CHAR_CLASS_SORCERESS) NTConfig_DoNotFollowAreas = [1,6,20,21,22,23,24,35,36,37,103,107,129,130];
+		
 	NTConfig_AllowCommands = true;									// Allows leader to issue commands such as 'exit', 'town', 'follow', etc.  'follow' is ON by default.
 	NTConfig_PortalAtLeechersCorpses = false;						// Make a TP at players corpses when they die near you
 		NTConfig_MessageDeadPlayers = false;						// Send a msg to those players when they die
@@ -5517,6 +5592,26 @@ function Follow(target) {
 	// Get the distance between our character and the leader
 	if(leaderUnit) _distance = GetDistance(me, leaderUnit);
 	else _distance = -1; 
+	
+	
+	if(NTConfig_DoNotFollowAreas.length >= 1) {					// do not follow if listed in the do not follow areas thingy
+		for(var i = 0; i < NTConfig_DoNotFollowAreas.length; i++) {
+			if(NTConfig_DoNotFollowAreas[i] === leaderPlayerUnit.areaid) return;
+		}
+	}
+	
+	// for following to baal
+	if(leaderPlayerUnit.areaid == 132) {
+		if(me.areaid == 131) {
+			d2B_usePortal2();
+			if(!InTown()) {
+				NTM_MakeTP();
+				d2B_usePortal2();
+				Town();
+			}
+			return;
+		}
+	}	
 	
 	if(CheckAct(me) !== CheckAct(leaderPlayerUnit) && NTC_InTown(me) && NTC_InTown(leaderPlayerUnit)) NTM_TakeWaypoint(GetPlayerActWaypointID(leaderPlayerUnit)); 
 	
@@ -8686,17 +8781,32 @@ function d2B_sorcLdr(_boB) {
 	d2B_chkAct(5);
 	d2B_townMgr();
 	if(_boB) {
-		d2B_sorcLdrBoBabaPre(65);						// ldr sorc to ancients wp, calls followers, then initiates bo baba
+		d2B_sorcLdrBoBabaPre(129);						// ldr sorc to ancients wp, calls followers, then initiates bo baba
 		if(_msgMe) Say("ummm 5 " + Random(10,100321));	// send team to A5 town
 		Print(COLOR_0 + "Gettin' goin' to zee throne...");
 		Delay(Random(6000,8000));
 		d2B_Act("baalSorcLdr");
 		Delay(Random(4000,6000));
-		if(_msgMe) Say("ummm 4 " + Random(120,1463666));
+		
+		//if(_msgMe) Say("ummm 4 " + Random(120,1463666));
 		Delay(Random(14000,16000));
+		
 		d2B_sorcLdrBoBabaPre(65);						// ldr sorc to ancients wp, calls followers, then initiates bo baba
+		d2B_usePortal2();
+		if(!InTown()) Town();
 		//d2B_Act("chaosSorcLdr");
-		for(i=9; i>=1; i--) {
+		
+		d2B_mfSpots("andy", false);
+		Delay(Random(4000,6000));
+		d2B_mfSpots("countess", false);
+		
+		d2B_sorcLdrBoBabaPre(65);						// ldr sorc to ancients wp, calls followers, then initiates bo baba
+		d2B_usePortal2();
+		if(!InTown()) Town();
+		
+		
+		
+		for(i=5; i>=1; i--) {
 			Print(COLOR_2 + i + COLOR_0 + " left...");
 			Delay(Random(20000,26000));
 		}
@@ -9265,6 +9375,25 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 	_newSorcNoTele : NTMove.ntl line 34 | used to impede teleing of new sorces
 	NTConfig_Leader; stores leader's name here
 	NTConfig_StopIfStashInventoryFull variable msg to change: D2Etal/scripts/libs/common/NTTownManager.ntl
+	
+	Quests.ntl altered the Say to if(!_quiet) Say(...
+*/
+/*	Druid thingies...
+	NTPrecast.ntl
+	
+	if(refresh || !me.GetState(149)) NTC_CastSkill(226, NTC_HAND_RIGHT); 	// Oak Sage
+	if(refresh || !NTP_GetMinion(426)) NTC_CastSkill(231, NTC_HAND_RIGHT); 	// Carrion Vine
+	if(refresh || !me.GetState(151)) NTC_CastSkill(235, NTC_HAND_RIGHT); 	// Cyclone Armor
+	if(refresh || !NTP_GetMinion(428)) NTC_CastSkill(247, NTC_HAND_RIGHT); 	// Summon Grizzly
+	if(refresh || !me.GetState(140)) NTC_CastSkill(228, NTC_HAND_RIGHT);	// werebear
+
+	if(refresh && NTConfig_CastRaven) {
+		for (i = 0; i < 5; i++) {
+			NTC_CastSkill(221, NTC_HAND_RIGHT); // raven
+			Delay(100);
+		}
+	}
+
 */
 /*
 // Get the distance between our character and the leader
