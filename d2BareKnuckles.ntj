@@ -911,10 +911,49 @@ function d2B_mfSpots(_spots, _skpRegMnstrs) {
 			}
 			NTP_DoPrecast(true);
 			
+			if(me.y > 11060 && me.y <= 11078) NTM_MoveTo(me.areaid, 12544, 11066);
+			else NTM_MoveTo(me.areaid, 12570, 11057);
+			
 			_countess = NTC_FindUnit(NTC_UNIT_MONSTER, GetLocaleString(2875), 5);
-			_x = _countess.x + (Random(0,20) - 10);
-			_y = _countess.y + (Random(0,20) - 10);
-			NTM_MoveTo(me.areaid, _x, _y);
+			
+			if(me.y > 11060 && me.y <= 11078) {
+				if(_countess.y <= 11054) NTM_MoveTo(me.areaid, 12537, 11042);
+				if(_countess.y > 11056 && _countess.y <= 11070) {
+					if(_countess.x < 12533) NTM_MoveTo(me.areaid, 12518, 11057);
+					else NTM_MoveTo(me.areaid, 12548, 11057);
+				}
+				if(_countess.y > 11070 && _countess.y <= 11085) {
+					if(_countess.x < 12533) NTM_MoveTo(me.areaid, 12518, 11083);
+					else NTM_MoveTo(me.areaid, 12548, 11083);
+				}
+				if(_countess.y > 11086) NTM_MoveTo(me.areaid, 12542, 11098);
+			}
+			else {
+				if(_countess.x <= 12550) {
+					NTM_MoveTo(me.areaid, 12562, 11057);
+					NTM_MoveTo(me.areaid, 12548, 11043);
+				}
+				if(_countess.x > 12550 && _countess.x <= 12561) {
+					if(_countess.y < 11027) NTM_MoveTo(me.areaid, 12577, 11043);
+					else {
+						NTM_MoveTo(me.areaid, 12565, 11043);
+						NTM_MoveTo(me.areaid, 12577, 11025);
+					}
+				}
+				if(_countess.x > 12561 && _countess.x <= 12579) {
+					if(_countess.y < 11027) NTM_MoveTo(me.areaid, 12555, 11043);
+					else {
+						NTM_MoveTo(me.areaid, 12565, 11043);
+						NTM_MoveTo(me.areaid, 12555, 11025);
+					}
+				}
+				if(_countess.x > 12579) {
+					NTM_MoveTo(me.areaid, 12578, 11057);
+					NTM_MoveTo(me.areaid, 12582, 11043);
+				}
+			}
+			_x = me.x;
+			_y = me.y;
 			
 			NTM_MakeTP();
 			Delay(300);
@@ -922,9 +961,10 @@ function d2B_mfSpots(_spots, _skpRegMnstrs) {
 			
 			NTA_KillMonster(GetLocaleString(2875));
 			NTSI_PickItems();
-			Delay(Random(500,1200);
+			NTA_ClearPosition(10, true);
+			Delay(Random(500,1200));
 			NTSI_PickItems();
-			Delay(700);
+			Delay(Random(500,1200));
 			
 			NTM_MoveTo(me.areaid, _x, _y);
 			NTM_UsePortal("BluePortal", 1, me.charname);
@@ -951,13 +991,15 @@ function d2B_mfSpots(_spots, _skpRegMnstrs) {
 			NTM_MoveTo(me.areaid, 22589, 9596);
 			NTM_MakeTP();
 			Delay(700);
+			NTA_ClearPosition(10, true);
 			
 			NTP_DoPrecast(true);
 			NTM_MoveTo(me.areaid, 22532, 9553);
 
 			NTA_KillMonster(156);
 			NTSI_PickItems();
-			Delay(Random(500,1200);
+			NTA_ClearPosition(10, true);
+			Delay(Random(500,1200));
 			NTSI_PickItems();
 			Delay(700);
 
@@ -4317,8 +4359,8 @@ function d2H_load() {
 	NTConfig_DoNotFollowAreas = [0];
 	NTConfig_DoNotAttackAreas = [0];
 	
-	if(me.classid == NTC_CHAR_CLASS_SORCERESS) NTConfig_DoNotFollowAreas = [6,20,35,107,129,130];							// Won't take a WP or TP to these areas 107,129
-	if(me.classid != NTC_CHAR_CLASS_SORCERESS) NTConfig_DoNotFollowAreas = [1,6,20,21,22,23,24,35,36,37,103,107,129,130];
+	if(me.classid == NTC_CHAR_CLASS_SORCERESS || me.classid == NTC_CHAR_CLASS_PALADIN) NTConfig_DoNotFollowAreas = [6,20,35,107,129,130];							// Won't take a WP or TP to these areas 107,129
+	if(me.classid != NTC_CHAR_CLASS_SORCERESS && me.classid != NTC_CHAR_CLASS_PALADIN) NTConfig_DoNotFollowAreas = [1,6,20,21,22,23,24,25,35,36,37,103,107,129,130];
 		
 	NTConfig_AllowCommands = true;									// Allows leader to issue commands such as 'exit', 'town', 'follow', etc.  'follow' is ON by default.
 	NTConfig_PortalAtLeechersCorpses = false;						// Make a TP at players corpses when they die near you
@@ -4580,11 +4622,14 @@ function ChatHandler( msg, type ) {
 
 function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 	switch( msg1 )	{
-		case "dbg": // keep right above goto command without a break
-					if(debug)
-						d2B_msg("Debug:  Leader Coordinates: X: " + leaderPlayerUnit.x + " " + "Y: " + leaderPlayerUnit.y);
-					if(debug)
-						d2B_msg("Debug:  Leader Area ID: " + leaderPlayerUnit.areaid);
+		case "dbg": // print out leader coords & area
+
+					Print(COLOR_0 + "Debug:  Leader Coordinates: X: " + COLOR_8 + leaderPlayerUnit.x + " " + COLOR_0 + "Y: " + COLOR_9 + leaderPlayerUnit.y);
+					Print(COLOR_0 + "Debug:  Leader Area ID: " + COLOR_9 + leaderPlayerUnit.areaid);
+					
+					Print(COLOR_0 + "Debug:  my Coordinates: X: " + COLOR_8 + me.x + " " + COLOR_0 + "Y: " + COLOR_9 + me.y);
+					Print(COLOR_0 + "Debug:  Leader Area ID: " + COLOR_9 + me.areaid);
+					
 					msg2 = leaderPlayerUnit.areaid;
 					msg3 = leaderPlayerUnit.x;
 					msg4 = leaderPlayerUnit.y;
@@ -4604,7 +4649,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 						NTM_TakeWaypoint(4);
 						if(!NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 737, 10, 10, false)) {
 							NTM_MakeTP();
-							d2B_msg("Failed to move to unit");
+							Print(COLOR_0 + "Failed to move to unit");
 							//Delay(7500);
 							//NTC_SendMsgToScript("NTBotGame.ntj", "NTM_MoveToPresetUnit()");
 							return;
@@ -4614,8 +4659,8 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					}
 					else if(me.areaid === parseInt(msg2)) {
 						if(parseInt(msg3) >= 0 && parseInt(msg4) >= 0) {
-							d2B_msg("Moving to: " + msg3 + ", " + msg4);
-							if(!NTM_MoveTo(parseInt(msg2), parseInt(msg3), parseInt(msg4))) d2B_msg("!Failed to move");
+							Print(COLOR_9 + "Moving to: " + msg3 + ", " + msg4);
+							if(!NTM_MoveTo(parseInt(msg2), parseInt(msg3), parseInt(msg4))) Print(COLOR_9 + "Failed to move");
 						}
 					}
 					break;
@@ -4670,26 +4715,26 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		case "-":				// use leader's tp w/o following enabled
 					if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
 					isFollowingEnabled = false;
-					TakeLeaderTP();
-					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
+					if(!TakeLeaderTP()) Town();
 					break;
-		case ".":				//	follow
+		case ".":				// follow
 					if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
-					if(NTC_InTown(me)) TakeLeaderTP();
-					if(!_lowLvlPeeps) {
-						isFollowingEnabled = true;
-						Print(COLOR_4 + "Follow on");
-					}
+					isFollowingEnabled = true;
+					Print(COLOR_4 + "Follow on");
 					break;
 		case "..":				// unfollow
 					if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
 					isFollowingEnabled = false;
 					Print(COLOR_4 + "Follow off");
 					break;
-		case ",":				// while in town, got to portal area
-					if(!NTC_InTown(me)) break;
+		case ",":				// if not in town, town then while in town, got to portal area
 					if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
+					if(!NTC_InTown(me)) {
+						if(!TakeLeaderTP()) Town();
+					}
 					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
 					NTTM_TownMove("portalspot");
 					d2B_littleJMP();
 					Delay(250);
@@ -4699,33 +4744,29 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					d2B_littleJMP();
 					break;
 		case ";":
-		case "buff":
-					if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
 					if(!NTC_InTown(me)) {
 						NTP_DoPrecast( true );
 						//Chant( msg2 );
 					}
 					break;
-		case "ummm":							// send peeps to act 1 town and by the portal area
-					if(msg2) {							// 1,2,3,4,5 <--- acts
+		case "ummm":	// msg2 = act 1 thru 5 | send peeps to town, then to act 1 thru to 5 town, and finally them wait by the portal area
+					if((Number(msg2) >= 1) && (Number(msg2) <= 5)) {
 						isFollowingEnabled = false;
-						if(NTC_InTown(me)) {
-							d2B_townMove("portalspot");
-							d2B_littleJMP();
-						}
+						Print(COLOR_4 + "Follow off");
+						if(!TakeLeaderTP()) Town();
+						d2B_townMove("portalspot");
+						d2B_littleJMP();
 						Delay(Random(1000,10000));
 						d2B_chkAct(Number(msg2));
 						Delay(Random(4000,6000));
-						if(NTC_InTown(me)) {
-							d2B_townMove("portalspot");
-							d2B_littleJMP();
-						}
+						d2B_townMove("portalspot");
+						d2B_littleJMP();
 					}
 					break;
 		case "rwp":								// sends peep to town and then to river wp for a bo
 					Print(COLOR_3 + "Going to river wp for a bo...");
-					if(me.name == _myBoBarb || me.name == _myChantress || me.areaid == 107) break;
 					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
 					if(!InTown() && !TakeLeaderTP() && me.areaid != 107)
 						Town();
 					isFollowingEnabled = false;
@@ -4742,7 +4783,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 						d2B_druidthronepark();
 						break;
 					}
-					if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
+					if(NTC_GetSkillLevel(54) != 0) break;	// if not able to teleport, break
 					if(msg2) {
 						Print(COLOR_3 + "Doing "+ COLOR_2 + msg2 + " " + COLOR_7 + msg3);
 						(msg3) ? NTConfig_SkipRegularMonsters = true : NTConfig_SkipRegularMonsters = false;
@@ -4752,6 +4793,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		case "counttp":													// Heading to just inside where Countess is
 					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
 					Print(COLOR_3 + "Heading to just inside where Countess is...");
 					
 					Delay(300);
@@ -4764,11 +4806,11 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					NTM_MakeTP();
 					d2B_usePortal2();
 					Town();
-					isFollowingEnabled = false;
 					break;
 		case "atp":													// Heading to just inside where Andy is
 					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
 					Print(COLOR_3 + "Heading to just inside where Andy is...");
 					
 					Delay(300);
@@ -4783,12 +4825,12 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					NTM_MakeTP();
 					d2B_usePortal2();
 					Town();
-					isFollowingEnabled = false;
 					break;
 		case "stp": 
 																	// heading to summoner
 					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
 					Print(COLOR_3 + "Heading to Summoner...");
 					
 					Delay(300);
@@ -4806,11 +4848,11 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					NTM_MakeTP();
 					d2B_usePortal2();
 					Town();
-					isFollowingEnabled = false;
 					break;
 		case "dtp":													// Heading to just inside where Duriel is
 					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
 					Print(COLOR_3 + "Heading to just inside where Duriel is...");
 					
 					Delay(300);
@@ -4828,11 +4870,11 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					NTM_MakeTP();
 					d2B_usePortal2();
 					Town();
-					isFollowingEnabled = false;
 					break;
 		case "sttp":												// heading for stormtree
 					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
 					Print(COLOR_3 + "Heading to Stormtree...");
 					
 					Delay(300);
@@ -4842,13 +4884,11 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					NTM_MakeTP();
 					d2B_usePortal2();
 					Town();
-					isFollowingEnabled = false;
-					break;
-					
-					
+					break;	
 		case "mtp":													// Heading to dur of hate 3
 					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
 					Print(COLOR_3 + "Heading to dur of hate 3...");
 					
 					Delay(300);
@@ -4860,12 +4900,11 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					NTM_MakeTP();
 					d2B_usePortal2();
 					Town();
-					isFollowingEnabled = false;
-				
 					break;
 		case "ctp":													// Heading to chaos enterance to make a tp
 					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
 					Print(COLOR_3 + "Heading to chaos enterance to make a tp...");
 					
 					Delay(300);
@@ -4874,11 +4913,11 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					NTM_MakeTP();
 					d2B_usePortal2();
 					Town();
-					isFollowingEnabled = false;
 					break;
 		case "cctp":													// Heading to chaos centre to make a tp
 					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
 					Print(COLOR_3 + "Heading to chaos centre to make a tp...");
 					
 					Delay(300);
@@ -4887,20 +4926,20 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					NTM_MakeTP();
 					d2B_usePortal2();
 					Town();
-					isFollowingEnabled = false;
 					break;
 		case "ctr":													// send team to the centre of chaos
 					if(me.areaid != 108) break;
 					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
 					Print(COLOR_3 + "Heading to the ctr of chaos...");
 					Delay(300);
 					NTM_MoveTo(108,7793,5287); 						// chaos ctr
 					NTP_DoPrecast(true);
-					isFollowingEnabled = false;
 					break;
 		case "ntp":													// Heading to Nihlathak
 					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
 					Print(COLOR_3 + "Heading to Nihlathak to make a tp...");
 					
 					Delay(300);
@@ -4916,11 +4955,11 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					NTM_MakeTP();
 					d2B_usePortal2();
 					Town();
-					isFollowingEnabled = false;
 					break;
 		case "ttp":													// Heading to throne to make a tp
 					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
 					Print(COLOR_3 + "Heading to throne to make a tp...");
 					Delay(300);
 					
@@ -4933,89 +4972,44 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					NTM_MakeTP();
 					d2B_usePortal2();
 					Town();
-					isFollowingEnabled = false;
 					break;
 		case "zonjavs":
 					if(me.classid != NTC_CHAR_CLASS_AMAZON) break;
 					var _intown = true;
 					if(!InTown()) _intown = false;
 					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
 					NTTMGR_VisitTown();
-					if(!_intown) {
-						isFollowingEnabled = true;
-						return;
-					}
-					isFollowingEnabled = false;
 					d2B_townMove("portalspot");
 					d2B_littleJMP();
+					isFollowingEnabled = true;
+					Print(COLOR_4 + "Follow on");
 					break;
 		case "leechbaal":
+					if(me.areaid != 131) break;
 					isFollowingEnabled = false;
-					if(me.areaid == 131) {
-						NTM_MoveTo(131, 15092, 5010);			// moves to entrance to worldstone chamber
-						NTP_DoPrecast(true);
-						for(var i = 0; i < 60; i++) {			// wait for baal to enter chamber
-							Delay(500);
-							if(!NTC_FindUnit(NTC_UNIT_MONSTER, 543)) break;
-						}
-						_portal = NTC_FindUnit(NTC_UNIT_OBJECT, 563, 1);
-						NTM_UsePortal("Portal", 132, null, _portal);	// enter into worldstone chamber
+					Print(COLOR_4 + "Follow off");
+					
+					NTM_MoveTo(131, 15092, 5010);			// moves to entrance to worldstone chamber
+					NTP_DoPrecast(true);
+					for(var i = 0; i < 60; i++) {			// wait for baal to enter chamber
 						Delay(500);
-						NTM_MoveTo(me.areaid, 15193, 5933);				// moves to safe spot for leeching Baal exp
-						//NTM_MoveTo(me.areaid, 15138, 5899);				// tele to safe leeching spot baal (orig: 15138, 5916)
+						if(!NTC_FindUnit(NTC_UNIT_MONSTER, 543)) break;
 					}
-					isFollowingEnabled = false;
+					_portal = NTC_FindUnit(NTC_UNIT_OBJECT, 563, 1);
+					NTM_UsePortal("Portal", 132, null, _portal);	// enter into worldstone chamber
+					Delay(500);
+					NTM_MoveTo(me.areaid, 15193, 5933);				// moves to safe spot for leeching Baal exp
+					//NTM_MoveTo(me.areaid, 15138, 5899);			// tele to safe leeching spot baal (orig: 15138, 5916)
 					break;
 		case "leechdiablo":
+					if(me.areaid != 108) break;
 					isFollowingEnabled = false;
-					if(me.areaid == 108) {
-						_i = Random(0,1);
-						(_i == 1) ? NTM_MoveTo(108, 7763, 5267) : NTM_MoveTo(108, 7767, 5263);				// moves to safe diablo leeching spot (7763,5267) (7767,5263)
-						NTP_DoPrecast(true);
-					}
-					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
+					_i = Random(0,1);
+					(_i == 1) ? NTM_MoveTo(108, 7763, 5267) : NTM_MoveTo(108, 7767, 5263);				// moves to safe diablo leeching spot (7763,5267) (7767,5263)
+					NTP_DoPrecast(true);
 					break;	
-		case "b":											// barbarian calls
-					if(me.name != _myBoBarb) break;
-					switch(msg2) {									// for bo town barb only
-						case ".":
-									if(NTC_InTown(me)) TakeLeaderTP();
-									isFollowingEnabled = true;
-									Print(COLOR_4 + "Follow on");
-									break;
-						case "..":
-									isFollowingEnabled = false;
-									Print(COLOR_4 + "Follow off");
-									break;
-						case ",":									// while in town, got to portal area	
-									if(!NTC_InTown(me)) break;
-									isFollowingEnabled = false;
-									NTTM_TownMove("portalspot");
-									d2B_littleJMP();
-									Delay(250);
-									Print(COLOR_4 + "Ready at town portal");
-									break;
-						case ";":
-									if(!NTC_InTown(me)) {
-										NTP_DoPrecast( true );
-										//Chant( msg2 );
-									}
-									break;
-						case "'":
-									if(InTown()) {
-										isFollowingEnabled = false;
-										break;
-									}
-									isFollowingEnabled = false;
-									Print(COLOR_4 + "Follow off");
-									Delay(700);
-									if(!TakeLeaderTP()) Town();
-									Delay(Random(1000,2000));
-									d2B_townMove("portalspot");
-									d2B_littleJMP();
-									break;
-					}
-					break;
 		case "hop":											// barb hopper calls
 					if(me.classid != NTC_CHAR_CLASS_BARBARIAN || InTown()) break;
 					switch(msg2) {
@@ -5026,51 +5020,6 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 						case "off":
 							_barbHop = false;
 							break;
-					}
-					break;
-		case "c":											// sorceress calls
-					if(me.name != _myChantress) break;
-					switch(msg2) {									// for bo town barb only
-						case ".":
-								if(NTC_InTown(me)) TakeLeaderTP();
-								isFollowingEnabled = true;
-								Print(COLOR_4 + "Follow on");
-								break;
-						case "..":
-								isFollowingEnabled = false;
-								Print(COLOR_4 + "Follow off");
-								break;
-						case ",":									// while in town, got to portal area	
-								if(!NTC_InTown(me)) break;
-								isFollowingEnabled = false;
-								NTTM_TownMove("portalspot");
-								d2B_littleJMP();
-								Delay(250);
-								Print(COLOR_4 + "Ready at town portal");
-								break;
-						case ";":
-								if(!NTC_InTown(me)) {
-									NTP_DoPrecast( true );
-									//Chant( msg2 );
-								}
-								break;
-						case "'":
-								if(InTown()) {
-									isFollowingEnabled = false;
-									break;
-								}
-								isFollowingEnabled = false;
-								Print(COLOR_4 + "Follow off");
-								Delay(700);
-								if(!TakeLeaderTP()) Town();
-								Delay(Random(1000,2000));
-								d2B_townMove("portalspot");
-								d2B_littleJMP();
-								break;
-						case "refill":
-									if(!NTC_InTown(me)) break;
-									refillChanter();
-									break;
 					}
 					break;
 		case "c2":
@@ -5118,6 +5067,8 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					break;
 		case "leg":
 					if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
+					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
 					Print(COLOR_2 + "grabbing wirt's leg...");
 					Delay(500);
 					NTTM_TownMove("waypoint");
@@ -5156,7 +5107,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					NTTM_CheckAct(1);
 					NTTM_TownMove('stash');
 					break;
-		case "sorc":										// barbarian calls
+		case "sorc":										// sorc calls
 					if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 					switch(msg2) {
 						case "townmgr":
@@ -5279,7 +5230,15 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					DisplayHelp( msg2 );		// Display help menu.
 					break;
 		case "clear":
-					CommandClear( msg2 );		// Clear function.
+					if(msg2 == "level") {
+						CommandClear(msg2);
+						break;
+					}
+					if(Number(msg2) >= 5 && Number(msg2) <= 40) {
+						CommandClear(Number(msg2));
+						break;
+					}	
+					CommandClear("");			// Clear function.
 					break;
 		case "tp":
 					TP(msg2);					// TP functions.
@@ -5296,24 +5255,17 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					if(me.classid != NTC_CHAR_CLASS_SORCERESS && me.name != _myChantress) break;
 					Chant( msg2 );				// Chant functions.
 					break;
-		case "'":
-					if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
-					if(InTown()) {
-						isFollowingEnabled = false;
-						break;
-					}
+		case "'":	
 					isFollowingEnabled = false;
-					_barbHop = false;
 					Print(COLOR_4 + "Follow off");
-					Delay(700);
-					if(!TakeLeaderTP())
-						Town();
-					Delay(Random(1000,2000));
+					if(!InTown()) {
+						_barbHop = false;
+						if(!TakeLeaderTP()) Town();
+					}
 					d2B_townMove("portalspot");
 					d2B_littleJMP();
 					break;
 		case "'r":							// sends team to river wp temporarily
-					//if((me.name == _myBoBarb) || (me.name == _myChantress)) break;
 					if(!InTown(me)) {
 						if(!TakeLeaderTP()) Town();
 					}
@@ -5337,6 +5289,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 		case "restock":
 					if(!InTown()) break;
 					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
 					NTTMGR_TownManager();
 					NTTM_TownMove("portalspot");
 					d2B_littleJMP();
@@ -8781,7 +8734,7 @@ function d2B_sorcLdr(_boB) {
 	d2B_chkAct(5);
 	d2B_townMgr();
 	if(_boB) {
-		d2B_sorcLdrBoBabaPre(129);						// ldr sorc to ancients wp, calls followers, then initiates bo baba
+		d2B_sorcLdrBoBabaPre(118);						// ldr sorc to ancients wp, calls followers, then initiates bo baba
 		if(_msgMe) Say("ummm 5 " + Random(10,100321));	// send team to A5 town
 		Print(COLOR_0 + "Gettin' goin' to zee throne...");
 		Delay(Random(6000,8000));
@@ -8791,7 +8744,7 @@ function d2B_sorcLdr(_boB) {
 		//if(_msgMe) Say("ummm 4 " + Random(120,1463666));
 		Delay(Random(14000,16000));
 		
-		d2B_sorcLdrBoBabaPre(65);						// ldr sorc to ancients wp, calls followers, then initiates bo baba
+		d2B_sorcLdrBoBabaPre(118);						// ldr sorc to ancients wp, calls followers, then initiates bo baba
 		d2B_usePortal2();
 		if(!InTown()) Town();
 		//d2B_Act("chaosSorcLdr");
@@ -8800,7 +8753,7 @@ function d2B_sorcLdr(_boB) {
 		Delay(Random(4000,6000));
 		d2B_mfSpots("countess", false);
 		
-		d2B_sorcLdrBoBabaPre(65);						// ldr sorc to ancients wp, calls followers, then initiates bo baba
+		d2B_sorcLdrBoBabaPre(118);						// ldr sorc to ancients wp, calls followers, then initiates bo baba
 		d2B_usePortal2();
 		if(!InTown()) Town();
 		
@@ -9372,6 +9325,8 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 
 */
 /*	noteworthy & altered things:
+	Ancients way : 118 wp
+	
 	_newSorcNoTele : NTMove.ntl line 34 | used to impede teleing of new sorces
 	NTConfig_Leader; stores leader's name here
 	NTConfig_StopIfStashInventoryFull variable msg to change: D2Etal/scripts/libs/common/NTTownManager.ntl
@@ -9381,11 +9336,11 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 /*	Druid thingies...
 	NTPrecast.ntl
 	
-	if(refresh || !me.GetState(149)) NTC_CastSkill(226, NTC_HAND_RIGHT); 	// Oak Sage
-	if(refresh || !NTP_GetMinion(426)) NTC_CastSkill(231, NTC_HAND_RIGHT); 	// Carrion Vine
-	if(refresh || !me.GetState(151)) NTC_CastSkill(235, NTC_HAND_RIGHT); 	// Cyclone Armor
-	if(refresh || !NTP_GetMinion(428)) NTC_CastSkill(247, NTC_HAND_RIGHT); 	// Summon Grizzly
-	if(refresh || !me.GetState(140)) NTC_CastSkill(228, NTC_HAND_RIGHT);	// werebear
+	if(refresh && !me.GetState(149)) NTC_CastSkill(226, NTC_HAND_RIGHT); 	// Oak Sage
+	if(refresh && !NTP_GetMinion(426)) NTC_CastSkill(231, NTC_HAND_RIGHT); 	// Carrion Vine
+	if(refresh && !me.GetState(151)) NTC_CastSkill(235, NTC_HAND_RIGHT); 	// Cyclone Armor
+	if(refresh && !NTP_GetMinion(428)) NTC_CastSkill(247, NTC_HAND_RIGHT); 	// Summon Grizzly
+	if(refresh && !me.GetState(140)) NTC_CastSkill(228, NTC_HAND_RIGHT);	// werebear
 
 	if(refresh && NTConfig_CastRaven) {
 		for (i = 0; i < 5; i++) {
@@ -9394,6 +9349,64 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 		}
 	}
 
+*/
+/*	the helper commands:
+		case "dbg"		// print out leader coords & area
+		case "atk"		// toggle atk
+		case "goto"		// msg2 = area or "trist"
+		case "exit"		// exit current game
+		case "attack"	// attackRange 		(default 15) 	btwn 3 to 30
+						// flwrArk_range 	(default 30) 	btwn 3 to 30
+		case "range"	// followRange 		(default 15)	btwn 3 to 30
+		case "come"		// town me and then take leader tp
+		case "my"		// if msg2 is "tp" and in town, take my tp
+		case "go"		// send me to town
+		case "..."		// if in chaos, head to safe spot to leech d
+		case "-"		// disengage following | use leader's tp to town, if not town
+		case "."		// follow 
+		case ".."		// unfollow
+		case ","		// if not in town, town and then while in town, got to portal area
+		case "j"		// do a little jump or move away from current spot
+		case ";"		// precast
+		case "ummm"		// msg2 = act 1 thru 5 | send peeps to town, then to act 1 thru to 5 town, and finally them wait by the portal area
+		case "rwp"		// sends peeps to town and then to river wp to reset and back to town
+		case "doact"	// if a druid and msg2 = "throne", send druid thru throne tp and park | if peeps can tele, then doact(msg2)
+		case "counttp"	// send a sorc to just inside where Countess is
+		case "atp":		// send a sorc to just inside where Andy is
+		case "stp":		// send a sorc to summoner
+		case "dtp":		// send a sorc to Duriel
+		case "sttp":	// send a sorc to stormtree
+		case "mtp":		// send a sorc to dur3
+		case "ctp":		// send a sorc to chaos enterance and make a tp
+		case "cctp":	// send a sorc to chaos centre to make a tp
+		case "ctr":		// send team to the centre of chaos
+		case "ntp":		// send a sorc to Nihlathak
+		case "ttp":		// send a sorc to throne to make a tp
+		case "zonjavs":	// send javazon to NPC to restock javs
+		case "leechbaal":	// sends throne leeching peeps frome throne to a safe spot in Baal's chamber
+		case "leechdiablo"	// tells leeching peeps to move to a safe spot near to Chaos centre
+		case "hop"		// msg2 = "on"/"off" | enable/disable barb hopping
+		case "c2"		// chant all
+		case "c3"		// chant mercs, skellies, revives
+		case "n"		// necromancer calls | msg2 = "w" bbne walls
+		case "exp"		// for finding exp shrines
+		case "leg"		// for retreiving wirt's leg
+		case "sorc"		// sorc calls | for instructing sorc to do things
+		case "nec"		// necro calls
+		case "sa":		// sorc assisting me 
+		case "help"		// display help menu
+		case "clear"	// msg2 = "" clears distance of 30 | msg2 = "level" | msg2 = 5 to 40
+		case "tp"		// make tp and town
+		case "q"		// send sorc to do quests | msg2 == cain, andy, radament, cube, staff, ammy, summoner, duriel, travincal, meph, izual, diablo, shenk, anya, ancients, baal 
+		case "rush"		// rush acts | msg2 = 1,2,3,4,5
+		case "chant"	// tell chantress to chant
+		case "'":		// send peeps to town
+		case "'r":		// sends peeps to town and then to river wp to reset and back to town
+		case "gold"		// tell a peep to give gold | msg2 = amount to give
+		case "d":		// chant with NPCs
+		case "data"		// instruct peep to display its parameters
+		case "restock"	// instruct peeps to restock
+		default			// for invalid cmds
 */
 /*
 // Get the distance between our character and the leader
