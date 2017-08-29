@@ -47,6 +47,7 @@
 		var _dollSoul 			= false;				// global var for if there are dolls
 		var _throneLeechers 	= false;				// if stationary throne leechers are following in the throne
 		var _throneHelpers 		= true;					// if active fighters are following in the throne
+		var _customDNFollow		= false;				// for enabling/disabling donotfollow areas
 			
 	// extra variables
 	
@@ -58,6 +59,7 @@
 		var _myChantress 		= "";				// my chantress
 		var delayChant_x		= 750;
 		var delayChant_y		= 1200;
+		var _swapWeps			= true;				// enabling/disabling wep swap for chanting
 	
 	// team variables
 	
@@ -3673,7 +3675,7 @@ function d2B_usePortal2() {
 
 function d2B_swapWeapons() {
 	Delay(Random(300,700));
-	me.SwapWeapons();
+	if(_swapWeps) me.SwapWeapons();
 	return;
 }
 function d2B_barbHop() {
@@ -4359,8 +4361,8 @@ function d2H_load() {
 	NTConfig_DoNotFollowAreas = [0];
 	NTConfig_DoNotAttackAreas = [0];
 	
-	if(me.classid == NTC_CHAR_CLASS_SORCERESS || me.classid == NTC_CHAR_CLASS_PALADIN) NTConfig_DoNotFollowAreas = [6,20,35,107,129,130];							// Won't take a WP or TP to these areas 107,129
-	if(me.classid != NTC_CHAR_CLASS_SORCERESS && me.classid != NTC_CHAR_CLASS_PALADIN) NTConfig_DoNotFollowAreas = [1,6,20,21,22,23,24,25,35,36,37,103,107,129,130];
+	if((me.classid == NTC_CHAR_CLASS_SORCERESS || me.classid == NTC_CHAR_CLASS_PALADIN) && _customDNFollow) NTConfig_DoNotFollowAreas = [6,20,35,107,129,130];							// Won't take a WP or TP to these areas 107,129
+	if((me.classid != NTC_CHAR_CLASS_SORCERESS && me.classid != NTC_CHAR_CLASS_PALADIN) && _customDNFollow) NTConfig_DoNotFollowAreas = [1,6,20,21,22,23,24,25,35,36,37,103,107,129,130];
 		
 	NTConfig_AllowCommands = true;									// Allows leader to issue commands such as 'exit', 'town', 'follow', etc.  'follow' is ON by default.
 	NTConfig_PortalAtLeechersCorpses = false;						// Make a TP at players corpses when they die near you
@@ -4634,12 +4636,29 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					msg3 = leaderPlayerUnit.x;
 					msg4 = leaderPlayerUnit.y;
 					break;
-		case "atk" : // toggle atk
+		case "atk": // toggle atk
 					(isAttackEnabled) ? isAttackEnabled = false : isAttackEnabled = true;
 					Print(COLOR_9 + "attack is " + COLOR_0 + isAttackEnabled);
 					break;
+		case "cow":	// send peeps to cow | msg2 == level
+					if(msg2 != "level") break;
+					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
+					NT_TakeCowPortal();
+					Delay(300);
+					NTP_DoPrecast(true);
+					//CommandClear(msg2);
+					NTA_ClearLevel(true);
+					Town();
+					NTTM_TownMove("portalspot");
+					d2B_littleJMP();
+					Delay(250);
+					Print(COLOR_4 + "Ready at town portal");
+					break;
 		case "goto":
 					if(msg2 == 'trist') {
+						isFollowingEnabled = false;
+						Print(COLOR_4 + "Follow off");
 						if(!d2B_chkAct(1)) {
 							NTC_SendMsgToScript("NTBotGame.ntj", "d2B_chkAct()");
 							return;
@@ -4687,12 +4706,6 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					Print(COLOR_2 + "Attack range set to: " + attackRange);
 					Print(COLOR_0 + "Follow range set to: " + flwrAtk_Range);
 
-					break;
-		case "come":
-					if(NTC_InTown(me)) {
-						NTTM_TownMove("portalspot");
-						TakeLeaderTP();
-					}
 					break;
 		case "my":
 					if(msg2 == "tp" && NTC_InTown(me)) {
@@ -4769,10 +4782,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					Print(COLOR_4 + "Follow off");
 					if(!InTown() && !TakeLeaderTP() && me.areaid != 107)
 						Town();
-					isFollowingEnabled = false;
 					_barbHop = false;
-					Print(COLOR_4 + "Follow off");
-					Delay(700);
 					NTTM_TownMove("waypoint");
 					NTM_TakeWaypoint(107);
 					d2B_littleJMP();
@@ -4783,7 +4793,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 						d2B_druidthronepark();
 						break;
 					}
-					if(NTC_GetSkillLevel(54) != 0) break;	// if not able to teleport, break
+					if(NTC_GetSkillLevel(54) == 0) break;	// if not able to teleport, break
 					if(msg2) {
 						Print(COLOR_3 + "Doing "+ COLOR_2 + msg2 + " " + COLOR_7 + msg3);
 						(msg3) ? NTConfig_SkipRegularMonsters = true : NTConfig_SkipRegularMonsters = false;
@@ -5244,7 +5254,8 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					TP(msg2);					// TP functions.
 					break;
 		case "q":
-					if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
+					if(NTC_GetSkillLevel(54) == 0) break;	// if not able to teleport, break
+					//if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
 					Quest( msg2 );				// Quest functions.
 					break;
 		case "rush":
@@ -5556,16 +5567,47 @@ function Follow(target) {
 	// for following to baal
 	if(leaderPlayerUnit.areaid == 132) {
 		if(me.areaid == 131) {
-			d2B_usePortal2();
-			if(!InTown()) {
-				NTM_MakeTP();
-				d2B_usePortal2();
-				Town();
+			var _portal;
+			NTM_MoveTo(me.areaid, 15089, 5006);
+			NTP_DoPrecast(true);
+			Delay(300)
+			
+			for(var i = 0; i < 60; i++) {
+				Delay(500);
+				if(!NTC_FindUnit(NTC_UNIT_MONSTER, 543)) {
+					break;
+				}
+				if(i >= 58) {
+					Print(COLOR_7 + "looks like baal is bugged");
+				}
 			}
+			
+			_portal = NTC_FindUnit(NTC_UNIT_OBJECT, 563, 1);
+			if(!_portal){
+				d2B_usePortal2();
+				if(!InTown()) {
+					NTM_MakeTP();
+					d2B_usePortal2();
+					Town();
+				}
+				return;
+			}
+			if(!NTM_UsePortal("Portal", 132, null, _portal)){
+				d2B_usePortal2();
+				if(!InTown()) {
+					NTM_MakeTP();
+					d2B_usePortal2();
+					Town();
+				}
+				return;
+			}
+			NTM_MoveTo(me.areaid, 15138, 5916);
 			return;
 		}
 	}	
 	
+	// for following down stairs
+	// we need to write the code for following down stairs 
 	if(CheckAct(me) !== CheckAct(leaderPlayerUnit) && NTC_InTown(me) && NTC_InTown(leaderPlayerUnit)) NTM_TakeWaypoint(GetPlayerActWaypointID(leaderPlayerUnit)); 
 	
 	// If we get a valid distance, and we're inside the follow range, we don't need to do anything except attack.
@@ -6569,23 +6611,23 @@ function Rush( msg ) { 								// Done (needs testing)
 			Rush5();
 			break;
 		case "1":
-			d2B_msg("Starting act 1");
+			Print(COLOR_7 + "Starting act 1");
 			Rush1();
 			break;
 		case "2":
-			d2B_msg("Starting act 2");
+			Print(COLOR_7 + "Starting act 2");
 			Rush2();
 			break;
 		case "3":
-			d2B_msg("Starting act 3");
+			Print(COLOR_7 + "Starting act 3");
 			Rush3();
 			break;
 		case "4":
-			d2B_msg("Starting act 4");
+			Print(COLOR_7 + "Starting act 4");
 			Rush4();
 			break;
 		case "5":
-			d2B_msg("Starting act 5");
+			Print(COLOR_7 + "Starting act 5");
 			Rush5();
 			break;
 		default:
@@ -6742,6 +6784,36 @@ function FindShrines() {
 function SortRoomInt(a, b) {
    if(GetDistance(me.x, me.y, a[0], a[1]) < GetDistance(me.x, me.y, b[0], b[1])) return -1;
    return 1;
+}
+function NT_TakeCowPortal() {
+	var readyNow = false;
+	var _prearea = me.areaid
+	var _portal = NTC_GetUnit(NTC_UNIT_OBJECT, GetLocaleString(3226));
+	if(!_portal) {
+		return false;
+	}
+	if(_portal){
+		do{
+			if(_portal.subareaid == 295 || _portal.subareaid == 39){
+				while(_portal.mode != 2){
+					Delay(500)
+				}
+				readyNow = true;
+				break;
+			}
+		} while(_portal.GetNext());
+		if(readyNow) {
+			for(var i = 0 ; i < 40 ; i++){
+				if(NTM_GetCloserIntS(_portal)){
+					NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _portal);
+				}
+				if(me.areaid != _prearea){
+					break;
+				}
+			}
+		}
+	}
+	return (me.areaid == 39);
 }
 //
 //	my chat functions
@@ -7436,18 +7508,18 @@ function NT_OpenSealsInt() {
 	if (!_unit) return false;
 	
 	if (_unit[0].roomy * 5 + _unit[0].y == 5275) {
-		if(_whereRchaosSeals) d2B_msg("Vizier is 1");
+		if(_whereRchaosSeals) Print(COLOR_7 + "Vizier is 1");
 		_result = NT_OpenVizierSealInt(1);
 	} else {
-		if(_whereRchaosSeals) d2B_msg("Vizier is 2");
+		if(_whereRchaosSeals) Print(COLOR_0 + "Vizier is 2");
 		_result = NT_OpenVizierSealInt(2);
 	}
 	_unit = GetPresetUnits(108, NTC_UNIT_OBJECT, 394);
 	if (_unit[0].roomx * 5 + _unit[0].x == 7773) {
-		if(_whereRchaosSeals) d2B_msg("Seis is 1");
+		if(_whereRchaosSeals) Print(COLOR_7 + "Seis is 1");
 		_result = NT_OpenDeSeisSealInt(1);
 	} else {
-		if(_whereRchaosSeals) d2B_msg("Seis is 2");
+		if(_whereRchaosSeals) Print(COLOR_0 + "Seis is 2");
 		_result = NT_OpenDeSeisSealInt(2);
 	}
 	if (!_result) {
@@ -7460,10 +7532,10 @@ function NT_OpenSealsInt() {
 		return false;
 	}
 	if (_unit[0].roomx * 5 + _unit[0].x == 7893) {
-		if(_whereRchaosSeals) d2B_msg("Venom is 1");
+		if(_whereRchaosSeals) Print(COLOR_7 + "Venom is 1");
 		_result = NT_OpenVenomSealInt(1);
 	} else {
-		if(_whereRchaosSeals) d2B_msg("Venom is 2");
+		if(_whereRchaosSeals) Print(COLOR_0 + "Venom is 2");
 		_result = NT_OpenVenomSealInt(2);
 	}
 	NTP_DoPrecast(true);
@@ -7492,10 +7564,16 @@ function NT_OpenVizierSealInt(type) {
 	if(!_nonTelePeeps) NTM_MoveTo(108, vx[0], vy[0]);
 		
 	NTA_ClearPosition(40, true);
-	if (!NT_OpenSealInt(395) || !NT_OpenSealInt(396)) {
+	
+	NT_OpenSealInt(395);
+	NTA_ClearPosition(20, true);
+	NT_OpenSealInt(396);
+	NTA_ClearPosition(10, true);
+	
+	/*if (!NT_OpenSealInt(395) || !NT_OpenSealInt(396)) {
 		d2B_team(false, false);
 		return false;
-	}
+	}*/
 	if (type == 1) {
 		NTM_MoveTo(108, 7691, 5292);
 	} else {
@@ -8310,7 +8388,7 @@ function d2B_baal() {
 			break;
 		}
 		if(i >= 58) {
-			d2B_msg("looks like baal is bugged");
+			Print(COLOR_7 + "looks like baal is bugged");
 		}
 	}
 	
