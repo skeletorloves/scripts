@@ -158,6 +158,9 @@ function NTMain() {
 									break;
 			case "helperSorc":		d2H_helperSorc();								// for enabling a follower which is a sorc
 									break;
+			case "sorcMf":			d2B_chkAct(1);									// for running a sorc mfer
+									d2B_mySolo2("soft");								
+									break;
 			case "sorcLdr":			d2B_sorcLdr(_boB);								// for running a sorc leader w or w/o bo baba
 									break;
 			case "barbLdr":			d2B_barbLdr();
@@ -401,8 +404,10 @@ function d2B_Act(_loc) {							// Act scripts
 		//	sewers
 		//
 			Print(COLOR_4 + "Running: " + COLOR_7 + "sewers");
-			NTTM_Act2SewerTrapDoor();					// begins at the stairs enterance
-			d2B_preCastClrLvlOC();
+			//NTTM_Act2SewerTrapDoor();					// begins at the stairs enterance
+			d2B_commonInitSetup(48);
+			d2B_moveToStair(me.areaid,47, false);
+			d2B_takeStairs(47, true);
 			d2B_moveToStair(me.areaid,48, false);
 			d2B_takeStairs(48, true);
 			d2B_moveToStair(me.areaid,49, false);
@@ -4762,7 +4767,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 						//Chant( msg2 );
 					}
 					break;
-		case "ummm":	// msg2 = act 1 thru 5 | send peeps to town, then to act 1 thru to 5 town, and finally them wait by the portal area
+		case "m":	// msg2 = act 1 thru 5 | send peeps to town, then to act 1 thru to 5 town, and finally them wait by the portal area
 					if((Number(msg2) >= 1) && (Number(msg2) <= 5)) {
 						isFollowingEnabled = false;
 						Print(COLOR_4 + "Follow off");
@@ -8867,13 +8872,22 @@ function d2B_sorcLdrBoBabaPre(a) {
 	}
 	return;
 }
-function d2B_mySolo2() {
+function d2B_mySolo2(_soloMfAreas) {
 	d2B_townMgr();
-	var _locations = 	["chaos", "baal", "coldPlains", "burialGrounds", "undergroundPassage", "blackMarsh", "tamoeHighland", "catacombs",
-						"lostCity", "clawviperTemple", "arcane", "canyon",
-						"flayerJungle", "lowerKurast", "kurast", "upperKurrast"];
-	var _ignoreRegMonsters = 	[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false];
-								 
+	switch(_soloMfAreas){
+		case "soft":
+					var _locations = ["coldPlains", "burialGrounds", "undergroundPassage", "blackMarsh", "tamoeHighland", "catacombs",
+									"lostCity", "clawviperTemple", "arcane", "canyon",
+									"flayerJungle", "lowerKurast", "kurast", "upperKurrast"];
+					var _ignoreRegMonsters = [false,false,false,false,false,false,false,false,false,false,false,false,false,false];
+					break;		
+		case "hard":					
+					var _locations = ["chaos", "baal", "coldPlains", "burialGrounds", "undergroundPassage", "blackMarsh", "tamoeHighland", "catacombs",
+									"lostCity", "clawviperTemple", "arcane", "canyon",
+									"flayerJungle", "lowerKurast", "kurast", "upperKurrast"];
+					var _ignoreRegMonsters = [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false];
+					break;
+	}
 	var _i = _locations.length;
 	var _j = 0;
 	
@@ -9446,7 +9460,7 @@ function d2B_switchMainRuns(chaos,baal,countess) {
 		case ","		// if not in town, town and then while in town, got to portal area
 		case "j"		// do a little jump or move away from current spot
 		case ";"		// precast
-		case "ummm"		// msg2 = act 1 thru 5 | send peeps to town, then to act 1 thru to 5 town, and finally them wait by the portal area
+		case "m"		// msg2 = act 1 thru 5 | send peeps to town, then to act 1 thru to 5 town, and finally them wait by the portal area
 		case "rwp"		// sends peeps to town and then to river wp to reset and back to town
 		case "doact"	// if a druid and msg2 = "throne", send druid thru throne tp and park | if peeps can tele, then doact(msg2)
 		case "counttp"	// send a sorc to just inside where Countess is
