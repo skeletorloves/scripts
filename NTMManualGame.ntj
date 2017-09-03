@@ -290,7 +290,7 @@ function NT_KeyEvents(keycode) {
 		case 1:						// main customized keycode menu
 			d2B_KeyCodeMain(keycode);
 			break;
-		case 2:						// baal customized manual key menu
+		case 2:						// chaos/baal customized manual key menu
 			switch(keycode) {
 				case 46:			// [del] button (orig: Key_ExitGame)
 					ExitGame();
@@ -311,7 +311,7 @@ function NT_KeyEvents(keycode) {
 						Delay(500);
 						d2B_LXPC_FindShrines(true);
 					}
-					break; 
+					break;
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
 					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
 					MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
@@ -362,6 +362,30 @@ function NT_KeyEvents(keycode) {
 							_follow = true;
 							d2B_msg(".");
 						}
+					}
+					break;
+				
+				// -------------------------------
+	
+				case 97:			// #pad 1: move to safe Vizier spot
+					Print(COLOR_2 + "move to safe Vizier spot...");
+					if(InTown(me)) break;	
+					if(me.areaid == 108) NTM_MoveTo(108, 7716, 5276);	// safe Vizier spot
+					break;
+				case 98:			// #pad 1: move to safe Seis spot
+					Print(COLOR_2 + "move to safe Seis spot...");
+					if(InTown(me)) break;	
+					if(me.areaid == 108) {
+						NTM_MoveTo(108, 7793, 5293);	// centre star
+						NTM_MoveTo(108, 7816, 5220);	// safe Seis spot
+					}
+					break;
+				case 99:			/// #pad 1: move to safe Infector spot
+					Print(COLOR_2 + "move to safe Infector spot...");
+					if(InTown(me)) break;	
+					if(me.areaid == 108) {
+						NTM_MoveTo(108, 7793, 5293);	// centre star
+						NTM_MoveTo(108, 7876. 5315);	// safe Infector spot
 					}
 					break;
 			}
@@ -864,7 +888,7 @@ function NT_KeyEvents(keycode) {
 									break;
 						case 40:	Say(_tpSorc + " stp " + Random(1,134332));
 									break;
-						case 75:	Say(_tpSorc + " mtp " + Random(1,134332));
+						case 75:	Say(_tpSorc + " sttp " + Random(1,134332)); // stormtree
 									break;
 						case 103:	Say(_tpSorc + " ctp " + Random(1,134332));
 									break;
@@ -879,6 +903,8 @@ function NT_KeyEvents(keycode) {
 						case 1: 	Say(_tpSorc + " atp " + Random(1,134332));
 									break;
 						case 40:	Say(_tpSorc + " dtp " + Random(1,134332));
+									break;
+						case 75:	Say(_tpSorc + " mtp " + Random(1,134332));
 									break;
 						case 103:	Say(_tpSorc + " cctp " + Random(1,134332));
 									break;
@@ -925,6 +951,10 @@ function NT_KeyEvents(keycode) {
 				case 101:			// #pad 5: cowing
 					Print(COLOR_2 + "clear cows...");
 					Delay(500);
+					if(me.classid != NTC_CHAR_CLASS_SORCERESS) {
+						Print(COLOR_2 + "Oops... We are not a sorceress...");
+						break;
+					}
 					if(!NT_CheckCowPortal()) {
 						Print(COLOR_7 + "Ummm... Dude, there is no cow portal.");
 						break;
@@ -952,7 +982,7 @@ function d2B_KeyCodeMain(keycode) {
 		case 19:									// 19: Key_AntiIdle | scrolling thru keypad menus
 			_keycodeMenu = _keycodeMenu + 1;
 			if(_keycodeMenu > 7) _keycodeMenu = 0;
-			Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "Baal customized keypad...");
+			Print(COLOR_2 + "Customized key menu: " + COLOR_5 + _keycodeMenu + " - " + COLOR_4 + "Chaos/Baal customized keypad...");
 			Delay(Random(1000,1200));
 			break;
 		case 104:									// number pad #8 | pickit enable/disable
@@ -2663,6 +2693,19 @@ function NTR_ClearRooms() {
 	return true;
 }
 function NTR_ClearPosition(range, pickitem, safelevel, failed) {
+	if(me.classid == NTC_CHAR_CLASS_SORCERESS) {
+		NTConfig_AttackSkill[0]  = -1; 	// First skill. Maybe slow missiles
+		NTConfig_AttackSkill[1]  = 59; 	// Primary skill to super unique/champion.
+		NTConfig_AttackSkill[2]  = 45; 	// Primary untimed skill to super unique/champion.
+		NTConfig_AttackSkill[3]  = 59; 	// Primary skill to others.
+		NTConfig_AttackSkill[4]  = 45; 	// Primary untimed skill to others.
+		NTConfig_AttackSkill[5]  = -1; 	// Secondary skill in case monster is immune to primary skill.
+		NTConfig_AttackSkill[6]  = -1; 	// Secondary untimed skill.
+		NTConfig_AttackSkill[7]  = -1; 	// Tertiary skill to everything else in case monster is immune to both primary and secondary.
+		NTConfig_AttackSkill[8]  = -1; 	// Tertiary untimed skill.
+		NTConfig_AttackSkill[9]  = 59; 	// Primary skill to boss (diablo/meph/Duriel/andy)
+		NTConfig_AttackSkill[10] = 59; 	// Primary skill to baal this MUST be set if you do baal charged bolt works well here
+	}
 	var _orgx, _orgy;
 	var _spectype = [0x0A, 0x01, 0x01];
 	//var _spectype = [0x0A, 0x01];
