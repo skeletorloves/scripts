@@ -367,25 +367,48 @@ function NT_KeyEvents(keycode) {
 				
 				// -------------------------------
 	
-				case 97:			// #pad 1: move to safe Vizier spot
-					Print(COLOR_2 + "move to safe Vizier spot...");
+				case 97:			// #pad 1: move to safe Vizier/throne spot
+					Print(COLOR_2 + "move to safe Vizier/throne spot...");
 					if(InTown(me)) break;	
 					if(me.areaid == 108) NTM_MoveTo(108, 7716, 5276);	// safe Vizier spot
+					if(me.areaid == 131) NTM_MoveTo(108, 15112, 5052);	// safe throne spot
+					NTP_DoPrecast(true);
 					break;
-				case 98:			// #pad 1: move to safe Seis spot
-					Print(COLOR_2 + "move to safe Seis spot...");
+				case 98:			// #pad 1: move to safe Seis/Baal chamber spot
+					Print(COLOR_2 + "move to safe Seis/Baal chamber spot...");
 					if(InTown(me)) break;	
 					if(me.areaid == 108) {
 						NTM_MoveTo(108, 7793, 5293);	// centre star
 						NTM_MoveTo(108, 7816, 5220);	// safe Seis spot
 					}
+					if(me.areaid == 131) {
+						NTM_MoveTo(131, 15095, 5043);	// centre throne
+						NTM_MoveTo(131, 15091, 5011);	// up by chamber enterance
+						
+						for(var i = 0; i < 60; i++) {
+							Delay(500);
+							if(!NTC_FindUnit(NTC_UNIT_MONSTER, 543)) {
+								break;
+							}
+							if(i >= 58) Print(COLOR_7 + "looks like baal is bugged");
+						}
+						
+						_portal = NTC_FindUnit(NTC_UNIT_OBJECT, 563, 1);
+						if(!_portal) break;
+						NTM_UsePortal("Portal", 132, null, _portal);
+						if(me.areaid == 132) {
+							NTM_MoveTo(132, 15176, 5921);
+							NTM_MoveTo(132, 15193, 5932);// safe spot for leeching baal
+						}
+					}
+					NTP_DoPrecast(true);
 					break;
-				case 99:			/// #pad 1: move to safe Infector spot
+				case 99:			/// #pad 3: move to safe Infector spot
 					Print(COLOR_2 + "move to safe Infector spot...");
 					if(InTown(me)) break;	
 					if(me.areaid == 108) {
 						NTM_MoveTo(108, 7793, 5293);	// centre star
-						NTM_MoveTo(108, 7876. 5315);	// safe Infector spot
+						NTM_MoveTo(108, 7876, 5315);	// safe Infector spot
 					}
 					break;
 			}
