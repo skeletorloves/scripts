@@ -1574,24 +1574,45 @@ function d2B_Act1(noTele) {							// Act 1 complete | noTele = var _nonTelePeeps
 //
 //
 function d2B_Solo_a1() {
+	var _a1Temp = [1,2,3,4,5,6,7,8]
+	var _dCountA1 = _a1Temp.length;
+	var _dRndA1, _dTmpA1;
+	
+	while(_dCountA1) {
+		_dRndA1 = Random(0, _dCountA1--);
+		_dTmpA1 = _a1Temp[_dCountA1];
+		_a1Temp[_dCountA1] = _a1Temp[_dRndA1];
+		_a1Temp[_dRndA1] = _dTmpA1;
+	}
+	
 	var _a1Actions = 8;
 	do {
-		_a1Actions--;
-		d2_bloodmoor(3);
-		_a1Actions--;
-		d2_coldplains(3);
-		_a1Actions--;
-		d2_burialgrounds(3);
-		_a1Actions--;
-		d2_stonyfield(4);
-		_a1Actions--;
-		d2_darkwood(5);
-		_a1Actions--;
-		d2_blackmarsh(6);
-		_a1Actions--;
-		d2_innercloister(32);
-		_a1Actions--;
-		d2_catacombs(35);
+		switch(_a1Temp[_a1Actions]) {
+			case(1):	_a1Actions--;
+						d2_bloodmoor(3);
+						break;
+			case(2):	_a1Actions--;
+						d2_coldplains(3);
+						break;
+			case(3):	_a1Actions--;
+						d2_burialgrounds(3);
+						break;
+			case(4):	_a1Actions--;
+						d2_stonyfield(4);
+						break;
+			case(5):	_a1Actions--;
+						d2_darkwood(5);
+						break;
+			case(6):	_a1Actions--;
+						d2_blackmarsh(6);
+						break;
+			case(7):	_a1Actions--;
+						d2_innercloister(32);
+						break;
+			case(8):	_a1Actions--;
+						d2_catacombs(35);
+						break;
+		}
 	}while(_a1Actions > 0)
 	return;
 }			
@@ -1621,7 +1642,7 @@ function d2B_Solo_a2() {
 }
 		
 //
-/* 	--- Act 1 actions...*/
+/* 	--- Act 1,2 actions...*/
 //
 function d2_gotoWpPrepMe(_wpTmp) {
 	Town();
@@ -1655,7 +1676,8 @@ function d2_burialgrounds(_wpTmp) {
 	return;
 }
 function d2_stonyfield(_wpTmp) {
-	d2_gotoWpPrepMe(_wpTmp);	
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_clrLvlOC();	
 	d2B_movePresetUnitMonster(737, 0, 0);															// 737: Rakinishu 2872: Rakinishu
 	d2B_usePortal("Portal",38);																		// use portal to enter tristram
 	Delay(Random(1000,1500));
