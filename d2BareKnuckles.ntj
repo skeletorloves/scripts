@@ -107,7 +107,7 @@
 /*	_______________________________________________________________________________ */
 
 	var d2B_cases = 1;
-	var d2B_toggleHelper = "sorcLdr";
+	var d2B_toggleHelper = "sorcMF";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 
 
@@ -161,8 +161,9 @@ function NTMain() {
 									break;
 			case "helperSorc":		d2H_helperSorc();								// for enabling a follower which is a sorc
 									break;
-			case "sorcMf":			d2B_chkAct(1);									// for running a sorc mfer
-									d2B_mySolo2("soft");								
+			case "sorcMF":			d2B_chkAct(1);									// for running a sorc mfer
+									d2B_Solo_a1();
+									d2B_Solo_a2();								
 									break;
 			case "sorcLdr":			d2B_sorcLdr(_boB);								// for running a sorc leader w or w/o bo baba
 									break;
@@ -1574,7 +1575,7 @@ function d2B_Act1(noTele) {							// Act 1 complete | noTele = var _nonTelePeeps
 //
 function d2B_Solo_a1() {
 	var _a1Actions = 8;
-	while(_a1Actions >= 1) {
+	do {
 		_a1Actions--;
 		d2_bloodmoor(3);
 		_a1Actions--;
@@ -1582,7 +1583,7 @@ function d2B_Solo_a1() {
 		_a1Actions--;
 		d2_burialgrounds(3);
 		_a1Actions--;
-		d2_stonyfields(4);
+		d2_stonyfield(4);
 		_a1Actions--;
 		d2_darkwood(5);
 		_a1Actions--;
@@ -1591,103 +1592,34 @@ function d2B_Solo_a1() {
 		d2_innercloister(32);
 		_a1Actions--;
 		d2_catacombs(35);
-	}
+	}while(_a1Actions > 0)
 	return;
 }			
 function d2B_Solo_a2() {
-	if(InTown(me)) d2B_moveWP();
-	d2B_gotoWP(48);							// sewers
-	NTP_DoPrecast(true);
-	d2B_moveToStair(me.areaid,47, false);
-	d2B_takeStairs(47, true);
-	d2B_moveToStair(me.areaid,48, false);
-	d2B_takeStairs(48, true);
-	d2B_moveToStair(me.areaid,49, false);
-	d2B_takeStairs(49, true);
-	Town();
-	
-	if(InTown(me)) d2B_moveWP();
-	d2B_gotoWP(42);							// rocky waste
-	NTP_DoPrecast(true);
-	d2B_moveToStair(41,55, true);
-	d2B_moveToStair(me.areaid,55, false);
-	d2B_takeStairs(55, true);
-	d2B_moveToStair(me.areaid,59, false);
-	d2B_takeStairs(59, true);
-	Town();
-	
-	if(InTown(me)) d2B_moveWP();
-	d2B_gotoWP(42);							// dry hills
-	NTP_DoPrecast(true);
-	d2B_moveToStair(me.areaid,56, true);
-	d2B_moveToStair(me.areaid,56, false);
-	d2B_takeStairs(56, true);
-	d2B_moveToStair(me.areaid,57, false);
-	d2B_takeStairs(57, true);
-	d2B_moveToStair(me.areaid,60, false);
-	d2B_takeStairs(60, true);
-	Town();
-	
-	if(InTown(me)) d2B_moveWP();
-	d2B_gotoWP(43);							// far oasis
-	NTP_DoPrecast(true);
-	d2B_moveToStair(me.areaid,62, true);
-	for(var i = 0 ; i < 3 ; i++){
-		d2B_moveToStair(me.areaid, 62+i, false);
-		d2B_takeStairs(62+i, true);
-	}
-	Town();
-	
-	if(InTown(me)) d2B_moveWP();
-	d2B_gotoWP(44);							// lost city
-	NTP_DoPrecast(true);
-	d2B_moveToStair(me.areaid,65, true);
-	//d2B_moveToStair(me.areaid,65, false);	// check for new edits in site
-	//d2B_takeStairs(65, true);
-	Town();
-	
-	if(InTown(me)) d2B_moveWP();
-	d2B_gotoWP(44);							// claw viper temple
-	NTP_DoPrecast(true);
-	d2B_movePresetUnitTitle(45,37,0);
-	d2B_moveToStair(me.areaid,58, false);
-	d2B_takeStairs(58, true);
-	d2B_moveToStair(58,61, false);
-	d2B_takeStairs(61, true);
-	Town();
-	
-	if(InTown(me)) d2B_moveWP();
-	d2B_gotoWP(52);							// palace cellar lvl 1
-	NTP_DoPrecast(true);
-	d2B_moveToStair(me.areaid,53, true);
-	d2B_moveToStair(me.areaid,53, false);
-	d2B_takeStairs(53, true);
-	d2B_moveToStair(me.areaid,54, false);
-	d2B_takeStairs(54, true);
-	Town();
-	
-	if(InTown(me)) d2B_moveWP();
-	d2B_gotoWP(74);							// arcane
-	NTP_DoPrecast(true);
-	d2B_preCastClrLvlOC();
-	Town();
-	
-	if(InTown(me)) d2B_moveWP();
-	d2B_gotoWP(46);							// canyon
-	NTP_DoPrecast(true);
-	d2B_moveToStair(me.areaid,69, true);
-			
-	var _stair = [69, 68, 67, 66, 70, 71, 72];
-	for(var i = 0; i < _stair.length; i++){
-		d2B_moveToStair(me.areaid,_stair[i], false);
-		d2B_takeStairs(_stair[i], true);
-		d2B_moveToStair(me.areaid,46, false);
-		d2B_takeStairs(46, false);
-	}
-	Town();
-	
+	var _a1Actions = 9;
+	do {
+		_a1Actions--;
+		d2_sewers(48);
+		_a1Actions--;
+		d2_rockywaste(42);
+		_a1Actions--;
+		d2_dryhills(42);
+		_a1Actions--;
+		d2_faroasis(43);
+		_a1Actions--;
+		d2_lostcity(44);
+		_a1Actions--;
+		d2_clawviper(44);
+		_a1Actions--;
+		d2_palacecellar(52);
+		_a1Actions--;
+		d2_arcane(74);
+		_a1Actions--;
+		d2_canyon(46);
+	}while(_a1Actions > 0)
 	return;
 }
+		
 //
 /* 	--- Act 1 actions...*/
 //
@@ -1715,7 +1647,7 @@ function d2_coldplains(_wpTmp) {
 	d2B_takeStairs(9, true);
 	return;
 }
-function d2_burialground(_wpTmp) {
+function d2_burialgrounds(_wpTmp) {
 	d2_gotoWpPrepMe(_wpTmp);	
 	d2B_clrLvlOC();
 	d2B_moveToStair(17,18, false);																	// front of crypt
@@ -1764,6 +1696,88 @@ function d2_catacombs(_wpTmp) {
 	NTM_MoveTo(me.areaid, 22545, 9517);
 	return;
 }
+
+function d2_sewers(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_moveToStair(me.areaid,47, false);
+	d2B_takeStairs(47, true);
+	d2B_moveToStair(me.areaid,48, false);
+	d2B_takeStairs(48, true);
+	d2B_moveToStair(me.areaid,49, false);
+	d2B_takeStairs(49, true);
+	return;
+}
+function d2_rockywaste(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_moveToStair(41,55, true);
+	d2B_moveToStair(me.areaid,55, false);
+	d2B_takeStairs(55, true);
+	d2B_moveToStair(me.areaid,59, false);
+	d2B_takeStairs(59, true);
+	return;
+}
+function d2_dryhills(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_moveToStair(me.areaid,56, true);
+	d2B_moveToStair(me.areaid,56, false);
+	d2B_takeStairs(56, true);
+	d2B_moveToStair(me.areaid,57, false);
+	d2B_takeStairs(57, true);
+	d2B_moveToStair(me.areaid,60, false);
+	d2B_takeStairs(60, true);
+	return;
+}
+function d2_faroasis(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_moveToStair(me.areaid,62, true);
+	for(var i = 0 ; i < 3 ; i++){
+		d2B_moveToStair(me.areaid, 62+i, false);
+		d2B_takeStairs(62+i, true);
+	}
+	return;
+}
+function d2_lostcity(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_moveToStair(me.areaid,65, true);
+	return;
+}
+function d2_clawviper(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_movePresetUnitTitle(45,37,0);
+	d2B_moveToStair(me.areaid,58, false);
+	d2B_takeStairs(58, true);
+	d2B_moveToStair(58,61, false);
+	d2B_takeStairs(61, true);
+	return;
+}
+function d2_palacecellar(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_moveToStair(me.areaid,53, true);
+	d2B_moveToStair(me.areaid,53, false);
+	d2B_takeStairs(53, true);
+	d2B_moveToStair(me.areaid,54, false);
+	d2B_takeStairs(54, true);
+	return;
+}
+function d2_arcane(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_preCastClrLvlOC();
+	return;
+}
+function d2_canyon(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_moveToStair(me.areaid,69, true);
+			
+	var _stair = [69, 68, 67, 66, 70, 71, 72];
+	for(var i = 0; i < _stair.length; i++){
+		d2B_moveToStair(me.areaid,_stair[i], false);
+		d2B_takeStairs(_stair[i], true);
+		d2B_moveToStair(me.areaid,46, false);
+		d2B_takeStairs(46, false);
+	}
+	return;
+}
+
 //
 //	Act I
 //	
