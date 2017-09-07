@@ -35,13 +35,13 @@
 	
 		var _solo 				= false;			// for soloing
 		var _soloCountess 		= false;			// for leader not to msg followers nor to make tps while solo countessing
-		var _ldr 				= true;				// for msg'ing
+		var _ldr 				= false;				// for msg'ing
 	
 	// chaos Drumpf
 	
 		var _chaosCentreMe 		= false;			// for sending leader to the centre of Chaos Sanctuary
 		var _soloChaos 			= false;			// for leader not to msg followers nor to make tps in chaos
-		var _chaosHelpers 		= true;				// if no chaos helpers
+		var _chaosHelpers 		= false;				// if no chaos helpers
 		var _whereRchaosSeals 	= false;			// to msg the location of the chaos seals
 	
 	// throne variables
@@ -49,7 +49,7 @@
 		var _dollChk 			= true;					// true: if dolls break or do other things | false: no throne room doll check
 		var _dollSoul 			= false;				// global var for if there are dolls
 		var _throneLeechers 	= false;				// if stationary throne leechers are following in the throne
-		var _throneHelpers 		= true;					// if active fighters are following in the throne
+		var _throneHelpers 		= false;					// if active fighters are following in the throne
 		var _customDNFollow		= false;				// for enabling/disabling donotfollow areas
 			
 	// extra variables
@@ -72,7 +72,7 @@
 		var d2B_usingAFollower 	= false; 			// using a follower therefore make townportals d2B_takeMyTP()
 		var d2B_refill 			= true;				// enable/disable NTTMGR_TownManager();
 		
-		var d2B_helpers 		= true;			// general helpers thang
+		var d2B_helpers 		= false;			// general helpers thang
 		
 		
 		var _peeps = [];						// d2B_Peeps()
@@ -86,7 +86,7 @@
 		var _teamPeepsQty;
 		
 	
-	var _noCheck = false;					// for skipping the players who've joined check	
+	var _noCheck = true;					// for skipping the players who've joined check	
 	var _test = false;
 	var _debug = false;						// for testing chaos w/o using followere
 	var _quiet = true;						// msg free silence
@@ -1584,8 +1584,11 @@ function d2B_Solo_a1() {
 		_a1Temp[_dCountA1] = _a1Temp[_dRndA1];
 		_a1Temp[_dRndA1] = _dTmpA1;
 	}
+	for(_i=0; _i<=7; _i++) {
+		Print(COLOR_7 + "a1 activity: " + COLOR_1 + _a1Temp[_i]);
+	}
 	
-	var _a1Actions = 8;
+	var _a1Actions = 7;
 	do {
 		switch(_a1Temp[_a1Actions]) {
 			case(1):	_a1Actions--;
@@ -1613,31 +1616,54 @@ function d2B_Solo_a1() {
 						d2_catacombs(35);
 						break;
 		}
-	}while(_a1Actions > 0)
+	}while(_a1Actions >= 0)
 	return;
 }			
 function d2B_Solo_a2() {
-	var _a1Actions = 9;
+	var _a1Temp = [1,2,3,4,5,6,7,8,9]
+	var _dCountA1 = _a1Temp.length;
+	var _dRndA1, _dTmpA1;
+	
+	while(_dCountA1) {
+		_dRndA1 = Random(0, _dCountA1--);
+		_dTmpA1 = _a1Temp[_dCountA1];
+		_a1Temp[_dCountA1] = _a1Temp[_dRndA1];
+		_a1Temp[_dRndA1] = _dTmpA1;
+	}
+	for(_i=0; _i<=8; _i++) {
+		Print(COLOR_7 + "a2 activity: " + COLOR_1 + _a1Temp[_i]);
+	}
+	
+	var _a1Actions = 8;
 	do {
-		_a1Actions--;
-		d2_sewers(48);
-		_a1Actions--;
-		d2_rockywaste(42);
-		_a1Actions--;
-		d2_dryhills(42);
-		_a1Actions--;
-		d2_faroasis(43);
-		_a1Actions--;
-		d2_lostcity(44);
-		_a1Actions--;
-		d2_clawviper(44);
-		_a1Actions--;
-		d2_palacecellar(52);
-		_a1Actions--;
-		d2_arcane(74);
-		_a1Actions--;
-		d2_canyon(46);
-	}while(_a1Actions > 0)
+		case(1):	_a1Actions--;
+					d2_sewers(48);
+					break;
+		case(2):	_a1Actions--;
+					d2_rockywaste(42);
+					break;
+		case(3):	_a1Actions--;
+					d2_dryhills(42);
+					break;
+		case(4):	_a1Actions--;
+					d2_faroasis(43);
+					break;
+		case(5):	_a1Actions--;
+					d2_lostcity(44);
+					break;
+		case(6):	_a1Actions--;
+					d2_clawviper(44);
+					break;
+		case(7):	_a1Actions--;
+					d2_palacecellar(52);
+					break;
+		case(8):	_a1Actions--;
+					d2_arcane(74);
+					break;
+		case(9):	_a1Actions--;
+					d2_canyon(46);
+					break;
+	}while(_a1Actions >= 0)
 	return;
 }
 		
