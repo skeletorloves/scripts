@@ -137,8 +137,9 @@ function NT_KeyEvents(keycode) {
 			case 102:			// #pad 6: if I am a necro, make skellies and revives
 			case 103:			// #pad 7: sending followers to a5 or a4 depending on leader's area
 			case 105:			// #pad 9: buffing
-			case 220: 			// "\": grab wirt's leg
+			case 221: 			// "\": grab wirt's leg
 			case 222:			// "'": send the zon to replenish her javs
+			case 219:			// "[" glitching low lvl from ancients to worldstone 1
 			
 			*/
 			switch(keycode) {
@@ -285,6 +286,9 @@ function NT_KeyEvents(keycode) {
 					(InTown()) ? t = true : t = false;
 					d2B_chant(t);
 					break;
+				case 219:			// "[" glitching low lvl from ancients to worldstone 1
+					d2B_glitchWS1();
+					break;
 			}
 			break;
 		case 1:						// main customized keycode menu
@@ -339,6 +343,8 @@ function NT_KeyEvents(keycode) {
 						_portal = NTC_FindUnit(NTC_UNIT_OBJECT, 563, 1);
 						NTM_UsePortal("Portal", 132, null, _portal);	// enter into worldstone chamber
 						NTM_MoveTo(me.areaid, 15138, 5899);				// tele near baal (orig: 15138, 5916)
+						MGConfig_PickItems = true;
+						MGConfig_PickAuto = true;
 						//NTA_KillMonster(544);							// kill baal
 					}
 					break;
@@ -1727,6 +1733,9 @@ function d2B_keySettings(menu) {
 				Print(COLOR_4 + "8: " + COLOR_7 + "enable or disable pickit");
 				Print(COLOR_4 + "9: " + COLOR_7 + "ldr & team precast");
 				Print(COLOR_4 + "' "+ COLOR_7 + "direct zon to replenish her javs");
+				Print(COLOR_4 + "\ "+ COLOR_7 + "fetch leg");
+				Print(COLOR_4 + "] "+ COLOR_7 + "chant team");
+				Print(COLOR_4 + "[ "+ COLOR_7 + "glitching low lvl from ancients to worldstone 1");
 				break;
 		case 7:						// meun: 7 - for cowing and ctrl'ing sorc
 				Print(COLOR_2 + "Customized key menu: " + COLOR_5 + "for cowing and ctrl'ing sorc");
@@ -2846,6 +2855,43 @@ function NTR_ClearPosition(range, pickitem, safelevel, failed) {
 	}
 	return true;
 }
+function d2B_glitchWS1(areaid) {	// glitch rush low lvl from ancients to worldstone 1
+	var _unit;
+	var _prearea;
+	var _dist = 2;
+	var _unit2;
+	
+	_prearea = me.areaid;
+	_unit = NTC_FindUnit(NTC_UNIT_OBJECT, 547); 	// to wsk 1
+	if(!_unit) return false;
+	
+	for(var i = 0 ; i < 20 ; i++) {
+		if((i % 5) == 0) {
+			if(i == 10)  NTM_MoveTo(_prearea, me.x+6, me.y+6);
+			
+			/*if(_unit.classid == 366 && _unit.mode != 2) {
+				_unit2 = NTC_FindUnit(NTC_UNIT_OBJECT, 367); // sewer leaver
+				if(NTM_GetCloserInt(_unit2, _dist)) {
+					NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _unit2);
+					NTC_Delay(200);
+				}
+			}*/
+
+			if(NTM_GetCloserInt(_unit, _dist)) NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _unit);
+		}
+
+		NTC_Delay(200);
+
+		if(me.areaid != _prearea) break;
+	}
+
+	while(me.areaid == 0) NTC_Delay(200);
+
+	if(me.areaid == _prearea) return false;
+	NTC_PingDelay(NTConfig_AreaDelay);
+	
+	return true;
+}
 //
 //	player checking functions
 //
@@ -3526,3 +3572,68 @@ function d2B_initCharVars() {
 		break;
 	}
 */
+/* [20170908] glitching low lvl...
+function d2B_glitchWS1(areaid) {	// glitch rush low lvl from ancients to worldstone 1
+	var _unit;
+	var _prearea;
+	var _dist = 2;
+	var _unit2;
+	switch(areaid){
+		case 65:
+			_unit = NTC_FindUnit(NTC_UNIT_OBJECT, 74);		// trap door
+			break;
+		case 93:
+			_unit = NTC_FindUnit(NTC_UNIT_OBJECT, 366);		// sewer stairs
+			break;
+		case 94:
+		case 96:
+		case 98:
+			_unit = NTC_FindUnit(NTC_UNIT_OBJECT, 195);		// stair
+			_dist = 4;
+			break;
+		case 95:
+		case 97:
+		case 99:
+			_unit = NTC_FindUnit(NTC_UNIT_OBJECT, 194);		// stair
+			_dist = 4;
+			break;
+		case 100:
+			_unit = NTC_FindUnit(NTC_UNIT_OBJECT, 386); 	// trav to duri
+			_dist = 4;
+			break;
+		case 128:
+			_unit = NTC_FindUnit(NTC_UNIT_OBJECT, 547); 	// to wsk 1
+			break;
+		default:
+			_unit = NTM_GetStairInt(areaid);
+		break;
+	}
+	if(!_unit) return false;
+
+	_prearea = me.areaid;
+	for(var i = 0 ; i < 20 ; i++) {
+		if((i % 5) == 0) {
+			if(i == 10)  NTM_MoveTo(_prearea, me.x+6, me.y+6);
+			if(_unit.classid == 366 && _unit.mode != 2) {
+				_unit2 = NTC_FindUnit(NTC_UNIT_OBJECT, 367); // sewer leaver
+				if(NTM_GetCloserInt(_unit2, _dist)) {
+					NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _unit2);
+					NTC_Delay(200);
+				}
+			}
+
+			if(NTM_GetCloserInt(_unit, _dist)) NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _unit);
+		}
+
+		NTC_Delay(200);
+
+		if(me.areaid != _prearea) break;
+	}
+
+	while(me.areaid == 0) NTC_Delay(200);
+
+	if(me.areaid == _prearea) return false;
+	NTC_PingDelay(NTConfig_AreaDelay);
+	
+	return true;
+}*/
