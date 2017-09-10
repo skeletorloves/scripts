@@ -10,11 +10,10 @@
 */
 	
 	// team test & team bo variables
-		
-		var leaderName = NTConfig_leader;
+		var leaderName;
 		
 		var _actualTeamSize 	= 0;				// size of team
-		var _expectedTeamSize	= 5;				// size of party to check for; it does not include leader
+		var _expectedTeamSize	= 1;				// size of party to check for; it does not include leader
 		
 		var _teamSize			= 0;
 		var _PPamount 			= 7;				// size of party to check for; it does not include leader
@@ -1693,12 +1692,12 @@ function d2B_Solo_a1a2a3() {
 		_a1Temp[_dCountA1] = _a1Temp[_dRndA1];
 		_a1Temp[_dRndA1] = _dTmpA1;
 	}
-	for(_i=0; _i<=24; _i++) {
+	for(_i = 0; _i <= (_a1Temp.length - 1); _i++) {
 		Print(COLOR_7 + "a1 activity: " + COLOR_1 + _a1Temp[_i]);
 		if(_a1Temp[_i] == "undefined") d2B_Solo_a1a2();
 	}
 	
-	var _a1Actions = 24;
+	var _a1Actions = _a1Temp.length - 1;
 	do {
 		d2B_getBO();								// go to where auto boer is and wait til it boes me...
 		switch(_a1Temp[_a1Actions]) {
@@ -1781,13 +1780,37 @@ function d2B_Solo_a1a2a3() {
 						break;
 		}
 	}while(_a1Actions >= 0)
+	d2B_gotoHarem1();								// after finishing actions, hang out in Harem 1 so that bo leader can monitor and leave
+	return;
+}
+function d2B_gotoHarem1() {
+	d2B_gotoWpPrepMe(52);							// palace cellar 1
+	d2B_moveToStairs(52,51, false);
+	NTM_TakeStairs(51);
+	
+	_harem = [10031, 5608, 10058, 5610, 10084, 5611, 10109, 5612, 10133, 5613, 10148, 5603, 10143, 5599];
+
+	for (var i = 0; i < _harem.length; i += 2) {
+		for (var n = 0 ; n < 2 ; n++) {
+			if (!NTM_TeleportTo(_harem[i]+Random(-n, n), _harem[i+1]+Random(-n, n))) {
+				Common.LogError("NTM_TeleportTo()");
+				return false;
+			}
+		}
+	}
+	NTM_TakeStair(50);
+	NTM_MoveTo(me.areaid, 10022, 5046));
+	while(CheckLeader(NTConfig_Leader)) {
+		Print(COLOR_4 + "Just waiting till the leader leaves...");
+		Delay(Random(4000,5000));
+	}
 	return;
 }	
-function d2B_justBO() {								// goto Jail lvl 1, wait for bo barb to cast bo, and then go...
+function d2B_getBO() {								// goto Jail lvl 1, wait for bo barb to cast bo, and then go...
 	d2_gotoWpPrepMe(29); // jail lvl 1
 	NTA_ClearPosition(10, true);
 	
-	_tmpLeaderName = NTConfig_leader;
+	_tmpLeaderName = NTConfig_Leader;
 	var _tmpLeaderUnit = GetLeaderUnit(_tmpLeaderName);
 	Print(COLOR_3 + _tmpLeaderUnit + COLOR_0 + "is in areas " + COLOR_7 + _tmpLeaderUnit.areaid + " " + COLOR_3 + _tmpLeaderUnit.x + ", " + _tmpLeaderUnit.y);
 	Delay(600);
@@ -1807,6 +1830,9 @@ function d2B_boBarbObserving() {
 	// if peep at the same areaid, bo em
 	//_tmpNear = false;
 	
+	_myXTmp = me.x;
+	_myYTmp = me.y;
+	
 	// check if any peeps are near to bo
 	var _boThePlayer;
 	_boThePlayer = GetPlayerUnit();
@@ -1817,10 +1843,43 @@ function d2B_boBarbObserving() {
 				Delay(Random(1000,3000));
 				NTP_DoPrecast(true);
 			}
-			Print(COLOR_3 + "I am checking/waitin for other peeps to bo 'em...");
+			//if(d2B_boAreAllBotsDone() d2B_exit();	// check to see if all bots are at river. If so, then exit.
+			Print(COLOR_3 + "I am checking/waitin for peeps to bo 'em...");
+			Delay(Random(3000,4000));
+			_x = _myXTmp + (Random(0,20) - 10))
+			_y = _myYTmp + (Random(0,20) - 10))
+			NTM_MoveTo(me.areaid, _x,_y);
 			Delay(Random(2000,3000));
+			NTM_MoveTo(me.areaid, _myXTmp,_myYTmp);
+			if(d2B_boWhereRPeeps()) d2B_boExitGame;					// check areaid of peeps
 		} while(_boThePlayer.GetNext());
 	return;
+}
+function d2B_boWhereRPeeps() {
+	var _peepsDone = 0;
+	var _iTmp = 0;
+	
+	var _boPlayer = GetPlayerUnit();
+	if(_boPlayer){
+		do{
+			Print(COLOR_7 + _boPlayer.name + COLOR_8 + " is in area: " + COLOR_9 + _boPlayer.areaid);
+			if(_boPlayer.areaid == 50) {
+				_peepsDone = true;
+				_iTmp++;
+				Print(COLOR_8 + _boPlayer.name + COLOR_7 + " is done and is now waiting at Harem. #" + COLOR_9 + _iTmp);
+			}
+			else if(_boPlayer.areaid != 50) _peepsDone = false;
+			
+			Delay(Random(1000,2000));
+			/*if(_teamPeeps.indexOf(Player.name) == -1){
+				_teamPeepsName.push(Player.name);
+				_teamPeepsLevel.push(Player.level);
+				_teamPeepsName.push(Player.classid);
+			}*/
+		} while(Player.GetNext())
+	}
+	(_peepsDone < _expectedTeamSize) ? return false : return true;
+	return false;
 }
 //
 /* 	--- Act 1,2,3 actions...*/
@@ -6586,7 +6645,7 @@ function Quest( msg ) { 							// Done (needs testing)
 }
 
 function Town() { 									// Done
-	(leaderName == "undefined") ? leaderName = me.name : leaderName = NTConfig_leader;
+	(leaderName == "undefined") ? leaderName = me.name : leaderName = NTConfig_Leader;
 	if(!NTC_InTown(me)) {
 		// Try to take our own tp or the leader's tp
 		TP("");
