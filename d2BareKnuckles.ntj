@@ -11,6 +11,8 @@
 	
 	// team test & team bo variables
 		
+		var leaderName = NTConfig_leader;
+		
 		var _actualTeamSize 	= 0;				// size of team
 		var _expectedTeamSize	= 5;				// size of party to check for; it does not include leader
 		
@@ -161,9 +163,14 @@ function NTMain() {
 									break;
 			case "helperSorc":		d2H_helperSorc();								// for enabling a follower which is a sorc
 									break;
+			case "boObserver":		d2_gotoWpPrepMe(29);
+									Print(COLOR_9 + "Ready for my bo duties...");
+									for(_i=0; _i<=10000; _i++) {					// for a bo observer/boer
+										d2B_boBarbObserving();
+									}
+									break;
 			case "sorcMF":			d2B_chkAct(1);									// for running a sorc mfer
-									d2B_Solo_a1();
-									d2B_Solo_a2();								
+									d2B_Solo_a1a2a3();							
 									break;
 			case "sorcLdr":			d2B_sorcLdr(_boB);								// for running a sorc leader w or w/o bo baba
 									break;
@@ -1693,6 +1700,7 @@ function d2B_Solo_a1a2a3() {
 	
 	var _a1Actions = 24;
 	do {
+		d2B_getBO();								// go to where auto boer is and wait til it boes me...
 		switch(_a1Temp[_a1Actions]) {
 			case("undefined"): _a1Actions--;
 						break;
@@ -1775,6 +1783,45 @@ function d2B_Solo_a1a2a3() {
 	}while(_a1Actions >= 0)
 	return;
 }	
+function d2B_justBO() {								// goto Jail lvl 1, wait for bo barb to cast bo, and then go...
+	d2_gotoWpPrepMe(29); // jail lvl 1
+	NTA_ClearPosition(10, true);
+	
+	_tmpLeaderName = NTConfig_leader;
+	var _tmpLeaderUnit = GetLeaderUnit(_tmpLeaderName);
+	Print(COLOR_3 + _tmpLeaderUnit + COLOR_0 + "is in areas " + COLOR_7 + _tmpLeaderUnit.areaid + " " + COLOR_3 + _tmpLeaderUnit.x + ", " + _tmpLeaderUnit.y);
+	Delay(600);
+	NTM_MoveTo(_tmpLeaderUnit.areaid, _tmpLeaderUnit.x, _tmpLeaderUnit.y);
+	
+	while(!me.GetState(32)) {	// while not boed, wait for when boed to exit this loop
+		Print(COLOR_9 + "I am in need of " + COLOR_1 + "BO! " + COLOR_5 + "So, I'll just wait 'til barb boes me...");
+		Delay(Random(6000,8000));
+	}
+	
+	Print(COLOR_5 + "Got " + COLOR_1 + "BO! " + COLOR_9 + "Yet, I'm gonna wait a bit more to make sure to get all three shouts...");
+	Delay(Random(8000,12000));
+	
+	return;
+}
+function d2B_boBarbObserving() {
+	// if peep at the same areaid, bo em
+	//_tmpNear = false;
+	
+	// check if any peeps are near to bo
+	var _boThePlayer;
+	_boThePlayer = GetPlayerUnit();
+	
+	do {
+			if(_boThePlayer.areaid == me.areaid) {
+				Print(COLOR_0 + "I am bo'ing " + COLOR_3 + _boThePlayer.name);
+				Delay(Random(1000,3000));
+				NTP_DoPrecast(true);
+			}
+			Print(COLOR_3 + "I am checking/waitin for other peeps to bo 'em...");
+			Delay(Random(2000,3000));
+		} while(_boThePlayer.GetNext());
+	return;
+}
 //
 /* 	--- Act 1,2,3 actions...*/
 //
@@ -6376,7 +6423,7 @@ function TakeLeaderTP(toArea) { 					// Done
 	}
 	return _ret;
 }	
-function TakeLeaderTPFromTown(toArea) { 					// Done
+function TakeLeaderTPFromTown(toArea) { 			// Done
 
 	while(me.areaid == 0)
 		NTC_Delay(100);
@@ -6539,7 +6586,7 @@ function Quest( msg ) { 							// Done (needs testing)
 }
 
 function Town() { 									// Done
-	if(leaderName == "undefined") leaderName = me.name;
+	(leaderName == "undefined") ? leaderName = me.name : leaderName = NTConfig_leader;
 	if(!NTC_InTown(me)) {
 		// Try to take our own tp or the leader's tp
 		TP("");
@@ -9715,6 +9762,7 @@ function d2B_barbLdr() {
 			change line15 Say("/f m Got myself into a perm and drop game!");
 			to: Print(COLOR_7 + "Got myself...	
 */
+/*	libs/common/NTCommon.ntl are where the global variables are set */
 /*
 // Get the distance between our character and the leader
 	//	
