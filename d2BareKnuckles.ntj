@@ -119,7 +119,7 @@
 	var pathRushBots = "NTRush/rushbots/";						// . .. follow, unfollow
 	var isBusy = false;											// ;	precast, buff
 	var isPaused = false;										// '	town & unfollow
-	var isFollowingEnabled = false;								// ,	in town move to portal area
+	var isFollowingEnabled = true;								// ,	in town move to portal area
 	var isAttackEnabled = true;
 	if(_myBarb == me.charname) isAttackEnabled = false;			// if a bo barb is used, that bo barb is not to attack monsters
 	var isAutoEnchantEnabled = false;
@@ -1780,13 +1780,14 @@ function d2B_Solo_a1a2a3() {
 						break;
 		}
 	}while(_a1Actions >= 0)
+	Town();
 	d2B_gotoHarem1();								// after finishing actions, hang out in Harem 1 so that bo leader can monitor and leave
 	return;
 }
 function d2B_gotoHarem1() {
-	d2B_gotoWpPrepMe(52);							// palace cellar 1
-	d2B_moveToStairs(52,51, false);
-	NTM_TakeStairs(51);
+	d2_gotoWpPrepMe(52);							// palace cellar 1
+	d2B_moveToStair(52,51, false);
+	NTM_TakeStair(51);
 	
 	_harem = [10031, 5608, 10058, 5610, 10084, 5611, 10109, 5612, 10133, 5613, 10148, 5603, 10143, 5599];
 
@@ -1799,7 +1800,8 @@ function d2B_gotoHarem1() {
 		}
 	}
 	NTM_TakeStair(50);
-	NTM_MoveTo(me.areaid, 10022, 5046));
+	NTM_MoveTo(me.areaid, 10022, 5046);
+	Town();
 	while(CheckLeader(NTConfig_Leader)) {
 		Print(COLOR_4 + "Just waiting till the leader leaves...");
 		Delay(Random(4000,5000));
@@ -1822,7 +1824,7 @@ function d2B_getBO() {								// goto Jail lvl 1, wait for bo barb to cast bo, a
 	}
 	
 	Print(COLOR_5 + "Got " + COLOR_1 + "BO! " + COLOR_9 + "Yet, I'm gonna wait a bit more to make sure to get all three shouts...");
-	Delay(Random(8000,12000));
+	Delay(Random(10000,14000));
 	
 	return;
 }
@@ -1846,12 +1848,12 @@ function d2B_boBarbObserving() {
 			//if(d2B_boAreAllBotsDone() d2B_exit();	// check to see if all bots are at river. If so, then exit.
 			Print(COLOR_3 + "I am checking/waitin for peeps to bo 'em...");
 			Delay(Random(3000,4000));
-			_x = _myXTmp + (Random(0,20) - 10))
-			_y = _myYTmp + (Random(0,20) - 10))
+			_x = _myXTmp + (Random(0,20) - 10);
+			_y = _myYTmp + (Random(0,20) - 10);
 			NTM_MoveTo(me.areaid, _x,_y);
 			Delay(Random(2000,3000));
 			NTM_MoveTo(me.areaid, _myXTmp,_myYTmp);
-			if(d2B_boWhereRPeeps()) d2B_boExitGame;					// check areaid of peeps
+			if(d2B_boWhereRPeeps()) d2B_boExitGame();					// check areaid of peeps
 		} while(_boThePlayer.GetNext());
 	return;
 }
@@ -1876,10 +1878,15 @@ function d2B_boWhereRPeeps() {
 				_teamPeepsLevel.push(Player.level);
 				_teamPeepsName.push(Player.classid);
 			}*/
-		} while(Player.GetNext())
+		} while(_boPlayer.GetNext())
 	}
 	(_peepsDone < _expectedTeamSize) ? return false : return true;
 	return false;
+}
+function d2B_boExitGame() {
+	Print(COLOR_3 + "going to exit now...");
+	Delay(Random(100000,200000));
+	return;
 }
 //
 /* 	--- Act 1,2,3 actions...*/
@@ -1890,6 +1897,7 @@ function d2_gotoWpPrepMe(_wpTmp) {
 	Print(COLOR_0 + "Taking a little " + COLOR_1 + "delay...");
 	Delay(Random(14000,20000));
 	d2B_gotoWP(_wpTmp);
+	NTM_MakeTP();
 	NTP_DoPrecast(true);
 	return;
 }
@@ -5986,6 +5994,8 @@ function sorcassist(order) {
 	return 1;
 }
 function Follow(target) {
+	if(!me.GetState(32)) d2B_getBO();	// if I need a bo go, get it
+	
 	var _distance = -1;
 	var leaderPlayerUnitintown, _meintown;
 	
@@ -6377,6 +6387,8 @@ function Guard() { 									// Done
 }
 
 function hAttack() {
+	if(!me.GetState(32)) d2B_getBO();	// if I need a bo go, get it
+	
 	if(!NTC_InTown(me))
 	{
 		if(NTA_CheckForCloseMonsters(flwrAtk_Range))	// deeEdits orig: 30
