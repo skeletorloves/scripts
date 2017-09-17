@@ -1,4 +1,4 @@
-/*	v1.20170724a
+/*	v1.20170917a
 	
 	v1.20170724a
 	d2BareKnuckles.ntj
@@ -169,7 +169,7 @@ function NTMain() {
 									}
 									break;
 			case "sorcMF":			d2B_chkAct(1);									// for running a sorc mfer
-									d2B_Solo_a1a2a3();							
+									d2B_Solo_acts();							
 									break;
 			case "sorcLdr":			d2B_sorcLdr(_boB);								// for running a sorc leader w or w/o bo baba
 									break;
@@ -1681,8 +1681,9 @@ function d2B_Solo_a2() {
 	return;
 }
 		
-function d2B_Solo_a1a2a3() {
-	var _a1Temp = [1,2,3,4,5,6,7,8, 9,10,11,12,13,14,15,16,17, 18,19,20,21,22,23,24,25]
+function d2B_Solo_acts() {
+	var _a1Temp = 	[1,2,3,4,5,6,7,8, 9,10,11,12,13,14,15,16,17, 18,19,20,21,22,23,24,25,
+					26,27,28, 29,30,31,32,33,34,35,36]
 	var _dCountA1 = _a1Temp.length;
 	var _dRndA1, _dTmpA1;
 	
@@ -1778,6 +1779,42 @@ function d2B_Solo_a1a2a3() {
 			case(25):	_a1Actions--;
 						d2_meph(101);
 						break;
+			/*case(26):	_a1Actions--;
+						d2_outersteps(104);
+						break;*/
+			case(26):	_a1Actions--;
+						d2_cityofthedamned(106);
+						break;
+			case(27):	_a1Actions--;
+						d2_riverofflame(107);
+						break;
+			case(28):	_a1Actions--;
+						d2_chaossanctuary(107);
+						break;
+			case(29):	_a1Actions--;
+						d2_bloodyfoothills(111);
+						break;
+			case(30):	_a1Actions--;
+						d2_rigidhighlands(111);
+						break;
+			case(31):	_a1Actions--;
+						d2_arreatplateau(112);
+						break;
+			case(32):	_a1Actions--;
+						d2_crystalizedpassage(113);
+						break;
+			case(33):	_a1Actions--;
+						d2_glacialtrail(115);
+						break;
+			case(34):	_a1Actions--;
+						d2_frozentundra(117);
+						break;
+			case(35):	_a1Actions--;
+						d2_ancientsway(118);
+						break;
+			case(36):	_a1Actions--;
+						d2_worldstone2(129);
+						break;
 		}
 	}while(_a1Actions >= 0)
 	Town();
@@ -1809,17 +1846,26 @@ function d2B_gotoHarem1() {
 	return;
 }	
 function d2B_getBO() {								// goto Jail lvl 1, wait for bo barb to cast bo, and then go...
+	var _noBoChk = 0;
 	d2_gotoWpPrepMe(29); // jail lvl 1
+	if(me.areaid != 29) {
+		Town();
+		return;
+	}
 	NTA_ClearPosition(10, true);
-	
-	_tmpLeaderName = NTConfig_Leader;
-	var _tmpLeaderUnit = GetLeaderUnit(_tmpLeaderName);
-	Print(COLOR_3 + _tmpLeaderUnit + COLOR_0 + "is in areas " + COLOR_7 + _tmpLeaderUnit.areaid + " " + COLOR_3 + _tmpLeaderUnit.x + ", " + _tmpLeaderUnit.y);
-	Delay(600);
-	NTM_MoveTo(_tmpLeaderUnit.areaid, _tmpLeaderUnit.x, _tmpLeaderUnit.y);
+	d2B_littleJMP();
+	d2B_getCloserToBarb();
 	
 	while(!me.GetState(32)) {	// while not boed, wait for when boed to exit this loop
+		if(CheckLeader(NTConfig_Leader) Print(COLOR_9 + "The leader is still in the game");
+		Delay(500);
 		Print(COLOR_9 + "I am in need of " + COLOR_1 + "BO! " + COLOR_5 + "So, I'll just wait 'til barb boes me...");
+		_noBoChk++;
+		if(_noBoChk > 2) {
+			_noBoChk = 0;
+			d2B_littleJMP();
+			d2B_getCloserToBarb();
+		}
 		Delay(Random(6000,8000));
 	}
 	
@@ -1842,16 +1888,16 @@ function d2B_boBarbObserving() {
 	do {
 			if(_boThePlayer.areaid == me.areaid) {
 				Print(COLOR_0 + "I am bo'ing " + COLOR_3 + _boThePlayer.name);
-				Delay(Random(1000,3000));
+				Delay(Random(500,750));
 				NTP_DoPrecast(true);
 			}
 			//if(d2B_boAreAllBotsDone() d2B_exit();	// check to see if all bots are at river. If so, then exit.
 			Print(COLOR_3 + "I am checking/waitin for peeps to bo 'em...");
-			Delay(Random(3000,4000));
+			Delay(Random(500,750));
 			_x = _myXTmp + (Random(0,20) - 10);
 			_y = _myYTmp + (Random(0,20) - 10);
 			NTM_MoveTo(me.areaid, _x,_y);
-			Delay(Random(2000,3000));
+			Delay(Random(750.1500));
 			NTM_MoveTo(me.areaid, _myXTmp,_myYTmp);
 			if(d2B_boWhereRPeeps()) d2B_boExitGame();					// check areaid of peeps
 		} while(_boThePlayer.GetNext());
@@ -1872,7 +1918,7 @@ function d2B_boWhereRPeeps() {
 			}
 			else if(_boPlayer.areaid != 50) _peepsDone = false;
 			
-			Delay(Random(1000,2000));
+			Delay(Random(500,750));
 			/*if(_teamPeeps.indexOf(Player.name) == -1){
 				_teamPeepsName.push(Player.name);
 				_teamPeepsLevel.push(Player.level);
@@ -1880,12 +1926,29 @@ function d2B_boWhereRPeeps() {
 			}*/
 		} while(_boPlayer.GetNext())
 	}
-	(_peepsDone < _expectedTeamSize) ? return false : return true;
-	return false;
+	_tmpLeaderName2 = NTConfig_Leader;
+	var _tmpLeaderUnit2 = GetLeaderUnit(_tmpLeaderName2);
+	if(!_tmpLeaderUnit2) d2B_boExitGame();
+	if(_peepsDone < _expectedTeamSize) return false;
+	return true;
 }
 function d2B_boExitGame() {
 	Print(COLOR_3 + "going to exit now...");
-	Delay(Random(100000,200000));
+	Delay(Random(5000,6000));
+	ExitGame();
+	return;
+}
+function d2B_getCloserToBarb() {
+	var _player = GetPlayerUnit();
+	if(_player){
+		do{
+			Print(COLOR_7 + "Trying to get closer to bo barb...");
+			if(_player.name == _myBoBarb) {
+				NTM_MoveTo(me.areaid, _player.x, _player.y);
+				break;
+			}
+		} while(_player.GetNext())
+	}
 	return;
 }
 //
@@ -1897,7 +1960,7 @@ function d2_gotoWpPrepMe(_wpTmp) {
 	Print(COLOR_0 + "Taking a little " + COLOR_1 + "delay...");
 	Delay(Random(14000,20000));
 	d2B_gotoWP(_wpTmp);
-	NTM_MakeTP();
+	//if(!GetLocalString(3226)) NTM_MakeTP();
 	NTP_DoPrecast(true);
 	return;
 }
@@ -2086,6 +2149,64 @@ function d2_travincal(_wpTmp) {
 	return;
 }
 function d2_meph(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_preCastClrLvlOC();
+	return;
+}
+function d2_cityofthedamned(_wptmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_preCastClrLvlOC();
+	return;
+}
+function d2_riverofflame(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_preCastClrLvlOC();
+	return;
+}
+function d2_chaossanctuary(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	NTM_MoveTo(108, 7788,5555); // move to just inside the chaos sanctuary
+	d2B_preCastClrLvlOC();
+	return;
+}
+function d2_bloodyfoothills(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	NTM_MoveTo(110, me.x+79, me.y+16); // move to just inside the chaos sanctuary
+	d2B_preCastClrLvlOC();
+	return;
+}
+function d2_rigidhighlands(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_preCastClrLvlOC();
+	return;
+}
+function d2_arreatplateau(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_preCastClrLvlOC();
+	return;
+}
+function d2_crystalizedpassage(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_preCastClrLvlOC();
+	return;
+}
+function d2_glacialtrail(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_preCastClrLvlOC();
+	return;
+}
+
+function d2_frozentundra(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_preCastClrLvlOC();
+	return;
+}
+function d2_ancientsway(_wpTmp) {
+	d2_gotoWpPrepMe(_wpTmp);
+	d2B_preCastClrLvlOC();
+	return;
+}
+function d2_worldstone2(_wpTmp) {
 	d2_gotoWpPrepMe(_wpTmp);
 	d2B_preCastClrLvlOC();
 	return;
@@ -4084,9 +4205,9 @@ function d2B_msg(a) {
 }
 function d2B_littleJMP() {
 	if(me.areaid != 109) {
-		var x_tmp = Random(3,8);
+		var x_tmp = Random(8,13);
 		x_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
-		var y_tmp = Random(3,8);
+		var y_tmp = Random(8,13);
 		y_tmp *= (Random(1,2) / 2) == 1 ? 1 : -1;
 		if(!NTM_MoveTo(me.areaid, me.x+x_tmp, me.y+y_tmp)) return;
 	}
@@ -9832,6 +9953,10 @@ function d2B_barbLdr() {
 		in D2Etal/scripts/NTAms/NTPermAndDrop.ntj
 			change line15 Say("/f m Got myself into a perm and drop game!");
 			to: Print(COLOR_7 + "Got myself...	
+*/
+/*	NTM_Move.ntl edits - to open a tp when in a new area
+	do a search for NTConfig_AreaDelay, then add this line before that line
+	if(me.name == NTConfig_Leader) NTM_MakeTP();
 */
 /*	libs/common/NTCommon.ntl are where the global variables are set */
 /*
