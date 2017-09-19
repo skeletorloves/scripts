@@ -1854,16 +1854,18 @@ function d2B_getBO() {								// goto Jail lvl 1, wait for bo barb to cast bo, a
 	}
 	NTA_ClearPosition(10, true);
 	d2B_littleJMP();
+	d2B_stayoffofwaypoint();
 	d2B_getCloserToBarb();
 	
 	while(!me.GetState(32)) {	// while not boed, wait for when boed to exit this loop
-		if(CheckLeader(NTConfig_Leader) Print(COLOR_9 + "The leader is still in the game");
+		if(CheckLeader(NTConfig_Leader)) Print(COLOR_9 + "The leader is still in the game");
 		Delay(500);
 		Print(COLOR_9 + "I am in need of " + COLOR_1 + "BO! " + COLOR_5 + "So, I'll just wait 'til barb boes me...");
 		_noBoChk++;
 		if(_noBoChk > 2) {
 			_noBoChk = 0;
 			d2B_littleJMP();
+			d2B_stayoffofwaypoint();
 			d2B_getCloserToBarb();
 		}
 		Delay(Random(6000,8000));
@@ -1939,16 +1941,52 @@ function d2B_boExitGame() {
 	return;
 }
 function d2B_getCloserToBarb() {
+	Print(COLOR_7 + "Trying to get closer to bo barb...");
 	var _player = GetPlayerUnit();
 	if(_player){
 		do{
-			Print(COLOR_7 + "Trying to get closer to bo barb...");
 			if(_player.name == _myBoBarb) {
 				NTM_MoveTo(me.areaid, _player.x, _player.y);
 				break;
 			}
 		} while(_player.GetNext())
 	}
+	return;
+}
+function d2B_stayoffofwaypoint() {
+	if(InTown()) return;
+	
+	var _waypoint;
+	var _classid;
+
+	for(var i = 0 ; i <= 2 ; i++)
+	{
+		_waypoint = NTC_FindUnit(NTC_UNIT_OBJECT);
+		
+		if(_waypoint)
+		{
+			do
+			{
+				_classid = _waypoint.classid;
+
+				if(_classid == 119 || _classid == 145 || _classid == 156 || _classid == 157
+					|| _classid == 237 || _classid == 238 || _classid == 288 || _classid == 323
+					|| _classid == 324 || _classid == 398 || _classid == 402 || _classid == 429
+					|| _classid == 494 || _classid == 496 || _classid == 511 || _classid == 539)
+					
+					Print(COLOR_0 + "Trying to move outside of the waypoint. Orig: " + COLOR_7 + _waypoint.x + "," +  _waypoint.y);
+					(Random(0,1)) ? _xTmp = _waypoint.x + (Random(4,6)) : _xTmp = _waypoint.x - (Random(4,6));
+					(Random(0,1)) ? _yTmp = _waypoint.y + (Random(4,6)) : _yTmp = _waypoint.y - (Random(4,6));
+					NTM_MoveTo(me.areaid, _xTmp, _yTmp);
+					Print(COLOR_0 + "Moved to outside of the waypoint. New x,y: " + COLOR_7 + _waypoint.x + "," +  _waypoint.y);
+					return;
+			} while(_waypoint.GetNext());
+		}
+
+		if(i < 2)
+			NTC_Delay(500);
+	}
+	
 	return;
 }
 //
@@ -2153,7 +2191,7 @@ function d2_meph(_wpTmp) {
 	d2B_preCastClrLvlOC();
 	return;
 }
-function d2_cityofthedamned(_wptmp) {
+function d2_cityofthedamned(_wpTmp) {
 	d2_gotoWpPrepMe(_wpTmp);
 	d2B_preCastClrLvlOC();
 	return;
@@ -2166,12 +2204,14 @@ function d2_riverofflame(_wpTmp) {
 function d2_chaossanctuary(_wpTmp) {
 	d2_gotoWpPrepMe(_wpTmp);
 	NTM_MoveTo(108, 7788,5555); // move to just inside the chaos sanctuary
+	NTM_MakeTP();
 	d2B_preCastClrLvlOC();
 	return;
 }
 function d2_bloodyfoothills(_wpTmp) {
 	d2_gotoWpPrepMe(_wpTmp);
 	NTM_MoveTo(110, me.x+79, me.y+16); // move to just inside the chaos sanctuary
+	NTM_MakeTP();
 	d2B_preCastClrLvlOC();
 	return;
 }
