@@ -2291,6 +2291,7 @@ function d2_worldstone2(_wpTmp) {
 //
 // act 1...
 function d2_corpsefire(_wpTmp) {
+	Print(COLOR_9 + "Going for " + COLOR_2 + "Corpsefire");
 	d2_gotoWpPrepMe(_wpTmp);
 	d2B_moveToStair(2,8, false);										// blood moore, front of den
 	d2B_takeStairs(8, false);
@@ -2300,12 +2301,14 @@ function d2_corpsefire(_wpTmp) {
 	return;
 }
 function d2_bishiboshcoldcrow(_wpTmp) {
+	Print(COLOR_2 + "Going for " + COLOR_9 + "Bishibosh");
 	d2_gotoWpPrepMe(_wpTmp);
 	d2B_moveToStair(3,9, false);
 	d2B_takeStairs(9, false);
 	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 734, 0, 0);		// 734: Bishibosh
 	d2B_KillMonster(2869, 10);											// 2869: Bishibosh
 	
+	Print(COLOR_9 + "Going for " + COLOR_2 + "Coldcrow");
 	d2B_moveToStair(3,9, false);
 	d2B_takeStairs(9, false);
 	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 736, 0, 0);		// 736: Cold Crow
@@ -2314,11 +2317,13 @@ function d2_bishiboshcoldcrow(_wpTmp) {
 	return;
 }
 function d2_bloodravenbonebreaker(_wpTmp) {
+	Print(COLOR_2 + "Going for " + COLOR_9 + "Corpsefire");
 	d2_gotoWpPrepMe(_wpTmp);
 	d2B_moveToStair(17,18, false);										// front of crypt
 	NTM_MoveToPresetUnit(17, NTC_UNIT_TILE, 7, 0, 0);					// 7: Blood Raven
 	d2B_KillMonster(3111, 10);											// 3111: Blood Raven
 	
+	Print(COLOR_9 + "Going for " + COLOR_2 + "Bonebreaker");
 	d2B_moveToStair(17,18, false);
 	d2B_takeStairs(18, false);
 	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 735, 0, 0);		// 735: Bone Breaker
@@ -2327,11 +2332,13 @@ function d2_bloodravenbonebreaker(_wpTmp) {
 	return;
 }
 function d2_rakanishugriswold(_wpTmp) {
+	Print(COLOR_2 + "Going for " + COLOR_9 + "Rakanishu");
 	d2_gotoWpPrepMe(_wpTmp);
 	d2B_movePresetUnitMonster(737, 0, 0);								// 737: Rakinishu 2872: Rakinishu
 	d2B_KillMonster(2872, 10);											// 2872: Rakanishu
 	NTA_ClearPosition(10, true);
 	
+	Print(COLOR_9 + "Going for " + COLOR_2 + "Griswold");
 	d2B_usePortal("Portal",38);											// use portal to enter tristram
 	Delay(Random(1000,1500));
 	d2B_movePresetUnitMonster(739, 0, 0);								// 739: Griswold
@@ -2341,6 +2348,7 @@ function d2_rakanishugriswold(_wpTmp) {
 	return;
 }
 function d2_treehead(_wpTmp) {
+	Print(COLOR_2 + "Going for " + COLOR_9 + "Griswold");
 	d2_gotoWpPrepMe(_wpTmp);	
 	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 30, 15, -15);		// 30: I think this is the tree for Treehead Woodfist
 	d2B_KillMonster(2873, 10);											// 2873: Treehead Woodfist
@@ -2348,6 +2356,7 @@ function d2_treehead(_wpTmp) {
 	return;
 }
 function d2_countess(_wpTmp) {
+	Print(COLOR_9 + "Going for " + COLOR_2 + "Countess");
 	d2_gotoWpPrepMe(_wpTmp);
 	for(var i = 0 ; i < 6 ; i++) {
 		d2B_moveToStair(me.areaid,20+i, false);	// go to the forgotten tower and do tower things
@@ -2359,6 +2368,7 @@ function d2_countess(_wpTmp) {
 	return;
 }
 function d2_pitspawnfouldog(_wpTmp) {
+	Print(COLOR_2 + "Going for " + COLOR_9 + "Pitspawn Fouldog");
 	d2_gotoWpPrepMe(_wpTmp);	
 	d2B_moveToStair(29,30, false);
 	d2B_takeStairs(30, false);
@@ -2368,6 +2378,7 @@ function d2_pitspawnfouldog(_wpTmp) {
 	return;
 }
 function d2_boneash(_wpTmp) {
+	Print(COLOR_9 + "Going for " + COLOR_2 + "Bone Ash");
 	d2_gotoWpPrepMe(_wpTmp);
 	d2B_movePresetUnitTitle(33,15,0);									// go to the enterance of the catacombs
 	NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_MONSTER, 743, 15, -15);	// 743: Treehead Woodfist
@@ -2376,6 +2387,7 @@ function d2_boneash(_wpTmp) {
 	return;
 }
 function d2_thesmith(_wpTmp) {
+	Print(COLOR_2 + "Going for " + COLOR_9 + "the Smith");
 	d2_gotoWpPrepMe(_wpTmp);
 	d2B_moveToStair(29,28, false);
 	d2B_takeStairs(28, false);
@@ -2385,6 +2397,7 @@ function d2_thesmith(_wpTmp) {
 	return;
 }
 function d2_andarial(_wpTmp) {
+	Print(COLOR_9 + "Going for " + COLOR_2 + "Andarial");
 	d2_gotoWpPrepMe(_wpTmp);	
 	for(var i = 36 ; i <= 37 ; i++){
 		d2B_movePresetUnitTitle(me.areaid,18,0);
@@ -2397,7 +2410,7 @@ function d2_andarial(_wpTmp) {
 	return;
 }
 // act 2...
-function 
+
 //
 // regular Act I functions:
 //
