@@ -64,6 +64,8 @@
 		var delayChant_x		= 750;
 		var delayChant_y		= 1200;
 		var _swapWeps			= true;				// enabling/disabling wep swap for chanting
+		
+		var _shrineFound		= false;
 	
 	// team variables
 	
@@ -5364,7 +5366,21 @@ function ChatHandler( msg, type ) {
 	}
 }
 
+
 function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
+	/*
+		debug:	outputs leader & helper's coords and area location
+		ways:	msg2 all,1,2,3,4,5 - tells helper to give waypoints
+		atk:	(dis)(en)ables attack
+		cow:	send helper through cow portal and clear the cow area
+		goto: 	msg2 trist 
+		exit:	leave game
+		attack: msg2 from 3 to 30
+		range:	msg2 from 3 to 30
+		my:		msg2 tp
+		go:		take leader's tp to town or town
+		
+	*/
 	switch( msg1 )	{
 		case "dbg": // print out leader coords & area
 
@@ -5378,7 +5394,8 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					msg3 = leaderPlayerUnit.x;
 					msg4 = leaderPlayerUnit.y;
 					break;
-		case "ways": // for giving the wps
+		case "ways": // for giving the wps ways 1, 2, 3, 4, 5, all - for giving the waypoints
+					_leader = 1;
 					d2B_ways(msg2);
 					break;
 		case "atk": // toggle atk
@@ -5464,7 +5481,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 						if(!TakeLeaderTP()) Town();
 					}
 					break;
-		case "...":				//	hide
+		case "...":				//	hide in chaos
 					if(!_lowLvlPeeps) break;
 					if(NTC_InTown(me)) TakeLeaderTP();
 					Delay(Random(1000,1200));
@@ -5748,7 +5765,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					isFollowingEnabled = true;
 					Print(COLOR_4 + "Follow on");
 					break;
-		case "lb":
+		case "lb":											// moves followers through throne room portal into baal's chamber, then to a safe location
 					if(me.areaid != 131) break;
 					isFollowingEnabled = false;
 					Print(COLOR_4 + "Follow off");
@@ -5765,7 +5782,7 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					NTM_MoveTo(me.areaid, 15193, 5933);				// moves to safe spot for leeching Baal exp
 					//NTM_MoveTo(me.areaid, 15138, 5899);			// tele to safe leeching spot baal (orig: 15138, 5916)
 					break;
-		case "ld":
+		case "ld":											// moves followers to a safe location ner to diablo
 					if(me.areaid != 108) break;
 					isFollowingEnabled = false;
 					Print(COLOR_4 + "Follow off");
@@ -5823,10 +5840,13 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 								break;
 					}
 					break;
-		case "exp":	// for finding exp shrines
+		case "exp":	// for finding exp shrines | msg2 == me: makes a tp by the exp shrine
 					if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
-					d2B_expMe();
+					isFollowingEnabled = false;
+					d2B_expMe(msg2);
 					NTM_MakeTP(1);
+					_foundShrine = false;
+					isFollowingEnabled = false;
 					break;
 		case "leg":
 					if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
@@ -7495,31 +7515,31 @@ function Imbue() {
 	NTA_ClearPosition(10);
 	Town();
 }
-function d2B_expMe() {
+function d2B_expMe(msg2) {
 	NTTM_TownMove("waypoint");
 	NTM_TakeWaypoint(3);
 	NTP_DoPrecast(true);
 
-	if(!me.GetState(137)) {
+	if(!me.GetState(137) || _foundShrine == false) {
 		  NTM_MoveToStair(2, 8);				//Blood Moor
-		  FindShrines();
+		  FindShrines(msg2);
 		  
-		  if(!me.GetState(137)) {
+		  if(!me.GetState(137) || _foundShrine == false) {
 			 NTM_MoveToStair(3, 9);				//Cold Plains
-			 FindShrines();
+			 FindShrines(msg2);
 			 
-			 if(!me.GetState(137)) {
+			 if(!me.GetState(137) || _foundShrine == false) {
 				NTM_MoveToStair(4, 10);			// Stony Field
-				FindShrines();
+				FindShrines(msg2);
 				
-				if(!me.GetState(137)) { 
+				if(!me.GetState(137) || _foundShrine == false) { 
 					NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 119, 0, 0)
 					NTM_TakeWaypoint(5);		// Dark Wood
-					FindShrines();
+					FindShrines(msg2);
 					
-					if(!me.GetState(137)) {
+					if(!me.GetState(137) || _foundShrine == false) {
 					  NTM_MoveToStair(6, 20);	//Black Marsh
-					  FindShrines();
+					  FindShrines(msg2);
 				   }
 				}
 			 }
@@ -7528,7 +7548,7 @@ function d2B_expMe() {
    
 }
       
-function FindShrines() {
+function FindShrines(msg2) {
    var ShrineIds = [2, 83, 85, 86, 93, 96, 97, 109, 116, 120, 123, 124, 133, 134, 135, 136, 150, 151, 172, 173, 184, 190, 191, 197, 199, 200, 201, 226, 231, 232, 260, 275, 276, 277, 278, 279, 282, 299, 300, 303, 325, 361, 414, 415, 421, 422, 423, 427, 428, 464, 465, 472, 479, 483, 484, 488, 491, 492, 495, 497, 499, 503, 509, 512, 520, 521, 522];
    var ShrineLocs = [];
   
@@ -7551,13 +7571,18 @@ function FindShrines() {
          do{     
             if(GetDistance(me.x,me.y,shrine.x,shrine.y)<5) {
                if(shrine.shrinetype == 15) {
-                  NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, shrine);
+					if(msg2 == "me") {
+						Towm();
+						_foundShrine = true;
+						break;
+					}
+				  NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, shrine);
                   break;
                }
             }
          }while(shrine.GetNext());
       }
-      if(me.GetState(137))
+      if(me.GetState(137) || _foundShrine == true)
          break;
    }   
 }
@@ -7595,38 +7620,36 @@ function NT_TakeCowPortal() {
 	}
 	return (me.areaid == 39);
 }
-function d2B_ways(msg2) {
+function d2B_ways(msg2){
 	Print(COLOR_9 + "Let's get 'em waypointers...");
 	NTTMGR_TownManager();
 	inuse = true;
-	_abort = false;
+	abort = false;
 	skip = false;
 	
 	switch(msg2) {
 		case("all"):
-			ways_act1();
-			ways_act2();
+			act1();
+			act2();
 			NTTMGR_TownManager();
-			ways_act3();
-			ways_act4();
-			NTTMGR_TownManager();
-			ways_act5();
-			NTTMGR_TownManager();
+			act3();
+			act4();
+			act5();
 			break;
-		case(1):
-			ways_act1();
+		case("1"):
+			act1();
 			break;
-		case(2):
-			ways_act2();
+		case("2"):
+			act2();
 			break;
-		case(3):
-			ways_act3();
+		case("3"):
+			act3();
 			break;
-		case(4):
-			ways_act4();
+		case("4"):
+			act4();
 			break;
-		case(5):
-			ways_act5();
+		case("5"):
+			act5();
 			break;
 	}
 	NTTMGR_TownManager();
@@ -7635,7 +7658,8 @@ function d2B_ways(msg2) {
 	Print(COLOR_7 + "Im finished with my current task")
 	return;
 }
-function ways_act1(){
+
+function act1(){
 	if (abort)
 		return;
 	var _wps1 = [3, 4, 5, 6, 27, 29, 32, 35];
@@ -7679,7 +7703,7 @@ function ways_act1(){
 	tptown = true;
 }
 
-function ways_act2(){
+function act2(){
 	if (abort)
 		return;
 	var _wps2 = [48, 42, 57, 43, 44, 52, 74, 46];
@@ -7723,7 +7747,7 @@ function ways_act2(){
 	tptown = true;
 }
 
-function ways_act3(){
+function act3(){
 	if (abort)
 		return;
 	var _wps3 = [76, 77, 78, 79, 80, 81, 83, 101];
@@ -7767,7 +7791,7 @@ function ways_act3(){
 	tptown = true;
 }
 
-function ways_act4(){
+function act4(){
 	if (abort)
 		return;
 	var _wps4 = [106, 107];
@@ -7811,7 +7835,7 @@ function ways_act4(){
 	tptown = true;
 }
 
-function ways_act5(){
+function act5(){
 	if (abort)
 		return;
 	var _wps5 = [111, 112, 113, 115, 123, 117, 118, 129];
