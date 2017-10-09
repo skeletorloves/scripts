@@ -5847,6 +5847,11 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					NTM_MakeTP(1);
 					_foundShrine = false;
 					isFollowingEnabled = false;
+					if(!InTown()) {
+						NTM_MakeTP();
+						d2B_usePortal2();
+						NTTM_TownMove("waypoint");
+					}
 					break;
 		case "leg":
 					if(me.classid != NTC_CHAR_CLASS_SORCERESS) break;
@@ -7520,24 +7525,24 @@ function d2B_expMe(msg2) {
 	NTM_TakeWaypoint(3);
 	NTP_DoPrecast(true);
 
-	if(!me.GetState(137) || _foundShrine == false) {
+	if(!me.GetState(137) && _shrineFound == false) {
 		  NTM_MoveToStair(2, 8);				//Blood Moor
 		  FindShrines(msg2);
 		  
-		  if(!me.GetState(137) || _foundShrine == false) {
+		  if(!me.GetState(137) && _shrineFound == false) {
 			 NTM_MoveToStair(3, 9);				//Cold Plains
 			 FindShrines(msg2);
 			 
-			 if(!me.GetState(137) || _foundShrine == false) {
+			 if(!me.GetState(137) && _shrineFound == false) {
 				NTM_MoveToStair(4, 10);			// Stony Field
 				FindShrines(msg2);
 				
-				if(!me.GetState(137) || _foundShrine == false) { 
+				if(!me.GetState(137) && _shrineFound == false) { 
 					NTM_MoveToPresetUnit(me.areaid, NTC_UNIT_OBJECT, 119, 0, 0)
 					NTM_TakeWaypoint(5);		// Dark Wood
 					FindShrines(msg2);
 					
-					if(!me.GetState(137) || _foundShrine == false) {
+					if(!me.GetState(137) && _shrineFound == false) {
 					  NTM_MoveToStair(6, 20);	//Black Marsh
 					  FindShrines(msg2);
 				   }
@@ -7571,19 +7576,15 @@ function FindShrines(msg2) {
          do{     
             if(GetDistance(me.x,me.y,shrine.x,shrine.y)<5) {
                if(shrine.shrinetype == 15) {
-					if(msg2 == "me") {
-						Towm();
-						_foundShrine = true;
-						break;
-					}
-				  NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, shrine);
-                  break;
+					_shrineFound = true;
+					if(_shrineFound) Print(COLOR_7 + "exe shrine found...");
+					if(msg2 != "me") NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, shrine);
+					break;
                }
             }
          }while(shrine.GetNext());
       }
-      if(me.GetState(137) || _foundShrine == true)
-         break;
+      if(me.GetState(137) || _shrineFound == true) break;
    }   
 }
 function SortRoomInt(a, b) {
