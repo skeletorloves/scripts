@@ -157,9 +157,9 @@ function NT_KeyEvents(keycode) {
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
 					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
 					MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
-					Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+					Print(COLOR_2 + "MGConfig_PickItems " + COLOR_5 + MGConfig_PickItems);
 					Delay(Random(1000,1700));
-					Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+					Print(COLOR_5 + "MGConfig_PickAuto " + COLOR_2 + MGConfig_PickAuto);
 					break;
 				case 97:			// #pad 1: msg "." call peeps to follow
 					Print(COLOR_2 + "calling followers...");
@@ -196,9 +196,9 @@ function NT_KeyEvents(keycode) {
 						NTM_MoveTo(108, 7799, 5286);	// move to star
 						MGConfig_PickItems = true;
 						MGConfig_PickAuto = true;
-						Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+						Print(COLOR_2 + "MGConfig_PickItems " + COLOR_5 + MGConfig_PickItems);
 						Delay(Random(1000,1700));
-						Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+						Print(COLOR_5 + "MGConfig_PickAuto " + COLOR_2 + MGConfig_PickAuto);
 						break;
 					}
 					break;
@@ -286,8 +286,8 @@ function NT_KeyEvents(keycode) {
 					(InTown()) ? t = true : t = false;
 					d2B_chant(t);
 					break;
-				case 219:			// "[" glitching low lvl from ancients to worldstone 1
-					d2B_glitchWS1();
+				case 219:				// "[" glitching low lvl from ancients to worldstone 1
+					d2B_glitchWS1(128); // 128 worldstone keep lvl 1 
 					break;
 			}
 			break;
@@ -319,9 +319,9 @@ function NT_KeyEvents(keycode) {
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
 					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
 					MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
-					Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+					Print(COLOR_2 + "MGConfig_PickItems " + COLOR_5 + MGConfig_PickItems);
 					Delay(Random(1000,1700));
-					Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+					Print(COLOR_5 + "MGConfig_PickAuto " + COLOR_2 + MGConfig_PickAuto);
 					break;
 				case 105:			// #pad 9: enter throne blue portal then move to safe spot (orig: Key_CursoriLvL)
 					if(me.areaid == 109) {					// 109: Harrogoth
@@ -333,6 +333,14 @@ function NT_KeyEvents(keycode) {
 					}
 					break;
 				case 102:			// #pad 6: (orig: Key_Refresh)
+					if(me.areaid == 108) {
+						NTM_MoveTo(108, 7791, 5299);			// moves to the centre star of chaos
+						NTP_DoPrecast(true);
+						MGConfig_PickItems = true;
+						MGConfig_PickAuto = true;
+						Print(COLOR_2 + "MGConfig_PickItems " + COLOR_5 + MGConfig_PickItems);
+						Delay(Random(1000,1600));
+					}
 					if(me.areaid == 131) {
 						NTM_MoveTo(131, 15092, 5010);			// moves to entrance to worldstone chamber
 						NTP_DoPrecast(true);
@@ -345,6 +353,8 @@ function NT_KeyEvents(keycode) {
 						NTM_MoveTo(me.areaid, 15138, 5899);				// tele near baal (orig: 15138, 5916)
 						MGConfig_PickItems = true;
 						MGConfig_PickAuto = true;
+						Print(COLOR_2 + "MGConfig_PickItems " + COLOR_5 + MGConfig_PickItems);
+						Delay(Random(1000,1600));
 						//NTA_KillMonster(544);							// kill baal
 					}
 					break;
@@ -435,9 +445,9 @@ function NT_KeyEvents(keycode) {
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
 					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
 					MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
-					Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+					Print(COLOR_2 + "MGConfig_PickItems " + COLOR_5 + MGConfig_PickItems);
 					Delay(Random(1000,1700));
-					Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+					Print(COLOR_5 + "MGConfig_PickAuto " + COLOR_2 + MGConfig_PickAuto);
 					break;
 				case 103:			// #pad 7: grab exp shrine (orig:Key_MyChicken)
 					if(!InTown(me)) {
@@ -774,9 +784,9 @@ function NT_KeyEvents(keycode) {
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
 					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
 					MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
-					Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+					Print(COLOR_2 + "MGConfig_PickItems " + COLOR_5 + MGConfig_PickItems);
 					Delay(Random(1000,1700));
-					Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+					Print(COLOR_5 + "MGConfig_PickAuto " + COLOR_2 + MGConfig_PickAuto);
 					break;
 				case 97:			// #pad 1: for throne hopping by stairs barb
 				case 98:			// #pad 2: for throne hopping in place barb
@@ -884,9 +894,9 @@ function NT_KeyEvents(keycode) {
 				case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
 					MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
 					MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
-					Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+					Print(COLOR_2 + "MGConfig_PickItems " + COLOR_5 + MGConfig_PickItems);
 					Delay(Random(1000,1700));
-					Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+					Print(COLOR_5 + "MGConfig_PickAuto " + COLOR_2 + MGConfig_PickAuto);
 					break;
 				case 97:			// #pad 1: msg "." call peeps to follow
 					Print(COLOR_2 + "calling followers...");
@@ -1017,9 +1027,9 @@ function d2B_KeyCodeMain(keycode) {
 		case 104:									// number pad #8 | pickit enable/disable
 			MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
 			MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
-			Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+			Print(COLOR_2 + "MGConfig_PickItems " + COLOR_5 + MGConfig_PickItems);
 			Delay(Random(300,700));
-			Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+			Print(COLOR_5 + "MGConfig_PickAuto " + COLOR_2 + MGConfig_PickAuto);
 			break;
 		//	____________________________________________
 		//
@@ -1622,9 +1632,9 @@ function d2B_noobRushCtrls(keycode) {
 		case 104:			// #pad 8: enable/disable pickit (orig: Key_DPSMeter)
 			MGConfig_PickItems ? (MGConfig_PickItems = false) : (MGConfig_PickItems = true);
 			MGConfig_PickAuto ? (MGConfig_PickAuto = false) : (MGConfig_PickAuto = true);
-			Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+			Print(COLOR_2 + "MGConfig_PickItems " + COLOR_5 + MGConfig_PickItems);
 			Delay(Random(1000,1700));
-			Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+			Print(COLOR_5 + "MGConfig_PickAuto " + COLOR_2 + MGConfig_PickAuto);
 			break;
 		
 		case 97:			// #pad 1: head to tree, grab scroll, town, and talk to Akara
@@ -1733,7 +1743,7 @@ function d2B_keySettings(menu) {
 				Print(COLOR_4 + "8: " + COLOR_7 + "enable or disable pickit");
 				Print(COLOR_4 + "9: " + COLOR_7 + "ldr & team precast");
 				Print(COLOR_4 + "' "+ COLOR_7 + "direct zon to replenish her javs");
-				Print(COLOR_4 + "\ "+ COLOR_7 + "fetch leg");
+				Print(COLOR_4 + "\\ "+ COLOR_7 + "fetch leg");
 				Print(COLOR_4 + "] "+ COLOR_7 + "chant team");
 				Print(COLOR_4 + "[ "+ COLOR_7 + "glitching low lvl from ancients to worldstone 1");
 				break;
@@ -2860,37 +2870,78 @@ function d2B_glitchWS1(areaid) {	// glitch rush low lvl from ancients to worldst
 	var _prearea;
 	var _dist = 2;
 	var _unit2;
-	
+	switch(areaid){
+		case 47:
+		case 65:
+			_unit = NTC_FindUnit(NTC_UNIT_OBJECT, 74); // trap door
+			break;
+		case 93:
+			_unit = NTC_FindUnit(NTC_UNIT_OBJECT, 366); // sewer stairs
+			break;
+		case 94:
+		case 96:
+		case 98:
+			_unit = NTC_FindUnit(NTC_UNIT_OBJECT, 195);// stair
+			_dist = 4;
+			break;
+		case 95:
+		case 97:
+		case 99:
+			_unit = NTC_FindUnit(NTC_UNIT_OBJECT, 194);// stair
+			_dist = 4;
+			break;
+		case 100:
+			_unit = NTC_FindUnit(NTC_UNIT_OBJECT, 386); // trav to duri
+			_dist = 4;
+			break;
+		case 128:
+			_unit = NTC_FindUnit(NTC_UNIT_OBJECT, 547); // to wsk 1
+			break;
+		default:
+			_unit = NTM_GetStairInt(areaid);
+			break;
+	}
+	if(!_unit){
+		return false;
+	}
+
 	_prearea = me.areaid;
-	_unit = NTC_FindUnit(NTC_UNIT_OBJECT, 547); 	// to wsk 1
-	if(!_unit) return false;
-	
-	for(var i = 0 ; i < 20 ; i++) {
-		if((i % 5) == 0) {
-			if(i == 10)  NTM_MoveTo(_prearea, me.x+6, me.y+6);
-			
-			/*if(_unit.classid == 366 && _unit.mode != 2) {
+	for(var i = 0 ; i < 20 ; i++){
+		if((i % 5) == 0){
+			if(i == 10){
+				NTM_MoveTo(_prearea, me.x+6, me.y+6);
+			}
+			if(_unit.classid == 366 && _unit.mode != 2){
 				_unit2 = NTC_FindUnit(NTC_UNIT_OBJECT, 367); // sewer leaver
-				if(NTM_GetCloserInt(_unit2, _dist)) {
+				if(NTM_GetCloserInt(_unit2, _dist)){
 					NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _unit2);
 					NTC_Delay(200);
 				}
-			}*/
+			}
 
-			if(NTM_GetCloserInt(_unit, _dist)) NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _unit);
+			if(NTM_GetCloserInt(_unit, _dist)){
+				NTC_DoClick(NTC_CLICK_LDOWN, NTC_SHIFT_NONE, _unit);
+				
+			}
 		}
 
 		NTC_Delay(200);
 
-		if(me.areaid != _prearea) break;
+		if(me.areaid != _prearea){
+			break;
+		}
 	}
 
-	while(me.areaid == 0) NTC_Delay(200);
+	while(me.areaid == 0){
+		NTC_Delay(200);
+	}
 
-	if(me.areaid == _prearea) return false;
+	if(me.areaid == _prearea){
+		return false;
+	}
 	NTC_PingDelay(NTConfig_AreaDelay);
-	
-	return true;
+
+   	return true;
 }
 //
 //	player checking functions
@@ -3136,6 +3187,10 @@ function d2B_LXPC_FindShrines(a) {
 								NTC_CastSkill(43, NTC_HAND_RIGHT, ThisShrine);
 							}
 							NTC_Delay(100);
+							MGConfig_PickItems = false;
+							MGConfig_PickAuto = false;
+							Print(COLOR_2 + "MGConfig_PickItems " + COLOR_5 + MGConfig_PickItems);
+							Print(COLOR_5 + "MGConfig_PickAuto " + COLOR_2 + MGConfig_PickAuto);
 						}
 						while(!me.GetState(137) && !ThisShrine.mode && !a) {
 							NTM_GetCloserIntS(ThisShrine);
@@ -3504,9 +3559,9 @@ function d2B_manualBaal() {
 	NTM_MoveTo(me.areaid, 15138, 5916);
     MGConfig_PickItems = true;
 	MGConfig_PickAuto = true;
-	Print(COLOR_2 + "MGConfig_PickItems" + COLOR_5 + MGConfig_PickItems);
+	Print(COLOR_2 + "MGConfig_PickItems " + COLOR_5 + MGConfig_PickItems);
 	Delay(Random(1000,1700));
-	Print(COLOR_5 + "MGConfig_PickAuto" + COLOR_2 + MGConfig_PickAuto);
+	Print(COLOR_5 + "MGConfig_PickAuto " + COLOR_2 + MGConfig_PickAuto);
 }
 function d2B_initCharVars() {
 	NTConfig_SkipRegularMonsters = false;
