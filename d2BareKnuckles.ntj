@@ -109,7 +109,7 @@
 /*	_______________________________________________________________________________ */
 
 	var d2B_cases = 1;
-	var d2B_toggleHelper = "helper";
+	var d2B_toggleHelper = "sorcMF";
 	NTConfig_SkipRegularMonsters = false;			// toggle atk to regular monsters	
 
 
@@ -1203,9 +1203,9 @@ function d2B_Solo_acts() {
 			case(25):	_a1Actions--;
 						d2_meph(101);
 						break;
-			/*case(26):	_a1Actions--;
-						d2_outersteps(104);
-						break;*/
+			case(26):	_a1Actions--;
+						//d2_outersteps(104);
+						break;
 			case(26):	_a1Actions--;
 						d2_cityofthedamned(106);
 						break;
@@ -1441,6 +1441,10 @@ function d2B_stayoffofwaypoint() {
 //
 function d2_gotoWpPrepMe(_wpTmp) {
 	Town();
+	if(NTTMGR_CheckScrolls(1) < 8)) {
+		Print(COLOR_9 + "Refilling my scrolls...");
+		NTTMGR_TownManager();
+	}
 	d2B_moveWP();
 	if(d2B_toggleHelper != "helper" && d2B_toggleHelper != "boObserver") {
 		Print(COLOR_0 + "Taking a little " + COLOR_1 + "delay...");
@@ -1729,6 +1733,9 @@ function d2_worldstone2(_wpTmp) {
 	d2B_preCastClrLvlOC();
 	d2B_moveToStair(129,130, false);
 	d2B_takeStairs(130, true);
+	d2B_moveToStair(130,131, false);
+	d2B_takeStairs(131, true);
+	d2B_throne();
 	return;
 }
 //
@@ -3707,6 +3714,9 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					msg3 = leaderPlayerUnit.x;
 					msg4 = leaderPlayerUnit.y;
 					break;
+		case "tpme":
+					if(!InTown()) NTM_MakeTP();
+					break;
 		case "ways": // for giving the wps ways 1, 2, 3, 4, 5, all - for giving the waypoints
 					_leader = 1;
 					d2B_ways(msg2);
@@ -4662,7 +4672,15 @@ function sorcassist(order) {
 }
 function Follow(target) {
 	if(!me.GetState(32)) d2B_getBO();	// if I need a bo go, get it
-	
+	if(NTTMGR_CheckScrolls(1) < 8)) {
+		Print(COLOR_9 + "Refilling my scrolls...");
+		if(!InTown()) {
+			NTM_MakeTP();
+			d2B_usePortal2();
+			Town();
+		}
+		NTTMGR_TownManager();
+	}
 	var _distance = -1;
 	var leaderPlayerUnitintown, _meintown;
 	
@@ -4948,7 +4966,7 @@ function Follow(target) {
 		}
 		// from the river of flames to the chaos sanctuary
 		if(leaderPlayerUnit.areaid == 108 && me.areaid == 107) {
-			NTM_MoveTo(108, 7888,5555);			// move to just inside of the chaos sanctuary
+			if(!NTM_MoveTo(108, 7888,5555)) Town();			// move to just inside of the chaos sanctuary
 			return;
 		}
 		
@@ -7563,6 +7581,42 @@ function OutOfBounds(Monst){
 // 	act v functions
 //	******************************************************************************
 //
+function d2B_throne() {
+	prewavespot = [15092, 5040];	// from: D2Etal/scripts/NTRush/rush_configs/Sorceress.ntl 
+	
+	if(me.areaid != 131) {
+		Town();
+		return;
+	}
+	Delay(500);
+	NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
+	NTM_MakeTP();
+	
+	if(_dollChk) {
+		if(d2B_dollsoulChk()) {
+		_dollSoul = true;
+		return;
+		}
+		Delay(100);
+		if(d2B_dollsoulChk()) {
+		_dollSoul = true;
+		return;
+		}
+	}
+	
+	_dollSoul = false;
+	NTM_MoveTo(me.areaid, 15094, 5039);				// safe: 15118, 5051 | centre: 15094, 5039 | orig(15112, 5068, 1, true)
+	NTA_ClearPosition();
+	
+	NT_ClearThroneInt();
+	
+	NTM_MoveTo(me.areaid, 15118, 5051);				// centre: 15094, 5039 | orig(15112, 5068, 1, true)
+	d2B_throneWaves();
+	d2B_baal();
+	Delay(Random(6000,10000));
+	
+	return;
+}
 function NT_FindNihlathakInt() {
 		
 	var i, x, y;
@@ -7595,7 +7649,6 @@ function NT_ClearThroneInt(){
 	return;
 }
 function d2B_throneWaves() {
-	d2B_msg(".");
 	Delay(100);
 	while(1){
 		NTC_Delay(100);
@@ -7625,7 +7678,6 @@ function d2B_throneWaves() {
                 }
 				NTA_ClearPosition(40, true, 2);
 				NTP_DoPrecast(true);
-				if(!_quiet && _throneLeechers) Say("yo");
 				break;
 			case 2:
 				if(NTConfig_PreWaveTele){
@@ -7639,13 +7691,10 @@ function d2B_throneWaves() {
 				if(NTConfig_Wave2PSNCheck && me.GetState(2) != -1){
 					NTTMGR_VisitTown();
 				}
-				//d2B_msg("yo");
-				if(!_quiet && _throneLeechers) Say("yo");
 				Delay(700);
 				break;
 			case 3:
-			    d2B_msg(".");
-			    Delay(100);
+				Delay(100);
 				if(NTConfig_PreWaveTele){
 					NTM_TeleportTo(me.x+1, me.y+3);
                 }
@@ -7654,13 +7703,10 @@ function d2B_throneWaves() {
 					NT_CheckHydraInt();
 				}
 				else {
-					//d2B_msg("yo");
-					if(!_quiet && _throneLeechers) Say("yo");
 					NTC_Delay(3000);
 				}
 				break;
 			case 4:
-			   d2B_msg(".");
 			   Delay(100);
 				if(NTConfig_PreWaveTele){
 					NTM_TeleportTo(me.x+1, me.y+3);
@@ -7789,18 +7835,20 @@ function d2B_baal() {
 	_portal = NTC_FindUnit(NTC_UNIT_OBJECT, 563, 1);
 	if(!_portal){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTC_FindUnit()");
+		Town();
 		return;
 	}
 	if(!NTM_UsePortal("Portal", 132, null, _portal)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTM_UsePortal()");
+		Town();
 		return;
 	}
 	NTM_MoveTo(me.areaid, 15138, 5916);
     NTM_MakeTP();
-	//if(d2B_usingAFollower || d2B_usingSorcFlwrs) d2B_team2(true);
 	
 	if(!d2B_killBaal(544)){
 		NTC_SendMsgToScript("NTBotGame.ntj", "NTA_KillMonster()");
+		Town();
 		return;
 	}
 	NTSI_PickItems();
