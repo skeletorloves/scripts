@@ -1,6 +1,6 @@
-/*	v1.20171023
+/*	v1.20171111
 	
-	v1.20171023
+	v1.20171111
 	d2BareKnuckles.ntj
 
 */
@@ -4691,7 +4691,7 @@ function sorcassist(order) {
 	return 1;
 }
 function Follow(target) {
-	if(!me.GetState(32)) d2B_getBO();	// if I need a bo go, get it
+	if(!me.GetState(32)&& !_noBoer) d2B_getBO();	// if I need a bo go, get it
 	if(NTTMGR_CheckScrolls(1) < 10) {
 		Print(COLOR_9 + "Refilling my scrolls...");
 		if(!InTown()) {
@@ -5163,7 +5163,7 @@ function Guard() { 									// Done
 }
 
 function hAttack() {
-	if(!me.GetState(32)) d2B_getBO();	// if I need a bo go, get it
+	if(!me.GetState(32)&& !_noBoer) d2B_getBO();	// if I need a bo go, get it
 	
 	if(!NTC_InTown(me))
 	{
