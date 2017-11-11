@@ -1115,8 +1115,8 @@ function d2B_Solo_acts() {
 		_a1Temp[_dRndA1] = _dTmpA1;
 	}
 	for(_i = 0; _i <= (_a1Temp.length - 1); _i++) {
+		if(_a1Temp[_i] == "undefined") _a1Temp[_i] = 107;
 		Print(COLOR_7 + "a1 activity: " + COLOR_1 + _a1Temp[_i]);
-		if(_a1Temp[_i] == "undefined") d2B_Solo_a1a2();
 	}
 	
 	var _a1Actions = _a1Temp.length - 1;
@@ -1237,7 +1237,7 @@ function d2B_Solo_acts() {
 						d2_ancientsway(118);
 						break;
 			case(36):	_a1Actions--;
-						d2_worldstone2(129);
+						d2_worldstone2(129, false);
 						break;
 			//
 			// unique monsters & bosses
@@ -1441,7 +1441,7 @@ function d2B_stayoffofwaypoint() {
 //
 function d2_gotoWpPrepMe(_wpTmp) {
 	Town();
-	if(NTTMGR_CheckScrolls(1) < 8)) {
+	if(NTTMGR_CheckScrolls(1) < 10) {
 		Print(COLOR_9 + "Refilling my scrolls...");
 		NTTMGR_TownManager();
 	}
@@ -1728,14 +1728,16 @@ function d2_ancientsway(_wpTmp) {
 	d2B_preCastClrLvlOC();
 	return;
 }
-function d2_worldstone2(_wpTmp) {
+function d2_worldstone2(_wpTmp, _baalTmp) {
 	d2_gotoWpPrepMe(_wpTmp);
 	d2B_preCastClrLvlOC();
 	d2B_moveToStair(129,130, false);
 	d2B_takeStairs(130, true);
-	d2B_moveToStair(130,131, false);
-	d2B_takeStairs(131, true);
-	d2B_throne();
+	if(_baalTmp) {
+		d2B_moveToStair(130,131, false);
+		d2B_takeStairs(131, true);
+		d2B_throne();
+	}
 	return;
 }
 //
@@ -2784,7 +2786,7 @@ function ActionSorc() {
 		if(isFollowingEnabled)	{FollowSorc();}
 	}
 	if(NTC_InTown(me)) {
-		if((NTTMGR_CheckScrolls(1) < 8) && d2B_refill) d2B_townMgr();
+		if((NTTMGR_CheckScrolls(1) < 10) && d2B_refill) d2B_townMgr();
 	}
 }
 function FollowSorc(target) {
@@ -3422,6 +3424,10 @@ function d2H_load() {
     	NTSI_LoadNIPFiles("NTBot/item_configs");
 	NTA_Initialize();
 	
+	var _xPrewavespot = Randome(15085,15097);
+	var _yPrewavespot = Randome(5035,5045);
+	prewavespot = [_xPrewavespot, _yPrewavespot];
+	
 	NTConfig_DoNotFollowAreas = [0];
 	NTConfig_DoNotAttackAreas = [0];
 	
@@ -3439,7 +3445,7 @@ function d2H_load() {
 	NTConfig_Quest_WirtsLeg	= true;						// true/false to do quests when using rush commands
 	NTConfig_Quest_Radament	= true;						// true/false to do quests when using rush commands
 	NTConfig_Quest_Izual	= true;						// true/false to do quests when using rush commands
-	NTConfig_Quest_Tome		= true;						// true/false to do quests when using rush commands
+	NTConfig_Quest_Tome		= false;						// true/false to do quests when using rush commands
 	NTConfig_Quest_Shenk	= true;						// true/false to do quests when using rush commands
 	NTConfig_Quest_Anya		= true;						// true/false to do quests when using rush commands
 	NTConfig_Quest_Ancients	= true;						// true/false to do quests when using rush commands
@@ -3462,7 +3468,7 @@ function d2H_load() {
 	Scripts.K1 = true;
 	Scripts.K2 = true;
 	Scripts.K3 = true;
-	Scripts.Tome = true;
+	Scripts.Tome = false;
 	Scripts.Travincal = true;
 	Scripts.Mephisto = true;
 	Scripts.Izual = true;
@@ -3542,7 +3548,7 @@ function Action() {
 		if(isFollowingEnabled)	{Follow();}
 	}
 	if(NTC_InTown(me)) {
-		if((NTTMGR_CheckScrolls(1) < 8) && d2B_refill) {
+		if((NTTMGR_CheckScrolls(1) < 10) && d2B_refill) {
 			d2B_townMgr();
 		}
 	}
@@ -4030,6 +4036,20 @@ function CommandHandler( msg1, msg2, msg3, msg4, msg5 ) {
 					Delay(300);
 					NTM_MoveTo(108,7793,5287); 						// chaos ctr
 					NTP_DoPrecast(true);
+					break;
+		case "anctp":
+					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
+					isFollowingEnabled = false;
+					Print(COLOR_4 + "Follow off");
+					Print(COLOR_3 + "Heading to ancients to make a tp...");
+					
+					Delay(300);
+					d2B_commonInitSetup(118);
+					NTM_MoveToStair(me.areaid, 120);
+					NTM_TakeStair(120);
+					
+					NTM_MoveTo(me.areaid, 10057, 12645);
+					NTM_MakeTP();
 					break;
 		case "ntp":													// Heading to Nihlathak
 					if(!InTown(me) || me.classid != NTC_CHAR_CLASS_SORCERESS) break;
@@ -4672,7 +4692,7 @@ function sorcassist(order) {
 }
 function Follow(target) {
 	if(!me.GetState(32)) d2B_getBO();	// if I need a bo go, get it
-	if(NTTMGR_CheckScrolls(1) < 8)) {
+	if(NTTMGR_CheckScrolls(1) < 10) {
 		Print(COLOR_9 + "Refilling my scrolls...");
 		if(!InTown()) {
 			NTM_MakeTP();
@@ -5232,7 +5252,7 @@ function TakeLeaderTP(toArea) { 					// Done
 		
 		if(NTC_InTown(me) && d2B_refill)
 		{
-			if((NTTMGR_CheckScrolls(1) < 4) && d2B_refill)
+			if((NTTMGR_CheckScrolls(1) < 10) && d2B_refill)
 			{
 				Whisper(leaderPlayerUnit.name, "Buying scrolls");
 				d2B_townMgr();
@@ -5289,7 +5309,7 @@ function TakeLeaderTPFromTown(toArea) { 			// Done
 		Delay(250);
 		
 		if(NTC_InTown(me) && d2B_refill) {
-			if((NTTMGR_CheckScrolls(1) < 8) && d2B_refill) d2B_townMgr();
+			if((NTTMGR_CheckScrolls(1) < 10) && d2B_refill) d2B_townMgr();
 		}
 		
 		if(_prearea !== me.areaid) _ret = true;
@@ -5724,7 +5744,7 @@ function TP(msg) { 									// Done
 					Delay(Random(1000,1500));
 					d2B_usePortal2();
 					
-					if((NTTMGR_CheckScrolls(1) <= 4) && d2B_refill)
+					if((NTTMGR_CheckScrolls(1) <= 10) && d2B_refill)
 					{
 						d2B_msg("Buying scrolls first!");
 						d2B_townMgr();
@@ -5753,7 +5773,7 @@ function TP(msg) { 									// Done
 			{
 				if(wpID != -1)
 				{
-					if((NTTMGR_CheckScrolls(1) <= 4) && d2B_refill)
+					if((NTTMGR_CheckScrolls(1) <= 10) && d2B_refill)
 					{
 						d2B_msg("Buying scrolls first!");
 						d2B_townMgr();
@@ -6098,12 +6118,12 @@ function act1(){
 		if (abort)
 			break;
 	}
+	var tptown = true;
 	if(me.areaid == 1 || me.areaid == 40 || me.areaid == 75 || me.areaid == 103 || me.areaid == 109)
 		tptown = false;
 	if(tptown)
 		NTM_MakeTP(true);
 	NTTM_CheckAct(4);
-	tptown = true;
 }
 
 function act2(){
@@ -6142,12 +6162,12 @@ function act2(){
 		if (abort)
 			break;
 	}
+	var tptown = true;
 	if(me.areaid == 1 || me.areaid == 40 || me.areaid == 75 || me.areaid == 103 || me.areaid == 109)
 		tptown = false;
 	if(tptown)
 		NTM_MakeTP(true);
 	NTTM_CheckAct(4);
-	tptown = true;
 }
 
 function act3(){
@@ -6186,12 +6206,12 @@ function act3(){
 		if (abort)
 			break;
 	}
+	var tptown = true;
 	if(me.areaid == 1 || me.areaid == 40 || me.areaid == 75 || me.areaid == 103 || me.areaid == 109)
 		tptown = false;
 	if(tptown)
 		NTM_MakeTP(true);
 	NTTM_CheckAct(4);
-	tptown = true;
 }
 
 function act4(){
@@ -6230,12 +6250,12 @@ function act4(){
 		if (abort)
 			break;
 	}
+	var tptown = true;
 	if(me.areaid == 1 || me.areaid == 40 || me.areaid == 75 || me.areaid == 103 || me.areaid == 109)
 		tptown = false;
 	if(tptown)
 		NTM_MakeTP(true);
 	NTTM_CheckAct(4);
-	tptown = true;
 }
 
 function act5(){
@@ -6274,12 +6294,12 @@ function act5(){
 		if (abort)
 			break;
 	}
+	ivar tptown = true;
 	if(me.areaid == 1 || me.areaid == 40 || me.areaid == 75 || me.areaid == 103 || me.areaid == 109)
 		tptown = false;
 	if(tptown)
 		NTM_MakeTP(true);
 	NTTM_CheckAct(4);
-	tptown = true;
 }
 //
 //	my chat functions
