@@ -631,6 +631,14 @@ function Follower() {
 	// act1: rcain, malus
 	// act2: rada, staff, summoner, orifice
 	//
+				case "rmini":
+				case me.name + " rmini":
+					if(me.classid == 1) d2_rush("rmini");
+					break;
+				case "rmax":
+				case me.name + " rmax":
+					if(me.classid == 1) d2_rush("rmax");
+					break;
 				case "randariel": // enables rusher
 				case me.name + " randariel":
 					if(me.classid == 1) d2_rush("randariel");
@@ -2326,7 +2334,7 @@ function d2_rush(rMsg) {
 
 	
 	this.andariel = function () {
-		say("starting andariel");
+		me.overhead("starting andariel");
 		Town.doChores();
 		Pather.useWaypoint(35, true);
 		Precast.doPrecast(true);
@@ -2337,7 +2345,7 @@ function d2_rush(rMsg) {
 
 		Pather.makePortal();
 		Attack.securePosition(me.x, me.y, 40, 3000, true);
-		say("1");
+		me.overhead("1");
 
 		while (!this.playerIn()) {
 			Pather.moveTo(22582, 9612);
@@ -2345,7 +2353,7 @@ function d2_rush(rMsg) {
 		}
 
 		Attack.kill(156);
-		say("2");
+		me.overhead("2");
 		Pather.moveTo(22582, 9612);
 
 		while (this.playerIn()) {
@@ -2353,7 +2361,7 @@ function d2_rush(rMsg) {
 		}
 
 		Pather.usePortal(null, me.name);
-		say("a2");
+		me.overhead("a2");
 		Pather.useWaypoint(40, true);
 
 		while (!this.playersInAct(2)) {
@@ -2367,7 +2375,7 @@ function d2_rush(rMsg) {
 			return false;
 		}
 
-		say("starting radament");
+		me.overhead("starting radament");
 
 		var i, radaCoords, rada, radaPreset, returnSpot,
 			moveIntoPos = function (unit, range) {
@@ -2432,7 +2440,7 @@ function d2_rush(rMsg) {
 
 		Attack.securePosition(me.x, me.y, 35, 3000);
 		Pather.makePortal();
-		say("1");
+		me.overhead("1");
 
 		while (!this.playerIn()) {
 			delay(200);
@@ -2445,7 +2453,7 @@ function d2_rush(rMsg) {
 			y: me.y
 		};
 
-		say("2");
+		me.overhead("2");
 		Pickit.pickItems();
 		Attack.securePosition(me.x, me.y, 30, 3000);
 
@@ -2455,7 +2463,7 @@ function d2_rush(rMsg) {
 
 		Pather.moveToUnit(returnSpot);
 		Pather.makePortal();
-		say("all in");
+		me.overhead("all in");
 
 		while (!this.playerIn()) {
 			delay(200);
@@ -2475,7 +2483,7 @@ function d2_rush(rMsg) {
 	};
 	this.cube = function () {
 		if (me.diff === 0) {
-			say("starting cube");
+			me.overhead("starting cube");
 			Pather.useWaypoint(57, true);
 			Precast.doPrecast(true);
 
@@ -2485,7 +2493,7 @@ function d2_rush(rMsg) {
 
 			Pather.makePortal();
 			Attack.securePosition(me.x, me.y, 30, 3000, true);
-			say("1");
+			me.overhead("1");
 
 			while (!this.playerIn()) {
 				delay(100);
@@ -2501,7 +2509,7 @@ function d2_rush(rMsg) {
 		return true;
 	};
 	this.amulet = function () {
-		say("starting amulet");
+		me.overhead("starting amulet");
 		Town.doChores();
 		Pather.useWaypoint(44, true);
 		Precast.doPrecast(true);
@@ -2518,7 +2526,7 @@ function d2_rush(rMsg) {
 			Attack.securePosition(me.x, me.y, 25, 3000, true, true);
 		}
 
-		say("1");
+		me.overhead("1");
 
 		while (!this.playerIn()) {
 			delay(100);
@@ -2533,7 +2541,7 @@ function d2_rush(rMsg) {
 		return true;
 	};
 	this.staff = function () {
-		say("starting staff");
+		me.overhead("starting staff");
 		Town.doChores();
 		Pather.useWaypoint(43, true);
 		Precast.doPrecast(true);
@@ -2544,7 +2552,7 @@ function d2_rush(rMsg) {
 
 		Pather.makePortal();
 		Attack.securePosition(me.x, me.y, 30, 3000, true);
-		say("1");
+		me.overhead("1");
 
 		while (!this.playerIn()) {
 			//Pather.moveToPreset(me.area, 2, 356);
@@ -2565,7 +2573,7 @@ function d2_rush(rMsg) {
 		// right down 25830 5447 (25866, 5431)
 		// left down 25447 5822 (25431, 5861)
 
-		say("starting summoner");
+		me.overhead("starting summoner");
 		Town.doChores();
 		Pather.useWaypoint(74, true);
 		Precast.doPrecast(true);
@@ -2600,7 +2608,7 @@ function d2_rush(rMsg) {
 
 		Pather.makePortal();
 		Attack.securePosition(me.x, me.y, 25, 3000);
-		say("1");
+		me.overhead("1");
 
 		while (!this.playerIn()) {
 			Pather.moveToUnit(spot);
@@ -2610,7 +2618,7 @@ function d2_rush(rMsg) {
 
 		Pather.moveToPreset(me.area, 2, 357);
 		Attack.kill(250);
-		say("2");
+		me.overhead("2");
 
 		while (this.playerIn()) {
 			delay(100);
@@ -2640,7 +2648,7 @@ function d2_rush(rMsg) {
 		return true;
 	};
 	this.duriel = function () {
-		say("starting duriel");
+		me.overhead("starting duriel");
 
 		if (me.inTown) {
 			Town.doChores();
@@ -2655,7 +2663,7 @@ function d2_rush(rMsg) {
 
 		Pather.makePortal();
 		Attack.securePosition(me.x, me.y, 30, 3000, true, me.diff === 2);
-		say("1");
+		me.overhead("1");
 
 		while (!this.playerIn()) {
 			//Pather.moveToPreset(me.area, 2, 152, 0, -5);
@@ -2683,7 +2691,7 @@ function d2_rush(rMsg) {
 		Pather.moveTo(22577, 15649, 10);
 		Pather.moveTo(22577, 15609, 10);
 		Pather.makePortal();
-		say("1");
+		me.overhead("1");
 
 		while (!this.playerIn()) {
 			delay(100);
@@ -2696,7 +2704,7 @@ function d2_rush(rMsg) {
 		Pather.useWaypoint(52);
 		Pather.moveToExit([51, 50], true);
 		Pather.moveTo(10022, 5047);
-		say("a3");
+		me.overhead("a3");
 		Town.goToTown(3);
 		Town.doChores();
 
@@ -2707,7 +2715,7 @@ function d2_rush(rMsg) {
 		return true;
 	};
 	this.travincal = function () {
-		say("starting travincal");
+		me.overhead("starting travincal");
 		Town.doChores();
 		Pather.useWaypoint(83, true);
 		Precast.doPrecast(true);
@@ -2717,7 +2725,7 @@ function d2_rush(rMsg) {
 		Pather.moveTo(coords[0] + 23, coords[1] - 102);
 		Pather.makePortal();
 		Attack.securePosition(me.x, me.y, 40, 3000);
-		say("1");
+		me.overhead("1");
 
 		while (!this.playerIn()) {
 			delay(250);
@@ -2732,7 +2740,7 @@ function d2_rush(rMsg) {
 		Attack.kill(getLocaleString(2862));
 		Attack.kill(getLocaleString(2860));*/
 
-		say("2");
+		me.overhead("2");
 		Pather.moveTo(coords[0] + 23, coords[1] - 102);
 		Pather.usePortal(null, me.name);
 
@@ -2740,7 +2748,7 @@ function d2_rush(rMsg) {
 	};
 
 	this.mephisto = function () {
-		say("starting mephisto");
+		me.overhead("starting mephisto");
 
 		var hydra;
 
@@ -2751,7 +2759,7 @@ function d2_rush(rMsg) {
 		Pather.moveTo(17692, 8023);
 		Pather.makePortal();
 		delay(2000);
-		say("1");
+		me.overhead("1");
 
 		while (!this.playerIn()) {
 			delay(250);
@@ -2762,7 +2770,7 @@ function d2_rush(rMsg) {
 		Pickit.pickItems();
 		Pather.moveTo(17692, 8023);
 		Pather.makePortal();
-		say("2");
+		me.overhead("2");
 
 		while (this.playerIn()) {
 			delay(250);
@@ -2783,13 +2791,13 @@ function d2_rush(rMsg) {
 
 		Pather.makePortal();
 		Pather.moveTo(17581, 8070);
-		say("1");
+		me.overhead("1");
 
 		while (!this.playerIn()) {
 			delay(250);
 		}
 
-		say("a4");
+		me.overhead("a4");
 		//Pather.moveTo(17591, 8070);
 
 		while (!this.playersInAct(4)) {
@@ -2806,7 +2814,7 @@ function d2_rush(rMsg) {
 			return false;
 		}
 
-		say("starting izual");
+		me.overhead("starting izual");
 
 		var i, izualCoords, izual, izualPreset, returnSpot,
 			moveIntoPos = function (unit, range) {
@@ -2876,7 +2884,7 @@ function d2_rush(rMsg) {
 
 		Attack.securePosition(me.x, me.y, 30, 3000);
 		Pather.makePortal();
-		say("1");
+		me.overhead("1");
 
 		while (!this.playerIn()) {
 			delay(200);
@@ -2884,7 +2892,7 @@ function d2_rush(rMsg) {
 
 		Attack.kill(256); // Izual
 		Pickit.pickItems();
-		say("2");
+		me.overhead("2");
 		Pather.moveToUnit(returnSpot);
 
 		while (this.playerIn()) {
@@ -2896,7 +2904,7 @@ function d2_rush(rMsg) {
 		return true;
 	};
 	this.diablo = function () {
-		say("starting diablo");
+		me.overhead("starting diablo");
 
 		this.getLayout = function (seal, value) {
 			var sealPreset = getPresetUnit(108, 2, seal);
@@ -3065,7 +3073,7 @@ function d2_rush(rMsg) {
 		Pather.moveTo(7763, 5267);
 		Pather.makePortal();
 		Pather.moveTo(7727, 5267);
-		say("1");
+		me.overhead("1");
 
 		while (!this.playerIn()) {
 			delay(250);
@@ -3078,10 +3086,10 @@ function d2_rush(rMsg) {
 		}
 
 		Attack.kill(243);
-		say("2");
+		me.overhead("2");
 
 		if (me.gametype > 0) {
-			say("a5");
+			me.overhead("a5");
 
 			while (!this.playersInAct(5)) {
 				delay(250);
@@ -3101,14 +3109,14 @@ function d2_rush(rMsg) {
 			return false;
 		}
 
-		say("starting shenk");
+		me.overhead("starting shenk");
 
 		Pather.useWaypoint(111, true);
 		Precast.doPrecast(false);
 		Pather.moveTo(3846, 5120);
 		Attack.securePosition(me.x, me.y, 30, 3000);
 		Pather.makePortal();
-		say("1");
+		me.overhead("1");
 
 		while (!this.playerIn()) {
 			delay(200);
@@ -3117,7 +3125,7 @@ function d2_rush(rMsg) {
 		Attack.kill(getLocaleString(22435)); // Shenk
 		Pickit.pickItems();
 		Pather.moveTo(3846, 5120);
-		say("2");
+		me.overhead("2");
 
 		while (this.playerIn()) {
 			delay(200);
@@ -3132,7 +3140,7 @@ function d2_rush(rMsg) {
 			return false;
 		}
 
-		say("starting anya");
+		me.overhead("starting anya");
 
 		var anya;
 
@@ -3158,7 +3166,7 @@ function d2_rush(rMsg) {
 		}
 
 		Pather.makePortal();
-		say("1");
+		me.overhead("1");
 
 		while (!this.playerIn()) {
 			delay(200);
@@ -3168,7 +3176,7 @@ function d2_rush(rMsg) {
 			delay(1000);
 		}
 
-		say("2"); // Mainly for non-questers to know when to get the scroll of resistance
+		me.overhead("2"); // Mainly for non-questers to know when to get the scroll of resistance
 
 		while (this.playerIn()) {
 			delay(200);
@@ -3180,7 +3188,7 @@ function d2_rush(rMsg) {
 	};
 	this.ancients = function () {
 		if (me.diff === 2) {
-			say("Hell rush complete~");
+			me.overhead("Hell rush complete~");
 			delay(500);
 			quit();
 
@@ -3188,14 +3196,14 @@ function d2_rush(rMsg) {
 		}
 
 		if (!this.bumperCheck()) {
-			say("No eligible bumpers detected. Rush complete~");
+			me.overhead("No eligible bumpers detected. Rush complete~");
 			delay(500);
 			quit();
 
 			return false;
 		}
 
-		say("starting ancients");
+		me.overhead("starting ancients");
 
 		var altar;
 
@@ -3209,7 +3217,7 @@ function d2_rush(rMsg) {
 
 		Pather.moveTo(10089, 12622);
 		Pather.makePortal();
-		say("3");
+		me.overhead("3");
 
 		while (!this.playerIn()) {
 			delay(250);
@@ -3248,7 +3256,7 @@ function d2_rush(rMsg) {
 		return true;
 	};
 	this.baal = function () {
-		say("starting baal");
+		me.overhead("starting baal");
 
 		var tick, portal;
 
@@ -3491,7 +3499,7 @@ MainLoop:
 		Pather.makePortal();
 		Pather.moveTo(15170, 5950);
 		delay(1000);
-		say("3");
+		me.overhead("3");
 
 		while (!this.playerIn()) {
 			delay(250);
@@ -3508,25 +3516,82 @@ MainLoop:
 	
 	
 	switch(rMsg) {
-		case randariel: this.andariel();
-		case rradament: this.radament();
-		case rcube: 	this.cube();
-		case ramulet:	this.amulet();
-		case rstaff: 	this.staff();
-		case rsummoner:	this.summoner();
-		case rduriel:	this.duriel();
-		case rtravincal:	this.travincal();
-		case rmephisto:	this.mephisto();
-		case rizual:	this.izual();
-		case rdiablo:	this.diablo();
-		case rshenk:	this.shenk();
-		case ranya:		this.anya();
-		case rancients:	this.ancients();
-		case rbaal:		this.baal();
-		default break;
+		case "rmini":
+			this.andariel();
+			this.cube();
+			this.amulet();
+			this.staff();
+			this.duriel();
+			this.travincal();
+			this.mephisto();
+			this.diablo();
+			this.shenk();
+			break;
+		case "rmax":
+			this.andariel();
+			this.radament();
+			this.cube();
+			this.amulet();
+			this.staff();
+			this.duriel();
+			this.travincal();
+			this.mephisto();
+			this.izual();
+			this.diablo();
+			this.shenk();
+			this.anya();
+			this.ancients();
+			this.baal();
+			break;
+		case "randariel": 	
+			this.andariel();
+			break;
+		case "rradament": 
+			this.radament();
+			break;
+		case "rcube": 		
+			this.cube();
+			break;
+		case "ramulet":		
+			this.amulet();
+			break;
+		case "rstaff": 		
+			this.staff();
+			break;
+		case "rsummoner":	
+			this.summoner();
+			break;
+		case "rduriel":		
+			this.duriel();
+			break;
+		case "rtravincal":	
+			this.travincal();
+			break;
+		case "rmephisto":	
+			this.mephisto();
+			break;
+		case "rizual":		
+			this.izual();
+			break;
+		case "rdiablo":		
+			this.diablo();
+			break;
+		case "rshenk":		
+			this.shenk();
+			break;
+		case "ranya":		
+			this.anya();
+			break;
+		case "rancients":	
+			this.ancients();
+			break;
+		case "rbaal":		
+			this.baal();
+			break;
+		default: break;
 		
 		break;
 	}
 	
 	return true;
-}*/
+}
