@@ -2252,6 +2252,13 @@ MainLoop:
 */
 
 function d2_rusher() {
+	// chat commands
+	// me		: assigns master
+	// notme	: releases master
+	// x		: exits rush function
+	// paws		: pause rush
+	// unpaws	: unpause rush
+	
 	load("tools/rushthread.js");
 	delay(500);
 
@@ -2330,7 +2337,7 @@ function d2_rusher() {
 	this.chatEvent = function (nick, msg) {
 		if (nick !== me.name) {
 			switch (msg) {
-			case "master":
+			case "me": // dEdits: case "master":
 				if (!master) {
 					me.overhead(nick + " is my master.");
 
@@ -2340,7 +2347,7 @@ function d2_rusher() {
 				}
 
 				break;
-			case "release":
+			case "notme": // dEdits: case "release":
 				if (nick === master) {
 					me.overhead("I have no master now.");
 
@@ -2350,10 +2357,10 @@ function d2_rusher() {
 				}
 
 				break;
-			case "quit":
+			case "x": // dEdits: "out"
 				if (nick === master) {
-					me.overhead("bye ~");
-					scriptBroadcast("quit");
+					me.overhead("Returning to main script..."); // dEdits: "bye ~"
+					// dEdits: scriptBroadcast("quit");
 				} else {
 					me.overhead("I'm only accepting commands from my master.");
 				}
@@ -2412,7 +2419,7 @@ function d2_rusher() {
 			command = commands.shift();
 
 			switch (command) {
-			case "pause":
+			case "paws":	// dEdits: "pause"
 				if (rushThread.running) {
 					me.overhead("Pausing");
 
@@ -2420,7 +2427,7 @@ function d2_rusher() {
 				}
 
 				break;
-			case "resume":
+			case "unpaws":	// dEdits: "resume"
 				if (!rushThread.running) {
 					me.overhead("Resuming");
 
