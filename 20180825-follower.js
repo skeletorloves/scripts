@@ -659,22 +659,30 @@ function Follower() {
 				case me.name + " rstaff":
 					if(me.classid == 1) d2_rush("rstaff");
 					break;
+				case "ramuler": // help to get the staff
+				case me.name + " ramulet":
+					if(me.classid == 1) d2_rush("ramulet");
+					break;
 				case "rsummoner": // help to get the summoner
 				case me.name + " rsummoner":
 					if(me.classid == 1) d2_rush("rsummoner");
 					break;
-				case "rorifice": // help to get to the orifice
-				case me.name + " rorifice": 
-					if(me.classid == 1) d2_rush("rorifice");
+				case "rduriel": // help to get to the orifice
+				case me.name + " rduriel": 
+					if(me.classid == 1) d2_rush("rduriel");
+					break;
+				case "rizual": // help to get to shenk
+				case me.name + " rizual":
+					if(me.classid == 1) d2_rush("rizual");
+					break;
+				case "rdiablo": // help to get to shenk
+				case me.name + " rdiablo":
+					if(me.classid == 1) d2_rush("rdiablo");
 					break;
 				case "rshenk": // help to get to shenk
 				case me.name + " rshenk":
 					if(me.classid == 1) d2_rush("rshenk");
 					break;
-				//case "rescue": // help to rescue the barbs
-				//case me.name + " rescue":
-				//	if(me.classid == 1) d2_rescue();
-				//	break;
 				case "ranya": // help to get anya
 				case me.name + " ranya":
 					if(me.classid == 1) d2_rush("ranya");
@@ -3521,6 +3529,7 @@ MainLoop:
 			this.cube();
 			this.amulet();
 			this.staff();
+			this.summoner();
 			this.duriel();
 			this.travincal();
 			this.mephisto();
@@ -3533,6 +3542,7 @@ MainLoop:
 			this.cube();
 			this.amulet();
 			this.staff();
+			this.summoner();
 			this.duriel();
 			this.travincal();
 			this.mephisto();
