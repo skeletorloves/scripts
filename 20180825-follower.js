@@ -560,23 +560,23 @@ function Follower() {
 					break;
 				case "den":
 				case me.name + " den":
-					d2_act1den();
+					if(me.classid == 1) d2_act1den();
 					break;
 				case "hole":
 				case me.name + " hole":
-					d2_act1hole();
+					if(me.classid == 1) d2_act1hole();
 					break;
 				case "pit":
 				case me.name + " pit":
-					d2_act1pit();
+					if(me.classid == 1) d2_act1pit();
 					break;
 				case "count":
 				case me.name + " count":
-					d2_Countess();
+					if(me.classid == 1) d2_Countess();
 					break;
 				case "andy":
 				case me.name + " andy":
-					d2_Andy();
+					if(me.classid == 1) d2_Andy();
 					break;
 				case "duri":
 				case me.name + " duri":
@@ -584,44 +584,46 @@ function Follower() {
 					break;
 				case "meph":
 				case me.name + " meph":
-					d2_Meph();
+					if(me.classid == 1) d2_Meph();
 					break;
 				case "entrance":
 				case me.name + " entrance":
-					d2_ChaosEnt();
+					if(me.classid == 1) d2_ChaosEnt();
 					break;
 				case "ctr":
 				case me.name + " ctr":
-					d2_tele2ChaosCtr();
+					if(me.classid == 1) d2_tele2ChaosCtr();
 					break;
 				case "seals":
 				case me.name + " seals":
-					d2_ChaosOpenSeals();
+					if(me.classid == 1) d2_ChaosOpenSeals();
 					break;
 				case "anc":
 				case me.name + " anc":
-					d2_Ancients();
+					if(me.classid == 1) d2_Ancients();
 					break;
 				case "throne":
 				case me.name + " throne":
-					d2_throne();
+					if(me.classid == 1) d2_throne();
 					break;
 				case "baal":
 				case me.name + " baal":
-					d2_Baal();
+					if(me.classid == 1) d2_Baal();
 					break;
 				case "truffle":
 				case me.name + " truffle":
-					d2_Countess();
-					d2_towndly();
-					d2_Andy();
-					d2_towndly();
-					d2_Duriel();
-					d2_towndly();
-					d2_Meph();
-					d2_towndly();
-					d2_Baal();
-					d2_towndly();
+					if(me.classid == 1) {
+						d2_Countess();
+						d2_towndly();
+						d2_Andy();
+						d2_towndly();
+						d2_Duriel();
+						d2_towndly();
+						d2_Meph();
+						d2_towndly();
+						d2_Baal();
+						d2_towndly();
+					}
 					break;
 	//
 	// quest helper
@@ -629,49 +631,49 @@ function Follower() {
 	// act1: rcain, malus
 	// act2: rada, staff, summoner, orifice
 	//
-				case "thrush": // enables rusher
-				case me.name + "thrush":
-					d2_rusher();
+				case "randy": // enables rusher
+				case me.name + "randy":
+					if(me.classid == 1) d2_rush(msg);
 					break;
 				case "rcain": // help to rescue cain
 				case me.name + " rcain":
-					d2_rCain();
+					if(me.classid == 1) d2_rCain();
 					break;
 				case "malus": // help to get the imbue q
 				case me.name + " malus":
-					d2_malus();
+					if(me.classid == 1) d2_malus();
 					break;
 				case "rada": // help to get the Rada book
 				case me.name + " rada":
-					d2_rada();
+					if(me.classid == 1) d2_rada();
 					break;
 				case "staff": // help to get the staff
 				case me.name + " staff":
-					d2_staff();
+					if(me.classid == 1) d2_staff();
 					break;
 				case "summoner": // help to get the summoner
 				case me.name + " summoner":
-					d2_summoner();
+					if(me.classid == 1) d2_summoner();
 					break;
 				case "orifice": // help to get to the orifice
 				case me.name + " orifice": 
-					d2_orifice();
+					if(me.classid == 1) d2_orifice();
 					break;
 				case "shenk": // help to get to shenk
 				case me.name + " shenk":
-					d2_shenk();
+					if(me.classid == 1) d2_shenk();
 					break;
 				case "rescue": // help to rescue the barbs
 				case me.name + " rescue":
-					d2_rescue();
+					if(me.classid == 1) d2_rescue();
 					break;
 				case "anya": // help to get anya
 				case me.name + " anya":
-					d2_anya();
+					if(me.classid == 1) d2_anya();
 					break;
 				case "ancients": // help to get ancients
 				case me.name + " ancients":
-					d2_ancients();
+					if(me.classid == 1) d2_ancients();
 					break;
 			
 				default:
@@ -2251,13 +2253,46 @@ MainLoop:
 	*				example: do travincal
 */
 
-function d2_rusher() {
+function d2_rush(rMsg) {
+	load("tools/rushthread.js");
+	delay(500);
+	rushThread = getScript("tools/rushthread.js");
+	
+	this.reloadThread = function () {
+		rushThread = getScript("tools/rushthread.js");
+
+		if (rushThread) {
+			rushThread.stop();
+		}
+
+		delay(500);
+		load("tools/rushthread.js");
+
+		rushThread = getScript("tools/rushthread.js");
+
+		delay(500);
+	};
+	
+	switch (rMsg) {
+			case "randy":
+				rushThread.send("andariel");
+				break;
+		break;
+	}
+	
+	return 1;
+}	
+/* function d2_rusher() {
 	// chat commands
 	// me		: assigns master
 	// notme	: releases master
 	// x		: exits rush function
 	// paws		: pause rush
 	// unpaws	: unpause rush
+	// ah sequence	:	do sequence - stop current action and start the given sequence.
+	//					supported sequences are: andariel, cube, amulet, staff, summoner, duriel, travincal, mephisto, diablo
+	//					example: ah travincal
+	// sweep	: clears ?
 	
 	load("tools/rushthread.js");
 	delay(500);
@@ -2361,13 +2396,14 @@ function d2_rusher() {
 				if (nick === master) {
 					me.overhead("Returning to main script..."); // dEdits: "bye ~"
 					// dEdits: scriptBroadcast("quit");
+					return 1; // dEdits: added this
 				} else {
 					me.overhead("I'm only accepting commands from my master.");
 				}
 
 				break;
 			default:
-				if (msg && msg.match(/^do \w|^clear \d|^pause$|^resume$/gi)) {
+				if (msg && msg.match(/^ah \w|^sweep \d|^paws$|^unpaws$/gi)) {	// dEdits: (/^do \w|^clear \d|^pause$|^resume$/gi)
 					if (nick === master) {
 						commands.push(msg);
 					} else {
@@ -2442,7 +2478,7 @@ function d2_rusher() {
 					break;
 				}
 
-				if (commandSplit0.toLowerCase() === "do") {
+				if (commandSplit0.toLowerCase() === "ah") {		// dEdits: "do"
 					for (i = 0; i < sequence.length; i += 1) {
 						if (command.split(" ")[1] && sequence[i].match(command.split(" ")[1], "gi")) {
 							this.reloadThread();
@@ -2455,7 +2491,7 @@ function d2_rusher() {
 					if (i === sequence.length) {
 						me.overhead("Invalid sequence");
 					}
-				} else if (commandSplit0.toLowerCase() === "clear") {
+				} else if (commandSplit0.toLowerCase() === "sweep") {	// dEdits: "clear"
 					if (!isNaN(parseInt(command.split(" ")[1], 10)) && parseInt(command.split(" ")[1], 10) > 0 && parseInt(command.split(" ")[1], 10) <= 132) {
 						this.reloadThread();
 						rushThread.send(command);
@@ -2472,4 +2508,4 @@ function d2_rusher() {
 	}
 
 	return true;
-}	
+}*/
