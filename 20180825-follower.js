@@ -2308,18 +2308,29 @@ function d2_rusher() {
 			}
 		} while (party.getNext());
 
-		if (minArea >= 1 && minArea <= 39) return 1;
-		if (minArea >= 40 && minArea <= 74) return 2;
-		if (minArea >= 75 && minArea <= 102) return 3;
-		if (minArea >= 103 && minArea <= 108) return 4;
-		if (minArea >= 109 && minArea <= 132) return 5;
-		return 1;
+		if (minArea <= 39) {
+			return 1;
+		}
+
+		if (minArea >= 40 && minArea <= 74) {
+			return 2;
+		}
+
+		if (minArea >= 75 && minArea <= 102) {
+			return 3;
+		}
+
+		if (minArea >= 103 && minArea <= 108) {
+			return 4;
+		}
+
+		return 5;
 	};
 
 	this.chatEvent = function (nick, msg) {
 		if (nick !== me.name) {
 			switch (msg) {
-			case "me": // case "master":
+			case "master":
 				if (!master) {
 					me.overhead(nick + " is my master.");
 
@@ -2329,7 +2340,7 @@ function d2_rusher() {
 				}
 
 				break;
-			case "letgo": // case "release":
+			case "release":
 				if (nick === master) {
 					me.overhead("I have no master now.");
 
@@ -2339,10 +2350,10 @@ function d2_rusher() {
 				}
 
 				break;
-			case "fini": // case "quit":
+			case "quit":
 				if (nick === master) {
-					me.overhead("returning to follower ~");
-					return true; // scriptBroadcast("quit");
+					me.overhead("bye ~");
+					scriptBroadcast("quit");
 				} else {
 					me.overhead("I'm only accepting commands from my master.");
 				}
@@ -2401,7 +2412,7 @@ function d2_rusher() {
 			command = commands.shift();
 
 			switch (command) {
-			case "paws": // case "pause":
+			case "pause":
 				if (rushThread.running) {
 					me.overhead("Pausing");
 
@@ -2409,7 +2420,7 @@ function d2_rusher() {
 				}
 
 				break;
-			case "unpaws": // case "resume":
+			case "resume":
 				if (!rushThread.running) {
 					me.overhead("Resuming");
 
@@ -2454,4 +2465,4 @@ function d2_rusher() {
 	}
 
 	return true;
-}
+}	
