@@ -631,51 +631,54 @@ function Follower() {
 	// act1: rcain, malus
 	// act2: rada, staff, summoner, orifice
 	//
-				case "randy": // enables rusher
-				case me.name + "randy":
-					if(me.classid == 1) d2_rush(msg);
+				case "randariel": // enables rusher
+				case me.name + " randariel":
+					if(me.classid == 1) d2_rush("randariel");
 					break;
-				case "rcain": // help to rescue cain
-				case me.name + " rcain":
-					if(me.classid == 1) d2_rCain();
+				//case "rcain": // help to rescue cain
+				//case me.name + " rcain":
+				//	if(me.classid == 1) d2_rCain();
+				//	break;
+				//case "malus": // help to get the imbue q
+				//case me.name + " malus":
+				//	if(me.classid == 1) d2_malus();
+				//	break;
+				case "rradament": // help to get the Rada book
+				case me.name + " rradament":
+					if(me.classid == 1) d2_rush("rradament");
 					break;
-				case "malus": // help to get the imbue q
-				case me.name + " malus":
-					if(me.classid == 1) d2_malus();
+				case "rstaff": // help to get the staff
+				case me.name + " rstaff":
+					if(me.classid == 1) d2_rush("rstaff");
 					break;
-				case "rada": // help to get the Rada book
-				case me.name + " rada":
-					if(me.classid == 1) d2_rada();
+				case "rsummoner": // help to get the summoner
+				case me.name + " rsummoner":
+					if(me.classid == 1) d2_rush("rsummoner");
 					break;
-				case "staff": // help to get the staff
-				case me.name + " staff":
-					if(me.classid == 1) d2_staff();
+				case "rorifice": // help to get to the orifice
+				case me.name + " rorifice": 
+					if(me.classid == 1) d2_rush("rorifice");
 					break;
-				case "summoner": // help to get the summoner
-				case me.name + " summoner":
-					if(me.classid == 1) d2_summoner();
+				case "rshenk": // help to get to shenk
+				case me.name + " rshenk":
+					if(me.classid == 1) d2_rush("rshenk");
 					break;
-				case "orifice": // help to get to the orifice
-				case me.name + " orifice": 
-					if(me.classid == 1) d2_orifice();
+				//case "rescue": // help to rescue the barbs
+				//case me.name + " rescue":
+				//	if(me.classid == 1) d2_rescue();
+				//	break;
+				case "ranya": // help to get anya
+				case me.name + " ranya":
+					if(me.classid == 1) d2_rush("ranya");
 					break;
-				case "shenk": // help to get to shenk
-				case me.name + " shenk":
-					if(me.classid == 1) d2_shenk();
+				case "rancients": // help to get ancients
+				case me.name + " rancients":
+					if(me.classid == 1) d2_rush("rancients");
 					break;
-				case "rescue": // help to rescue the barbs
-				case me.name + " rescue":
-					if(me.classid == 1) d2_rescue();
+				case "rbaal": // help to get baal
+				case me.name + " rbaal":
+					if(me.classid == 1) d2_rush("rbaal");
 					break;
-				case "anya": // help to get anya
-				case me.name + " anya":
-					if(me.classid == 1) d2_anya();
-					break;
-				case "ancients": // help to get ancients
-				case me.name + " ancients":
-					if(me.classid == 1) d2_ancients();
-					break;
-			
 				default:
 					if (me.classid === 3 && msg.indexOf("aura ") > -1) {
 						piece = msg.split(" ")[0];
@@ -2254,258 +2257,1276 @@ MainLoop:
 */
 
 function d2_rush(rMsg) {
-	load("tools/rushthread.js");
-	delay(500);
-	rushThread = getScript("tools/rushthread.js");
-	
-	this.reloadThread = function () {
-		rushThread = getScript("tools/rushthread.js");
-
-		if (rushThread) {
-			rushThread.stop();
+	this.playerIn = function (area) {
+		if (!area) {
+			area = me.area;
 		}
 
-		delay(500);
-		load("tools/rushthread.js");
-
-		rushThread = getScript("tools/rushthread.js");
-
-		delay(500);
-	};
-	
-	switch (rMsg) {
-			case "randy":
-				rushThread.send("andariel");
-				break;
-		break;
-	}
-	
-	return 1;
-}	
-/* function d2_rusher() {
-	// chat commands
-	// me		: assigns master
-	// notme	: releases master
-	// x		: exits rush function
-	// paws		: pause rush
-	// unpaws	: unpause rush
-	// ah sequence	:	do sequence - stop current action and start the given sequence.
-	//					supported sequences are: andariel, cube, amulet, staff, summoner, duriel, travincal, mephisto, diablo
-	//					example: ah travincal
-	// sweep	: clears ?
-	
-	load("tools/rushthread.js");
-	delay(500);
-
-	var i, rushThread, command, master, commandSplit0,
-		commands = [],
-		sequence = [
-			"andariel", "radament", "cube", "amulet", "staff", "summoner", "duriel", "lamesen",
-			"travincal", "mephisto", "izual", "diablo", "shenk", "anya", "ancients", "baal"
-		];
-	rushThread = getScript("tools/rushthread.js");
-
-	this.reloadThread = function () {
-		rushThread = getScript("tools/rushthread.js");
-
-		if (rushThread) {
-			rushThread.stop();
-		}
-
-		delay(500);
-		load("tools/rushthread.js");
-
-		rushThread = getScript("tools/rushthread.js");
-
-		delay(500);
-	};
-
-	this.getPlayerCount = function () {
-		var count = 0,
-			party = getParty();
+		var party = getParty();
 
 		if (party) {
 			do {
-				count += 1;
+				if (party.name !== me.name && party.area === area) {
+					return true;
+				}
 			} while (party.getNext());
 		}
 
-		return count;
+		return false;
 	};
 
-	this.getPartyAct = function () {
-		var party = getParty(),
-			minArea = 999;
+	this.bumperCheck = function () {
+		var party = getParty();
 
-		do {
-			if (party.name !== me.name) {
-				while (!party.area) {
-					me.overhead("Waiting for party area info");
+		if (party) {
+			do {
+				if (party.name !== me.name) {
+					switch (me.diff) {
+					case 0:
+						if (party.level >= 20) {
+							return true;
+						}
+
+						break;
+					case 1:
+						if (party.level >= 40) {
+							return true;
+						}
+
+						break;
+					}
+				}
+			} while (party.getNext());
+		}
+
+		return false;
+	};
+
+	this.playersInAct = function (act) {
+		var area, party,
+			areas = [0, 1, 40, 75, 103, 109];
+
+		if (!act) {
+			act = me.act;
+		}
+
+		area = areas[act];
+		party = getParty();
+
+		if (party) {
+			do {
+				if (party.name !== me.name && party.area !== area) {
+					return false;
+				}
+			} while (party.getNext());
+		}
+
+		return true;
+	};
+
+	
+	this.andariel = function () {
+		say("starting andariel");
+		Town.doChores();
+		Pather.useWaypoint(35, true);
+		Precast.doPrecast(true);
+
+		if (!Pather.moveToExit([36, 37], true) || !Pather.moveTo(22582, 9612)) {
+			throw new Error("andy failed");
+		}
+
+		Pather.makePortal();
+		Attack.securePosition(me.x, me.y, 40, 3000, true);
+		say("1");
+
+		while (!this.playerIn()) {
+			Pather.moveTo(22582, 9612);
+			delay(250);
+		}
+
+		Attack.kill(156);
+		say("2");
+		Pather.moveTo(22582, 9612);
+
+		while (this.playerIn()) {
+			delay(250);
+		}
+
+		Pather.usePortal(null, me.name);
+		say("a2");
+		Pather.useWaypoint(40, true);
+
+		while (!this.playersInAct(2)) {
+			delay(250);
+		}
+
+		return true;
+	};
+	this.radament = function () {
+		if (!Config.Rusher.Radament) {
+			return false;
+		}
+
+		say("starting radament");
+
+		var i, radaCoords, rada, radaPreset, returnSpot,
+			moveIntoPos = function (unit, range) {
+				var i, coordx, coordy,
+					coords = [],
+					angle = Math.round(Math.atan2(me.y - unit.y, me.x - unit.x) * 180 / Math.PI),
+					angles = [0, 15, -15, 30, -30, 45, -45, 60, -60, 75, -75, 90, -90, 105, -105, 120, -120, 135, -135, 150, -150, 180];
+
+				for (i = 0; i < angles.length; i += 1) {
+					coordx = Math.round((Math.cos((angle + angles[i]) * Math.PI / 180)) * range + unit.x);
+					coordy = Math.round((Math.sin((angle + angles[i]) * Math.PI / 180)) * range + unit.y);
+
+					try {
+						if (!(getCollision(unit.area, coordx, coordy) & 0x1)) {
+							coords.push({
+								x: coordx,
+								y: coordy
+							});
+						}
+					} catch (e) {
+
+					}
+				}
+
+				if (coords.length > 0) {
+					coords.sort(Sort.units);
+
+					return Pather.moveToUnit(coords[0]);
+				}
+
+				return false;
+			};
+
+		Pather.useWaypoint(48, true);
+		Precast.doPrecast(false);
+		Pather.moveToExit(49, true);
+
+		radaPreset = getPresetUnit(49, 2, 355);
+		radaCoords = {
+			area: 49,
+			x: radaPreset.roomx * 5 + radaPreset.x,
+			y: radaPreset.roomy * 5 + radaPreset.y
+		};
+
+		moveIntoPos(radaCoords, 50);
+
+		for (i = 0; i < 3; i += 1) {
+			rada = getUnit(1, 229);
+
+			if (rada) {
+				break;
+			}
+
+			delay(500);
+		}
+
+		if (rada) {
+			moveIntoPos(rada, 60);
+		} else {
+			print("radament unit not found");
+		}
+
+		Attack.securePosition(me.x, me.y, 35, 3000);
+		Pather.makePortal();
+		say("1");
+
+		while (!this.playerIn()) {
+			delay(200);
+		}
+
+		Attack.kill(229); // Radament
+
+		returnSpot = {
+			x: me.x,
+			y: me.y
+		};
+
+		say("2");
+		Pickit.pickItems();
+		Attack.securePosition(me.x, me.y, 30, 3000);
+
+		while (this.playerIn()) {
+			delay(200);
+		}
+
+		Pather.moveToUnit(returnSpot);
+		Pather.makePortal();
+		say("all in");
+
+		while (!this.playerIn()) {
+			delay(200);
+		}
+
+		while (getUnit(4, 552)) {
+			delay(1000);
+		}
+
+		while (this.playerIn()) {
+			delay(200);
+		}
+
+		Pather.usePortal(null, null);
+
+		return true;
+	};
+	this.cube = function () {
+		if (me.diff === 0) {
+			say("starting cube");
+			Pather.useWaypoint(57, true);
+			Precast.doPrecast(true);
+
+			if (!Pather.moveToExit(60, true) || !Pather.moveToPreset(me.area, 2, 354)) {
+				throw new Error("cube failed");
+			}
+
+			Pather.makePortal();
+			Attack.securePosition(me.x, me.y, 30, 3000, true);
+			say("1");
+
+			while (!this.playerIn()) {
+				delay(100);
+			}
+
+			while (this.playerIn()) {
+				delay(100);
+			}
+
+			Pather.usePortal(null, me.name);
+		}
+
+		return true;
+	};
+	this.amulet = function () {
+		say("starting amulet");
+		Town.doChores();
+		Pather.useWaypoint(44, true);
+		Precast.doPrecast(true);
+
+		if (!Pather.moveToExit([45, 58, 61], true) || !Pather.moveTo(15044, 14045)) {
+			throw new Error("amulet failed");
+		}
+
+		Pather.makePortal();
+
+		if (me.diff < 2) {
+			Attack.securePosition(me.x, me.y, 25, 3000);
+		} else {
+			Attack.securePosition(me.x, me.y, 25, 3000, true, true);
+		}
+
+		say("1");
+
+		while (!this.playerIn()) {
+			delay(100);
+		}
+
+		while (this.playerIn()) {
+			delay(100);
+		}
+
+		Pather.usePortal(null, me.name);
+
+		return true;
+	};
+	this.staff = function () {
+		say("starting staff");
+		Town.doChores();
+		Pather.useWaypoint(43, true);
+		Precast.doPrecast(true);
+
+		if (!Pather.moveToExit([62, 63, 64], true) || !Pather.moveToPreset(me.area, 2, 356)) {
+			throw new Error("staff failed");
+		}
+
+		Pather.makePortal();
+		Attack.securePosition(me.x, me.y, 30, 3000, true);
+		say("1");
+
+		while (!this.playerIn()) {
+			//Pather.moveToPreset(me.area, 2, 356);
+			delay(100);
+		}
+
+		while (this.playerIn()) {
+			delay(100);
+		}
+
+		Pather.usePortal(null, me.name);
+
+		return true;
+	};
+	this.summoner = function () {
+		// right up 25449 5081 (25431, 5011)
+		// left up 25081 5446 (25011, 5446)
+		// right down 25830 5447 (25866, 5431)
+		// left down 25447 5822 (25431, 5861)
+
+		say("starting summoner");
+		Town.doChores();
+		Pather.useWaypoint(74, true);
+		Precast.doPrecast(true);
+
+		var i, journal,
+			preset = getPresetUnit(me.area, 2, 357),
+			spot = {};
+
+		switch (preset.roomx * 5 + preset.x) {
+		case 25011:
+			spot = {x: 25081, y: 5446};
+			break;
+		case 25866:
+			spot = {x: 25830, y: 5447};
+			break;
+		case 25431:
+			switch (preset.roomy * 5 + preset.y) {
+			case 5011:
+				spot = {x: 25449, y: 5081};
+				break;
+			case 5861:
+				spot = {x: 25447, y: 5822};
+				break;
+			}
+
+			break;
+		}
+
+		if (!Pather.moveToUnit(spot)) {
+			throw new Error("summoner failed");
+		}
+
+		Pather.makePortal();
+		Attack.securePosition(me.x, me.y, 25, 3000);
+		say("1");
+
+		while (!this.playerIn()) {
+			Pather.moveToUnit(spot);
+			Attack.securePosition(me.x, me.y, 25, 500);
+			delay(250);
+		}
+
+		Pather.moveToPreset(me.area, 2, 357);
+		Attack.kill(250);
+		say("2");
+
+		while (this.playerIn()) {
+			delay(100);
+		}
+
+		Pickit.pickItems();
+		Pather.moveToPreset(me.area, 2, 357);
+
+		journal = getUnit(2, 357);
+
+		for (i = 0; i < 5; i += 1) {
+			journal.interact();
+			delay(1000);
+			me.cancel();
+
+			if (Pather.getPortal(46)) {
+				break;
+			}
+		}
+
+		if (i === 5) {
+			throw new Error("summoner failed");
+		}
+
+		Pather.usePortal(46);
+
+		return true;
+	};
+	this.duriel = function () {
+		say("starting duriel");
+
+		if (me.inTown) {
+			Town.doChores();
+			Pather.useWaypoint(46, true);
+		}
+
+		Precast.doPrecast(true);
+
+		if (!Pather.moveToExit(getRoom().correcttomb, true) || !Pather.moveToPreset(me.area, 2, 152)) {
+			throw new Error("duriel failed");
+		}
+
+		Pather.makePortal();
+		Attack.securePosition(me.x, me.y, 30, 3000, true, me.diff === 2);
+		say("1");
+
+		while (!this.playerIn()) {
+			//Pather.moveToPreset(me.area, 2, 152, 0, -5);
+			delay(100);
+		}
+
+		while (this.playerIn()) {
+			delay(100);
+		}
+
+		while (!getUnit(2, 100)) {
+			delay(500);
+		}
+
+		Pather.useUnit(2, 100, 73);
+		Attack.kill(211);
+		Pickit.pickItems();
+
+		Pather.teleport = false;
+
+		Pather.moveTo(22579, 15706);
+
+		Pather.teleport = true;
+
+		Pather.moveTo(22577, 15649, 10);
+		Pather.moveTo(22577, 15609, 10);
+		Pather.makePortal();
+		say("1");
+
+		while (!this.playerIn()) {
+			delay(100);
+		}
+
+		if (!Pather.usePortal(null, me.name)) {
+			Town.goToTown();
+		}
+
+		Pather.useWaypoint(52);
+		Pather.moveToExit([51, 50], true);
+		Pather.moveTo(10022, 5047);
+		say("a3");
+		Town.goToTown(3);
+		Town.doChores();
+
+		while (!this.playersInAct(3)) {
+			delay(250);
+		}
+
+		return true;
+	};
+	this.travincal = function () {
+		say("starting travincal");
+		Town.doChores();
+		Pather.useWaypoint(83, true);
+		Precast.doPrecast(true);
+
+		var coords = [me.x, me.y];
+
+		Pather.moveTo(coords[0] + 23, coords[1] - 102);
+		Pather.makePortal();
+		Attack.securePosition(me.x, me.y, 40, 3000);
+		say("1");
+
+		while (!this.playerIn()) {
+			delay(250);
+		}
+
+		Pather.moveTo(coords[0] + 30, coords[1] - 134);
+		Pather.moveTo(coords[0] + 86, coords[1] - 130);
+		Pather.moveTo(coords[0] + 71, coords[1] - 94);
+		Attack.securePosition(me.x, me.y, 40, 3000);
+
+		/*Attack.kill(getLocaleString(2863));
+		Attack.kill(getLocaleString(2862));
+		Attack.kill(getLocaleString(2860));*/
+
+		say("2");
+		Pather.moveTo(coords[0] + 23, coords[1] - 102);
+		Pather.usePortal(null, me.name);
+
+		return true;
+	};
+
+	this.mephisto = function () {
+		say("starting mephisto");
+
+		var hydra;
+
+		Town.doChores();
+		Pather.useWaypoint(101, true);
+		Precast.doPrecast(true);
+		Pather.moveToExit(102, true);
+		Pather.moveTo(17692, 8023);
+		Pather.makePortal();
+		delay(2000);
+		say("1");
+
+		while (!this.playerIn()) {
+			delay(250);
+		}
+
+		Pather.moveTo(17591, 8070);
+		Attack.kill(242);
+		Pickit.pickItems();
+		Pather.moveTo(17692, 8023);
+		Pather.makePortal();
+		say("2");
+
+		while (this.playerIn()) {
+			delay(250);
+		}
+
+		Pather.moveTo(17591, 8070);
+		Attack.securePosition(me.x, me.y, 40, 3000);
+
+		hydra = getUnit(1, "hydra");
+
+		if (hydra) {
+			do {
+				while (hydra.mode !== 0 && hydra.mode !== 12 && hydra.hp > 0) {
 					delay(500);
 				}
+			} while (hydra.getNext());
+		}
 
-				if (party.area < minArea) {
-					minArea = party.area;
+		Pather.makePortal();
+		Pather.moveTo(17581, 8070);
+		say("1");
+
+		while (!this.playerIn()) {
+			delay(250);
+		}
+
+		say("a4");
+		//Pather.moveTo(17591, 8070);
+
+		while (!this.playersInAct(4)) {
+			delay(250);
+		}
+
+		delay(2000);
+		Pather.usePortal(null);
+
+		return true;
+	};
+	this.izual = function () {
+		if (!Config.Rusher.Izual) {
+			return false;
+		}
+
+		say("starting izual");
+
+		var i, izualCoords, izual, izualPreset, returnSpot,
+			moveIntoPos = function (unit, range) {
+				var i, coordx, coordy,
+					coords = [],
+					angle = Math.round(Math.atan2(me.y - unit.y, me.x - unit.x) * 180 / Math.PI),
+					angles = [0, 15, -15, 30, -30, 45, -45, 60, -60, 75, -75, 90, -90, 105, -105, 120, -120, 135, -135, 150, -150, 180];
+
+				for (i = 0; i < angles.length; i += 1) {
+					coordx = Math.round((Math.cos((angle + angles[i]) * Math.PI / 180)) * range + unit.x);
+					coordy = Math.round((Math.sin((angle + angles[i]) * Math.PI / 180)) * range + unit.y);
+
+					try {
+						if (!(getCollision(unit.area, coordx, coordy) & 0x1)) {
+							coords.push({
+								x: coordx,
+								y: coordy
+							});
+						}
+					} catch (e) {
+
+					}
+				}
+
+				if (coords.length > 0) {
+					coords.sort(Sort.units);
+
+					return Pather.moveToUnit(coords[0]);
+				}
+
+				return false;
+			};
+
+		Pather.useWaypoint(106, true);
+		Precast.doPrecast(false);
+		Pather.moveToExit(105, true);
+
+		izualPreset = getPresetUnit(105, 1, 256);
+		izualCoords = {
+			area: 105,
+			x: izualPreset.roomx * 5 + izualPreset.x,
+			y: izualPreset.roomy * 5 + izualPreset.y
+		};
+
+		moveIntoPos(izualCoords, 50);
+
+		for (i = 0; i < 3; i += 1) {
+			izual = getUnit(1, 256);
+
+			if (izual) {
+				break;
+			}
+
+			delay(500);
+		}
+
+		if (izual) {
+			moveIntoPos(izual, 60);
+		} else {
+			print("izual unit not found");
+		}
+
+		returnSpot = {
+			x: me.x,
+			y: me.y
+		};
+
+		Attack.securePosition(me.x, me.y, 30, 3000);
+		Pather.makePortal();
+		say("1");
+
+		while (!this.playerIn()) {
+			delay(200);
+		}
+
+		Attack.kill(256); // Izual
+		Pickit.pickItems();
+		say("2");
+		Pather.moveToUnit(returnSpot);
+
+		while (this.playerIn()) {
+			delay(200);
+		}
+
+		Pather.usePortal(null, null);
+
+		return true;
+	};
+	this.diablo = function () {
+		say("starting diablo");
+
+		this.getLayout = function (seal, value) {
+			var sealPreset = getPresetUnit(108, 2, seal);
+
+			if (!seal) {
+				throw new Error("Seal preset not found. Can't continue.");
+			}
+
+			if (sealPreset.roomy * 5 + sealPreset.y === value || sealPreset.roomx * 5 + sealPreset.x === value) {
+				return 1;
+			}
+
+			return 2;
+		};
+
+		this.initLayout = function () {
+			this.vizLayout = this.getLayout(396, 5275);
+			this.seisLayout = this.getLayout(394, 7773);
+			this.infLayout = this.getLayout(392, 7893);
+		};
+
+		this.getBoss = function (name) {
+			var i, boss,
+				glow = getUnit(2, 131);
+
+			for (i = 0; i < (name === getLocaleString(2853) ? 14 : 12); i += 1) {
+				boss = getUnit(1, name);
+
+				if (boss) {
+					if (name === getLocaleString(2852)) {
+						this.chaosPreattack(getLocaleString(2852), 8);
+					}
+
+					Attack.kill(name);
+					Pickit.pickItems();
+
+					return true;
+				}
+
+				delay(250);
+			}
+
+			return !!glow;
+		};
+
+		this.chaosPreattack = function (name, amount) {
+			var i, n, target, positions;
+
+			switch (me.classid) {
+			case 0:
+				break;
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				target = getUnit(1, name);
+
+				if (!target) {
+					return;
+				}
+
+				positions = [[6, 11], [0, 8], [8, -1], [-9, 2], [0, -11], [8, -8]];
+
+				for (i = 0; i < positions.length; i += 1) {
+					if (Attack.validSpot(target.x + positions[i][0], target.y + positions[i][1])) { // check if we can move there
+						Pather.moveTo(target.x + positions[i][0], target.y + positions[i][1]);
+						Skill.setSkill(Config.AttackSkill[2], 0);
+
+						for (n = 0; n < amount; n += 1) {
+							Skill.cast(Config.AttackSkill[1], 1);
+						}
+
+						break;
+					}
+				}
+
+				break;
+			case 4:
+				break;
+			case 5:
+				break;
+			case 6:
+				break;
+			}
+		};
+
+		this.openSeal = function (id) {
+			Pather.moveToPreset(108, 2, id, id === 394 ? 5 : 2, id === 394 ? 5 : 0);
+
+			var i, tick,
+				seal = getUnit(2, id);
+
+			if (seal) {
+				for (i = 0; i < 3; i += 1) {
+
+					if (id === 394) {
+						Misc.click(0, 0, seal);
+					} else {
+						seal.interact();
+					}
+
+					tick = getTickCount();
+
+					while (getTickCount() - tick < 500) {
+						if (seal.mode) {
+							return true;
+						}
+
+						delay(10);
+					}
 				}
 			}
-		} while (party.getNext());
 
-		if (minArea <= 39) {
-			return 1;
+			return false;
+		};
+
+		Town.doChores();
+		Pather.useWaypoint(107, true);
+		Precast.doPrecast(true);
+		Pather.moveTo(7790, 5544);
+		this.initLayout();
+
+		if (!this.openSeal(395) || !this.openSeal(396)) {
+			throw new Error("Failed to open seals");
 		}
 
-		if (minArea >= 40 && minArea <= 74) {
-			return 2;
+		if (this.vizLayout === 1) {
+			Pather.moveTo(7691, 5292);
+		} else {
+			Pather.moveTo(7695, 5316);
 		}
 
-		if (minArea >= 75 && minArea <= 102) {
-			return 3;
+		if (!this.getBoss(getLocaleString(2851))) {
+			throw new Error("Failed to kill Vizier");
 		}
 
-		if (minArea >= 103 && minArea <= 108) {
-			return 4;
+		if (!this.openSeal(394)) {
+			throw new Error("Failed to open seals");
 		}
 
-		return 5;
+		if (this.seisLayout === 1) {
+			Pather.moveTo(7771, 5196);
+		} else {
+			Pather.moveTo(7798, 5186);
+		}
+
+		if (!this.getBoss(getLocaleString(2852))) {
+			throw new Error("Failed to kill de Seis");
+		}
+
+		if (!this.openSeal(392) || !this.openSeal(393)) {
+			throw new Error("Failed to open seals");
+		}
+
+		if (this.infLayout === 1) {
+			delay(1);
+		} else {
+			Pather.moveTo(7928, 5295); // temp
+		}
+
+		if (!this.getBoss(getLocaleString(2853))) {
+			throw new Error("Failed to kill Infector");
+		}
+
+		Pather.moveTo(7763, 5267);
+		Pather.makePortal();
+		Pather.moveTo(7727, 5267);
+		say("1");
+
+		while (!this.playerIn()) {
+			delay(250);
+		}
+
+		Pather.moveTo(7763, 5267);
+
+		while (!getUnit(1, 243)) {
+			delay(500);
+		}
+
+		Attack.kill(243);
+		say("2");
+
+		if (me.gametype > 0) {
+			say("a5");
+
+			while (!this.playersInAct(5)) {
+				delay(250);
+			}
+		}
+
+		Pickit.pickItems();
+
+		if (!Pather.usePortal(null, me.name)) {
+			Town.goToTown();
+		}
+
+		return true;
 	};
+	this.shenk = function () {
+		if (!Config.Rusher.Shenk) {
+			return false;
+		}
 
-	this.chatEvent = function (nick, msg) {
-		if (nick !== me.name) {
-			switch (msg) {
-			case "me": // dEdits: case "master":
-				if (!master) {
-					me.overhead(nick + " is my master.");
+		say("starting shenk");
 
-					master = nick;
-				} else {
-					me.overhead("I already have a master.");
-				}
+		Pather.useWaypoint(111, true);
+		Precast.doPrecast(false);
+		Pather.moveTo(3846, 5120);
+		Attack.securePosition(me.x, me.y, 30, 3000);
+		Pather.makePortal();
+		say("1");
 
-				break;
-			case "notme": // dEdits: case "release":
-				if (nick === master) {
-					me.overhead("I have no master now.");
+		while (!this.playerIn()) {
+			delay(200);
+		}
 
-					master = false;
-				} else {
-					me.overhead("I'm only accepting commands from my master.");
-				}
+		Attack.kill(getLocaleString(22435)); // Shenk
+		Pickit.pickItems();
+		Pather.moveTo(3846, 5120);
+		say("2");
 
-				break;
-			case "x": // dEdits: "out"
-				if (nick === master) {
-					me.overhead("Returning to main script..."); // dEdits: "bye ~"
-					// dEdits: scriptBroadcast("quit");
-					return 1; // dEdits: added this
-				} else {
-					me.overhead("I'm only accepting commands from my master.");
-				}
+		while (this.playerIn()) {
+			delay(200);
+		}
 
-				break;
-			default:
-				if (msg && msg.match(/^ah \w|^sweep \d|^paws$|^unpaws$/gi)) {	// dEdits: (/^do \w|^clear \d|^pause$|^resume$/gi)
-					if (nick === master) {
-						commands.push(msg);
+		Pather.usePortal(null, null);
+
+		return true;
+	};
+	this.anya = function () {
+		if (!Config.Rusher.Anya) {
+			return false;
+		}
+
+		say("starting anya");
+
+		var anya;
+
+		if (!Town.goToTown() || !Pather.useWaypoint(113, true)) {
+			throw new Error("Anya quest failed");
+		}
+
+		Precast.doPrecast(false);
+
+		if (!Pather.moveToExit(114, true) || !Pather.moveToPreset(me.area, 2, 460)) {
+			throw new Error("Anya quest failed");
+		}
+
+		Attack.securePosition(me.x, me.y, 30, 2000);
+
+		anya = getUnit(2, 558);
+
+		if (anya) {
+			Pather.moveToUnit(anya);
+			sendPacket(1, 0x13, 4, 0x2, 4, anya.gid); // Rusher should be able to interact so quester can get the potion without entering
+			delay(1000 + me.ping);
+			me.cancel();
+		}
+
+		Pather.makePortal();
+		say("1");
+
+		while (!this.playerIn()) {
+			delay(200);
+		}
+
+		while (getUnit(2, 558)) {
+			delay(1000);
+		}
+
+		say("2"); // Mainly for non-questers to know when to get the scroll of resistance
+
+		while (this.playerIn()) {
+			delay(200);
+		}
+
+		Pather.usePortal(null, null);
+
+		return true;
+	};
+	this.ancients = function () {
+		if (me.diff === 2) {
+			say("Hell rush complete~");
+			delay(500);
+			quit();
+
+			return false;
+		}
+
+		if (!this.bumperCheck()) {
+			say("No eligible bumpers detected. Rush complete~");
+			delay(500);
+			quit();
+
+			return false;
+		}
+
+		say("starting ancients");
+
+		var altar;
+
+		Town.doChores();
+		Pather.useWaypoint(118, true);
+		Precast.doPrecast(true);
+
+		if (!Pather.moveToExit(120, true)) {
+			throw new Error("Failed to go to Ancients way.");
+		}
+
+		Pather.moveTo(10089, 12622);
+		Pather.makePortal();
+		say("3");
+
+		while (!this.playerIn()) {
+			delay(250);
+		}
+
+		Pather.moveTo(10048, 12628);
+
+		altar = getUnit(2, 546);
+
+		if (altar) {
+			while (altar.mode !== 2) {
+				Pather.moveToUnit(altar);
+				altar.interact();
+				delay(2000 + me.ping);
+				me.cancel();
+			}
+		}
+
+		while (!getUnit(1, 542)) {
+			delay(250);
+		}
+
+		Attack.clear(50);
+		Pather.moveTo(10089, 12622);
+		me.cancel();
+		Pather.makePortal();
+
+		while (this.playerIn()) {
+			delay(100);
+		}
+
+		if (!Pather.usePortal(null, me.name)) {
+			Town.goToTown();
+		}
+
+		return true;
+	};
+	this.baal = function () {
+		say("starting baal");
+
+		var tick, portal;
+
+		this.preattack = function () {
+			var check;
+
+			switch (me.classid) {
+			case 1:
+				if ([56, 59, 64].indexOf(Config.AttackSkill[1]) > -1) {
+					if (me.getState(121)) {
+						delay(500);
 					} else {
-						me.overhead("I'm only accepting commands from my master.");
+						Skill.cast(Config.AttackSkill[1], 0, 15093, 5024);
+					}
+				}
+
+				return true;
+			case 3: // Paladin
+				if (Config.AttackSkill[3] !== 112) {
+					return false;
+				}
+
+				if (getDistance(me, 15093, 5029) > 3) {
+					Pather.moveTo(15093, 5029);
+				}
+
+				if (Config.AttackSkill[4] > 0) {
+					Skill.setSkill(Config.AttackSkill[4], 0);
+				}
+
+				Skill.cast(Config.AttackSkill[3], 1);
+
+				return true;
+			case 5: // Druid
+				if (Config.AttackSkill[3] === 245) {
+					Skill.cast(Config.AttackSkill[3], 0, 15093, 5029);
+
+					return true;
+				}
+
+				break;
+			case 6:
+				if (Config.UseTraps) {
+					check = ClassAttack.checkTraps({x: 15093, y: 5029});
+
+					if (check) {
+						ClassAttack.placeTraps({x: 15093, y: 5029}, 5);
+
+						return true;
 					}
 				}
 
 				break;
 			}
+
+			return false;
+		};
+
+		this.checkThrone = function () {
+			var monster = getUnit(1);
+
+			if (monster) {
+				do {
+					if (Attack.checkMonster(monster) && monster.y < 5080) {
+						switch (monster.classid) {
+						case 23:
+						case 62:
+							return 1;
+						case 105:
+						case 381:
+							return 2;
+						case 557:
+							return 3;
+						case 558:
+							return 4;
+						case 571:
+							return 5;
+						default:
+							Attack.getIntoPosition(monster, 10, 0x4);
+							Attack.clear(15);
+
+							return false;
+						}
+					}
+				} while (monster.getNext());
+			}
+
+			return false;
+		};
+
+		this.clearThrone = function () {
+			var i, monster,
+				monList = [],
+				pos = [15097, 5054, 15085, 5053, 15085, 5040, 15098, 5040, 15099, 5022, 15086, 5024];
+
+			if (Config.AvoidDolls) {
+				monster = getUnit(1, 691);
+
+				if (monster) {
+					do {
+						if (monster.x >= 15072 && monster.x <= 15118 && monster.y >= 5002 && monster.y <= 5079 && Attack.checkMonster(monster) && Attack.skipCheck(monster)) {
+							monList.push(copyUnit(monster));
+						}
+					} while (monster.getNext());
+				}
+
+				if (monList.length) {
+					Attack.clearList(monList);
+				}
+			}
+
+			for (i = 0; i < pos.length; i += 2) {
+				Pather.moveTo(pos[i], pos[i + 1]);
+				Attack.clear(30);
+			}
+		};
+
+		this.checkHydra = function () {
+			var monster = getUnit(1, "hydra");
+
+			if (monster) {
+				do {
+					if (monster.mode !== 12 && monster.getStat(172) !== 2) {
+						Pather.moveTo(15118, 5002);
+
+						while (monster.mode !== 12) {
+							delay(500);
+
+							if (!copyUnit(monster).x) {
+								break;
+							}
+						}
+
+						break;
+					}
+				} while (monster.getNext());
+			}
+
+			return true;
+		};
+
+		if (me.inTown) {
+			Town.doChores();
+			Pather.useWaypoint(129, true);
+			Precast.doPrecast(true);
+
+			if (!Pather.moveToExit([130, 131], true)) {
+				throw new Error("Failed to move to Throne of Destruction.");
+			}
 		}
-	};
 
-	addEventListener("chatmsg", this.chatEvent);
+		Pather.moveTo(15113, 5040);
+		Attack.clear(15);
+		this.clearThrone();
 
-	while (this.getPlayerCount() < Math.min(8, Config.Rusher.WaitPlayerCount)) {
-		me.overhead("Waiting for players to join");
-		delay(500);
-	}
+		tick = getTickCount();
+		Pather.moveTo(15093, me.classid === 3 ? 5029 : 5039);
 
-	// Skip to a higher act if all party members are there
-	switch (this.getPartyAct()) {
-	case 2:
-		me.overhead("Party is in act 2, starting from act 2");
-		rushThread.send("skiptoact 2");
+MainLoop:
+		while (true) {
+			if (getDistance(me, 15093, me.classid === 3 ? 5029 : 5039) > 3) {
+				Pather.moveTo(15093, me.classid === 3 ? 5029 : 5039);
+			}
 
-		break;
-	case 3:
-		me.overhead("Party is in act 3, starting from act 3");
-		rushThread.send("skiptoact 3");
+			if (!getUnit(1, 543)) {
+				break MainLoop;
+			}
 
-		break;
-	case 4:
-		me.overhead("Party is in act 4, starting from act 4");
-		rushThread.send("skiptoact 4");
+			switch (this.checkThrone()) {
+			case 1:
+				Attack.clear(40);
 
-		break;
-	case 5:
-		me.overhead("Party is in act 5, starting from act 5");
-		rushThread.send("skiptoact 5");
+				tick = getTickCount();
 
-		break;
-	}
-
-	delay(200);
-	rushThread.send("go");
-
-	while (true) {
-		if (commands.length > 0) {
-			command = commands.shift();
-
-			switch (command) {
-			case "paws":	// dEdits: "pause"
-				if (rushThread.running) {
-					me.overhead("Pausing");
-
-					rushThread.pause();
-				}
+				Precast.doPrecast(true);
 
 				break;
-			case "unpaws":	// dEdits: "resume"
-				if (!rushThread.running) {
-					me.overhead("Resuming");
+			case 2:
+				Attack.clear(40);
 
-					rushThread.resume();
-				}
+				tick = getTickCount();
 
 				break;
+			case 4:
+				Attack.clear(40);
+
+				tick = getTickCount();
+
+				break;
+			case 3:
+				Attack.clear(40);
+				this.checkHydra();
+
+				tick = getTickCount();
+
+				break;
+			case 5:
+				Attack.clear(40);
+
+				break MainLoop;
 			default:
-				commandSplit0 = command.split(" ")[0];
+				if (getTickCount() - tick < 7e3) {
+					if (me.getState(2)) {
+						Skill.setSkill(109, 0);
+					}
 
-				if (commandSplit0 === undefined) {
 					break;
 				}
 
-				if (commandSplit0.toLowerCase() === "ah") {		// dEdits: "do"
-					for (i = 0; i < sequence.length; i += 1) {
-						if (command.split(" ")[1] && sequence[i].match(command.split(" ")[1], "gi")) {
-							this.reloadThread();
-							rushThread.send(command.split(" ")[1]);
-
-							break;
-						}
-					}
-
-					if (i === sequence.length) {
-						me.overhead("Invalid sequence");
-					}
-				} else if (commandSplit0.toLowerCase() === "sweep") {	// dEdits: "clear"
-					if (!isNaN(parseInt(command.split(" ")[1], 10)) && parseInt(command.split(" ")[1], 10) > 0 && parseInt(command.split(" ")[1], 10) <= 132) {
-						this.reloadThread();
-						rushThread.send(command);
-					} else {
-						me.overhead("Invalid area");
-					}
+				if (!this.preattack()) {
+					delay(100);
 				}
 
 				break;
 			}
+
+			Precast.doPrecast(false);
+			delay(10);
 		}
 
-		delay(100);
-	}
+		this.clearThrone();
+		Pather.moveTo(15092, 5011);
+		Precast.doPrecast(true);
 
+		while (getUnit(1, 543)) {
+			delay(500);
+		}
+
+		delay(1000);
+
+		portal = getUnit(2, 563);
+
+		if (portal) {
+			Pather.usePortal(null, null, portal);
+		} else {
+			throw new Error("Couldn't find portal.");
+		}
+
+		Pather.moveTo(15213, 5908);
+		Pather.makePortal();
+		Pather.moveTo(15170, 5950);
+		delay(1000);
+		say("3");
+
+		while (!this.playerIn()) {
+			delay(250);
+		}
+
+		Pather.moveTo(15134, 5923);
+		Attack.kill(544); // Baal
+		Pickit.pickItems();
+
+		return true;
+	};
+	
+	
+	
+	
+	switch(rMsg) {
+		case randariel: this.andariel();
+		case rradament: this.radament();
+		case rcube: 	this.cube();
+		case ramulet:	this.amulet();
+		case rstaff: 	this.staff();
+		case rsummoner:	this.summoner();
+		case rduriel:	this.duriel();
+		case rtravincal:	this.travincal();
+		case rmephisto:	this.mephisto();
+		case rizual:	this.izual();
+		case rdiablo:	this.diablo();
+		case rshenk:	this.shenk();
+		case ranya:		this.anya();
+		case rancients:	this.ancients();
+		case rbaal:		this.baal();
+		default break;
+		
+		break;
+	}
+	
 	return true;
 }*/
