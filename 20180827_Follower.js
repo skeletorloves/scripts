@@ -659,6 +659,10 @@ function Follower() {
 				case me.name + " rradament":
 					if(me.classid == 1) d2_rush("rradament");
 					break;
+				case "rcube": 									// help to get the cube
+				case me.name + " rcube":
+					if(me.classid == 1) d2_rush("rcube");
+					break;
 				case "rstaff": 									// help to get the staff
 				case me.name + " rstaff":
 					if(me.classid == 1) d2_rush("rstaff");
@@ -2806,12 +2810,15 @@ function d2_rush(rMsg) {
 	this.khalimswill = function () {
 		me.overhead("starting khalim's will help");
 		delay(1000);
+	
+	//	Khalim's eye
+	//
 		me.overhead("starting khalim's eye");
 		Town.doChores();
 		Pather.useWaypoint(76, true);
 		Precast.doPrecast(true);
 
-		if (!Pather.moveToExit([76, 85], false);) {
+		if (!Pather.moveToExit([76, 85], true)) {
 			me.overhead("Failed to move to Spider Cavern");
 			return false;
 		}
@@ -2825,11 +2832,12 @@ function d2_rush(rMsg) {
 		Pickit.pickItems();
 		Pather.makePortal();
 		me.overhead("1");
-
+		
 		while (!this.playerIn()) {
 			Attack.securePosition(me.x, me.y, 10, 1500);
 			delay(200);
 		}
+		
 		
 		while (this.playerIn()) {
 			Attack.securePosition(me.x, me.y, 10, 1500);
@@ -2838,23 +2846,94 @@ function d2_rush(rMsg) {
 		
 		Pather.usePortal(null, null);
 		
-		/*
+	//	Khalim's brain
+	//
 		me.overhead("starting khalim's brain");
 		Town.doChores();
-		Pather.useWaypoint(5, true);
+		Pather.useWaypoint(78, true);
 		Precast.doPrecast(true);
-	
-	
+		
+		if (!Pather.moveToExit([78, 88], true)) {
+			me.overhead("Failed to move to Flayer Dungeon lvl 1");
+			return false;
+		}
+		if (!Pather.moveToExit([88, 89], true)) {
+			me.overhead("Failed to move to Flayer Dungeon lvl 2");
+			return false;
+		}
+		
+		var chest = getPresetUnit(me.area, 2, 407);
+		if (!chest) return false;				
+		Pather.moveToUnit(chest);
+		
+		Attack.securePosition(me.x, me.y, 10, 3000);
+		Pickit.pickItems();
+		Pather.makePortal();
+		me.overhead("1");
+		
+		while (!this.playerIn()) {
+			Attack.securePosition(me.x, me.y, 10, 1500);
+			delay(200);
+		}
+		
+		
+		while (this.playerIn()) {
+			Attack.securePosition(me.x, me.y, 10, 1500);
+			delay(200);
+		}
+		
+		Pather.usePortal(null, null);
+/*	
+	//	Khalim's heart
+	//
 		me.overhead("starting khalim's heart");
 		Town.doChores();
 		Pather.useWaypoint(5, true);
 		Precast.doPrecast(true);
 		
-		
+	//	Khalim's flail
+	//	
 		me.overhead("starting khalim's flail");
 		Town.doChores();
 		Pather.useWaypoint(5, true);
-		Precast.doPrecast(true);*/
+		Precast.doPrecast(true);
+		
+		me.overhead("starting khalim's brain");
+		Town.doChores();
+		Pather.useWaypoint(80, true);
+		Precast.doPrecast(true);
+		
+		if (!Pather.moveToExit([80, 92], true)) {
+			me.overhead("Failed to move to a3 sewers lvl 1");
+			return false;
+		}
+		if (!Pather.moveToExit([92, 93], true)) {
+			me.overhead("Failed to move to a3 sewers lvl 2");
+			return false;
+		}
+		
+		var chest = getPresetUnit(me.area, 2, 407);
+		if (!chest) return false;				
+		Pather.moveToUnit(chest);
+		
+		Attack.securePosition(me.x, me.y, 10, 3000);
+		Pickit.pickItems();
+		Pather.makePortal();
+		me.overhead("1");
+		
+		while (!this.playerIn()) {
+			Attack.securePosition(me.x, me.y, 10, 1500);
+			delay(200);
+		}
+		
+		
+		while (this.playerIn()) {
+			Attack.securePosition(me.x, me.y, 10, 1500);
+			delay(200);
+		}
+		
+		Pather.usePortal(null, null);
+		*/
 	
 		return true;
 	};
@@ -3713,6 +3792,9 @@ MainLoop:
 			break;
 		case "rduriel":		
 			this.duriel();
+			break;
+		case "rkhalim":
+			this.khalimswill();
 			break;
 		case "rtravincal":	
 			this.travincal();
