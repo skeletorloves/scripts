@@ -67,6 +67,14 @@
 *	ahem     		- move in a random direction (use if you're stuck by followers)
 *	reload    		- reload script. Use only in case of emergency, or after editing character config.
 *	fini         	- exit game
+
+
+Some notes:
+	securePosition: function (x, y, range, timer, skipBlocked, special);	
+	Pather.walkTo(x, y, minDist);	 minDist - minimal distance from x/y before returning true
+	Pather.moveToPreset(area, unitType, unitId, offX, offY, clearPath, pop);
+	Pather.moveToExit(targetArea, use, clearPath);	use - enter target area or last area in the array | 
+
 */
 
 function Follower() {
@@ -2348,97 +2356,71 @@ function d2_rush(rMsg) {
 
 	
 	this.cain = function () {
-		me.overhead("starting cain");
+		me.overhead("starting cain help");
+		delay(1000);
+		me.overhead("starting tree");
 		Town.doChores();
 		Pather.useWaypoint(5, true);
 		Precast.doPrecast(true);
-
-		var i, treeheadCoords, treehead, treeheadPreset, returnSpot,
-			moveIntoPos = function (unit, range) {
-				var i, coordx, coordy,
-					coords = [],
-					angle = Math.round(Math.atan2(me.y - unit.y, me.x - unit.x) * 180 / Math.PI),
-					angles = [0, 15, -15, 30, -30, 45, -45, 60, -60, 75, -75, 90, -90, 105, -105, 120, -120, 135, -135, 150, -150, 180];
-
-				for (i = 0; i < angles.length; i += 1) {
-					coordx = Math.round((Math.cos((angle + angles[i]) * Math.PI / 180)) * range + unit.x);
-					coordy = Math.round((Math.sin((angle + angles[i]) * Math.PI / 180)) * range + unit.y);
-
-					try {
-						if (!(getCollision(unit.area, coordx, coordy) & 0x1)) {
-							coords.push({
-								x: coordx,
-								y: coordy
-							});
-						}
-					} catch (e) {
-
-					}
-				}
-
-				if (coords.length > 0) {
-					coords.sort(Sort.units);
-
-					return Pather.moveToUnit(coords[0]);
-				}
-
-				return false;
-			};
 		
-		Pather.useWaypoint(5, true);
-		Precast.doPrecast(false);
-
-		treeheadPreset = getPresetUnit(5, 1, 4);
-		treeheadCoords = {
-			area: 5,
-			x: treeheadPreset.roomx * 5 + treeheadPreset.x,
-			y: treeheadPreset.roomy * 5 + treeheadPreset.y
-		};
-
-		moveIntoPos(treeheadCoords, 50);
-
-		for (i = 0; i < 3; i += 1) {
-			treehead = getUnit(1, 4);
-
-			if (treehead) {
-				break;
-			}
-
-			delay(500);
+		if (!Pather.moveToPreset(me.area, 2, 30, 5, 5, true)) {
+			me.overhead("Failed to move to Tree of Inifuss");
+			return false;
 		}
-
-		if (treehead) {
-			moveIntoPos(treehead, 60);
-		} else {
-			print("treehead unit not found");
-		}
-
-		returnSpot = {
-			x: me.x,
-			y: me.y
-		};
-
-		Attack.securePosition(me.x, me.y, 30, 3000);
+		
+		Attack.securePosition(me.x, me.y, 10, 3000);
 		Pather.makePortal();
 		me.overhead("1");
 
 		while (!this.playerIn()) {
 			delay(200);
 		}
-
-		Attack.kill(4); // treehead
+		
+		Attack.securePosition(me.x, me.y, 10, 3000);
 		Pickit.pickItems();
-		me.overhead("2");
-		Pather.moveToUnit(returnSpot);
+		Pather.makePortal();
+		me.overhead("1");
 
+		while (!this.playerIn()) {
+			Attack.securePosition(me.x, me.y, 10, 1500);
+			delay(200);
+		}
+		
+		Pather.moveToPreset(me.area, 2, 30, 5, 5, true);
 		while (this.playerIn()) {
+			Attack.securePosition(me.x, me.y, 10, 1500);
 			delay(200);
 		}
 
 		Pather.usePortal(null, null);
-
-		return true;
 		
+		me.overhead("starting tree");
+		Town.doChores();
+		Pather.useWaypoint(4);
+		Precast.doPrecast(true);
+
+		if (!Pather.moveToPreset(me.area, 1, 737, 0, 0, false)) {
+			me.overhead("Failed to move to Rakanishu");
+			return false;
+		}
+		
+		Attack.securePosition(me.x, me.y, 10, 3000);
+		Pickit.pickItems();
+		Pather.makePortal();
+		me.overhead("1");
+
+		while (!this.playerIn()) {
+			Attack.securePosition(me.x, me.y, 10, 1500);
+			delay(200);
+		}
+		
+		while (this.playerIn()) {
+			Attack.securePosition(me.x, me.y, 10, 1500);
+			delay(200);
+		}
+		
+		Pather.usePortal(null, null);
+		return true;
 	};
 	this.andariel = function () {
 		me.overhead("starting andariel");
@@ -2819,6 +2801,61 @@ function d2_rush(rMsg) {
 			delay(250);
 		}
 
+		return true;
+	};
+	this.khalimswill = function () {
+		me.overhead("starting khalim's will help");
+		delay(1000);
+		me.overhead("starting khalim's eye");
+		Town.doChores();
+		Pather.useWaypoint(76, true);
+		Precast.doPrecast(true);
+
+		if (!Pather.moveToExit([76, 85], false);) {
+			me.overhead("Failed to move to Spider Cavern");
+			return false;
+		}
+		
+		//407 khalim's chest
+		var chest = getPresetUnit(me.area, 2, 407);
+		if (!chest) return false;				
+		Pather.moveToUnit(chest);
+		
+		Attack.securePosition(me.x, me.y, 10, 3000);
+		Pickit.pickItems();
+		Pather.makePortal();
+		me.overhead("1");
+
+		while (!this.playerIn()) {
+			Attack.securePosition(me.x, me.y, 10, 1500);
+			delay(200);
+		}
+		
+		while (this.playerIn()) {
+			Attack.securePosition(me.x, me.y, 10, 1500);
+			delay(200);
+		}
+		
+		Pather.usePortal(null, null);
+		
+		/*
+		me.overhead("starting khalim's brain");
+		Town.doChores();
+		Pather.useWaypoint(5, true);
+		Precast.doPrecast(true);
+	
+	
+		me.overhead("starting khalim's heart");
+		Town.doChores();
+		Pather.useWaypoint(5, true);
+		Precast.doPrecast(true);
+		
+		
+		me.overhead("starting khalim's flail");
+		Town.doChores();
+		Pather.useWaypoint(5, true);
+		Precast.doPrecast(true);*/
+	
 		return true;
 	};
 	this.travincal = function () {
