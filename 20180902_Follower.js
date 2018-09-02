@@ -2393,6 +2393,68 @@ function d2_rush(rMsg) {
 
 		return true;
 	};
+	this.cain = function () {
+		me.overhead("starting cain help");
+		delay(1000);
+		me.overhead("starting tree");
+		Town.doChores();
+		Pather.useWaypoint(5, true);
+		Precast.doPrecast(true);
+		
+		if (!Pather.moveToPreset(me.area, 2, 30, 5, 5, true)) {
+			me.overhead("Failed to move to Tree of Inifuss");
+			return false;
+		}
+		
+		Attack.securePosition(me.x, me.y, 10, 3000);
+		Pather.makePortal();
+		me.overhead("1");
+ 		while (!this.playerIn()) {
+			delay(200);
+		}
+		
+		Attack.securePosition(me.x, me.y, 10, 3000);
+		Pickit.pickItems();
+		Pather.makePortal();
+		me.overhead("1");
+ 		while (!this.playerIn()) {
+			Attack.securePosition(me.x, me.y, 10, 1500);
+			delay(200);
+		}
+		
+		Pather.moveToPreset(me.area, 2, 30, 5, 5, true);
+		while (this.playerIn()) {
+			Attack.securePosition(me.x, me.y, 10, 1500);
+			delay(200);
+		}
+ 		Pather.usePortal(null, null);
+		
+		me.overhead("starting tree");
+		Town.doChores();
+		Pather.useWaypoint(4);
+		Precast.doPrecast(true);
+ 		if (!Pather.moveToPreset(me.area, 1, 737, 0, 0, false)) {
+			me.overhead("Failed to move to Rakanishu");
+			return false;
+		}
+		
+		Attack.securePosition(me.x, me.y, 10, 3000);
+		Pickit.pickItems();
+		Pather.makePortal();
+		me.overhead("1");
+ 		while (!this.playerIn()) {
+			Attack.securePosition(me.x, me.y, 10, 1500);
+			delay(200);
+		}
+		
+		while (this.playerIn()) {
+			Attack.securePosition(me.x, me.y, 10, 1500);
+			delay(200);
+		}
+		
+		Pather.usePortal(null, null);
+		return true;
+	};
 	this.radament = function () {
 		if (!Config.Rusher.Radament) {
 			return false;
