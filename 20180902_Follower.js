@@ -67,14 +67,6 @@
 *	ahem     		- move in a random direction (use if you're stuck by followers)
 *	reload    		- reload script. Use only in case of emergency, or after editing character config.
 *	fini         	- exit game
-
-
-Some notes:
-	securePosition: function (x, y, range, timer, skipBlocked, special);	
-	Pather.walkTo(x, y, minDist);	 minDist - minimal distance from x/y before returning true
-	Pather.moveToPreset(area, unitType, unitId, offX, offY, clearPath, pop);
-	Pather.moveToExit(targetArea, use, clearPath);	use - enter target area or last area in the array | 
-
 */
 
 function Follower() {
@@ -555,7 +547,7 @@ function Follower() {
 
 			//
 			// commands for followers
-			// ahchoo: clears level
+			// ahchoo
 			// act1: den, hole, pit, count, andy
 			// act2: duri
 			// act3: meph
@@ -565,6 +557,10 @@ function Follower() {
 				case "ahchoo":
 				case me.name + " ahchoo":
 					d2_clearArea();
+					break;
+				case "ahchoo2":
+				case me.name + " ahchoo2":
+					d2_clearNearMe();
 					break;
 				case "den":
 				case me.name + " den":
@@ -647,67 +643,59 @@ function Follower() {
 				case me.name + " rmax":
 					if(me.classid == 1) d2_rush("rmax");
 					break;
-				case "rcain":									// help to get Cain
-				case me.name + " rcain": //
-					if(me.classid == 1) d2_rush("rcain");
-					break;
-				case "randariel": 								// help to get Andariel
+				case "randariel": // enables rusher
 				case me.name + " randariel":
 					if(me.classid == 1) d2_rush("randariel");
 					break;
-				case "rradament": 								// help to get the Rada book
+				case "rradament": // help to get the Rada book
 				case me.name + " rradament":
 					if(me.classid == 1) d2_rush("rradament");
 					break;
-				case "rcube": 									// help to get the cube
-				case me.name + " rcube":
-					if(me.classid == 1) d2_rush("rcube");
-					break;
-				case "rstaff": 									// help to get the staff
+				case "rstaff": // help to get the staff
 				case me.name + " rstaff":
 					if(me.classid == 1) d2_rush("rstaff");
 					break;
-				case "ramulet": 								// help to get the staff
+				case "ramulet": // help to get the staff
 				case me.name + " ramulet":
 					if(me.classid == 1) d2_rush("ramulet");
 					break;
-				case "rsummoner": 								// help to get the summoner
+				case "rsummoner": // help to get the summoner
 				case me.name + " rsummoner":
 					if(me.classid == 1) d2_rush("rsummoner");
 					break;
-				case "rduriel": 								// help to get to the orifice
+				case "rduriel": // help to get to the orifice
 				case me.name + " rduriel": 
 					if(me.classid == 1) d2_rush("rduriel");
 					break;
-				case "rtravincal": 								// help to get to the orifice
+				case "rtravincal": // help to get to the orifice
 				case me.name + " rtravincal": 
 					if(me.classid == 1) d2_rush("rtravincal");
 					break;
-				case "rmephisto": 								// help to get to the orifice
+				case "rmephisto": // help to get to the orifice
 				case me.name + " rmephisto": 
 					if(me.classid == 1) d2_rush("rmephisto");
 					break;	
-				case "rizual": 									// help to get to shenk
+				case "rizual": // help to get to shenk
 				case me.name + " rizual":
 					if(me.classid == 1) d2_rush("rizual");
 					break;
-				case "rdiablo": 								// help to get to shenk
+				case "rdiablo": // help to get to shenk
 				case me.name + " rdiablo":
 					if(me.classid == 1) d2_rush("rdiablo");
 					break;
-				case "rshenk": 									// help to get to shenk
+				case "rshenk": // help to get to shenk
 				case me.name + " rshenk":
 					if(me.classid == 1) d2_rush("rshenk");
 					break;
-				case "ranya": 									// help to get anya
+				case "ranya": // help to get anya
 				case me.name + " ranya":
 					if(me.classid == 1) d2_rush("ranya");
 					break;
-				case "rancients": 								// help to get ancients
+				case "rancients": // help to get ancients
 				case me.name + " rancients":
 					if(me.classid == 1) d2_rush("rancients");
 					break;
-				case "rbaal": 									// help to get baal
+				case "rbaal": // help to get baal
 				case me.name + " rbaal":
 					if(me.classid == 1) d2_rush("rbaal");
 					break;
@@ -1120,6 +1108,15 @@ function d2_clearArea() {
 	}
 	me.overhead("ÿc4Clearing area: " + me.area);
 	Attack.clearLevel(0); // clears 0: all | oxF: skip normal | ox7: champions/bosses
+	return 0;
+}
+function d2_clearNearMe() {
+	if(me.inTown) {
+		me.overhead("ÿc4I am in town you noob...");
+		return 0;
+	}
+	me.overhead("ÿc4Clearing near to you: " + me.area);
+	Attack.clear(60,0,0,0,true); // dEdit: clear: function (range, spectype, bossId, sortfunc, pickit)
 	return 0;
 }
 function d2_Countess() {
@@ -2359,73 +2356,6 @@ function d2_rush(rMsg) {
 	};
 
 	
-	this.cain = function () {
-		me.overhead("starting cain help");
-		delay(1000);
-		me.overhead("starting tree");
-		Town.doChores();
-		Pather.useWaypoint(5, true);
-		Precast.doPrecast(true);
-		
-		if (!Pather.moveToPreset(me.area, 2, 30, 5, 5, true)) {
-			me.overhead("Failed to move to Tree of Inifuss");
-			return false;
-		}
-		
-		Attack.securePosition(me.x, me.y, 10, 3000);
-		Pather.makePortal();
-		me.overhead("1");
-
-		while (!this.playerIn()) {
-			delay(200);
-		}
-		
-		Attack.securePosition(me.x, me.y, 10, 3000);
-		Pickit.pickItems();
-		Pather.makePortal();
-		me.overhead("1");
-
-		while (!this.playerIn()) {
-			Attack.securePosition(me.x, me.y, 10, 1500);
-			delay(200);
-		}
-		
-		Pather.moveToPreset(me.area, 2, 30, 5, 5, true);
-		while (this.playerIn()) {
-			Attack.securePosition(me.x, me.y, 10, 1500);
-			delay(200);
-		}
-
-		Pather.usePortal(null, null);
-		
-		me.overhead("starting tree");
-		Town.doChores();
-		Pather.useWaypoint(4);
-		Precast.doPrecast(true);
-
-		if (!Pather.moveToPreset(me.area, 1, 737, 0, 0, false)) {
-			me.overhead("Failed to move to Rakanishu");
-			return false;
-		}
-		
-		Attack.securePosition(me.x, me.y, 10, 3000);
-		Pickit.pickItems();
-		Pather.makePortal();
-		me.overhead("1");
-
-		while (!this.playerIn()) {
-			Attack.securePosition(me.x, me.y, 10, 1500);
-			delay(200);
-		}
-		
-		while (this.playerIn()) {
-			Attack.securePosition(me.x, me.y, 10, 1500);
-			delay(200);
-		}
-		
-		Pather.usePortal(null, null);
-		return true;
-	};
 	this.andariel = function () {
 		me.overhead("starting andariel");
 		Town.doChores();
@@ -2805,136 +2735,6 @@ function d2_rush(rMsg) {
 			delay(250);
 		}
 
-		return true;
-	};
-	this.khalimswill = function () {
-		me.overhead("starting khalim's will help");
-		delay(1000);
-	
-	//	Khalim's eye
-	//
-		me.overhead("starting khalim's eye");
-		Town.doChores();
-		Pather.useWaypoint(76, true);
-		Precast.doPrecast(true);
-
-		if (!Pather.moveToExit([76, 85], true)) {
-			me.overhead("Failed to move to Spider Cavern");
-			return false;
-		}
-		
-		//407 khalim's chest
-		var chest = getPresetUnit(me.area, 2, 407);
-		if (!chest) return false;				
-		Pather.moveToUnit(chest);
-		
-		Attack.securePosition(me.x, me.y, 10, 3000);
-		Pickit.pickItems();
-		Pather.makePortal();
-		me.overhead("1");
-		
-		while (!this.playerIn()) {
-			Attack.securePosition(me.x, me.y, 10, 1500);
-			delay(200);
-		}
-		
-		
-		while (this.playerIn()) {
-			Attack.securePosition(me.x, me.y, 10, 1500);
-			delay(200);
-		}
-		
-		Pather.usePortal(null, null);
-		
-	//	Khalim's brain
-	//
-		me.overhead("starting khalim's brain");
-		Town.doChores();
-		Pather.useWaypoint(78, true);
-		Precast.doPrecast(true);
-		
-		if (!Pather.moveToExit([78, 88], true)) {
-			me.overhead("Failed to move to Flayer Dungeon lvl 1");
-			return false;
-		}
-		if (!Pather.moveToExit([88, 89], true)) {
-			me.overhead("Failed to move to Flayer Dungeon lvl 2");
-			return false;
-		}
-		
-		var chest = getPresetUnit(me.area, 2, 407);
-		if (!chest) return false;				
-		Pather.moveToUnit(chest);
-		
-		Attack.securePosition(me.x, me.y, 10, 3000);
-		Pickit.pickItems();
-		Pather.makePortal();
-		me.overhead("1");
-		
-		while (!this.playerIn()) {
-			Attack.securePosition(me.x, me.y, 10, 1500);
-			delay(200);
-		}
-		
-		
-		while (this.playerIn()) {
-			Attack.securePosition(me.x, me.y, 10, 1500);
-			delay(200);
-		}
-		
-		Pather.usePortal(null, null);
-/*	
-	//	Khalim's heart
-	//
-		me.overhead("starting khalim's heart");
-		Town.doChores();
-		Pather.useWaypoint(5, true);
-		Precast.doPrecast(true);
-		
-	//	Khalim's flail
-	//	
-		me.overhead("starting khalim's flail");
-		Town.doChores();
-		Pather.useWaypoint(5, true);
-		Precast.doPrecast(true);
-		
-		me.overhead("starting khalim's brain");
-		Town.doChores();
-		Pather.useWaypoint(80, true);
-		Precast.doPrecast(true);
-		
-		if (!Pather.moveToExit([80, 92], true)) {
-			me.overhead("Failed to move to a3 sewers lvl 1");
-			return false;
-		}
-		if (!Pather.moveToExit([92, 93], true)) {
-			me.overhead("Failed to move to a3 sewers lvl 2");
-			return false;
-		}
-		
-		var chest = getPresetUnit(me.area, 2, 407);
-		if (!chest) return false;				
-		Pather.moveToUnit(chest);
-		
-		Attack.securePosition(me.x, me.y, 10, 3000);
-		Pickit.pickItems();
-		Pather.makePortal();
-		me.overhead("1");
-		
-		while (!this.playerIn()) {
-			Attack.securePosition(me.x, me.y, 10, 1500);
-			delay(200);
-		}
-		
-		
-		while (this.playerIn()) {
-			Attack.securePosition(me.x, me.y, 10, 1500);
-			delay(200);
-		}
-		
-		Pather.usePortal(null, null);
-		*/
-	
 		return true;
 	};
 	this.travincal = function () {
@@ -3752,6 +3552,7 @@ MainLoop:
 			this.shenk();
 			break;
 		case "rmax":
+			this.cain();
 			this.andariel();
 			this.radament();
 			this.cube();
@@ -3767,10 +3568,6 @@ MainLoop:
 			this.anya();
 			this.ancients();
 			this.baal();
-			break;
-		
-		case "rcain": 	
-			this.cain();
 			break;
 		case "randariel": 	
 			this.andariel();
@@ -3792,9 +3589,6 @@ MainLoop:
 			break;
 		case "rduriel":		
 			this.duriel();
-			break;
-		case "rkhalim":
-			this.khalimswill();
 			break;
 		case "rtravincal":	
 			this.travincal();
