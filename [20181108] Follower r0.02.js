@@ -19,7 +19,18 @@
 		rmini: 			follower(s) does a mini rush of - andy, cube, amulet, staff, summoner, duriel, travi, meph, diablo, shenk
 		rmax:			follower(s) does a full rush, incl. all quests minus the den
 		
-		follower(s) does single rush of: 	randy, rrada, rstaff, ramulet, rsum, rduri, rtravi, rmeph, rizual, rdiablo, rshenk, ranya, rancients, rbaal, 
+		follower(s) does single rush of: 	randy, rrada, rstaff, ramulet, rsum, rduri, rtravi, rmeph, rizual, rdiablo, rshenk, ranya, rancients, rbaal
+		
+		loc:		flwrs reveal their x,y coords
+		moo:		flwrs got to the stash area & attempt to enter cow portal
+		ahem:		flwrs move away from ldr by a little bit
+		way:		flwrs grab wp
+		c:			retrieve corpse in town
+		p:			engage flwts to pickit & to open containers
+		hulk:		precast, if barb, don't precast in town
+		wep0:		flwr to switch to wep I slot
+		wep1:		flwr to switch to wep II slot
+		tp:			? not sure
 */
 function Follower() {
 	var i, j, stop, leader, leaderUnit, charClass, piece, skill, result, unit, player,
@@ -431,8 +442,7 @@ function Follower() {
 
 	this.chatEvent = function (nick, msg) {
 		if (msg && nick === Config.Leader) {
-			myFwlrScipts.choreMe(msg);
-			
+			myFlwrScripts.choreMe(msg);			// sends the leader's chat to myFlwrScripts.js
 			switch (msg) {
 			//
 			// commands for followers
@@ -510,10 +520,7 @@ function Follower() {
 					stop = true;
 					me.overhead("ÿc1Stopping.");
 					delay(rand(1000,1200));
-					if(!Pather.usePortal(null, null)) {
-						delay(2000);
-						if(!me.inTown) Town.goToTown();
-					}
+					Town.goToTown();
 					delay(rand(1000,1200));
 					Town.doChores();
 					Town.move("portalspot");	
@@ -622,28 +629,28 @@ function Follower() {
 		me.overhead("ÿc2Leader found.");
 	}
 
-	while (!Misc.inMyParty(Config.Leader)) {
+	while (!Misc.inMyParty(Config.Leader)) {									// while flwr & ldr are not in party, loop here
 		delay(500);
 	}
 
 	me.overhead("ÿc2Partied.");
 	// Main Loop
-	while (Misc.inMyParty(Config.Leader)) {
+	while (Misc.inMyParty(Config.Leader)) {										// while flwr & ldr are in party, loop the following...
 		while (stop) {
 			delay(500);
 		}
-		if (me.classid == 4 && me.weaponswitch != 0) Precast.weaponSwitch(0); 			// dEdits: verifies if bo barb has weapon slot 0 engaged
-		if (!me.inTown) {
-			if (!leaderUnit || !copyUnit(leaderUnit).x) {
-				leaderUnit = this.getLeaderUnit(Config.Leader);
+		if (me.classid == 4 && me.weaponswitch != 0) Precast.weaponSwitch(0); 	// dEdits: verifies if bo barb has weapon slot 0 engaged
+		if (!me.inTown) {														// while flwr is not in town
+			if (!leaderUnit || !copyUnit(leaderUnit).x) {						// if no ldr set...
+				leaderUnit = this.getLeaderUnit(Config.Leader);					// get & set the ldr
 
 				if (leaderUnit) {
 					me.overhead("ÿc2Leader unit found.");
 				}
 			}
 
-			if (!leaderUnit) {
-				player = getUnit(0);
+			if (!leaderUnit) {													// if no ldr												
+				player = getUnit(0);											// find another playe in flwr's party, then get close to them
 
 				if (player) {
 					do {
@@ -657,12 +664,17 @@ function Follower() {
 			}
 			if (((leader.area === 132 || leader.area === 109) && me.area === 131) && !me.getSkill(54,1)) Town.goToTown();	// dEdits: fix flwrs gettin' stuck in throne while the leader is in the chamber
 			
-			if (leaderUnit && getDistance(me.x, me.y, leaderUnit.x, leaderUnit.y) <= 100 ) { 								// attempt to get closer to the leader | dEdit: changed <= 60 to != 0
+			if (leaderUnit && getDistance(me.x, me.y, leaderUnit.x, leaderUnit.y) <= 100 ) { 								// if ldr dist is <=100 & >4, try to get closer to ldr
 				if (getDistance(me.x, me.y, leaderUnit.x, leaderUnit.y) > 4) {
 					me.overhead("ÿc7leader's disance is: " + (getDistance(me.x, me.y, leaderUnit.x, leaderUnit.y)));
 					delay(250)
 					Pather.moveToUnit(leaderUnit);
 				}
+			}
+			else {																											// if ldr's dist is out of range, go to town. Wait 'til ldr goes to town.
+				Town.goToTown();
+				me.overhead("Leader went way too far. I'll wait in town 'til ldr comes to town.");
+				while(leader.area !== me.area) { delay(rand(1000,1500)); }
 			}
 		
 			if (attack) {
@@ -793,7 +805,7 @@ function Follower() {
 			case "moo":					// dEdit cow
 			case me.name + " moo":
 				if (me.area === 1) {
-					Town.move("portalspot");
+					Town.move("stash");
 
 					if (!Pather.usePortal(39)) {
 						me.overhead("ÿc1Failed to use cow portal.");
@@ -863,64 +875,13 @@ function Follower() {
 				me.overhead("ÿc2!Done picking.");
 
 				break;
-			case "1":
-				if (me.inTown && leader.inTown && this.checkLeaderAct(leader) !== me.act) {
-					me.overhead("ÿc8Going to leader's town.");
-					Town.goToTown(this.checkLeaderAct(leader));
-					Town.move("portalspot");
-				} else if (me.inTown) {
-					me.overhead("ÿc2Going outside.");
-					delay(rand(3000,4000));
-					me.overhead("ÿc7Leader is in act: " + this.checkLeaderAct(leader));
-					delay(400)
-					Town.goToTown(this.checkLeaderAct(leader));
-					delay(400);
-					Town.move("portalspot");
-
-					if (!Pather.usePortal(null, leader.name)) {
-						break;
-					}
-
-					while (!this.getLeaderUnit(Config.Leader) && !me.dead) {
-						Attack.clear(10);
-						delay(200);
-					}
-				}
-
-				break;
-			case "2":
-				if (!me.inTown) {
-					delay(150);
-					me.overhead("ÿc4Going to town.");
-					Pather.usePortal(null, leader.name);
-				}
-
-				break;
-			case "3":
-				if (me.inTown) {
-					me.overhead("ÿc4Running town chores");
-					Town.doChores();
-					Town.move("portalspot");
-					me.overhead("ÿc2Ready");
-				}
-
-				break;
-			case "h":
-				if (me.classid === 4) {
-					Skill.cast(130);
-				}
-
-				break;
 			case "hulk":
 			case me.name + " hulk":
 				if (me.inTown && me.classid === 4) break;
 				Precast.doPrecast(true);
 				break;
-			case "bo":
-				if (me.classid === 4) {
-					Precast.doPrecast(true);
-				}
 			case "wep0":
+			case me.name + " wep0":
 				for (i = 0; i < 5; i += 1) {
 					weaponSwitch();
 					var tick = getTickCount();
@@ -931,6 +892,7 @@ function Follower() {
 				}
 				break;
 			case "wep1":
+			case me.name + " wep1":
 				for (i = 0; i < 5; i += 1) {
 					weaponSwitch();
 					var tick = getTickCount();
@@ -939,13 +901,6 @@ function Follower() {
 						delay(10);
 					}
 				}
-				break;
-			case "a2":
-			case "a3":
-			case "a4":
-			case "a5":
-				this.changeAct(parseInt(action[1], 10));
-
 				break;
 			case me.name + " tp":
 				unit = me.findItem("tbk", 0, 3);
