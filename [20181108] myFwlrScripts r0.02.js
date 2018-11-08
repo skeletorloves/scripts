@@ -1,6 +1,6 @@
 /*	my custom follower scripts | place an: include("common/myFwlrScripts.js"); into the default.dbj script
 */	
-var myFwlrScipts = {
+var myFwlrScripts = {
 	choreMe: function (rMsg) {
 		this.playerIn = function (area) {
 			if (!area) {
@@ -70,13 +70,27 @@ var myFwlrScipts = {
 		};
 
 		
-		/* -- rush scripts below -- */
+		/* -- my repative functions --  */
+		this.prepChoreA = function (_msg, _town, _chores, _wpps, _wp, _pc) {	// _wpps: "waypoint","portalspot" | _pc: precast
+			if(_msg) me.overhead("ÿc4%s", _msg);
+			if(_town) Town.goToTown(_town);
+			if(_chores) Town.doChores();
+			if(_wpps) {
+				Town.move(_wpps);
+				delay(rand(3000,6000));
+			}
+			if(_wp) {
+				Pather.useWaypoint(_wp, true);
+				delay(rand(1000,2500));
+			}
+			if(_pc) Precast.doPrecast(true);
+			delay(250);
+		};
+			
+		/* ---- rush scripts below ---- */
 		this.andariel = function () {
-			me.overhead("starting andariel");
-			Town.doChores();
-			Pather.useWaypoint(35, true);
-			Precast.doPrecast(true);
-
+			this.prepChoreA("Andariel", 1, true, "waypoint", 35, true);
+			
 			if (!Pather.moveToExit([36, 37], true) || !Pather.moveTo(22582, 9612)) {
 				throw new Error("andy failed");
 			}
@@ -109,12 +123,7 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.cain = function () {
-			me.overhead("starting cain help");
-			delay(1000);
-			me.overhead("starting tree");
-			Town.doChores();
-			Pather.useWaypoint(5, true);
-			Precast.doPrecast(true);
+			this.prepChoreA("Cain: tree", 1, true, "waypoint", 5, true);
 			
 			if (!Pather.moveToPreset(me.area, 2, 30, 5, 5, true)) {
 				me.overhead("Failed to move to Tree of Inifuss");
@@ -143,11 +152,8 @@ var myFwlrScipts = {
 				delay(200);
 			}
 			Pather.usePortal(null, null);
+			this.prepChoreA("Cain: Cairn Stones", 1, true, "waypoint", 4, true);
 			
-			me.overhead("starting tree");
-			Town.doChores();
-			Pather.useWaypoint(4);
-			Precast.doPrecast(true);
 			if (!Pather.moveToPreset(me.area, 1, 737, 0, 0, false)) {
 				me.overhead("Failed to move to Rakanishu");
 				return false;
@@ -171,12 +177,8 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.radament = function () {
-			if (!Config.Rusher.Radament) {
-				return false;
-			}
-
-			me.overhead("starting radament");
-
+			this.prepChoreA("Radament", 2, true, "waypoint", 48, true);
+			
 			var i, radaCoords, rada, radaPreset, returnSpot,
 				moveIntoPos = function (unit, range) {
 					var i, coordx, coordy,
@@ -209,8 +211,6 @@ var myFwlrScipts = {
 					return false;
 				};
 
-			Pather.useWaypoint(48, true);
-			Precast.doPrecast(false);
 			Pather.moveToExit(49, true);
 
 			radaPreset = getPresetUnit(49, 2, 355);
@@ -283,9 +283,7 @@ var myFwlrScipts = {
 		};
 		this.cube = function () {
 			if (me.diff === 0) {
-				me.overhead("starting cube");
-				Pather.useWaypoint(57, true);
-				Precast.doPrecast(true);
+				this.prepChoreA("cube", 2, true, "waypoint", 57, true);
 
 				if (!Pather.moveToExit(60, true) || !Pather.moveToPreset(me.area, 2, 354)) {
 					throw new Error("cube failed");
@@ -309,10 +307,7 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.amulet = function () {
-			me.overhead("starting amulet");
-			Town.doChores();
-			Pather.useWaypoint(44, true);
-			Precast.doPrecast(true);
+			this.prepChoreA("amulet", 2, true, "waypoint", 44, true);
 
 			if (!Pather.moveToExit([45, 58, 61], true) || !Pather.moveTo(15044, 14045)) {
 				throw new Error("amulet failed");
@@ -341,10 +336,7 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.staff = function () {
-			me.overhead("starting staff");
-			Town.doChores();
-			Pather.useWaypoint(43, true);
-			Precast.doPrecast(true);
+			this.prepChoreA("staff", 2, true, "waypoint", 43, true);
 
 			if (!Pather.moveToExit([62, 63, 64], true) || !Pather.moveToPreset(me.area, 2, 356)) {
 				throw new Error("staff failed");
@@ -372,11 +364,8 @@ var myFwlrScipts = {
 			// left up 25081 5446 (25011, 5446)
 			// right down 25830 5447 (25866, 5431)
 			// left down 25447 5822 (25431, 5861)
-
-			me.overhead("starting summoner");
-			Town.doChores();
-			Pather.useWaypoint(74, true);
-			Precast.doPrecast(true);
+			
+			this.prepChoreA("Summoner", 2, true, "waypoint", 74, true);
 
 			var i, journal,
 				preset = getPresetUnit(me.area, 2, 357),
@@ -448,14 +437,7 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.duriel = function () {
-			me.overhead("starting duriel");
-
-			if (me.inTown) {
-				Town.doChores();
-				Pather.useWaypoint(46, true);
-			}
-
-			Precast.doPrecast(true);
+			this.prepChoreA("Duriel", 2, true, "waypoint", 46, true);
 
 			if (!Pather.moveToExit(getRoom().correcttomb, true) || !Pather.moveToPreset(me.area, 2, 152)) {
 				throw new Error("duriel failed");
@@ -515,11 +497,7 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.travincal = function () {
-			me.overhead("starting travincal");
-			Town.doChores();
-			Pather.useWaypoint(83, true);
-			Precast.doPrecast(true);
-
+			this.prepChoreA("Travincal", 3, true, "waypoint", 83, true);
 			var coords = [me.x, me.y];
 
 			Pather.moveTo(coords[0] + 23, coords[1] - 102);
@@ -548,13 +526,9 @@ var myFwlrScipts = {
 		};
 
 		this.mephisto = function () {
-			me.overhead("starting mephisto");
-
+			this.prepChoreA("Mephisto", 3, true, "waypoint", 101, true);
 			var hydra;
 
-			Town.doChores();
-			Pather.useWaypoint(101, true);
-			Precast.doPrecast(true);
 			Pather.moveToExit(102, true);
 			Pather.moveTo(17692, 8023);
 			Pather.makePortal();
@@ -610,11 +584,8 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.izual = function () {
-			if (!Config.Rusher.Izual) {
-				return false;
-			}
-
-			me.overhead("starting izual");
+			this.prepChoreA("Izual", 4, true, "waypoint", 106, true);
+			Pather.moveToExit(105, true);
 
 			var i, izualCoords, izual, izualPreset, returnSpot,
 				moveIntoPos = function (unit, range) {
@@ -648,8 +619,7 @@ var myFwlrScipts = {
 					return false;
 				};
 
-			Pather.useWaypoint(106, true);
-			Precast.doPrecast(false);
+			
 			Pather.moveToExit(105, true);
 
 			izualPreset = getPresetUnit(105, 1, 256);
@@ -704,7 +674,8 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.diablo = function () {
-			me.overhead("starting diablo");
+			this.prepChoreA("Diablo", 4, true, "waypoint", 107, true);
+			Pather.moveTo(7790, 5544);
 
 			this.getLayout = function (seal, value) {
 				var sealPreset = getPresetUnit(108, 2, seal);
@@ -822,10 +793,6 @@ var myFwlrScipts = {
 				return false;
 			};
 
-			Town.doChores();
-			Pather.useWaypoint(107, true);
-			Precast.doPrecast(true);
-			Pather.moveTo(7790, 5544);
 			this.initLayout();
 
 			if (!this.openSeal(395) || !this.openSeal(396)) {
@@ -905,15 +872,9 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.shenk = function () {
-			if (!Config.Rusher.Shenk) {
-				return false;
-			}
-
-			me.overhead("starting shenk");
-
-			Pather.useWaypoint(111, true);
-			Precast.doPrecast(false);
+			this.prepChoreA("Shenk", 5, true, "waypoint", 111, true);
 			Pather.moveTo(3846, 5120);
+			
 			Attack.securePosition(me.x, me.y, 30, 3000);
 			Pather.makePortal();
 			me.overhead("1");
@@ -936,19 +897,8 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.anya = function () {
-			if (!Config.Rusher.Anya) {
-				return false;
-			}
-
-			me.overhead("starting anya");
-
+			this.prepChoreA("Anya", 5, true, "waypoint", 113, true);			
 			var anya;
-
-			if (!Town.goToTown() || !Pather.useWaypoint(113, true)) {
-				throw new Error("Anya quest failed");
-			}
-
-			Precast.doPrecast(false);
 
 			if (!Pather.moveToExit(114, true) || !Pather.moveToPreset(me.area, 2, 460)) {
 				throw new Error("Anya quest failed");
@@ -987,29 +937,15 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.ancients = function () {
-			if (me.diff === 2) {
-				me.overhead("Hell rush complete~");
-				delay(500);
-				quit();
-
-				return false;
-			}
-
 			if (!this.bumperCheck()) {
 				me.overhead("No eligible bumpers detected. Rush complete~");
 				delay(500);
-				quit();
+				//quit();
 
 				return false;
 			}
-
-			me.overhead("starting ancients");
-
+			this.prepChoreA("Ancients", 5, true, "waypoint", 118, true);
 			var altar;
-
-			Town.doChores();
-			Pather.useWaypoint(118, true);
-			Precast.doPrecast(true);
 
 			if (!Pather.moveToExit(120, true)) {
 				throw new Error("Failed to go to Ancients way.");
@@ -1056,9 +992,20 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.baal = function () {
-			me.overhead("starting baal");
-
+			this.prepChoreA("Baal", 5, true, "waypoint", 129, true);
 			var tick, portal;
+			
+			if (!Pather.moveToExit([130, 131], true)) {
+				throw new Error("Failed to move to Throne of Destruction.");
+			}
+			
+			Pather.moveTo(15113, 5040);
+			Pather.makePortal();
+			Attack.clear(15);
+			this.clearThrone();
+
+			tick = getTickCount();
+			Pather.moveTo(15093, me.classid === 3 ? 5029 : 5039);
 
 			preattack = function () {
 				var check;
@@ -1198,23 +1145,7 @@ var myFwlrScipts = {
 				return true;
 			};
 
-			if (me.inTown) {
-				Town.doChores();
-				Pather.useWaypoint(129, true);
-				Precast.doPrecast(true);
-
-				if (!Pather.moveToExit([130, 131], true)) {
-					throw new Error("Failed to move to Throne of Destruction.");
-				}
-			}
-
-			Pather.moveTo(15113, 5040);
-			Attack.clear(15);
-			this.clearThrone();
-
-			tick = getTickCount();
-			Pather.moveTo(15093, me.classid === 3 ? 5029 : 5039);
-
+			
 	MainLoop:
 			while (true) {
 				if (getDistance(me, 15093, me.classid === 3 ? 5029 : 5039) > 3) {
@@ -1315,13 +1246,7 @@ var myFwlrScipts = {
 		
 		/* -- chore scripts below --  */
 		this.den = function () {
-			me.overhead("ÿc4Heading to the Den...");
-			Town.goToTown();
-			delay(250);
-			Town.move("waypoint");
-			Pather.useWaypoint(3);
-			Precast.doPrecast(true);
-			delay(250);
+			this.prepChoreA("Den", 1, true, "waypoint", 3, true);
 			Pather.moveToExit([2, 8], true);
 			delay(250);
 			Town.goToTown();
@@ -1329,13 +1254,7 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.hole = function () {
-			me.overhead("ÿc4Heading to the Black Marsh's hole...");
-			Town.goToTown();
-			delay(250);
-			Town.move("waypoint");
-			Pather.useWaypoint(6);
-			delay(250);
-			Precast.doPrecast(true);
+			this.prepChoreA("Hole in the Black Marsh", 1, true, "waypoint", 6, true);
 			Pather.moveToExit([6, 11], true);
 			delay(250);
 			Town.goToTown();
@@ -1343,32 +1262,24 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.count = function () {
-			me.overhead("ÿc4Heading to the Countess");
-			Town.goToTown();
-			delay(250);
-			Town.move("waypoint");
-			Pather.useWaypoint(6);
-			Precast.doPrecast(true);
-			delay(250);
-			
+			this.prepChoreA("Countess", 1, true, "waypoint", 6, true);
 			var i, poi, x_count, y_count;	
+			
 			if (!Pather.moveToExit([20, 21, 22, 23, 24, 25], true)) {
 				throw new Error("Failed to move to Countess");
 			}
 
 			poi = getPresetUnit(me.area, 2, 580);
-
 			if (!poi) {
 				throw new Error("Failed to move to Countess (preset not found)");
 			}
-
 			switch (poi.roomx * 5 + poi.x) {
-			case 12565:
-				Pather.moveTo(12578, 11043);
-				break;
-			case 12526:
-				Pather.moveTo(12548, 11083);
-				break;
+				case 12565:
+					Pather.moveTo(12578, 11043);
+					break;
+				case 12526:
+					Pather.moveTo(12548, 11083);
+					break;
 			}
 			var tmp_meX = me.x;
 			var tmp_meY = me.y;
@@ -1381,14 +1292,8 @@ var myFwlrScipts = {
 			delay(rand(3000,4000));
 			return true;
 		};
-		this.andy: function () {
-			me.overhead("ÿc4Heading to Andariel");
-			Town.goToTown();
-			delay(250);
-			Town.move("waypoint");
-			Pather.useWaypoint(35, true);
-			Precast.doPrecast(true);
-			delay(250);
+		this.andy = function () {
+			this.prepChoreA("Andy", 1, true, "waypoint", 35, true);
 			
 			if (!Pather.moveToExit([36, 37], true) || !Pather.moveTo(22582, 9612)) {
 				originPather.makePortal();
@@ -1410,13 +1315,7 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.duri = function () {
-			me.overhead("ÿc4Heading to Duriel");
-			Town.goToTown();
-			delay(250);
-			Town.move("waypoint");
-			Pather.useWaypoint(46, true);
-			Precast.doPrecast(true);
-			delay(250);
+			this.prepChoreA("Duriel", 2, true, "waypoint", 46, true);
 			
 			if (!Pather.moveToExit(getRoom().correcttomb, true) || !Pather.moveToPreset(me.area, 2, 152)) {
 				throw new Error("duriel failed");
@@ -1435,13 +1334,7 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.meph = function () {
-			me.overhead("ÿc4Heading to Meph");
-			Town.goToTown();
-			delay(250);
-			Town.move("waypoint");
-			Pather.useWaypoint(101, true);
-			Precast.doPrecast(true);
-
+			this.prepChoreA("Mephisto", 3, true, "waypoint", 101, true);
 			Pather.moveToExit(102, true);
 			Pather.moveTo(17591, 8070);
 			Pather.makePortal();
@@ -1454,23 +1347,14 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.centr = function () {
-			Town.doChores();
-			me.overhead("ÿc4Heading to make a tp at entrance.");
-			Town.goToTown();
-			delay(250);
-			Town.move("waypoint");
-			Pather.useWaypoint(107);
-			Precast.doPrecast(true);
-
-			if (me.area !== 107) {
-				Pather.useWaypoint(107);
-			}
+			this.prepChoreA("Chaos enterance", 4, true, "waypoint", 107, true);
 
 			if (!Pather.moveTo(7790, 5544)) {
 				throw new Error("Failed to move to Chaos Sanctuary");
 			}
 			Pather.makePortal();							// dEditeAdd make a portal at entrance
 			delay(500);
+			
 			while (!this.playerIn()) {
 				Attack.securePosition(me.x, me.y, 30, 250);
 				delay(100);
@@ -1481,15 +1365,10 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.ctr = function () {
-			me.overhead("ÿc4Heading to make a tp at Chaos centre.");
-			Town.goToTown();
-			delay(250);
-			Town.move("waypoint");
-			Pather.useWaypoint(107, true);
-			Precast.doPrecast(true);
-			delau(250);
+			this.prepChoreA("Chaos centre", 1, true, "waypoint", 107, true);
 			Pather.moveTo(7791, 5299);
 			Pather.makePortal();
+			
 			while(!myTroops.LdrInMyArea()) {
 				Attack.clear(5, 0, false, false, true);
 				delay(750);
@@ -1610,13 +1489,8 @@ var myFwlrScipts = {
 				return true;
 			};
 			
-			me.overhead("ÿc4Heading to make a tp at Chaos centre & then club zee seals...");
-			Town.goToTown();
-			delay(250);
-			Town.move("waypoint");
-			Pather.useWaypoint(107, true);
-			Precast.doPrecast(true);
-			delau(250);
+			
+			this.prepChoreA("Heading to make a tp at Chaos centre & then club zee seals...", 4, true, "waypoint", 107, true);
 			Pather.moveTo(7791, 5299);
 			Pather.makePortal();
 			
@@ -1632,15 +1506,9 @@ var myFwlrScipts = {
 			return true;	
 		};
 		this.anc = function () {
-			me.overhead("ÿc4starting ancients");
-			Town.goToTown();
-			delay(250);
-			Town.move("waypoint");
+			this.prepChoreA("Ancients", 5, true, "waypoint", 118, true);
 			var altar;
 			
-			Pather.useWaypoint(118, true);
-			Precast.doPrecast(true);
-			delay(250);
 			if (!Pather.moveToExit(120, true)) throw new me.overhead("Failed to go to Ancients way.");
 
 			Pather.moveTo(10089, 12622);
@@ -1675,17 +1543,7 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.throne = function () {
-			me.overhead("ÿc4Heading to make a tp at throne.");
-			Town.goToTown();
-			delay(250);
-			Town.move("waypoint");
-			
-			Pather.useWaypoint(Config.RandomPrecast ? "random" : 129);
-			Precast.doPrecast(true);
-
-			if (me.area !== 129) {
-				Pather.useWaypoint(129);
-			}
+			this.prepChoreA("Throne", 5, true, "waypoint", 129, true);
 
 			if (!Pather.moveToExit([130, 131], true)) {
 				Town.goToTown();
@@ -1896,20 +1754,8 @@ var myFwlrScipts = {
 				me.overhead("ÿc4" + string);
 			};
 
-			me.overhead("ÿc4Heading to do Baal...");
-			Town.goToTown();
-			delay(250);
-			Town.move("waypoint");
-			Pather.useWaypoint(Config.RandomPrecast ? "random" : 129);
-			//Pather.makePortal();
-			delay(2000);
-			Precast.doPrecast(true);
-
-			if (me.area !== 129) {
-				Pather.useWaypoint(129);
-				//Pather.makePortal();
-				delay(2000);
-			}
+			
+			this.prepChoreA("Baal", 5, true, "waypoint", 129, true);
 
 			if (!Pather.moveToExit([130, 131], true)) {
 				throw new Error("Failed to move to Throne of Destruction.");
@@ -2047,14 +1893,8 @@ var myFwlrScipts = {
 			return true;
 		};
 		this.pindle = function () {
-			me.overhead("Where r u pindlepoo?");
+			this.prepChoreA("Pindle", 5, true, "waypoint", 123, true);
 			var anya;
-			
-			Town.goToTown();
-			Pather.moveTo("waypoint");
-			Pather.useWaypoint(123);
-			Precast.doPrecast(true);
-			delay(250);
 
 			if (!Pather.moveToExit([122, 121], true)) {
 				me.overhead("Failed to move to Nihlahak's Temple");
@@ -2081,6 +1921,7 @@ var myFwlrScipts = {
 		
 		switch(rMsg) {
 			case "rmini":
+			case me.name + "rmini":
 				this.andariel();
 				this.cube();
 				this.amulet();
@@ -2093,6 +1934,7 @@ var myFwlrScipts = {
 				this.shenk();
 				break;
 			case "rmax":
+			case me.name + "rmax":
 				this.cain();
 				this.andariel();
 				this.radament();
@@ -2111,51 +1953,67 @@ var myFwlrScipts = {
 				this.baal();
 				break;
 			case "rcain":
+			case me.name + "rcain":
 				this.cain();
 				break;
-			case "randariel": 	
+			case "randariel":
+			case me.name + "randariel": 	
 				this.andariel();
 				break;
-			case "rradament": 
+			case "rradament":
+			case me.name + "rradament": 
 				this.radament();
 				break;
-			case "rcube": 		
+			case "rcube":
+			case me.name + "rcube": 		
 				this.cube();
 				break;
-			case "ramulet":		
+			case "ramulet":
+			case me.name + "ramulet":		
 				this.amulet();
 				break;
-			case "rstaff": 		
+			case "rstaff":
+			case me.name + "rstaff": 		
 				this.staff();
 				break;
-			case "rsummoner":	
+			case "rsummoner":
+			case me.name + "rsummoner":	
 				this.summoner();
 				break;
-			case "rduriel":		
+			case "rduriel":
+			case me.name + "rduriel":		
 				this.duriel();
 				break;
-			case "rtravincal":	
+			case "rtravincal":
+			case me.name + "rtravincal":	
 				this.travincal();
 				break;
-			case "rmephisto":	
+			case "rmephisto":
+			case me.name + "rmephisto":	
 				this.mephisto();
 				break;
-			case "rizual":		
+			case "rizual":
+			case me.name + "rizual":		
 				this.izual();
 				break;
-			case "rdiablo":		
+			case "rdiablo":
+			case me.name + "rdiablo":		
 				this.diablo();
 				break;
-			case "rshenk":		
+			case "rshenk":
+			case me.name + "rshenk":		
 				this.shenk();
 				break;
-			case "ranya":		
+			case "ranya":
+			case me.name + "ranya":		
 				this.anya();
 				break;
-			case "rancients":	
+			case "rancients":
+			case me.name + "rancients":	
 				this.ancients();
 				break;
-			case "rbaal":		
+			case "rbaal":
+			case me.name + "rbaal":		
 				this.baal();
 				break;
 			
@@ -2163,65 +2021,64 @@ var myFwlrScipts = {
 			
 			case "den":
 			case me.name + " den":
-				this.den;
+				this.den();
 				break;
 			case "hole":
 			case me.name + " hole":
-				this.hole;
+				this.hole();
 				break;
 			case "pit":
 			case me.name + " pit":
-				this.pit;
+				this.pit();
 				break;
 			case "count":
 			case me.name + " count":
-				this.count;
+				this.count();
 				break;
 			case "andy":
 			case me.name + " andy":
-				this.andy;
+				this.andy();
 				break;
 			case "duri":
 			case me.name + " duri":
-				this.duri;
+				this.duri();
 				break;
 			case "meph":
 			case me.name + " meph":
-				this.meph;
+				this.meph();
 				break;
 			case "centr":
 			case me.name + " centr":
-				this.centr;
+				this.centr();
 				break;
 			case "ctr":
 			case me.name + " ctr":
-				this.ctr;
+				this.ctr();
 				break;
 			case "seals":
 			case me.name + " seals":
-				this.seals;
+				this.seals();
 				break;
 			case "anc":
 			case me.name + " anc":
-				this.anc;
+				this.anc();
 				break;
 			case "throne":
 			case me.name + " throne":
-				this.throne;
+				this.throne();
 				break;
 			case "baalb":
 			case me.name + " baalb":
-				this.baal;
+				this.baal();
 				break;
 			case "pindle":
 			case me.name + " pindle":
-				this.pindle;
+				this.pindle();
 				break;
 			case "truffle":
 			case me.name + " truffle":
-				this.truffle;
+				this.truffle();
 				break;
-			default: break;
 		}
 	}
 };
