@@ -50,7 +50,9 @@ var myLdrScripts = {
 		Pather.useWaypoint(6, true);
 		Precast.doPrecast(true);
 		
-		if (!Pather.moveToExit([7, 12], true)) {			throw new Error("Failed to move to Pit level 1");		}
+		if (!Pather.moveToExit([7, 12], true)) {
+			throw new Error("Failed to move to Pit level 1");
+		}
 		if (_a !== 2) {
 			Pather.makePortal();
 			delay(250);
@@ -61,7 +63,9 @@ var myLdrScripts = {
 			Pather.usePortal(null, me.name);
 		}
 		delay(rand(1500,2000));
-		if (!Pather.moveToExit(16, true, false)) {			throw new Error("Failed to move to Pit level 2");		}
+		if (!Pather.moveToExit(16, true, false)) {
+			throw new Error("Failed to move to Pit level 2");
+		}
 		Pather.makePortal();
 		delay(250);
 		while(!(myTroops.TroopsInMyArea() === Config.Troops.length)) { Attack.securePosition(me.x, me.y, 15, 1750); }
@@ -560,7 +564,8 @@ var myLdrScripts = {
 		this.clearThrone = function () {
 			var i, monster,
 				monList = [],
-				pos = [15094, 5022, 15094, 5041, 15094, 5060, 15094, 5041, 15094, 5022];
+				// orig: pos = [15094, 5022, 15094, 5041, 15094, 5060, 15094, 5041, 15094, 5022];
+				pos = [15113,5010, 15105,5022, 15103,5042, 15082,5029, 15078,5038, 15085,5049, 15100,5050, 15098,5045]; // dEdits to do a safer Throne
 
 			if (1) {			// Config.AvoidDolls
 				monster = getUnit(1, 691);
@@ -667,7 +672,7 @@ var myLdrScripts = {
 		delay(250);
 		Pather.moveToExit([130, 131], true);
 		delay(250);
-		Pather.moveTo(15118, 5045);
+		Pather.moveTo(15113, 5010); // orig: 15118, 5045
 		
 		//me.overhead("Send the sorc to her doom...the throne!");
 		//say(_tSorc + " baal");
@@ -676,8 +681,9 @@ var myLdrScripts = {
 			delay(750);
 		}*/
 		
-		delay(250);
 		Pather.makePortal();
+		Attack.securePosition(me.x, me.y, 5, 4000)
+		
 
 		/*if (1 && getUnit(1, 691)) { 			// Config.Baal.DollQuit
 			say("Dolls found! NG.");
@@ -769,7 +775,7 @@ var myLdrScripts = {
 		Pather.usePortal(132, _tSorc);*/
 		
 		
-		me.overhead("ÿc4" + "You can do it!");		// Config.Baal.BaalMessage
+		me.overhead("Ã¿c4" + "You can do it!");		// Config.Baal.BaalMessage
 		Pather.usePortal(131, me.name);
 
 		Pather.moveTo(15090, 5008);
@@ -1810,23 +1816,23 @@ var myLdrScripts = {
 		this.vizierSeal = function () {
 			me.overhead("Viz layout " + this.vizLayout);
 			this.followPath(this.vizLayout === 1 ? this.starToVizA : this.starToVizB, false); // false: no deleay btwn teleing
-			myTroops.my_townThings(false, true, "portalspot", 6000, 8000, "wBoer", 7000, 9000);
-			Pather.usePortal(null, me.name);
+			/*myTroops.my_townThings(false, true, "portalspot", 6000, 8000, "wBoer", 7000, 9000);
+			Pather.usePortal(null, me.name);*/
 			Precast.doPrecast(true);
 			
-			if (!this.openSeal(395) || !this.openSeal(396)) {
+			/*if (!this.openSeal(395) || !this.openSeal(396)) {
 				me.overhead("Failed to open Vizier seals.");
 			}
 
 			if (this.vizLayout === 1) {
 				Pather.moveTo(7691, 5292);
-				Pather.makePortal();
+				//Pather.makePortal();
 				Attack.securePosition(me.x, me.y, 10, 6000);
 			} else {
 				Pather.moveTo(7690, 5315);
-				Pather.makePortal();
+				//Pather.makePortal();
 				Attack.securePosition(me.x, me.y, 10, 6000);
-			}
+			}*/
 
 			if (!this.getBoss(getLocaleString(2851))) {
 				me.overhead("Failed to kill Vizier");
@@ -1837,13 +1843,14 @@ var myLdrScripts = {
 
 		this.seisSeal = function () {
 			me.overhead("Seis layout " + this.seisLayout);
+			delay(rand(5000,8000));
 			this.followPath(this.seisLayout === 1 ? this.starToSeisA : this.starToSeisB, false);
-			Town.goToTown();
+			/*Town.goToTown();
 			myTroops.my_townThings(false, true, "portalspot", 6000, 8000, "wBoer", 7000, 9000);
-			Pather.usePortal(null, me.name);
+			Pather.usePortal(null, me.name);*/
 			Precast.doPrecast(true);
 				
-			if (!this.openSeal(394)) {
+			/*if (!this.openSeal(394)) {
 				me.overhead("Failed to open de Seis seal.");
 			}
 
@@ -1864,7 +1871,7 @@ var myLdrScripts = {
 				Pather.moveTo(7785, 5148);
 				Pather.makePortal();
 				Attack.securePosition(me.x, me.y, 30, 6000);
-			}
+			}*/
 			Attack.securePosition(me.x, me.y, 30, 6000);
 			if (!this.moveToBoss(getLocaleString(2852))) {
 				if (!this.getBoss(getLocaleString(2852))) {
@@ -1872,6 +1879,7 @@ var myLdrScripts = {
 				}
 				me.overhead("Failed to kill de Seis");
 			}
+
 			return true;
 		};
 
@@ -1879,7 +1887,7 @@ var myLdrScripts = {
 			me.overhead("Inf layout " + this.infLayout);
 			this.followPath(this.infLayout === 1 ? this.starToInfA : this.starToInfB, false);
 
-			if (!this.openSeal(392)) {
+			/*if (!this.openSeal(392)) {
 				me.overhead("Failed to open Infector seals.");
 			}
 
@@ -1891,15 +1899,15 @@ var myLdrScripts = {
 				me.overhead("this.infectorLayout === 1");
 				delay(rand(10000,15000));
 				Pather.moveTo(7928, 5295, 0, true); // temp
-			}
+			}*/
 			Attack.securePosition(me.x, me.y, 15, 6000);
 			if (!this.getBoss(getLocaleString(2853))) {
 				me.overhead("Failed to kill Infector");
 			}
 
-			if (!this.openSeal(393)) {
+			/*if (!this.openSeal(393)) {
 				me.overhead("Failed to open Infector seals.");
-			}
+			}*/
 			return true;
 		};
 		this.diabloPrep = function () {
@@ -2089,10 +2097,13 @@ var myLdrScripts = {
 		//edited for tele team: this.entranceToStar	= [7795,5501, 7769,5482, 7768,5436, 7789,5425, 7770,5390, 7775,5352, 7799,5350, 7765,5302];
 		this.entranceToStar	= [7795,5501, 7816,5480, 7819,5457, 7809,5434, 7820,5412, 7821,5385, 7812,5351, 7776,5344, 7774,5311, 7750,5292]; // my slow tele sorc ldr
 		
-		this.starToVizA 	= [7759, 5295, 7734, 5295, 7716, 5295, 7718, 5276, 7697, 5292, 7678, 5293, 7665, 5276, 7662, 5314];
+		this.starToVizA 	= [7759, 5295, 7734, 5295, 7716, 5295, 7718, 5276, 7697, 5292, 7678, 5293]; // , 7665, 5276, 7662, 5314];
 		this.starToVizB 	= [7759, 5295, 7734, 5295, 7716, 5295, 7701, 5315, 7666, 5313, 7653, 5284];
-		this.starToSeisA 	= [7781, 5259, 7776, 5256, 7809, 5223, 7804, 5193, 7814, 5169, 7788, 5153]; 			// 7776, 5228, 7775, 5205, 
-		this.starToSeisB 	= [7781, 5259, 7805, 5258, 7802, 5237, 7776, 5228, 7811, 5218, 7807, 5194, 7779, 5193, 7774, 5160, 7803, 5154];
+		// orig: this.starToSeisA 	= [7781, 5259, 7776, 5256, 7809, 5223, 7804, 5193, 7814, 5169, 7788, 5153]; 			// 7776, 5228, 7775, 5205, 
+		// orig: this.starToSeisB 	= [7781, 5259, 7805, 5258, 7802, 5237, 7776, 5228, 7811, 5218, 7807, 5194, 7779, 5193, 7774, 5160, 7803, 5154];
+		this.starToSeisA 	= [7786,5262, 7779,5246, 7779,5232,  7773,5207, 7776,5199, 7801,5194, 7816,5180, 7813,5156, 7794,5157, 7782,5157]; 	// Seis layout 1
+		this.starToSeisB 	= [7786,5259, 7783,5239, 7810,5241, 7813,5214, 7804,5195, 7785,5195, 7772,5177, 7778,5153, 7802,5152];				// Seis layout 2
+		
 		this.starToInfA 	= [7809, 5268, 7834, 5306, 7852, 5280, 7852, 5310, 7869, 5294, 7895, 5295, 7919, 5290];
 		this.starToInfB 	= [7809, 5268, 7834, 5306, 7852, 5280, 7852, 5310, 7869, 5294, 7895, 5274, 7927, 5275, 7932, 5297, 7923, 5313];
 		
@@ -2103,9 +2114,21 @@ var myLdrScripts = {
 		
 		if (me.area !== 107) Pather.usePortal(null, me.name);
 		delay(750);
+		if (!Pather.moveTo(7790,5276)) throw new Error("Failed to move to Chaos Sanctuary");
+		
+		// Prep chaos by opening all the seal
+		this.initLayout();
+		this.openSeal(395);	// seal at Vizier
+		this.openSeal(396);	// seal at Vizier
+		this.openSeal(394);	// seal at Seis
+		this.openSeal(393);	// seal at Infector
+		this.openSeal(392);	// seal at Infector
+		
+		// head back to the entrance 
 		if (!Pather.moveTo(7795,5501)) throw new Error("Failed to move to Chaos Sanctuary");
 		
 		Pather.makePortal();
+		Attack.securePosition(me.x, me.y, 5, 4000)
 		
 		delay(250);
 		Attack.clear(20, 0, false, this.sort);
@@ -2416,7 +2439,8 @@ var myLdrScripts = {
 			_timedOut += 1;
 		}
 		Pather.makePortal();
-		while(!(myTroops.TroopsInMyArea() >= (Config.Troops.length - Config.BObarb.Towners.length))) { Attack.securePosition(me.x, me.y, 5, 3000); }				
+		while(!(myTroops.TroopsInMyArea() >= (Config.Troops.length - Config.BObarb.Towners.length))) { Attack.securePosition(me.x, me.y, 5, 3000); }
+				
 		this.clearCowLevel(); // dEdits: commented out so as to try an Attack.clearLevel(0) call
 		//Attack.clearLevel(0);
 		
