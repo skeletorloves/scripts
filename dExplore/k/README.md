@@ -1,1 +1,3 @@
 And so it begins...
+
+original files gleaned from: https://github.com/kolton/d2bot-with-kolbot
